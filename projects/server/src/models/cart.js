@@ -11,7 +11,15 @@ module.exports = (sequelize, DataTypes) => {
   }
   cart.init({
     quantity: DataTypes.INTEGER,
-    subtotal: DataTypes.INTEGER
+    subtotal: DataTypes.INTEGER,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'cart',

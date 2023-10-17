@@ -17,6 +17,14 @@ module.exports = (sequelize, DataTypes) => {
     final_total: DataTypes.INTEGER,
     shipping_method: DataTypes.STRING,
     note: DataTypes.STRING,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'transactions',

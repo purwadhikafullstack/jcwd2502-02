@@ -15,15 +15,26 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   user.init({
-    name: DataTypes.STRING,
+    username: DataTypes.STRING,
     email: DataTypes.STRING,
     password: DataTypes.STRING,
     phone_number: DataTypes.STRING,
     birthdate: DataTypes.STRING,
     profile_picture: DataTypes.TEXT,
-    isVerified: DataTypes.ENUM("verified", "unverified"),
+    isVerified: {
+      type: DataTypes.ENUM("verified", "unverified"),
+      defaultValue: "unverified"
+    },
     referral_code: DataTypes.STRING,
-    role: DataTypes.ENUM("customer", "superadmin", "admin")
+    role: DataTypes.ENUM("customer", "superadmin", "admin"),
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'user',

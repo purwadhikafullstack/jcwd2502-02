@@ -12,7 +12,7 @@ module.exports = {
       address: {
         type: Sequelize.STRING
       },
-      status: {
+      name: {
         type: Sequelize.STRING
       },
       isPrimary: {

@@ -1,12 +1,13 @@
 const { join } = require("path");
 require('dotenv').config({ path: join(__dirname, '../.env') });
+const { DB_USERNAME, DB_PASSWORD, DB_DATABASE, DB_HOST } = process.env
 
 module.exports = {
   "development": {
-    "username": "jcwd250202",
-    "password": "jcwd250202",
-    "database": "jcwd250202",
-    "host": "adminer2.purwadhikabootcamp.com",
+    "username": DB_USERNAME,
+    "password": DB_PASSWORD,
+    "database": DB_DATABASE,
+    "host": DB_HOST,
     "dialect": "mysql"
   },
   "test": {

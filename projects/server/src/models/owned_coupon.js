@@ -9,7 +9,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   owned_coupon.init({
-    isValid: DataTypes.ENUM('true', 'false')
+    isValid: DataTypes.ENUM('true', 'false'),
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'owned_coupon',

@@ -11,9 +11,17 @@ module.exports = (sequelize, DataTypes) => {
   }
   user_address.init({
     address: DataTypes.STRING,
-    status: DataTypes.STRING,
+    name: DataTypes.STRING,
     isPrimary: DataTypes.ENUM('true', 'false'),
-    coordinate: DataTypes.STRING
+    coordinate: DataTypes.STRING,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'user_address',

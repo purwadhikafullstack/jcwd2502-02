@@ -10,10 +10,20 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   product_category.init({
-    name: DataTypes.STRING
+    name: DataTypes.STRING,
+    image: DataTypes.TEXT,
+    isDeleted: DataTypes.INTEGER,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
-    modelName: 'product_category',
+    modelName: 'product_category', paranoid: true
   });
   return product_category;
 };

@@ -10,7 +10,15 @@ module.exports = (sequelize, DataTypes) => {
   }
   used_token.init({
     token: DataTypes.STRING,
-    isValid: DataTypes.ENUM('true', 'false')
+    isValid: DataTypes.ENUM('true', 'false'),
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'used_token',

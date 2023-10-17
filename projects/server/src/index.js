@@ -1,3 +1,4 @@
+const { sequelize } = require("./models")
 require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
@@ -9,7 +10,7 @@ app.use(
   cors({
     origin: [
       process.env.WHITELISTED_DOMAIN &&
-        process.env.WHITELISTED_DOMAIN.split(","),
+      process.env.WHITELISTED_DOMAIN.split(","),
     ],
   })
 );
@@ -70,5 +71,6 @@ app.listen(PORT, (err) => {
     console.log(`ERROR: ${err}`);
   } else {
     console.log(`APP RUNNING at ${PORT} ✅`);
+    // sequelize.sync({ alter: true })
   }
 });

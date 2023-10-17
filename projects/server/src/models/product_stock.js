@@ -9,7 +9,15 @@ module.exports = (sequelize, DataTypes) => {
     }
   }
   product_stock.init({
-    stock: DataTypes.INTEGER
+    stock: DataTypes.INTEGER,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'product_stock',
