@@ -1,16 +1,20 @@
-//import component/pages
+import { Route, Routes } from "react-router-dom";
+import LandingPage from "./pages/user/landingPage";
+import RegistrationPage from "./pages/registerPage";
+import LoginPage from "./pages/loginPage";
 
 function App() {
   return (
     <div data-theme="light">
-      <div>
-        Hello
-      </div>
 
-      <div>
-        Hai
+      <Routes>
+        <Route element={<LandingPage />} path="/" />
+        <Route element={<RegistrationPage />} path="/register" />
+        <Route element={<LoginPage />} path="/login" />
 
-      </div>
+
+      </Routes>
+
     </div>
   );
 }

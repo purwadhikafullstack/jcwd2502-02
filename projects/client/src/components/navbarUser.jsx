@@ -6,7 +6,7 @@ import { BiSearchAlt } from "react-icons/bi";
 const Navbar = () => {
     return (
         <div className="relative">
-            < div className="bg-gradient-to-r from-emerald-100 to-green-700 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen ">
+            < div className="bg-gradient-to-r from-emerald-100 to-green-700 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
 
                 <div>
                     <img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" />
