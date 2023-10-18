@@ -32,6 +32,11 @@ app.get("/api/greetings", (req, res, next) => {
   });
 });
 
+app.use(express.static('public'))
+
+const { productsRouter } = require('./routers')
+app.use('/api/products', productsRouter)
+
 // ===========================
 
 // not found
