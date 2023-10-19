@@ -1,13 +1,22 @@
-//import component/pages
 import { Route, Routes } from "react-router-dom";
+import LandingPage from "./pages/user/landingPage";
+import RegistrationPage from "./pages/registerPage";
+import LoginPage from "./pages/loginPage";
 import ProductListPage from "./pages/user/productList";
 
 function App() {
   return (
     <div data-theme="light">
+
       <Routes>
-        <Route element={<ProductListPage />} path="/" />
+        <Route element={<LandingPage />} path="/" />
+        <Route element={<RegistrationPage />} path="/register" />
+        <Route element={<LoginPage />} path="/login" />
+        <Route element={<ProductListPage />} path="/products" />
+
+
       </Routes>
+
     </div>
   );
 }
