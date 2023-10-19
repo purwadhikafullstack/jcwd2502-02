@@ -24,9 +24,10 @@ export default function LoginPage() {
         alert(formik.values.password)
     }
     const handleSubmit = async () => {
-        if (!formik.values.email && !formik.values.password) {
+        console.log(formik.values);
+        if (formik.values.email && formik.values.password) {
             try {
-                const response = await axios.post('http://localhost:8000/api/users/login', formik.values);
+                const response = await axios.post('http://localhost:8905/api/users/login', formik.values);
                 console.log(response);
                 toast.success(response.data.message)
             } catch (error) {
