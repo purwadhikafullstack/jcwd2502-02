@@ -1,6 +1,7 @@
 import { HiShoppingCart } from "react-icons/hi";
 // import { HiMenu } from "react-icons/hi";
 import { BiSearchAlt } from "react-icons/bi";
+import { Link } from "react-router-dom";
 
 
 const Navbar = () => {
