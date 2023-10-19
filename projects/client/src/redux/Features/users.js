@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import { api } from "../../api/api";
 
 const initialState = {
     id: "",
@@ -36,6 +37,8 @@ export const userSlice = createSlice({
         }
     },extraReducers: (builder) => {
         builder.addCase(login2.fulfilled, (state,action) => {
+
+            console.log(action.payload, "hello");
             if(action.payload) return state = action.payload
             return state
         } )
@@ -43,46 +46,55 @@ export const userSlice = createSlice({
 })
 
 export const login2 = createAsyncThunk("auth", async (account, thunkApi)=> {
-    return  await axios.post(`users/login`, {username, password}).then(() => {
+    return await api().post(`/users/login`, account).then(({data}) => {
+
+        console.log(data);
+        
         localStorage.setItem("accessToken", data.data.jwt)
+
+        return data.data;
 
     }).catch((err ) => {
         console.log('an error has occurred');
-        toast.error(error.response.data.message);
+        toast.error(err.response.data.message);
     })} )
 
-export const login = ({email, password}) => {
-    async (dispatch) => {
-        try {
-            const data = await axios.post(`users/login`, {username, password});
+// export const login = ({email, password}) => {
+//     async (dispatch) => {
+//         try {
+//             const data = await api().post(`users/login`, {username, password});
             
-            localStorage.setItem("accessToken", data.data.jwt);
-            // dispatch(setId(data.data.id));
-            // dispatch(setEmail(data.data.email));
-            // dispatch(setUsername(data.data.username));
-            // dispatch(setProfile_picture(data.data.profile_picture));
-            dispatch(login(data.data))
+//             localStorage.setItem("accessToken", data.data.jwt);
+//             // dispatch(setId(data.data.id));
+//             // dispatch(setEmail(data.data.email));
+//             // dispatch(setUsername(data.data.username));
+//             // dispatch(setProfile_picture(data.data.profile_picture));
+//             dispatch(login(data.data))
 
-        } catch (error) {
-            console.log('an error has occurred');
-            toast.error(error.response.data.message);
-        }
-    }
-}
+//         } catch (error) {
+//             console.log('an error has occurred');
+//             toast.error(error.response.data.message);
+//         }
+//     }
+// }
 
 export const keepLogin = () => async (dispatch) => {
     const accessToken = localStorage.getItem("accessToken");
-    const {data} = await axios.get('')
+    const {data} = await api().get('')
 
     // ulang proses setelah jwt di confirm dan simpen 
 }
 
-export const logout = () => async (dispatch) => {
-    localStorage.removeItem("accessToken");
-    // dispatch(setId(""));
-    // dispatch(setEmail(""));
-    // dispatch(setUsername(""));
-    // dispatch(setProfile_picture(""));
-    // dispatch(setRole(""));
-    dispatch(logout())
-}
+// export const logout = () => async (dispatch) => {
+//     localStorage.removeItem("accessToken");
+//     // dispatch(setId(""));
+//     // dispatch(setEmail(""));
+//     // dispatch(setUsername(""));
+//     // dispatch(setProfile_picture(""));
+//     // dispatch(setRole(""));
+//     dispatch(logout())
+// }
+
+export const { login,logout} = userSlice.actions;
+
+export default userSlice.reducer;

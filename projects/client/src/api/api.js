@@ -1,8 +1,9 @@
 import axios from "axios";
 
-export const api = axios.create({
+export const api = () => axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL,
     headers: {
-
+      authorization :  "Bearer " + localStorage.getItem("accessToken")
     }
 })
+
