@@ -83,10 +83,10 @@ const UpdateProfile = () => {
 
                 </div>
 
-                {/* 
+
                 <div className="grid place-content-center mb-10">
                     <Button text={"Submit Changes"} />
-                </div> */}
+                </div>
 
             </div>
 
