@@ -21,7 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     phone_number: DataTypes.STRING,
     birthdate: DataTypes.STRING,
     profile_picture: DataTypes.TEXT,
-    isVerified: DataTypes.ENUM("verified", "unverified"),
+    isVerified: DataTypes.ENUM("true", "false"),
     referral_code: DataTypes.STRING,
     role: DataTypes.ENUM("customer", "superadmin", "admin")
   }, {
