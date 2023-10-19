@@ -4,7 +4,8 @@ import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
 
 
-const Navbar = () => {
+const Navbar = ({ onFilteredData }) => {
+
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-emerald-100 to-green-700 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">

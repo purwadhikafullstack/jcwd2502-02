@@ -2,7 +2,7 @@ const SortButton = (props) => {
     return (
         <div>
             <select
-                className="select select-md btn bg-green-400 hover:bg-green-300 text-white"
+                className="btn select rounded-full border-4 border-green-700 hover:bg-yellow-300 hover:border-green-700  bg-yellow-300 text-black"
                 name=""
                 onChange={props.onChange}
                 id=""

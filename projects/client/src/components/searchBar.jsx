@@ -4,8 +4,8 @@ const Searchbar = (props) => {
             <input
                 type="text"
                 onChange={props.onChange}
-                placeholder="Search here"
-                className="input bg-green-600 w-[500px] text-white placeholder:text-white"
+                placeholder="Search on BuyFresh"
+                className="border border-green-800 rounded-full h-[45px] text-xs pl-4 w-full"
                 value={props.value}
             />
         </div>
