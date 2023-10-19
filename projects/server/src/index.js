@@ -6,6 +6,7 @@ const { join } = require("path");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
+// app.use(cors())
 app.use(
   cors({
     origin: [
@@ -32,7 +33,7 @@ app.get("/api/greetings", (req, res, next) => {
   });
 });
 
-app.use(express.static('public'))
+app.use(express.static('src/public'))
 
 const { productsRouter } = require('./routers')
 app.use('/api/products', productsRouter)
@@ -60,7 +61,7 @@ app.use((err, req, res, next) => {
 
 //#endregion
 
-//#region CLIENT
+// #region CLIENT
 const clientPath = "../../client/build";
 app.use(express.static(join(__dirname, clientPath)));
 
