@@ -1,6 +1,8 @@
 import { useFormik } from 'formik';
+import axios from 'axios';
 import * as yup from 'yup';
 import Button from '../components/button';
+import toast, {Toaster} from "react-hot-toast";
 
 export default function LoginPage() {
     const formik = useFormik({
@@ -21,18 +23,24 @@ export default function LoginPage() {
     const registerUser = () => {
         alert(formik.values.password)
     }
-    const handleSubmit = () => {
-        console.log(formik.values);
+    const handleSubmit = async () => {
+        if(!formik.values.email && !formik.values.password) {
+            try {
+            const response = await axios.post('http://localhost:8000/api/users/login', formik.values);
+            console.log(response);
+            toast.success(response.data.message)
+            } catch (error) {
+                toast.error(error.response.data.message);
+            }  
+        } else {
+            toast.error("Please fill in all required forms")
+        }
         
-        try {
-            
-        } catch (error) {
-            
-        }  
     }
     // console.log('form values', formik.values);
     return (
         <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-emerald-300">
+            <Toaster />
             <div className='grid place-content-center'>
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
             </div>

@@ -38,7 +38,7 @@ export default function RegistrationPage() {
             setDisabled(true)
             const response = await axios.post('http://localhost:8000/api/users/register', formik.values)
             console.log(response);
-            
+
         } catch (error) {
             console.log(error.response.data.message);
             alert(error.response.data.message);
@@ -61,6 +61,7 @@ export default function RegistrationPage() {
 
     return (
         <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-emerald-300">
+            <Toaster />
             <div className='grid place-content-center'>
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
             </div>
