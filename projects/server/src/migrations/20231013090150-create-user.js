@@ -28,7 +28,7 @@ module.exports = {
         type: Sequelize.TEXT
       },
       isVerified: {
-        type: Sequelize.ENUM("verified", "unverified")
+        type: Sequelize.ENUM("true", "false")
       },
       referral_code: {
         type: Sequelize.STRING
