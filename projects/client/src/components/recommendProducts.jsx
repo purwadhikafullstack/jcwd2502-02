@@ -51,7 +51,7 @@ const RecommendProducts = () => {
                     </div>
                 </div>
 
-                <div className="px-2">
+                {/* <div className="px-2">
                     <Slider {...settings} className='flex justify-center'>
                         <ProductCard name={"Buah Mangga"} price={"Rp 20,000"} />
                         <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
@@ -63,7 +63,7 @@ const RecommendProducts = () => {
                         <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
                         <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
                     </Slider>
-                </div>
+                </div> */}
 
 
             </div>

@@ -71,12 +71,12 @@ const LandingPage = () => {
 
             <div className="mt-[70px]">
 
-                <div>
+                {/* <div>
                     <p>Your current location: Latitude {currentLocation.latitude}, Longitude {currentLocation.longitude}</p>
                 </div>
                 <div>
                     <p>Your nearest location is {nearestLocation.name}: Latitude {nearestLocation.latitude}, Longitude {nearestLocation.longitude}</p>
-                </div>
+                </div> */}
 
                 <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">
                     <ModalAddress />
