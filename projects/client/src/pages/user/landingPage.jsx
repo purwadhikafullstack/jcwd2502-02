@@ -106,7 +106,7 @@ const LandingPage = () => {
         // Get current location
         // nearestBranch()
 
-    }, [products]);
+    }, []);
 
     useEffect(() => {
         if (branchLoc.length) calculation()
