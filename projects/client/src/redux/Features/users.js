@@ -1,8 +1,18 @@
 import toast from "react-hot-toast";
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import { api } from "../../api/api";
+import { axios } from "axios";
+
 
 const initialState = {
+    id: "",
+    username: "",
+    profile_picture: "",
+    role: "",
+    email: "",
+}
+
+const resetState = {
     id: "",
     username: "",
     profile_picture: "",
@@ -14,30 +24,32 @@ export const userSlice = createSlice({
     name: "users",
     initialState,
     reducers: {
-        // setId: (initialState, {payload}) => {
-        //     initialState.id = payload
-        // },
-        // setUsername: (initialState, {payload}) => {
-        //     initialState.username = payload
-        // },
-        // setProfile_picture: (initialState, {payload}) => {
-        //     initialState.profile_picture = payload
-        // },
-        // setRole: (initialState, {payload}) => {
-        //     initialState.role = payload
-        // },
-        // setEmail: (initialState, {payload}) => {
-        //     initialState.email = payload
-        // },
         login : (state,action) => {
             return state = {...action.payload}
         },
         logout : (state,action) => {
-            return state = initialState;
-        }
+            localStorage.removeItem("accessToken")
+            return state = resetState;
+        },
+
+        setId: (initialState, { payload }) => {
+            initialState.id = payload;
+        },
+        setUsername: (initialState, { payload }) => {
+			initialState.username = payload;
+		},
+		setProfile_Picture: (initialState, { payload }) => {
+			initialState.profile_picture = payload;
+		},
+		setRole: (initialState, { payload }) => {
+			initialState.role = payload;
+		},
+		setEmail: (initialState, { payload }) => {
+			initialState.email = payload;
+		}
+
     },extraReducers: (builder) => {
         builder.addCase(login2.fulfilled, (state,action) => {
-
             console.log(action.payload, "hello");
             if(action.payload) return state = action.payload
             return state
@@ -47,54 +59,37 @@ export const userSlice = createSlice({
 
 export const login2 = createAsyncThunk("auth", async (account, thunkApi)=> {
     return await api().post(`/users/login`, account).then(({data}) => {
-
-        console.log(data);
-        
         localStorage.setItem("accessToken", data.data.jwt)
-
         return data.data;
-
     }).catch((err ) => {
         console.log('an error has occurred');
         toast.error(err.response.data.message);
     })} )
 
-// export const login = ({email, password}) => {
-//     async (dispatch) => {
-//         try {
-//             const data = await api().post(`users/login`, {username, password});
-            
-//             localStorage.setItem("accessToken", data.data.jwt);
-//             // dispatch(setId(data.data.id));
-//             // dispatch(setEmail(data.data.email));
-//             // dispatch(setUsername(data.data.username));
-//             // dispatch(setProfile_picture(data.data.profile_picture));
-//             dispatch(login(data.data))
+export const onCheckIsLogin = () => async (dispatch) => {
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            try {
+                const {data} = await api().get(`/users/find-one`)
+                dispatch(setId(data.data.id));
+                dispatch(setUsername(data.data.username));
+                dispatch(setProfile_Picture(data.data.profile_picture));
+                dispatch(setRole(data.data.role));
+                dispatch(setEmail(data.data.email));
+                console.log(data.data.username);
+            } catch (error) {
+                console.log(error);
+            }
+        } catch (error) {
+            console.log(error.response.data.message);
+        }
+    };
 
-//         } catch (error) {
-//             console.log('an error has occurred');
-//             toast.error(error.response.data.message);
-//         }
-//     }
-// }
 
 export const keepLogin = () => async (dispatch) => {
     const accessToken = localStorage.getItem("accessToken");
     const {data} = await api().get('')
-
-    // ulang proses setelah jwt di confirm dan simpen 
 }
 
-// export const logout = () => async (dispatch) => {
-//     localStorage.removeItem("accessToken");
-//     // dispatch(setId(""));
-//     // dispatch(setEmail(""));
-//     // dispatch(setUsername(""));
-//     // dispatch(setProfile_picture(""));
-//     // dispatch(setRole(""));
-//     dispatch(logout())
-// }
-
-export const { login,logout} = userSlice.actions;
-
+export const {login, logout, setId, setEmail, setProfile_Picture, setRole, setUsername} = userSlice.actions;
 export default userSlice.reducer;

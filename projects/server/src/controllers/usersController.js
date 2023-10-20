@@ -25,7 +25,6 @@ module.exports = {
                 {
                     id: account.dataValues.id,
                     role: account.dataValues.role,
-                    // addressList: addresses,
                 },
                 "1d"
             )
@@ -74,7 +73,8 @@ module.exports = {
             console.log(newAccount.dataValues.id);
             const token = createJWT(
                 {
-                    id: newAccount.dataValues.id
+                    id: newAccount.dataValues.id,
+                    role: newAccount.dataValues.role,
                 }, '12h')
             console.log(token);
 
@@ -97,16 +97,21 @@ module.exports = {
         }
     },
 
-    verify: async (req, res, next) => {
+    verifyUserAccount: async (req, res, next) => {
         try {
             const {id} = req.dataToken;
-            const account = db.users.findOne({
+            const account = db.user.findOne({
                 where: {id}
             })
-            await db.users.update({
-                isVerified: "TRUE"
+            await db.user.update({
+                isVerified: "verified"
             }, {
                 where: {id}
+            })
+            res.status(201).send({
+                isError: false,
+                message: "User account has been verified",
+                data: null
             })
         } catch (error) {
             next(error)
@@ -144,6 +149,7 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
+            console.log(`ini dari getUser di controller`, req.dataToken);
             const {id} = req.dataToken;
             const data = await findUser(id)
             res.status(201).send({
@@ -152,6 +158,7 @@ module.exports = {
                 data: data
             })
         } catch (error) {
+            console.log(error);
             next(error)
         }
     }

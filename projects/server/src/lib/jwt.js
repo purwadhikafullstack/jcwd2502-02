@@ -14,18 +14,16 @@ module.exports = {
 
     verify: (req, res, next) => {
         try {
+            console.log(`nyampe middleware`);
             console.log(req.headers);
             const {authorization} = req.headers;
+            console.log(req.headers.authorization);
             if(!authorization) throw {message: `token was not found`};
             const decodeData = jwt.verify(authorization, 'abc123');
             req.dataToken = decodeData;
             next()
-            // if (decodeData.apiKey == "Approved") {
-            //     next()
-            // } else {
-            //     throw {message: `User is not approved`}
-            // }
         } catch (error) {
+            console.log(error);
             next(error)
         }
     }

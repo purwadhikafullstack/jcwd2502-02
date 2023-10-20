@@ -5,6 +5,7 @@ import LoginPage from "./pages/loginPage";
 import ProductListPage from "./pages/user/productList";
 import ProfilePage from "./pages/user/profilePage";
 import UpdateProfile from "./pages/user/updateProfilePage";
+import VerificationPage from "./pages/verificationPage";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
         <Route element={<ProductListPage />} path="/products" />
         <Route path='/profile' element={<ProfilePage />} />
         <Route path='/updateprofile' element={<UpdateProfile />} />
+        <Route path='/verify/:id' element={<VerificationPage/>} />
       </Routes>
 
     </div>

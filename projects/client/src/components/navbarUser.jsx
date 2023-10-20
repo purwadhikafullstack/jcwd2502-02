@@ -2,9 +2,19 @@ import { HiShoppingCart } from "react-icons/hi";
 // import { HiMenu } from "react-icons/hi";
 import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import { useAppSelector } from '../redux/App/Store';
+import { useDispatch, useSelector } from "react-redux";
 
+import { logout } from "../redux/Features/users";
 
 const Navbar = () => {
+    const dispatch = useDispatch()
+    const user = useSelector((state) => state.users)
+    const handleLogout = async(e) => {
+        e.preventDefault()
+        console.log('akan logout');
+        await dispatch(logout())
+    }
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-emerald-100 to-green-700 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
@@ -37,11 +47,24 @@ const Navbar = () => {
                             </div>
                             <div className="drawer-side">
                                 <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
-                                <ul className="menu p-4 w-60 min-h-full bg-base-200 text-xl">
-                                    <li className="hover:bg-green-200"><a>Profile</a></li>
-                                    <li className="hover:bg-green-200"><a>MyOrder</a></li>
-                                    <li className="hover:bg-green-200"><a>Sign Out</a></li>
-                                </ul>
+                                {
+                                    user.username ? 
+                                    <ul className="menu p-4 w-60 min-h-full bg-base-200 text-xl">
+                                        <h1 className="flex justify-center text-lg font-semibold">Welcome, {user?.username}</h1>
+                                        <li className="hover:bg-green-200"><a>Profile</a></li>
+                                        <li className="hover:bg-green-200"><a>MyOrder</a></li>
+                                        <li className="hover:bg-green-200" onClick={handleLogout}><a>Sign Out</a></li>
+                                    </ul>
+                                    :
+                                    <ul className="menu p-4 w-60 min-h-full bg-base-200 text-xl">
+                                        <Link to={`/login`}>
+                                            <li className="hover:bg-green-200"><a>Log in</a></li>
+                                        </Link>
+                                        <Link to={`/register`}>
+                                            <li className="hover:bg-green-200"><a>Sign up</a></li>
+                                        </Link>
+                                    </ul>
+                                }
                             </div>
                         </div>
                     </div>
