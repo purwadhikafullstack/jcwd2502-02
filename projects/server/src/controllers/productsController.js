@@ -37,7 +37,6 @@ module.exports = {
         try {
             const { catId } = req.query;
             const productByCat = await getProductsByCategoryService(catId);
-            // console.log(productByCat);
             res.status(201).send({
                 isError: false,
                 message: "Get Product By Category Success",
@@ -50,9 +49,6 @@ module.exports = {
     getAllProductsByCat: async (req, res, next) => {
         try {
             const { catId, searchQuery, sort } = req.query;
-            // console.log(catId);
-            // console.log(searchQuery);
-            // console.log(sort);
             if (!catId && !searchQuery) {
                 const allProduct = await getAllProductsService2(sort);
                 console.log(allProduct);
