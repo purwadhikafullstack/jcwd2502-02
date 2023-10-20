@@ -5,6 +5,7 @@ import RecommendProducts from "../../components/recommendProducts"
 import ModalAddress from "../../components/modalAddress"
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
+import ProductCard from "../../components/productCard"
 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -14,19 +15,25 @@ import axios from "axios";
 
 
 const LandingPage = () => {
-
+    const [branchLoc, setBranchLoc] = useState("")
+    const [storeID, setStoreID] = useState(null)
+    const [products, setProducts] = useState("")
     const [currentLocation, setCurrentLocation] = useState(null);
     const [nearestLocation, setNearestLocation] = useState(null);
 
-    // contoh koordinat
-    const locations = [
-        { name: 'Location A', latitude: 40.7128, longitude: -74.0060 },
-        { name: 'Location B', latitude: 34.0522, longitude: -118.2437 },
-        { name: 'Location C', latitude: 51.5074, longitude: -0.1278 },
-    ];
 
-    useEffect(() => {
-        // Get current location
+    const getBranch = async () => {
+        try {
+            const allBranch = await axios.get('http://localhost:8905/api/branch/all')
+            // console.log(allBranch.data.data);
+            setBranchLoc(allBranch.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const calculation = () => {
+        let nearest = null;
         navigator.geolocation.getCurrentPosition((position) => {
             const userLatitude = position.coords.latitude;
             const userLongitude = position.coords.longitude;
@@ -34,10 +41,10 @@ const LandingPage = () => {
             setCurrentLocation({ latitude: userLatitude, longitude: userLongitude });
 
             // Rumus untuk mencari nearest location
-            let minDistance = Number.MAX_VALUE;
-            let nearest = null;
+            let minDistance = Infinity;
 
-            locations.forEach((location) => {
+
+            branchLoc.forEach((location, idx) => {
                 const lat1 = userLatitude;
                 const lon1 = userLongitude;
                 const lat2 = location.latitude;
@@ -52,17 +59,57 @@ const LandingPage = () => {
                 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 const distance = R * c;
 
+                console.log(distance, minDistance, idx);
+
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearest = location;
                 }
+                // setStoreID(branchLoc.indexOf(nearest) + 1)
+
+                // setNearestLocation(nearest);
             });
-            setNearestLocation(nearest);
+            console.log(nearest);
+            nearestBranch(nearest.id)
         });
+
+
+    }
+
+    const nearestBranch = async (storeId) => {
+        try {
+
+            const branch = await axios.get(`http://localhost:8905/api/branch/nearest/${storeId}`)
+            console.log(branch.data.data, "ini data branch");
+            setProducts(branch.data.data)
+            console.log(products);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+
+        getBranch()
+        // console.log(branchLoc);
+        // Get current location
+        // nearestBranch()
+
     }, []);
 
-    console.log(currentLocation);
-    console.log(nearestLocation);
+    useEffect(() => {
+        if (branchLoc.length) calculation()
+        console.log(branchLoc);
+
+
+    }, [branchLoc])
+
+
+    // useEffect(() => {
+    //     console.log("current", currentLocation);
+    //     console.log("nearest", nearestLocation);
+    // }, [nearestLocation])
+
 
     return (
         <div className="">
@@ -70,13 +117,6 @@ const LandingPage = () => {
             <Navbar />
 
             <div className="mt-[70px]">
-
-                {/* <div>
-                    <p>Your current location: Latitude {currentLocation.latitude}, Longitude {currentLocation.longitude}</p>
-                </div>
-                <div>
-                    <p>Your nearest location is {nearestLocation.name}: Latitude {nearestLocation.latitude}, Longitude {nearestLocation.longitude}</p>
-                </div> */}
 
                 <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">
                     <ModalAddress />
@@ -123,7 +163,19 @@ const LandingPage = () => {
                 </div>
 
                 <div>
-                    <RecommendProducts />
+                    {/* <RecommendProducts data={products} /> */}
+                    {/* {products.map((value, index) => {
+                        return (
+                            <div key={index}>
+                                <ProductCard
+                                    name={value.name}
+                                    image={value.image}
+                                    description={value.description}
+                                    price={value.price}
+                                />
+                            </div>
+                        )
+                    })} */}
                 </div>
 
             </div>

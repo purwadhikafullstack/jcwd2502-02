@@ -5,7 +5,11 @@ import "slick-carousel/slick/slick-theme.css";
 import "../css/style.css"
 import { FaLocationDot } from "react-icons/fa6";
 
-const RecommendProducts = () => {
+const RecommendProducts = (props) => {
+
+    console.log(props.data);
+
+    const products = props.data
 
     const settings = {
         dots: false,
@@ -50,27 +54,18 @@ const RecommendProducts = () => {
                         <div className="text-green-600 hover:underline"> See More!</div>
                     </div>
                 </div>
-
-                {/* <div className="px-2">
-                    <Slider {...settings} className='flex justify-center'>
-                        <ProductCard name={"Buah Mangga"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                    </Slider>
-                </div> */}
-
-
+                {/* {products.map((value, index) => {
+                    return (
+                        <div key={index}>
+                            <ProductCard
+                                name={value.name}
+                            // description={value.description}
+                            // price={value.price}
+                            />
+                        </div>
+                    )
+                })} */}
             </div>
-
-
-
-
         </div >
     )
 }

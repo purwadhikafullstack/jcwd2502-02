@@ -38,8 +38,11 @@ app.get("/api/greetings", (req, res, next) => {
 
 app.use(express.static('src/public'))
 
-const { productsRouter } = require('./routers')
+const { productsRouter, branchRouter } = require('./routers')
 app.use('/api/products', productsRouter)
+app.use('/api/branch', branchRouter)
+
+
 
 // ===========================
 
