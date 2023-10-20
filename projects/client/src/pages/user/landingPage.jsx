@@ -6,6 +6,7 @@ import ModalAddress from "../../components/modalAddress"
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
 import ProductCard from "../../components/productCard"
+import CategoryCard from "../../components/categoryCard"
 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -20,7 +21,17 @@ const LandingPage = () => {
     const [products, setProducts] = useState("")
     const [currentLocation, setCurrentLocation] = useState(null);
     const [nearestLocation, setNearestLocation] = useState(null);
+    const [category, setCategory] = useState([]);
 
+    const onGetCategory = async () => {
+        try {
+            const category = await axios.get(`http://localhost:8905/api/products/category`);
+            console.log(category.data.data);
+            setCategory(category.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
     const getBranch = async () => {
         try {
@@ -82,27 +93,26 @@ const LandingPage = () => {
             const branch = await axios.get(`http://localhost:8905/api/branch/nearest/${storeId}`)
             console.log(branch.data.data, "ini data branch");
             setProducts(branch.data.data)
-            console.log(products);
+            // console.log(products[0].product.name);
         } catch (error) {
             console.log(error);
         }
     }
 
     useEffect(() => {
-
+        onGetCategory();
         getBranch()
         // console.log(branchLoc);
         // Get current location
         // nearestBranch()
 
-    }, []);
+    }, [products]);
 
     useEffect(() => {
         if (branchLoc.length) calculation()
         console.log(branchLoc);
-
-
     }, [branchLoc])
+
 
 
     // useEffect(() => {
@@ -126,41 +136,14 @@ const LandingPage = () => {
                 <Jumbotron />
 
                 <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex w-auto lg:justify-center">
-
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-
+                    <CategoryCard name={"Show All"} image={"ALL"} />
+                    {category.map((value, index) => {
+                        return (
+                            <CategoryCard name={value.name} image={value.image} />
+                        )
+                    })}
                 </div>
+
 
                 <div>
                     {/* <RecommendProducts data={products} /> */}
@@ -168,10 +151,10 @@ const LandingPage = () => {
                         return (
                             <div key={index}>
                                 <ProductCard
-                                    name={value.name}
-                                    image={value.image}
-                                    description={value.description}
-                                    price={value.price}
+                                    name={value.product.name}
+                                    image={value.product.image}
+                                    description={value.product.description}
+                                    price={value.product.price}
                                 />
                             </div>
                         )
