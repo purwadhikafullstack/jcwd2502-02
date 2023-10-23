@@ -83,7 +83,7 @@ module.exports = {
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
             await transporter.sendMail({
-                to: `aryosetyotama27@gmail.com`,
+                to: `bkprasetya@gmail.com`,
                 subject: "Verification",
                 html: newTemplate
             });

@@ -4,28 +4,32 @@ import { AiFillEdit } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { api } from "../../api/api";
 
 const ProfilePage = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
     const [gender, setGender] = useState('')
     const [birthdate, setBirthdate] = useState('')
+    const apiInstance = api()
+    const [data, setData] = useState('')
 
-    const onFetchUser = async () => {
+    const getUserData = async () => {
         try {
-            const dataUser = await axios.get('http://localhost:8905/api/users/find-user')
-            console.log(dataUser);
-            setUsername(dataUser.data.data.username)
-            setEmail(dataUser.data.data.email)
-            setGender(dataUser.data.data.gender)
-            setBirthdate(dataUser.data.data.birthdate)
+            const accessToken = localStorage.getItem("accessToken");
+            console.log("ini token", accessToken);
+
+            const data = await apiInstance.get("/users/finduser")
+            console.log(data.data.data);
+            setData(data.data.data)
         } catch (error) {
-            console.log(error);
+
         }
     }
     useEffect(() => {
-        onFetchUser()
+        getUserData()
     }, [])
+
 
     return (
         <div>
@@ -42,7 +46,8 @@ const ProfilePage = () => {
 
                     <div className="bg-green-700 md:rounded-l-3xl md:shadow-xl">
                         <div className="grid place-content-center py-10 ">
-                            <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src="" alt="" />
+                            <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={`http://localhost:8905/${data.profile_picture
+                                .substring(7)}`} alt="" />
                         </div>
 
                         <div className=" mb-5 p-3 md:p-5 text-white md:flex md:flex-col md:justify-center">
@@ -74,19 +79,19 @@ const ProfilePage = () => {
                     <div className="my-5 md:my-0 md:p-10  mb-10 flex flex-col gap-3 border p-3 py-5 rounded-xl  md:rounded-none md:rounded-r-3xl md:col-span-2 shadow-xl">
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Username</div>
-                            <div className="rounded-2xl border border-green-800 p-3">{username}</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{data.username}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Email</div>
-                            <div className="rounded-2xl border border-green-800 p-3">{email}</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{data.email}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Gender</div>
-                            <div className="rounded-2xl border border-green-800 p-3">{gender}</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{data.gender == null ? "Data is not Yet Set" : data.gender}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Birthday</div>
-                            <div className="rounded-2xl border border-green-800 p-3">{birthdate}</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{data.birthdate == null ? "Data is not Yet Set" : data.birthdate}</div>
                         </div>
                     </div>
 
