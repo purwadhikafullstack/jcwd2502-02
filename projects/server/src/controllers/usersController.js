@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const {findAllUsers, findUser} = require('./../services/userService');
+const {findAllUsers, findId} = require('./../services/userService');
 const {createJWT} = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const {hash, match} = require('./../helper/hashing');
@@ -100,9 +100,10 @@ module.exports = {
     verifyUserAccount: async (req, res, next) => {
         try {
             const {id} = req.dataToken;
-            const account = db.user.findOne({
-                where: {id}
-            })
+            // const account = db.user.findOne({
+            //     where: {id}
+            // })
+            const account = await findId(id)
             await db.user.update({
                 isVerified: "verified"
             }, {
@@ -151,11 +152,11 @@ module.exports = {
         try {
             console.log(`ini dari getUser di controller`, req.dataToken);
             const {id} = req.dataToken;
-            const data = await findUser(id)
+            const account = await findId(id)
             res.status(201).send({
                 isError: false,
                 message: "user found",
-                data: data
+                data: account
             })
         } catch (error) {
             console.log(error);
