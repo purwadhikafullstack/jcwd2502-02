@@ -14,6 +14,9 @@ import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
+import { onCheckIsLogin } from "../../redux/Features/users";
+import { useDispatch, useSelector } from "react-redux";
+
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
@@ -22,6 +25,7 @@ const LandingPage = () => {
     const [currentLocation, setCurrentLocation] = useState(null);
     const [nearestLocation, setNearestLocation] = useState(null);
     const [category, setCategory] = useState([]);
+    const dispatch = useDispatch();
 
     const onGetCategory = async () => {
         try {
@@ -98,6 +102,9 @@ const LandingPage = () => {
     useEffect(() => {
         onGetCategory();
         getBranch()
+        // Check if user is logged in
+        console.log('checking if logged in');
+        dispatch(onCheckIsLogin())
     }, []);
 
     useEffect(() => {

@@ -4,13 +4,30 @@ import * as yup from 'yup';
 import Button from '../components/button';
 import toast, { Toaster } from "react-hot-toast";
 
+import { login2 } from '../redux/Features/users';
+import { useDispatch } from 'react-redux';
+import { useAppSelector } from '../redux/App/Store';
+import { useNavigate, Link } from 'react-router-dom';
+
 export default function LoginPage() {
+    const navigate = useNavigate();
+    const userSelector = useAppSelector((state) => state.users)
+    const dispatch = useDispatch();
     const formik = useFormik({
         initialValues: {
             email: "",
             password: "",
         },
-        // onSubmit: registerUser,
+        onSubmit: async (values) => {
+            await dispatch(login2({...values}))
+            const token = localStorage.getItem("accessToken");
+            if(token){
+                toast.success('Login successful')
+                setTimeout(() => {
+                    navigate('/')
+                }, 3000)
+            }
+        },
         validationSchema: yup.object().shape({
             email: yup.string().required().email(),
             password: yup.string().required(),
@@ -20,27 +37,10 @@ export default function LoginPage() {
         const { target } = event;
         formik.setFieldValue(target.name, target.value);
     }
-    const registerUser = () => {
-        alert(formik.values.password)
-    }
-    const handleSubmit = async () => {
-        console.log(formik.values);
-        if (formik.values.email && formik.values.password) {
-            try {
-                const response = await axios.post('http://localhost:8905/api/users/login', formik.values);
-                console.log(response);
-                toast.success(response.data.message)
-            } catch (error) {
-                toast.error(error.response.data.message);
-            }
-        } else {
-            toast.error("Please fill in all required forms")
-        }
 
-    }
-    // console.log('form values', formik.values);
     return (
         <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-emerald-300">
+            <h1>{userSelector?.email}</h1>
             <Toaster />
             <div className='grid place-content-center'>
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
@@ -56,9 +56,11 @@ export default function LoginPage() {
                     <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
                 </form>
                 <div className='flex justify-center mt-10'>
-                    <Button text={'Login'} onClick={handleSubmit} style={"w-[300px]"} />
+                    <Button text={'Login'} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />
                 </div>
-                <div className='flex justify-center text-green-800 font-semibold text-xl underline mt-5'>Register Here!</div>
+                <Link to={'/register'}>
+                    <div className='flex justify-center text-green-800 font-semibold text-xl underline mt-5'>Register Here!</div>
+                </Link>
             </div>
         </div>
     )

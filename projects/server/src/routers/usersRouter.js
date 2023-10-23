@@ -1,6 +1,7 @@
 const express = require("express");
 const Router = express.Router();
 const { validateUserLogin, validateUserRegistration, handleValidationErrors } = require('./../middlewares/validator');
+const { verify } = require('./../lib/jwt');
 
 // Import All Controller
 
@@ -12,8 +13,9 @@ Router.post('/register', validateUserRegistration, handleValidationErrors, users
 Router.patch('/change-password', usersController.changePassword);
 Router.patch('/reset-password', usersController.resetPassword);
 Router.patch('/update-user', usersController.updateUserData);
+Router.patch('/verify-user', verify, usersController.verifyUserAccount);
 
-Router.get('/find-one', usersController.getUser);
+Router.get('/find-one', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);
 Router.get('/find-user', usersController.getUserData);
 

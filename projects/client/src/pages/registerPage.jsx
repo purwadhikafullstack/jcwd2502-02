@@ -4,10 +4,12 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from 'axios';
 import * as yup from 'yup';
 import Button from '../components/button';
+import {useNavigate} from 'react-router-dom';
 
 export default function RegistrationPage() {
     const [getCoupon, setGetCoupon] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const navigate = useNavigate()
     const formik = useFormik({
         initialValues: {
             username: "",
@@ -33,20 +35,27 @@ export default function RegistrationPage() {
 
     const registerUser = async (e) => {
         e.preventDefault();
-        try {
-            console.log(`proses register`);
-            setDisabled(true)
-            const response = await axios.post('http://localhost:8000/api/users/register', formik.values)
-            console.log(response);
+        console.log(formik.values);
+        if(formik.values.email && formik.values.password && formik.values.username && formik.values.phone_number){
+            try {
+                console.log(`proses register`);
+                setDisabled(true)
+                const response = await axios.post('http://localhost:8905/api/users/register', formik.values)
 
-        } catch (error) {
-            console.log(error.response.data.message);
-            alert(error.response.data.message);
-        } finally {
-            setTimeout(() => {
-                setDisabled(false)
-            }, 3000)
+                toast.success(response.data.message);
+                
+                setTimeout(() => {
+                    setDisabled(false)
+                    navigate('/login')
+                }, 3000)
+            } catch (error) {
+                console.log(error.response.data.message);
+                toast.error(error.response.data.message);
+            }
+        } else {
+            toast.error('Please fill in all required informations')
         }
+
     }
 
     const handleReferral = (e) => {

@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findUser } = require('./../services/userService');
+const { findAllUsers, findId } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -25,7 +25,6 @@ module.exports = {
                 {
                     id: account.dataValues.id,
                     role: account.dataValues.role,
-                    addressList: addresses,
                 },
                 "1d"
             )
@@ -54,7 +53,7 @@ module.exports = {
         try {
             const { username, email, password, phone_number, referral } = req.body;
             const existingAccount = await db.user.findOne({
-                where: { name: username }
+                where: { username }
             })
             const existingEmail = await db.user.findOne({
                 where: { email }
@@ -62,7 +61,8 @@ module.exports = {
             if (existingAccount) throw { message: "Username has already been taken" };
             if (existingEmail) throw { message: "Email has already been taken" };
             const hashedPassword = await hash(password);
-
+            const newReferral = Math.round(Math.random() * 1e9);
+            console.log(newReferral);
             const validReferral = await db.user.findOne({
                 where: { referral_code: referral }
             })
@@ -70,25 +70,26 @@ module.exports = {
             if (validReferral) {
             }
 
-            const newAccount = await db.user.create({ name: username, email: email, password: hashedPassword, phone_number: phone_number })
+            const newAccount = await db.user.create({ username: username, email: email, password: hashedPassword, phone_number: phone_number, referral_code: newReferral })
             console.log(newAccount.dataValues.id);
             const token = createJWT(
                 {
-                    id: newAccount.dataValues.id
+                    id: newAccount.dataValues.id,
+                    role: newAccount.dataValues.role,
                 }, '12h')
             console.log(token);
 
-            const readTemplate = await fs.readFile('./public/template.html', 'utf-8');
+            const readTemplate = await fs.readFile('./src/public/template.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
             await transporter.sendMail({
-                to: email,
+                to: `aryosetyotama27@gmail.com`,
                 subject: "Verification",
                 html: newTemplate
             });
             res.status(201).send({
                 isError: false,
-                message: "Successful registration",
+                message: "Registration success, please check your email to verify your account!",
                 data: null
             })
         } catch (error) {
@@ -97,16 +98,22 @@ module.exports = {
         }
     },
 
-    verify: async (req, res, next) => {
+    verifyUserAccount: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
-            const account = db.users.findOne({
-                where: { id }
-            })
-            await db.users.update({
-                isVerified: "TRUE"
+            // const account = db.user.findOne({
+            //     where: {id}
+            // })
+            const account = await findId(id)
+            await db.user.update({
+                isVerified: "verified"
             }, {
                 where: { id }
+            })
+            res.status(201).send({
+                isError: false,
+                message: "User account has been verified",
+                data: null
             })
         } catch (error) {
             next(error)
@@ -144,14 +151,16 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
+            console.log(`ini dari getUser di controller`, req.dataToken);
             const { id } = req.dataToken;
-            const data = await findUser(id)
+            const account = await findId(id)
             res.status(201).send({
                 isError: false,
                 message: "user found",
-                data: data
+                data: account
             })
         } catch (error) {
+            console.log(error);
             next(error)
         }
     },

@@ -9,7 +9,7 @@ module.exports = {
         }
     },
 
-    findUser: async(id) => {
+    findId: async(id) => {
         try {
             return await db.user.findOne({
                 where: {id}
@@ -17,5 +17,25 @@ module.exports = {
         } catch (error) {
             return error
         }
-    }
+    },
+
+    findEmail: async(email) => {
+        try {
+            return await db.user.findOne({
+                where: {email}
+            })
+        } catch (error) {
+            return error
+        }
+    },
+
+    findUsername: async(username) => {
+        try {
+            return await db.user.findOne({
+                where: {username}
+            })
+        } catch (error) {
+            return error
+        }
+    },
 }
