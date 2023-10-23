@@ -19,6 +19,16 @@ module.exports = {
         }
     },
 
+    findReferral: async(referral) => {
+        try {
+            return await db.user.findOne({
+                where: {referral}
+            })            
+        } catch (error) {
+            return error
+        }
+    },
+
     findEmail: async(email) => {
         try {
             return await db.user.findOne({
@@ -38,4 +48,25 @@ module.exports = {
             return error
         }
     },
+
+    verifyUser: async(id) => {
+        try {
+            return db.user.update({
+                isVerified: "verified"
+            }, {
+                where: { id }
+            })
+        } catch (error) {
+            return error
+        }
+    },
+
+    createUser: async(userData) => {
+        try {
+            const {username, email, password, phone_number, referral} = userData
+            return db.user.create({ username: username, email: email, password: password, phone_number: phone_number, referral_code: referral })
+        } catch (error) {
+            return error
+        }
+    }
 }

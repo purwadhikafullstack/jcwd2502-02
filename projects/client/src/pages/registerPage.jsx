@@ -5,6 +5,7 @@ import axios from 'axios';
 import * as yup from 'yup';
 import Button from '../components/button';
 import {useNavigate} from 'react-router-dom';
+import { api } from '../api/api';
 
 export default function RegistrationPage() {
     const [getCoupon, setGetCoupon] = useState(false);
@@ -40,10 +41,8 @@ export default function RegistrationPage() {
             try {
                 console.log(`proses register`);
                 setDisabled(true)
-                const response = await axios.post('http://localhost:8905/api/users/register', formik.values)
-
+                const response = await api().post(`/users/register`, formik.values)
                 toast.success(response.data.message);
-                
                 setTimeout(() => {
                     setDisabled(false)
                     navigate('/login')
@@ -69,7 +68,7 @@ export default function RegistrationPage() {
     // console.log('form values', formik.values);
 
     return (
-        <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-emerald-300">
+        <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-emerald-300">
             <Toaster />
             <div className='grid place-content-center'>
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
