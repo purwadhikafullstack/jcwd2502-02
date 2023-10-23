@@ -15,7 +15,7 @@ Router.patch('/reset-password', usersController.resetPassword);
 Router.patch('/update-user', usersController.updateUserData);
 Router.patch('/verify-user', verify, usersController.verifyUserAccount);
 
-Router.get('/find-one', verify, usersController.getUser);
+Router.get('/finduser', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);
 Router.get('/find-user', usersController.getUserData);
 

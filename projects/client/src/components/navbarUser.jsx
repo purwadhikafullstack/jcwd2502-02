@@ -4,7 +4,6 @@ import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
-
 import { logout } from "../redux/Features/users";
 
 const Navbar = () => {
