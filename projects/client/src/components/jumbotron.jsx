@@ -22,23 +22,11 @@ const Jumbotron = () => {
 
     return (
         <div className='w-[auto] px-5 md:px-20 lg:px-48'>
-            {/* <div className="grid place-items-center p-5 md:px-24 md:pt-10 lg:px-48">
-                <div className="w-auto carousel rounded-box ">
-                    <div className="carousel-item w-full ">
-                        <img src="https://assets.grab.com/wp-content/uploads/sites/9/2023/03/15080812/KV-MTU-GRAB-x-BNI_1440x700px.jpg" className="w-auto" alt="Tailwind CSS Carousel component" />
-                    </div>
-                    <div className="carousel-item w-full">
-                        <img src="https://lelogama.go-jek.com/post_featured_image/promo-tokopedia-agustus.jpg" className="w-auto" alt="Tailwind CSS Carousel component" />
-                    </div>
-                    <div className="carousel-item w-full">
-                        <img src="https://radarjabar.disway.id/upload/340b55d46c4ccdc0148ec0cec58731c0.jpg" className="w-auto" alt="Tailwind CSS Carousel component" />
-                    </div></div>
-            </div> */}
 
             <div >
                 <Slider {...settings}>
-                    {cards.map((url) => (
-                        <div>
+                    {cards.map((url, index) => (
+                        <div key={index}>
                             <img className='rounded-3xl lg:h-[500px]' src={url}></img>
                         </div>
                     ))}

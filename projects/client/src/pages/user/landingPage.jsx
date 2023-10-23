@@ -36,7 +36,6 @@ const LandingPage = () => {
     const getBranch = async () => {
         try {
             const allBranch = await axios.get('http://localhost:8905/api/branch/all')
-            // console.log(allBranch.data.data);
             setBranchLoc(allBranch.data.data)
         } catch (error) {
             console.log(error);
@@ -76,9 +75,7 @@ const LandingPage = () => {
                     minDistance = distance;
                     nearest = location;
                 }
-                // setStoreID(branchLoc.indexOf(nearest) + 1)
 
-                // setNearestLocation(nearest);
             });
             console.log(nearest);
             nearestBranch(nearest.id)
@@ -93,7 +90,6 @@ const LandingPage = () => {
             const branch = await axios.get(`http://localhost:8905/api/branch/nearest/${storeId}`)
             console.log(branch.data.data, "ini data branch");
             setProducts(branch.data.data)
-            // console.log(products[0].product.name);
         } catch (error) {
             console.log(error);
         }
@@ -102,18 +98,12 @@ const LandingPage = () => {
     useEffect(() => {
         onGetCategory();
         getBranch()
-        // console.log(branchLoc);
-        // Get current location
-        // nearestBranch()
-
     }, []);
 
     useEffect(() => {
         if (branchLoc.length) calculation()
         console.log(branchLoc);
     }, [branchLoc])
-
-
 
     // useEffect(() => {
     //     console.log("current", currentLocation);
@@ -135,8 +125,7 @@ const LandingPage = () => {
 
                 <Jumbotron />
 
-                <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex w-auto lg:justify-center">
-                    <CategoryCard name={"Show All"} image={"ALL"} />
+                <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex w-auto">
                     {category.map((value, index) => {
                         return (
                             <CategoryCard name={value.name} image={value.image} />
@@ -145,20 +134,8 @@ const LandingPage = () => {
                 </div>
 
 
-                <div>
-                    {/* <RecommendProducts data={products} /> */}
-                    {/* {products.map((value, index) => {
-                        return (
-                            <div key={index}>
-                                <ProductCard
-                                    name={value.product.name}
-                                    image={value.product.image}
-                                    description={value.product.description}
-                                    price={value.product.price}
-                                />
-                            </div>
-                        )
-                    })} */}
+                <div className="mb-10">
+                    <RecommendProducts data={products} />
                 </div>
 
             </div>
