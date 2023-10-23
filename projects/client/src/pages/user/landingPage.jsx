@@ -137,7 +137,7 @@ const LandingPage = () => {
                 <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex w-auto">
                     {category.map((value, index) => {
                         return (
-                            <Link to={`/products?category=${value.id}&searchQuery=&sort=ASC`}>
+                            <Link to={`/products?category=${value.id}`}>
                                 <CategoryCard name={value.name} image={value.image} />
                             </Link>
 

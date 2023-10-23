@@ -8,6 +8,8 @@ import Footer from "../../components/footer";
 import React, { useEffect, useState } from "react";
 import { api1 } from "../../api/api";
 import { Link, useLocation } from "react-router-dom";
+import debounce from 'lodash/debounce';
+
 const ProductListPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
@@ -23,6 +25,7 @@ const ProductListPage = () => {
 
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
+
 
     const onGetCategory = async () => {
         try {
@@ -66,7 +69,9 @@ const ProductListPage = () => {
             <Navbar />
             <div className="mt-[70px] pt-3">
                 <div className=" lg:h-[180px] lg:py-5 pt-5 px-2 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex w-auto lg:mt-10 ">
-                    <CategoryCard name={"Show All"} image={`public/showall.jpg`} onClick={() => onFilterCat("")} />
+                    {/* <Link to={`/products?category=`}>
+                        <CategoryCard name={"Show All"} image={`public/showall.jpg`} onClick={() => onFilterCat("")} />
+                    </Link> */}
                     {category.map((value, index) => {
                         return (
                             <Link to={`/products?category=${value.id}`}>
