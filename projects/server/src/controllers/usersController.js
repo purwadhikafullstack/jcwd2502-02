@@ -1,9 +1,9 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const {findAllUsers, findUser} = require('./../services/userService');
-const {createJWT} = require('../lib/jwt');
+const { findAllUsers, findUser } = require('./../services/userService');
+const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
-const {hash, match} = require('./../helper/hashing');
+const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
@@ -11,15 +11,15 @@ const respondHandler = require('../utils/resnpondHandler');
 module.exports = {
     login: async (req, res, next) => {
         try {
-            const {email, password} = req.body;
+            const { email, password } = req.body;
             const account = await db.user.findOne({
-                where: {email}
+                where: { email }
             })
-            if(!account) throw {status: 401, message: "Account was not found!"};
+            if (!account) throw { status: 401, message: "Account was not found!" };
             const hashMatch = await match(password, account.dataValues.password)
-            if(!hashMatch) throw {status: 401, message: "Incorrect Password"}
+            if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
             const addresses = await db.user_address.findAll({
-                where: {user_id: account.dataValues.id}
+                where: { user_id: account.dataValues.id }
             })
             const token = await createJWT(
                 {
@@ -32,17 +32,18 @@ module.exports = {
             // res.status(201).send({
             //     isError:false,
             // })
-            respondHandler(res,{
+            respondHandler(res, {
                 // status : 201,
                 message: "login is succesful",
-            data: {
-                id: account.dataValues.id,
-                username: account.dataValues.username,
-                email: account.dataValues.email,
-                role: account.dataValues.role,
-                address: addresses,
-                jwt: token
-            }})
+                data: {
+                    id: account.dataValues.id,
+                    username: account.dataValues.username,
+                    email: account.dataValues.email,
+                    role: account.dataValues.role,
+                    address: addresses,
+                    jwt: token
+                }
+            })
         } catch (error) {
             console.log(error);
             next(error)
@@ -51,25 +52,25 @@ module.exports = {
 
     register: async (req, res, next) => {
         try {
-            const {username, email, password, phone_number, referral} = req.body;
+            const { username, email, password, phone_number, referral } = req.body;
             const existingAccount = await db.user.findOne({
-                where: {name: username}
+                where: { name: username }
             })
             const existingEmail = await db.user.findOne({
-                where: {email}
+                where: { email }
             })
-            if(existingAccount) throw {message: "Username has already been taken"};
-            if(existingEmail) throw {message: "Email has already been taken"};
+            if (existingAccount) throw { message: "Username has already been taken" };
+            if (existingEmail) throw { message: "Email has already been taken" };
             const hashedPassword = await hash(password);
 
             const validReferral = await db.user.findOne({
-                where: {referral_code: referral}
+                where: { referral_code: referral }
             })
-            
-            if(validReferral) {
-            }     
-            
-            const newAccount = await db.user.create({name: username, email: email, password: hashedPassword, phone_number: phone_number})
+
+            if (validReferral) {
+            }
+
+            const newAccount = await db.user.create({ name: username, email: email, password: hashedPassword, phone_number: phone_number })
             console.log(newAccount.dataValues.id);
             const token = createJWT(
                 {
@@ -98,14 +99,14 @@ module.exports = {
 
     verify: async (req, res, next) => {
         try {
-            const {id} = req.dataToken;
+            const { id } = req.dataToken;
             const account = db.users.findOne({
-                where: {id}
+                where: { id }
             })
             await db.users.update({
                 isVerified: "TRUE"
             }, {
-                where: {id}
+                where: { id }
             })
         } catch (error) {
             next(error)
@@ -114,7 +115,7 @@ module.exports = {
 
     changePassword: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
             next(error)
         }
@@ -122,7 +123,7 @@ module.exports = {
 
     resetPassword: async (req, res, next) => {
         try {
-            
+
         } catch (error) {
             next(error)
         }
@@ -143,12 +144,55 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
-            const {id} = req.dataToken;
+            const { id } = req.dataToken;
             const data = await findUser(id)
             res.status(201).send({
                 isError: false,
                 message: "user found",
                 data: data
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    updateUserData: async (req, res, next) => {
+        try {
+            const { id, username, email, gender, birthdate } = req.body
+            const findUser = await db.user.findOne({
+                where: {
+                    id
+                }
+            })
+
+            const newUserData = await db.user.update({ username, email, gender, birthdate }, {
+                where: {
+                    id
+                }
+            })
+
+            res.status(201).send({
+                isError: false,
+                message: "Data Updated",
+                data: newUserData
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getUserData: async (req, res, next) => {
+        try {
+            // const { id } = req.body
+            const findUser = await db.user.findOne({
+                where: {
+                    id: 4
+                }
+            })
+            res.status(201).send({
+                isError: false,
+                message: "Get User Success",
+                data: findUser
             })
         } catch (error) {
             next(error)

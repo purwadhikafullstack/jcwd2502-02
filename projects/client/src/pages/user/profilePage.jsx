@@ -2,8 +2,31 @@ import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer";
 import { AiFillEdit } from "react-icons/ai";
 import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const ProfilePage = () => {
+    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
+    const [gender, setGender] = useState('')
+    const [birthdate, setBirthdate] = useState('')
+
+    const onFetchUser = async () => {
+        try {
+            const dataUser = await axios.get('http://localhost:8905/api/users/find-user')
+            console.log(dataUser);
+            setUsername(dataUser.data.data.username)
+            setEmail(dataUser.data.data.email)
+            setGender(dataUser.data.data.gender)
+            setBirthdate(dataUser.data.data.birthdate)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    useEffect(() => {
+        onFetchUser()
+    }, [])
+
     return (
         <div>
 
@@ -51,19 +74,19 @@ const ProfilePage = () => {
                     <div className="my-5 md:my-0 md:p-10  mb-10 flex flex-col gap-3 border p-3 py-5 rounded-xl  md:rounded-none md:rounded-r-3xl md:col-span-2 shadow-xl">
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Username</div>
-                            <div className="rounded-2xl border border-green-800 p-3">Bayu Krisna</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{username}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Email</div>
-                            <div className="rounded-2xl border border-green-800 p-3">bkprasetya@gmail.com</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{email}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Gender</div>
-                            <div className="rounded-2xl border border-green-800 p-3">Male</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{gender}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Birthday</div>
-                            <div className="rounded-2xl border border-green-800 p-3">04/05/2000</div>
+                            <div className="rounded-2xl border border-green-800 p-3">{birthdate}</div>
                         </div>
                     </div>
 

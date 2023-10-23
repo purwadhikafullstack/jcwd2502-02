@@ -20,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     phone_number: DataTypes.STRING,
     birthdate: DataTypes.STRING,
+    gender: DataTypes.ENUM("male", "female"),
     profile_picture: {
       type: DataTypes.TEXT,
       defaultValue: "public/user.jpg"
