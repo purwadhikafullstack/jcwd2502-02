@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -12,15 +12,10 @@ module.exports = {
     login: async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            const account = await db.user.findOne({
-                where: { email }
-            })
+            const account = await findEmail(email)
             if (!account) throw { status: 401, message: "Account was not found!" };
             const hashMatch = await match(password, account.dataValues.password)
             if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
-            const addresses = await db.user_address.findAll({
-                where: { user_id: account.dataValues.id }
-            })
             const token = await createJWT(
                 {
                     id: account.dataValues.id,
@@ -28,18 +23,13 @@ module.exports = {
                 },
                 "1d"
             )
-            // res.status(201).send({
-            //     isError:false,
-            // })
             respondHandler(res, {
-                // status : 201,
                 message: "login is succesful",
                 data: {
                     id: account.dataValues.id,
                     username: account.dataValues.username,
                     email: account.dataValues.email,
                     role: account.dataValues.role,
-                    address: addresses,
                     jwt: token
                 }
             })
@@ -52,33 +42,30 @@ module.exports = {
     register: async (req, res, next) => {
         try {
             const { username, email, password, phone_number, referral } = req.body;
-            const existingAccount = await db.user.findOne({
-                where: { username }
-            })
-            const existingEmail = await db.user.findOne({
-                where: { email }
-            })
+            const existingAccount = await findUsername(username)
+            const existingEmail = await findEmail(email)
             if (existingAccount) throw { message: "Username has already been taken" };
             if (existingEmail) throw { message: "Email has already been taken" };
             const hashedPassword = await hash(password);
             const newReferral = Math.round(Math.random() * 1e9);
-            console.log(newReferral);
-            const validReferral = await db.user.findOne({
-                where: { referral_code: referral }
-            })
-
+            const validReferral = await findReferral(referral)
             if (validReferral) {
+                // beri kupon
+            }            
+            const userData = {
+                username: username,
+                email: email,
+                password: hashedPassword,
+                phone_number: phone_number,
+                referral: newReferral 
             }
-
-            const newAccount = await db.user.create({ username: username, email: email, password: hashedPassword, phone_number: phone_number, referral_code: newReferral })
-            console.log(newAccount.dataValues.id);
+            const newUser = await createUser(userData)
+            console.log(newUser);
             const token = createJWT(
                 {
-                    id: newAccount.dataValues.id,
-                    role: newAccount.dataValues.role,
+                    id: newUser.dataValues.id,
+                    role: newUser.dataValues.role,
                 }, '12h')
-            console.log(token);
-
             const readTemplate = await fs.readFile('./src/public/template.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
@@ -87,10 +74,8 @@ module.exports = {
                 subject: "Verification",
                 html: newTemplate
             });
-            res.status(201).send({
-                isError: false,
+            respondHandler(res, {
                 message: "Registration success, please check your email to verify your account!",
-                data: null
             })
         } catch (error) {
             console.log('error message:', error.message);
@@ -101,19 +86,11 @@ module.exports = {
     verifyUserAccount: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
-            // const account = db.user.findOne({
-            //     where: {id}
-            // })
             const account = await findId(id)
-            await db.user.update({
-                isVerified: "verified"
-            }, {
-                where: { id }
-            })
-            res.status(201).send({
-                isError: false,
-                message: "User account has been verified",
-                data: null
+            if(!account) throw {message: "User account was not found"}
+            await verifyUser(id)
+            respondHandler(res, {
+                message: "User account succesfully verified",
             })
         } catch (error) {
             next(error)
@@ -139,9 +116,8 @@ module.exports = {
     getAllUsers: async (req, res, next) => {
         try {
             const data = await findAllUsers();
-            res.status(201).send({
-                isError: false,
-                message: 'Userlist fetched',
+            respondHandler(res, {
+                message: "Userlist fetched",
                 data: data
             })
         } catch (error) {
@@ -154,9 +130,8 @@ module.exports = {
             console.log(`ini dari getUser di controller`, req.dataToken);
             const { id } = req.dataToken;
             const account = await findId(id)
-            res.status(201).send({
-                isError: false,
-                message: "user found",
+            respondHandler(res, {
+                message: "Registration success, please check your email to verify your account!",
                 data: account
             })
         } catch (error) {
@@ -168,18 +143,12 @@ module.exports = {
     updateUserData: async (req, res, next) => {
         try {
             const { id, username, email, gender, birthdate } = req.body
-            const findUser = await db.user.findOne({
-                where: {
-                    id
-                }
-            })
-
+            const findUser = await await findId(id)
             const newUserData = await db.user.update({ username, email, gender, birthdate }, {
                 where: {
                     id
                 }
             })
-
             res.status(201).send({
                 isError: false,
                 message: "Data Updated",
