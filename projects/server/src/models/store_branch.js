@@ -10,7 +10,11 @@ module.exports = (sequelize, DataTypes) => {
   }
   store_branch.init({
     address: DataTypes.STRING,
-    coordinate: DataTypes.STRING,
+    city: DataTypes.STRING,
+    province: DataTypes.STRING,
+    name: DataTypes.STRING,
+    longitude: DataTypes.FLOAT,
+    latitude: DataTypes.FLOAT,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

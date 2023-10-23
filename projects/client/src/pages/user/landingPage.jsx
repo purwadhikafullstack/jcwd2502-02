@@ -5,6 +5,8 @@ import RecommendProducts from "../../components/recommendProducts"
 import ModalAddress from "../../components/modalAddress"
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
+import ProductCard from "../../components/productCard"
+import CategoryCard from "../../components/categoryCard"
 
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -14,19 +16,34 @@ import axios from "axios";
 
 
 const LandingPage = () => {
-
+    const [branchLoc, setBranchLoc] = useState("")
+    const [storeID, setStoreID] = useState(null)
+    const [products, setProducts] = useState("")
     const [currentLocation, setCurrentLocation] = useState(null);
     const [nearestLocation, setNearestLocation] = useState(null);
+    const [category, setCategory] = useState([]);
 
-    // contoh koordinat
-    const locations = [
-        { name: 'Location A', latitude: 40.7128, longitude: -74.0060 },
-        { name: 'Location B', latitude: 34.0522, longitude: -118.2437 },
-        { name: 'Location C', latitude: 51.5074, longitude: -0.1278 },
-    ];
+    const onGetCategory = async () => {
+        try {
+            const category = await axios.get(`http://localhost:8905/api/products/category`);
+            console.log(category.data.data);
+            setCategory(category.data.data);
+        } catch (error) {
+            console.log(error);
+        }
+    };
 
-    useEffect(() => {
-        // Get current location
+    const getBranch = async () => {
+        try {
+            const allBranch = await axios.get('http://localhost:8905/api/branch/all')
+            setBranchLoc(allBranch.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const calculation = () => {
+        let nearest = null;
         navigator.geolocation.getCurrentPosition((position) => {
             const userLatitude = position.coords.latitude;
             const userLongitude = position.coords.longitude;
@@ -34,10 +51,10 @@ const LandingPage = () => {
             setCurrentLocation({ latitude: userLatitude, longitude: userLongitude });
 
             // Rumus untuk mencari nearest location
-            let minDistance = Number.MAX_VALUE;
-            let nearest = null;
+            let minDistance = Infinity;
 
-            locations.forEach((location) => {
+
+            branchLoc.forEach((location, idx) => {
                 const lat1 = userLatitude;
                 const lon1 = userLongitude;
                 const lat2 = location.latitude;
@@ -52,17 +69,47 @@ const LandingPage = () => {
                 const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
                 const distance = R * c;
 
+                console.log(distance, minDistance, idx);
+
                 if (distance < minDistance) {
                     minDistance = distance;
                     nearest = location;
                 }
+
             });
-            setNearestLocation(nearest);
+            console.log(nearest);
+            nearestBranch(nearest.id)
         });
+
+
+    }
+
+    const nearestBranch = async (storeId) => {
+        try {
+
+            const branch = await axios.get(`http://localhost:8905/api/branch/nearest/${storeId}`)
+            console.log(branch.data.data, "ini data branch");
+            setProducts(branch.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        onGetCategory();
+        getBranch()
     }, []);
 
-    console.log(currentLocation);
-    console.log(nearestLocation);
+    useEffect(() => {
+        if (branchLoc.length) calculation()
+        console.log(branchLoc);
+    }, [branchLoc])
+
+    // useEffect(() => {
+    //     console.log("current", currentLocation);
+    //     console.log("nearest", nearestLocation);
+    // }, [nearestLocation])
+
 
     return (
         <div className="">
@@ -71,13 +118,6 @@ const LandingPage = () => {
 
             <div className="mt-[70px]">
 
-                {/* <div>
-                    <p>Your current location: Latitude {currentLocation.latitude}, Longitude {currentLocation.longitude}</p>
-                </div>
-                <div>
-                    <p>Your nearest location is {nearestLocation.name}: Latitude {nearestLocation.latitude}, Longitude {nearestLocation.longitude}</p>
-                </div> */}
-
                 <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">
                     <ModalAddress />
                 </div>
@@ -85,45 +125,17 @@ const LandingPage = () => {
 
                 <Jumbotron />
 
-                <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex w-auto lg:justify-center">
-
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-                    <div className=" card flex flex-col justify-between w-[100px] flex-none hover:font-bold ease-in duration-200">
-                        <div className="border hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"><img src="https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png" alt="" /></div>
-                        <div className="flex justify-center z-0">Category X</div>
-                    </div>
-
+                <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex w-auto">
+                    {category.map((value, index) => {
+                        return (
+                            <CategoryCard name={value.name} image={value.image} />
+                        )
+                    })}
                 </div>
 
-                <div>
-                    <RecommendProducts />
+
+                <div className="mb-10">
+                    <RecommendProducts data={products} />
                 </div>
 
             </div>

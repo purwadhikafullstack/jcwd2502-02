@@ -4,8 +4,15 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../css/style.css"
 import { FaLocationDot } from "react-icons/fa6";
+import { useEffect } from "react";
 
-const RecommendProducts = () => {
+const RecommendProducts = (props) => {
+
+
+    const products = props.data
+
+    console.log(products);
+
 
     const settings = {
         dots: false,
@@ -39,7 +46,7 @@ const RecommendProducts = () => {
     };
 
     return (
-        <div className="w-[auto] px-5 md:px-20 lg:px-48 py-5 pb-20">
+        <div className="w-[auto] px-5 md:px-20 lg:px-48 py-5 ">
 
             <div>
                 <div className="pb-5">
@@ -51,26 +58,28 @@ const RecommendProducts = () => {
                     </div>
                 </div>
 
-                {/* <div className="px-2">
-                    <Slider {...settings} className='flex justify-center'>
-                        <ProductCard name={"Buah Mangga"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
-                        <ProductCard name={"Kiwi Fruit"} price={"Rp 20,000"} />
+                <div className="">
+
+                    <Slider {...settings}>
+                        {products
+                            ? products.map((value, index) => (
+                                <div key={index} className="">
+                                    <ProductCard
+                                        name={value.product.name}
+                                        image={value.product.image}
+                                        description={value.product.description}
+                                        price={value.product.price}
+                                    />
+                                </div>
+                            ))
+                            : <span className="loading loading-spinner loading-lg"></span>
+                        }
                     </Slider>
-                </div> */}
+
+                </div>
 
 
             </div>
-
-
-
-
         </div >
     )
 }
