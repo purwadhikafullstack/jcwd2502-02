@@ -26,6 +26,10 @@ const ProductListPage = () => {
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
 
+    const debouncedSearch = debounce((value) => {
+        console.log(value);
+        setSearchQuery(value);
+    }, 1000);
 
     const onGetCategory = async () => {
         try {
@@ -84,7 +88,7 @@ const ProductListPage = () => {
             <div className="mx-5 md:mx-24 lg:mx-40 my-10">
                 <div className="flex  justify-center gap-2 my-5 py-3 ">
                     <div className=" grid place-content-center">
-                        <Searchbar value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+                        <Searchbar value={searchQuery} onChange={(e) => debouncedSearch(e.target.value)} />
                     </div>
                     <div>
                         <SortButton
