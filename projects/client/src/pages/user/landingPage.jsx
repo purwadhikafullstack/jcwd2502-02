@@ -8,6 +8,7 @@ import { BiSolidDownArrow } from "react-icons/bi";
 import ProductCard from "../../components/productCard"
 import CategoryCard from "../../components/categoryCard"
 
+
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
@@ -16,6 +17,7 @@ import axios from "axios";
 
 import { onCheckIsLogin } from "../../redux/Features/users";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom"
 
 
 const LandingPage = () => {
@@ -135,7 +137,10 @@ const LandingPage = () => {
                 <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex w-auto">
                     {category.map((value, index) => {
                         return (
-                            <CategoryCard name={value.name} image={value.image} />
+                            <Link to={`/products?category=${value.id}&searchQuery=&sort=ASC`}>
+                                <CategoryCard name={value.name} image={value.image} />
+                            </Link>
+
                         )
                     })}
                 </div>

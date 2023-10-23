@@ -4,7 +4,6 @@ import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
-
 import { logout } from "../redux/Features/users";
 
 const Navbar = () => {
@@ -18,10 +17,12 @@ const Navbar = () => {
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-emerald-100 to-green-700 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
+                <Link to={'/'}>
+                    <div>
+                        <img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" />
+                    </div>
+                </Link>
 
-                <div>
-                    <img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" />
-                </div>
 
                 <div className="grid items-center">
                     <div className=" flex rounded-full bg-white">
@@ -51,7 +52,9 @@ const Navbar = () => {
                                     user.username ?
                                         <ul className="menu p-4 w-60 min-h-full bg-base-200 text-xl">
                                             <h1 className="flex justify-center text-lg font-semibold">Welcome, {user?.username}</h1>
-                                            <li className="hover:bg-green-200"><a>Profile</a></li>
+                                            <Link to={'/profile'}>
+                                                <li className="hover:bg-green-200"><a>Profile</a></li>
+                                            </Link>
                                             <li className="hover:bg-green-200"><a>MyOrder</a></li>
                                             <li className="hover:bg-green-200" onClick={handleLogout}><a>Sign Out</a></li>
                                         </ul>

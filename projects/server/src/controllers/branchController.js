@@ -1,12 +1,12 @@
 const db = require('../models');
 const fs = require('fs').promises;
-
+const { getBranchService } = require("./../services/branchService");
+const { nearestBranchService1 } = require("./../services/branchService");
+const { nearestBranchService2 } = require("./../services/branchService");
 module.exports = {
     getbranch: async (req, res, next) => {
         try {
-            const allBranch = await db.store_branch.findAll({
-                attributes: ['id', 'longitude', 'latitude']
-            })
+            const allBranch = await getBranchService()
             res.status(201).send({
                 isError: false,
                 message: "Get All Branch Success",
@@ -20,21 +20,9 @@ module.exports = {
     nearestBranch: async (req, res, next) => {
         try {
             const { id } = req.params;
-            const branch = await db.store_branch.findOne(
-                {
-                    where: { id }
-                }
-            )
+            const branch = await nearestBranchService1(id)
 
-            const product = await db.product_stock.findAll({
-                include: [{
-                    model: db.product
-                }],
-
-                where: {
-                    store_branch_id: id
-                }
-            })
+            const product = await nearestBranchService2(id)
 
             res.status(201).send({
                 isError: false,

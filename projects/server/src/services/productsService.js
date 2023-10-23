@@ -1,6 +1,5 @@
 const db = require("./../models");
 
-
 module.exports = {
     getAllProductsService: async () => {
         try {
@@ -19,6 +18,17 @@ module.exports = {
                 where: {
                     isDeleted: 0,
                 },
+            });
+        } catch (error) {
+            return error;
+        }
+    },
+    getProductsByCategoryService: async (catId) => {
+        try {
+            return await db.product.findAll({
+                where: {
+                    product_categories_id: catId,
+                }
             });
         } catch (error) {
             return error;
@@ -48,16 +58,33 @@ module.exports = {
             return error;
         }
     },
-    getProductsByCategoryService: async (catId) => {
+    getAllProductsBySearchService: async (like, searchQuery, sort) => {
+        try {
+            return await db.product.findAll({
+                where: {
+                    name: {
+                        [like]: `%${searchQuery}%`,
+                    },
+                },
+                order: [["name", sort]],
+            });
+        } catch (error) {
+            return error
+        }
+    },
+    getAllProductsFilteredService: async (like, catId, searchQuery, sort) => {
         try {
             return await db.product.findAll({
                 where: {
                     product_categories_id: catId,
-                }
+                    name: {
+                        [like]: `%${searchQuery}%`,
+                    },
+                },
+                order: [["name", sort]],
             });
         } catch (error) {
-            return error;
+            return error
         }
     }
-
 }

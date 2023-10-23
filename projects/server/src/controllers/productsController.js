@@ -4,6 +4,8 @@ const { getAllProductsService2 } = require("./../services/productsService");
 const { getCategoryService } = require("./../services/productsService");
 const { getAllProductsByCatService } = require("./../services/productsService");
 const { getProductsByCategoryService } = require("./../services/productsService");
+const { getAllProductsBySearchService } = require("./../services/productsService");
+const { getAllProductsFilteredService } = require("./../services/productsService");
 
 const { Sequelize } = require("sequelize");
 const Op = Sequelize.Op;
@@ -49,6 +51,7 @@ module.exports = {
     getAllProductsByCat: async (req, res, next) => {
         try {
             const { catId, searchQuery, sort } = req.query;
+            const like = Op.like
             if (!catId && !searchQuery) {
                 const allProduct = await getAllProductsService2(sort);
                 console.log(allProduct);
@@ -65,33 +68,18 @@ module.exports = {
                     data: allProductByCat,
                 });
             } else if (!catId) {
-                const allProductByCat = await db.product.findAll({
-                    where: {
-                        name: {
-                            [Op.like]: `%${searchQuery}%`,
-                        },
-                    },
-                    order: [["name", sort]],
-                });
+                const allProductBySearch = await getAllProductsBySearchService(like, searchQuery, sort)
                 res.status(201).send({
                     isError: false,
                     message: "Get All Product By Category Success 2",
-                    data: allProductByCat,
+                    data: allProductBySearch,
                 });
             } else {
-                const allProductByCat = await db.product.findAll({
-                    where: {
-                        product_categories_id: catId,
-                        name: {
-                            [Op.like]: `%${searchQuery}%`,
-                        },
-                    },
-                    order: [["name", sort]],
-                });
+                const allProductFiltered = await getAllProductsFilteredService(like, catId, searchQuery, sort)
                 res.status(201).send({
                     isError: false,
                     message: "Get All Product By Category Success 3",
-                    data: allProductByCat,
+                    data: allProductFiltered,
                 });
             }
         } catch (error) {
