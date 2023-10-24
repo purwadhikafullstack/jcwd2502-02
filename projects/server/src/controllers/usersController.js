@@ -51,13 +51,13 @@ module.exports = {
             const validReferral = await findReferral(referral)
             if (validReferral) {
                 // beri kupon
-            }            
+            }
             const userData = {
                 username: username,
                 email: email,
                 password: hashedPassword,
                 phone_number: phone_number,
-                referral: newReferral 
+                referral: newReferral
             }
             const newUser = await createUser(userData)
             console.log(newUser);
@@ -87,7 +87,7 @@ module.exports = {
         try {
             const { id } = req.dataToken;
             const account = await findId(id)
-            if(!account) throw {message: "User account was not found"}
+            if (!account) throw { message: "User account was not found" }
             await verifyUser(id)
             respondHandler(res, {
                 message: "User account succesfully verified",
@@ -173,6 +173,36 @@ module.exports = {
                 data: findUser
             })
         } catch (error) {
+            next(error)
+        }
+    },
+
+    updateImage: async (req, res, next) => {
+        try {
+            // 1. Ambil id user dari
+            const { idImage } = req.params
+
+            // 2. Ambil path image lama
+            const findImage = await db.hotel_image.findOne({
+                where: {
+                    id: idImage
+                }
+            })
+
+            // 3. Update new path on table
+            await db.hotel_image.update({ url: req.files.images[0].path }, { where: { id: idImage } })
+
+            // 4. Delete image lama
+            deleteFiles({ images: [{ path: findImage.dataValues.url }] })
+
+            // 5. Kirim response
+            res.status(201).send({
+                isError: false,
+                message: 'Update Image Success!',
+                data: null
+            })
+        } catch (error) {
+            deleteFiles(req.files)
             next(error)
         }
     }

@@ -6,8 +6,8 @@ const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
         const isDirectoryExist = fs.existsSync(defaultPath)
 
-        if(!isDirectoryExist) {
-            await fs.promises.mkdir(defaultPath, {recursive: true})
+        if (!isDirectoryExist) {
+            await fs.promises.mkdir(defaultPath, { recursive: true })
         }
 
         cb(null, `${defaultPath}`)
@@ -23,7 +23,7 @@ const storage = multer.diskStorage({
 // NANTI DI CEK LAGI INI CUMA FILTER UNTUK IMAGE, PROYEK KALI INI MAYBE BISA GIF DAN PNG JUGA, thanks
 var fileFilter = (req, file, cb) => {
     console.log(file);
-    if(file.mimetype.split('/')[0] === 'image') {
+    if (file.mimetype.split('/')[0] === 'image') {
         cb(null, true)
     } else if (file.mimetype.split('/')[0] !== "image") {
         cb(new Error("file must be an Image"))

@@ -49,8 +49,6 @@ const ProfilePage = () => {
 
                             <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={`http://localhost:8905/${data?.profile_picture
                                 ?.substring(7)}`} alt="" />
-
-
                         </div>
 
                         <div className=" mb-5 p-3 md:p-5 text-white md:flex md:flex-col md:justify-center">
