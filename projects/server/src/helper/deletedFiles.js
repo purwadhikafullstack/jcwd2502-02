@@ -1,9 +1,11 @@
 const fs = require('fs')
+const { log } = require('handlebars')
 
 module.exports = {
     deleteFiles: (files) => {
-        files.images.forEach(value => {
-            fs.unlinkSync(value.path)
+        log(files)
+        files.image.forEach(filename => {
+            fs.unlinkSync(__dirname + "/../public/" + filename)
         })
     }
 }

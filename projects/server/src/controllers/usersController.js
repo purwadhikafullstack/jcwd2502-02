@@ -177,31 +177,58 @@ module.exports = {
         }
     },
 
+
+    updateProfile: async (req, res, next) => {
+        try {
+            // const { id } = req.params
+
+            const data = JSON.parse(req.body.data)
+
+            console.log(data);
+
+            res.status(201).send({
+                isError: false,
+                message: 'Update Image Success!',
+                data: data
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    },
+
     updateImage: async (req, res, next) => {
         try {
-            // 1. Ambil id user dari
+            // 1. Ambil id image
             const { idImage } = req.params
-
             // 2. Ambil path image lama
-            const findImage = await db.hotel_image.findOne({
+            const findImage = await db.product_category.findOne({
                 where: {
                     id: idImage
                 }
             })
-
             // 3. Update new path on table
-            await db.hotel_image.update({ url: req.files.images[0].path }, { where: { id: idImage } })
-
+            console.log(req.files);
+            const newImage = await db.product_category.update({
+                image: req.files.image[0].filename
+            }, {
+                where: {
+                    id: idImage
+                }
+            })
             // 4. Delete image lama
-            deleteFiles({ images: [{ path: findImage.dataValues.url }] })
-
+            deleteFiles({
+                image: [findImage.dataValues.image
+                ]
+            })
             // 5. Kirim response
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',
-                data: null
+                data: newImage
             })
         } catch (error) {
+            console.log(error);
             deleteFiles(req.files)
             next(error)
         }
