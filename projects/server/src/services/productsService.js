@@ -23,6 +23,31 @@ module.exports = {
             return error;
         }
     },
+    editCategoryService1: async (id) => {
+        try {
+            return await db.product_category.findOne({
+                where: {
+                    id
+                }
+            })
+        } catch (error) {
+            return error
+        }
+    },
+    editCategoryService2: async (id, name, image) => {
+        try {
+            return await db.product_category.update({
+                name
+            },
+                {
+                    where: {
+                        id
+                    }
+                })
+        } catch (error) {
+            return error
+        }
+    },
     getProductsByCategoryService: async (catId) => {
         try {
             return await db.product.findAll({

@@ -30,7 +30,10 @@ module.exports = (sequelize, DataTypes) => {
       defaultValue: "unverified"
     },
     referral_code: DataTypes.STRING,
-    role: DataTypes.ENUM("customer", "superadmin", "admin"),
+    role: {
+      type: DataTypes.ENUM("customer", "superadmin", "admin"),
+      defaultValue: "customer"
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

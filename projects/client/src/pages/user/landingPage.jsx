@@ -18,7 +18,7 @@ import axios from "axios";
 import { onCheckIsLogin } from "../../redux/Features/users";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
-
+import { api1 } from "../../api/api";
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
@@ -28,10 +28,11 @@ const LandingPage = () => {
     const [nearestLocation, setNearestLocation] = useState(null);
     const [category, setCategory] = useState([]);
     const dispatch = useDispatch();
+    const api = api1();
 
     const onGetCategory = async () => {
         try {
-            const category = await axios.get(`http://localhost:8905/api/products/category`);
+            const category = await api.get(`/products/category`);
             console.log(category.data.data);
             setCategory(category.data.data);
         } catch (error) {
@@ -41,7 +42,7 @@ const LandingPage = () => {
 
     const getBranch = async () => {
         try {
-            const allBranch = await axios.get('http://localhost:8905/api/branch/all')
+            const allBranch = await api.get('/branch/all')
             setBranchLoc(allBranch.data.data)
         } catch (error) {
             console.log(error);
@@ -93,7 +94,7 @@ const LandingPage = () => {
     const nearestBranch = async (storeId) => {
         try {
 
-            const branch = await axios.get(`http://localhost:8905/api/branch/nearest/${storeId}`)
+            const branch = await api.get(`/branch/nearest/${storeId}`)
             console.log(branch.data.data, "ini data branch");
             setProducts(branch.data.data)
         } catch (error) {

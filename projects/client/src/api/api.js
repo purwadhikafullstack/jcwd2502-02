@@ -10,7 +10,8 @@ export const api = () => axios.create({
 export const api1 = () => axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL,
     headers: {
-        authorization: null
+        headers: { 'Custom-Header': 'foobar' },
+        secretKey: process.env.REACT_APP_API_SECRET_KEY
     }
 })
 

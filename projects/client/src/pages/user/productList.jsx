@@ -20,7 +20,7 @@ const ProductListPage = () => {
     const [postPerPage, setPostsPerPage] = useState(8);
     const lastPostIndex = currentPage * postPerPage;
     const firstPostIndex = lastPostIndex - postPerPage;
-    const currentPosts = products.slice(firstPostIndex, lastPostIndex);
+    const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
 
     const search = useLocation().search;
@@ -78,9 +78,12 @@ const ProductListPage = () => {
                     </Link> */}
                     {category.map((value, index) => {
                         return (
-                            <Link to={`/products?category=${value.id}`}>
-                                <CategoryCard onClick={() => onFilterCat(value.id)} name={value.name} image={value.image} />
-                            </Link>
+                            <div key={index}>
+                                <Link to={`/products?category=${value.id}`}>
+                                    <CategoryCard onClick={() => onFilterCat(value.id)} name={value.name} image={value.image} />
+                                </Link>
+                            </div>
+
                         )
                     })}
                 </div>
