@@ -15,7 +15,7 @@ Router.patch('/reset-password', usersController.resetPassword);
 Router.patch('/update-user', usersController.updateUserData);
 Router.patch('/verify-user', verify, usersController.verifyUserAccount);
 Router.patch('/update-image/:id', upload, usersController.updateImage)
-Router.post('/update-profile/', usersController.updateProfile)
+Router.post('/update-profile/', upload, usersController.updateProfile)
 
 Router.get('/fetch-user', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);

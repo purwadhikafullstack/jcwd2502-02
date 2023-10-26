@@ -187,7 +187,7 @@ module.exports = {
     updateProfile: async (req, res, next) => {
         try {
             // const { id } = req.params
-
+            console.log(req.files.image);
             const data = JSON.parse(req.body.data)
 
             console.log(data);
