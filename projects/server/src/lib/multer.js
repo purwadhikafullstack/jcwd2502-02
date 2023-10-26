@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
         // if (!isDirectoryExist) {
         //     await fs.promises.mkdir(defaultPath, { recursive: true })
         // }
-
         cb(null, `${defaultPath}`)
     },
     filename: function (req, file, cb) {
@@ -36,5 +35,4 @@ var fileFilter = (req, file, cb) => {
         cb(new Error('File Must Be Image!'))
     }
 }
-
 exports.multerUpload = multer({ storage: storage, fileFilter: fileFilter })
