@@ -82,6 +82,8 @@ module.exports = {
                     data: allProductFiltered,
                 });
             }
+
+
         } catch (error) {
             next(error);
         }
