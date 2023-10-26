@@ -5,6 +5,7 @@ const CategoryCard = (props) => {
                 <button className=" hover:border-green-300 grid place-content-center h-[100px] rounded-full hover:shadow-lg hover:shadow-green-200 hover:scale-105 ease-in duration-200"
                     onClick={props.onClick} text={props.name} item={props.item}>
                     <img className="object-fit rounded-full h-[100px] w-[100px]" src={process.env.REACT_APP_URL + `${props.image}`} />
+                    {/* <img src={"https://jcwdol0905.purwadhikabootcamp.com/api/categories/sayuran_medium-1686110433857.png"} alt="" /> */}
                 </button>
                 <div className="flex justify-center z-0 mt-2">
                     {props.name}

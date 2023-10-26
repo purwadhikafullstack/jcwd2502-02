@@ -7,7 +7,6 @@ import ProductListPage from "../pages/user/productList";
 import ProfilePage from "../pages/user/profilePage";
 import UpdateProfile from "../pages/user/updateProfilePage";
 import VerificationPage from "../pages/verificationPage";
-import UpdateProductsCategoryPage from "../pages/admin/updateCategoryPage";
 
 import Protected from "./protected";
 
@@ -31,9 +30,6 @@ const routes = [
         <Protected userPage={true}>
             <UpdateProfile />
         </Protected>
-    } />,
-    <Route path='/updatecategory' element={
-        <UpdateProductsCategoryPage />
     } />,
     <Route path='/register' element={
         <Protected guestPage={true}>
