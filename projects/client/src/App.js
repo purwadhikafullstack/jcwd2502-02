@@ -7,6 +7,7 @@ import ProductListPage from "./pages/user/productList";
 import ProfilePage from "./pages/user/profilePage";
 import UpdateProfile from "./pages/user/updateProfilePage";
 import VerificationPage from "./pages/verificationPage";
+import UpdateProductsCategoryPage from "./pages/admin/updateCategoryPage";
 
 function App() {
   // setup onCheckIsLogin
@@ -22,6 +23,7 @@ function App() {
         <Route path='/profile' element={<ProfilePage />} />
         <Route path='/updateprofile' element={<UpdateProfile />} />
         <Route path='/verify/:id' element={<VerificationPage />} />
+        <Route path='/updatecategory' element={<UpdateProductsCategoryPage />} />
       </Routes>
 
     </div>

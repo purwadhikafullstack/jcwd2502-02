@@ -4,14 +4,18 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class discount extends Model {
-    static associate({ product, product_category }) {
+    static associate({ product, product_category, discount_type, owned_coupon }) {
       this.belongsTo(product, { foreignKey: 'products_id' })
       this.belongsTo(product_category, { foreignKey: 'products_id' })
+      this.belongsTo(discount_type, { foreignKey: 'discount_type_id' })
+      this.hasMany(owned_coupon, { foreignKey: 'discount_id' })
     }
   }
   discount.init({
     name: DataTypes.STRING,
-    amount: DataTypes.INTEGER,
+    code: DataTypes.STRING,
+    max_discount: DataTypes.INTEGER,
+    isValid: DataTypes.INTEGER,
     expire: DataTypes.DATE,
     createdAt: {
       type: DataTypes.DATE,
@@ -23,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
+    paranoid: true,
     modelName: 'discount',
   });
   return discount;
