@@ -1,40 +1,30 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
+const { log } = require('console');
 
 module.exports = {
     login: async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            const account = await findEmail(email)
-            if (!account) throw { status: 401, message: "Account was not found!" };
-            const hashMatch = await match(password, account.dataValues.password)
-            if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
-            const token = await createJWT(
-                {
-                    id: account.dataValues.id,
-                    role: account.dataValues.role,
-                },
-                "1d"
-            )
+            const account = await userLogin(email, password);
             respondHandler(res, {
                 message: "login is succesful",
                 data: {
-                    id: account.dataValues.id,
-                    username: account.dataValues.username,
-                    email: account.dataValues.email,
-                    role: account.dataValues.role,
-                    jwt: token
+                    id: account.data.id,
+                    username: account.data.username,
+                    email: account.data.email,
+                    role: account.data.role,
+                    jwt: account.data.jwt
                 }
             })
         } catch (error) {
-            console.log(error);
             next(error)
         }
     },
@@ -42,41 +32,16 @@ module.exports = {
     register: async (req, res, next) => {
         try {
             const { username, email, password, phone_number, referral } = req.body;
-            const existingAccount = await findUsername(username)
-            const existingEmail = await findEmail(email)
-            if (existingAccount) throw { message: "Username has already been taken" };
-            if (existingEmail) throw { message: "Email has already been taken" };
-            const hashedPassword = await hash(password);
-            const newReferral = Math.round(Math.random() * 1e9);
-            const validReferral = await findReferral(referral)
-            if (validReferral) {
-                // beri kupon
-            }            
-            const userData = {
-                username: username,
-                email: email,
-                password: hashedPassword,
-                phone_number: phone_number,
-                referral: newReferral 
-            }
-            const newUser = await createUser(userData)
+            const newUser = await registerUser(username, email, password, phone_number, referral)
             console.log(newUser);
-            const token = createJWT(
-                {
-                    id: newUser.dataValues.id,
-                    role: newUser.dataValues.role,
-                }, '12h')
-            const readTemplate = await fs.readFile('./src/public/template.html', 'utf-8');
-            const compiledTemplate = await handlebars.compile(readTemplate);
-            const newTemplate = compiledTemplate({ username, token })
-            await transporter.sendMail({
-                to: `bkprasetya@gmail.com`,
-                subject: "Verification",
-                html: newTemplate
-            });
-            respondHandler(res, {
-                message: "Registration success, please check your email to verify your account!",
-            })
+
+            if(!newUser.isError) {
+                respondHandler(res, {
+                    message: "Registration success, please check your email to verify your account!",
+                })
+            } else {
+                throw {message: newUser.message}
+            }
         } catch (error) {
             console.log('error message:', error.message);
             next(error)
@@ -97,9 +62,30 @@ module.exports = {
         }
     },
 
-    changePassword: async (req, res, next) => {
+    requestResetPassword: async (req, res, next) => {
         try {
-
+            // terima input email dari front-end
+            const { email } = req.body;
+            // cek jika ada akun dengan email tersebut
+            const response = await findEmail(email);
+            if(!response) throw {message: "user was not found, please enter a valid email address"};
+            // buatkan jwt durasi 1 jam berisikan id
+            const token = createJWT({
+                id: response.dataValues.id
+            }, '3h');
+            // kirimkan email akun tersebut dengan template request password berisikan link ber param jwt baru tersebut
+            const readTemplate = await fs.readFile('./src/public/password-recovery.html', 'utf-8');
+            const compiledTemplate = await handlebars.compile(readTemplate);
+            const newTemplate = compiledTemplate({email, token})
+            await transporter.sendMail({
+                to: `aryosetyotama27@gmail.com`,
+                subject: 'password recovery mail',
+                html: newTemplate
+            })
+            // notifikasi user
+            respondHandler(res, {
+                message: "password reset email has been sent to your email"
+            });
         } catch (error) {
             next(error)
         }
@@ -107,7 +93,26 @@ module.exports = {
 
     resetPassword: async (req, res, next) => {
         try {
+            const data = req.headers;
+            if(data.newpassword !== data.confirmpassword) throw {message: "confirmation password must match the new password"}
+            
+            // if(data.newPassword)
+            // terima data dari front end
+            // lewatkan data dengan express validator
+            //  
 
+            res.status(201).send({
+                isError: false,
+                message: "Password Changed"
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    updatePassword: async (req, res, next) => {
+        try {
+            
         } catch (error) {
             next(error)
         }
@@ -127,7 +132,7 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
-            console.log(`ini dari getUser di controller`, req.dataToken);
+            console.log(`>>>>>>>`);
             const { id } = req.dataToken;
             const account = await findId(id)
             respondHandler(res, {
@@ -162,6 +167,7 @@ module.exports = {
     getUserData: async (req, res, next) => {
         try {
             // const { id } = req.body
+            console.log(req.headers.authorization);
             const findUser = await db.user.findOne({
                 where: {
                     id: 4

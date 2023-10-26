@@ -106,7 +106,7 @@ const LandingPage = () => {
         getBranch()
         // Check if user is logged in
         console.log('checking if logged in');
-        dispatch(onCheckIsLogin())
+        // dispatch(onCheckIsLogin())
     }, []);
 
     useEffect(() => {

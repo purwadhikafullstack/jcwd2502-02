@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { api } from "../../api/api";
 
+import { useDispatch, useSelector } from "react-redux";
+import { onCheckIsLogin } from "../../redux/Features/users";
+
 const ProfilePage = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -13,6 +16,11 @@ const ProfilePage = () => {
     const [birthdate, setBirthdate] = useState('')
     const apiInstance = api()
     const [data, setData] = useState('')
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(onCheckIsLogin())
+    }, [])
 
     const getUserData = async () => {
         try {
@@ -46,8 +54,8 @@ const ProfilePage = () => {
 
                     <div className="bg-green-700 md:rounded-l-3xl md:shadow-xl">
                         <div className="grid place-content-center py-10 ">
-                            <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={`http://localhost:8905/${data.profile_picture
-                                .substring(7)}`} alt="" />
+                            <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={`http://localhost:8905/${data?.profile_picture
+                                ?.substring(7)}`} alt="" />
                         </div>
 
                         <div className=" mb-5 p-3 md:p-5 text-white md:flex md:flex-col md:justify-center">

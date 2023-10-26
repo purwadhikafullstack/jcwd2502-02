@@ -9,7 +9,7 @@ export default function VerificationPage() {
     const navigate = useNavigate();
     const apiInstance = api1();
     const verifyAccount = async () => {
-        const response = await apiInstance.patch(`/users/verify-user`, null, {headers: {authorization: accessToken.id}})
+        const response = await apiInstance.patch(`/users/verify-user`, null, {headers: {authorization: "Bearer " + accessToken}})
         if(response.data.isError == false) {
             setIsVerified(true)
             setTimeout(() => {
