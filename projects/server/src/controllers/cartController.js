@@ -21,6 +21,7 @@ module.exports = {
     addCart: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
+
             const { productId } = req.params
             const getProduct = await db.product.findOne({
                 where: { id: productId }

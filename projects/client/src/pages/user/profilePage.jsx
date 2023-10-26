@@ -27,7 +27,7 @@ const ProfilePage = () => {
             const accessToken = localStorage.getItem("accessToken");
             console.log("ini token", accessToken);
 
-            const data = await apiInstance.get("/users/finduser")
+            const data = await apiInstance.get("/users/fetch-user")
             console.log(data.data.data);
             setData(data.data.data)
         } catch (error) {
