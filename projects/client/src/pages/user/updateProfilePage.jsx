@@ -101,7 +101,7 @@ const UpdateProfile = () => {
 
     useEffect(() => {
         getUserData();
-        setCurrentImage(`http://localhost:8905/${data?.profile_picture?.substring(7)}`);
+        setCurrentImage(`http://localhost:8905/${data?.profile_picture}`);
         data.id
             ? formik.setValues({
                 id: data.id,
