@@ -9,12 +9,22 @@ import UpdateProfile from "./pages/user/updateProfilePage";
 import VerificationPage from "./pages/verificationPage";
 import UpdateProductsCategoryPage from "./pages/admin/updateCategoryPage";
 
+import { onCheckIsLogin } from "./redux/Features/users";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
+
+// import routes baru
+import routes from "./routes/Routes";
+
 function App() {
-  // setup onCheckIsLogin
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(onCheckIsLogin())
+  }, [])
+
   return (
     <div data-theme="light">
-
-      <Routes>
+      {/* <Routes>
         <Route element={<LandingPage />} path="/" />
         <Route element={<LandingPage2 />} path="/v2" />
         <Route element={<RegistrationPage />} path="/register" />
@@ -22,10 +32,12 @@ function App() {
         <Route element={<ProductListPage />} path="/products" />
         <Route path='/profile' element={<ProfilePage />} />
         <Route path='/updateprofile' element={<UpdateProfile />} />
-        <Route path='/verify/:id' element={<VerificationPage />} />
-        <Route path='/updatecategory' element={<UpdateProductsCategoryPage />} />
-      </Routes>
+        <Route path='/verify/:id' element={<VerificationPage/>} />
+      </Routes> */}
 
+      <Routes>
+        {routes.map((value) => value)}
+      </Routes>
     </div>
   );
 }

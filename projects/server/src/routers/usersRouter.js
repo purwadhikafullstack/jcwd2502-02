@@ -9,13 +9,13 @@ const { usersController } = require("../controllers");
 
 Router.post('/login', validateUserLogin, handleValidationErrors, usersController.login);
 Router.post('/register', validateUserRegistration, handleValidationErrors, usersController.register);
+Router.post('/request-reset', usersController.requestResetPassword);
 
-Router.patch('/change-password', usersController.changePassword);
 Router.patch('/reset-password', usersController.resetPassword);
 Router.patch('/update-user', usersController.updateUserData);
 Router.patch('/verify-user', verify, usersController.verifyUserAccount);
 
-Router.get('/finduser', verify, usersController.getUser);
+Router.get('/fetch-user', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);
 Router.get('/find-user', usersController.getUserData);
 

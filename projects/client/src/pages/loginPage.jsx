@@ -19,9 +19,10 @@ export default function LoginPage() {
             password: "",
         },
         onSubmit: async (values) => {
-            await dispatch(login2({...values}))
+            const data = await dispatch(login2({...values}))
+            console.log(data.payload);
             const token = localStorage.getItem("accessToken");
-            if(token){
+            if(data.payload && token){
                 toast.success('Login successful')
                 setTimeout(() => {
                     navigate('/')
@@ -48,11 +49,22 @@ export default function LoginPage() {
             <div className='grid place-content-center'>
                 <form className='flex flex-col rounded-2xl gap-2 bg-green-700 p-5 w-[350px] md:w-[450px] lg:w-[400px]'>
                     <label className='text-white' htmlFor="" >Email</label>
-                    <input type="email" id='email' name='email' onChange={formik.handleChange} value={formik.values.email} className='rounded-xl p-2' placeholder='' />
-                    <div className='text-red-500 font-bold'> {formik.errors.email} </div>
+                    <input type="email" id='email' name='email' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} className='rounded-xl p-2' placeholder='' />
+                    {
+                        formik.touched.email && formik.errors.email ?
+                            <div className='text-red-500 font-bold'> {formik.errors.email} </div>
+                            :
+                            null
+                    }
                     <label className='text-white' htmlFor="" >Password</label>
-                    <input type="password" id='password' name='password' onChange={formik.handleChange} value={formik.values.password} className='rounded-xl p-2' />
-                    <div className='text-red-500 font-bold'> {formik.errors.password} </div>
+                    <input type="password" id='password' name='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className='rounded-xl p-2' />
+                    {
+                        formik.touched.password && formik.errors.password ?
+                            <div className='text-red-500 font-bold'> {formik.errors.password} </div>
+                            :
+                            null
+                    }
+                    
                     <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
                 </form>
                 <div className='flex justify-center mt-10'>

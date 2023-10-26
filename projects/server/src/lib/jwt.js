@@ -15,8 +15,9 @@ module.exports = {
     verify: (req, res, next) => {
         try {
             console.log(`nyampe middleware`);
-            const { authorization } = req.headers;
-            console.log(req.headers.authorization);
+            // const { authorization } = req.headers;
+            const authorization = req.token;
+            console.log(`LIBRARY VERIFY JWT, TOKEN DITERIMA`);
             if (!authorization) throw { message: `token was not found` };
             const decodeData = jwt.verify(authorization, 'abc123');
             req.dataToken = decodeData;

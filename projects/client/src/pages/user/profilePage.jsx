@@ -6,6 +6,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { api } from "../../api/api";
 
+import { useDispatch, useSelector } from "react-redux";
+import { onCheckIsLogin } from "../../redux/Features/users";
+
 const ProfilePage = () => {
     const [username, setUsername] = useState('')
     const [email, setEmail] = useState('')
@@ -13,6 +16,11 @@ const ProfilePage = () => {
     const [birthdate, setBirthdate] = useState('')
     const apiInstance = api()
     const [data, setData] = useState('')
+
+    const dispatch = useDispatch();
+    useEffect(() => {
+        dispatch(onCheckIsLogin())
+    }, [])
 
     const getUserData = async () => {
         try {
