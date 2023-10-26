@@ -143,8 +143,42 @@ module.exports = {
                     data: allProductFiltered,
                 });
             }
-
-
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOneCategory: async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const category = await db.product_category.findOne({ where: { id } });
+            console.log(category.dataValues.name);
+            if (!category) {
+                return res.status(200).send({
+                    isError: true,
+                    message: "Category not found",
+                });
+            }
+            res.status(200).send({
+                isError: false,
+                message: "get data success",
+                data: category.dataValues.name,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    saveEditCat: async (req, res, next) => {
+        try {
+            const { inputCat, id } = req.body;
+            console.log(inputCat);
+            console.log(id);
+            const newCategory = await db.product_category.update({ name: inputCat }, { where: { id } });
+            console.log(newCategory);
+            res.status(200).send({
+                isError: false,
+                message: "Changes Success!",
+                data: newCategory
+            });
         } catch (error) {
             next(error);
         }
