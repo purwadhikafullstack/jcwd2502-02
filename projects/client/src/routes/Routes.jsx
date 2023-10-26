@@ -15,38 +15,38 @@ const routes = [
         <Protected userPage={true}>
             <LandingPage />
         </Protected>
-    }/>,
+    } />,
     <Route path='/v2' element={
         <Protected userPage={true}>
             <LandingPage2 />
         </Protected>
-    }/>,
+    } />,
     <Route path='/profile' element={
         <Protected userPage={true}>
             <ProfilePage />
         </Protected>
-    }/>,
+    } />,
     <Route path='/updateprofile' element={
         <Protected userPage={true}>
             <UpdateProfile />
         </Protected>
-    }/>,
+    } />,
     <Route path='/register' element={
         <Protected guestPage={true}>
             <RegistrationPage />
         </Protected>
-    }/>,
+    } />,
     <Route path='/login' element={
         <Protected guestPage={true}>
             <LoginPage />
         </Protected>
-    }/>,
+    } />,
     <Route path='/products' element={
         <ProductListPage />
-    }/>,
+    } />,
     <Route path='/verify/:id' element={
         <VerificationPage />
-    }/>,
+    } />,
 ]
 
 export default routes;

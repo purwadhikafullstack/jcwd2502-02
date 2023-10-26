@@ -8,7 +8,7 @@ const handlebars = require('handlebars');
 const { log } = require('console');
 
 module.exports = {
-    findAllUsers: async() => {
+    findAllUsers: async () => {
         try {
             return await db.user.findAll()
         } catch (error) {
@@ -16,47 +16,47 @@ module.exports = {
         }
     },
 
-    findId: async(id) => {
+    findId: async (id) => {
         try {
             return await db.user.findOne({
-                where: {id}
+                where: { id }
             })
         } catch (error) {
             return error
         }
     },
 
-    findReferral: async(referral) => {
+    findReferral: async (referral) => {
         try {
             return await db.user.findOne({
-                where: {referral}
-            })            
-        } catch (error) {
-            return error
-        }
-    },
-
-    findEmail: async(email) => {
-        try {
-            return await db.user.findOne({
-                where: {email}
+                where: { referral }
             })
         } catch (error) {
             return error
         }
     },
 
-    findUsername: async(username) => {
+    findEmail: async (email) => {
         try {
             return await db.user.findOne({
-                where: {username}
+                where: { email }
             })
         } catch (error) {
             return error
         }
     },
 
-    verifyUser: async(id) => {
+    findUsername: async (username) => {
+        try {
+            return await db.user.findOne({
+                where: { username }
+            })
+        } catch (error) {
+            return error
+        }
+    },
+
+    verifyUser: async (id) => {
         try {
             return db.user.update({
                 isVerified: "verified"
@@ -68,19 +68,19 @@ module.exports = {
         }
     },
 
-    createUser: async(userData) => {
+    createUser: async (userData) => {
         try {
-            const {username, email, password, phone_number, referral} = userData
+            const { username, email, password, phone_number, referral } = userData
             return db.user.create({ username: username, email: email, password: password, phone_number: phone_number, referral_code: referral })
         } catch (error) {
             return error
         }
     },
 
-    userLogin: async(email, password) => {
+    userLogin: async (email, password) => {
         try {
             const account = await db.user.findOne({
-                where: {email}
+                where: { email }
             })
             console.log(account);
             if (!account) throw { status: 401, message: "Account was not found!" };
@@ -110,13 +110,13 @@ module.exports = {
         }
     },
 
-    registerUser: async(username, email, password, referral, phone_number) => {
+    registerUser: async (username, email, password, referral, phone_number) => {
         try {
             const existingAccount = await db.user.findOne({
-                where: {username}
+                where: { username }
             })
             console.log(existingAccount);
-            const existingEmail = await db.user.findOne({where: {email}})
+            const existingEmail = await db.user.findOne({ where: { email } })
             if (existingAccount) {
                 return {
                     isError: true,
@@ -131,16 +131,16 @@ module.exports = {
             }
             const hashedPassword = await hash(password);
             const newReferral = Math.round(Math.random() * 1e9);
-            const validReferral = await db.user.findOne({where: {referral_code: referral}})
+            const validReferral = await db.user.findOne({ where: { referral_code: referral } })
             if (validReferral) {
                 // beri kupon
-            }            
+            }
             const userData = {
                 username: username,
                 email: email,
                 password: hashedPassword,
                 phone_number: phone_number,
-                referral: newReferral 
+                referral: newReferral
             }
             console.log(userData);
             const newUser = await db.user.create(userData)
