@@ -147,6 +147,19 @@ module.exports = {
             next(error);
         }
     },
+    createCategory: async (req, res, next) => {
+        try {
+            const data = req.body;
+            const addCategory = await db.product_category.create({ ...data });
+            res.status(201).send({
+                isError: false,
+                message: "Product Added",
+                data: addCategory,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
     getOneCategory: async (req, res, next) => {
         try {
             const { id } = req.params;
