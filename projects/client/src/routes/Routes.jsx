@@ -41,7 +41,7 @@ const routes = [
         </Protected>
     } />,
     <Route path='/login' element={
-        <Protected guestPage={true}>
+        <Protected guestPage={false}>
             <LoginPage />
         </Protected>
     } />,

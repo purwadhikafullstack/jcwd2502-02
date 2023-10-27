@@ -19,14 +19,14 @@ export default function LoginPage() {
             password: "",
         },
         onSubmit: async (values) => {
-            const data = await dispatch(login2({...values}))
+            const data = await dispatch(login2({ ...values }))
             console.log(data.payload);
             const token = localStorage.getItem("accessToken");
-            if(data.payload && token){
+            if (data.payload && token) {
                 toast.success('Login successful')
                 setTimeout(() => {
                     navigate('/')
-                }, 3000)
+                }, 5000)
             }
         },
         validationSchema: yup.object().shape({
@@ -64,7 +64,7 @@ export default function LoginPage() {
                             :
                             null
                     }
-                    
+
                     <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
                 </form>
                 <div className='flex justify-center mt-10'>

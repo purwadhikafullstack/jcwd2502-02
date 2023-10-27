@@ -31,9 +31,9 @@ const RecommendProducts = (props) => {
                 }
             },
             {
-                breakpoint: 600,
+                breakpoint: 900,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 3,
                 }
             },
             {
@@ -46,7 +46,7 @@ const RecommendProducts = (props) => {
     };
 
     return (
-        <div className="w-[auto] px-5 md:px-20 lg:px-48 py-5 ">
+        <div className="w-[auto] px-5 md:px-20 lg:px-48 ">
 
             <div>
                 <div className="pb-5">
@@ -60,21 +60,28 @@ const RecommendProducts = (props) => {
 
                 <div className="">
 
-                    <Slider {...settings}>
-                        {products
-                            ? products.map((value, index) => (
-                                <div key={index} className="">
-                                    <ProductCard
-                                        name={value.product.name}
-                                        image={value.product.image}
-                                        description={value.product.description}
-                                        price={value.product.price}
-                                    />
-                                </div>
-                            ))
-                            : <span className="loading loading-spinner loading-lg"></span>
-                        }
-                    </Slider>
+                    <div>
+                        <Slider {...settings}>
+                            {products
+                                ? products.map((value, index) => (
+                                    <div key={index} className="w-64 mx-4">
+                                        <ProductCard
+                                            name={value.product.name}
+                                            image={value.product.image}
+                                            description={value.product.description}
+                                            price={value.product.price}
+                                        />
+                                    </div>
+                                ))
+                                : null
+                            }
+                        </Slider>
+                    </div>
+
+                    <div className="grid place-content-center pt-5">
+                        {!products && <span className="loading loading-spinner w-[100px] text-green-700"></span>}
+                    </div>
+
 
                 </div>
 

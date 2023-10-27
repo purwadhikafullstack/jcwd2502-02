@@ -135,13 +135,12 @@ const LandingPage = () => {
 
                 <Jumbotron />
 
-                <div className="h-[130px] lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex w-auto">
+                <div className="h-[160px] pt-1 lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex ">
                     {category.map((value, index) => {
                         return (
                             <Link to={`/products?category=${value.id}`}>
                                 <CategoryCard name={value.name} image={value.image} />
                             </Link>
-
                         )
                     })}
                 </div>

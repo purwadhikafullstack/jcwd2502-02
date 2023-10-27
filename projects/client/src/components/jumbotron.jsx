@@ -27,7 +27,7 @@ const Jumbotron = () => {
                 <Slider {...settings}>
                     {cards.map((url, index) => (
                         <div key={index}>
-                            <img className='rounded-3xl lg:h-[500px]' src={url}></img>
+                            <img className='rounded-3xl h-[200px] md:h-[350px] lg:h-[500px]' src={url}></img>
                         </div>
                     ))}
                 </Slider></div>
