@@ -36,7 +36,7 @@ const UpdateProfile = () => {
 
     const onSelectImages = (event) => {
         try {
-            const file = event.target.files[0];
+            const file = event.target.files;
 
             if (file) {
                 // Check file size and type here (validation)
@@ -75,7 +75,7 @@ const UpdateProfile = () => {
                     formData.append('image', values.file);
                 }
 
-                const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
+                const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formData)
                 toast.success(updateUserData.data.message);
             } catch (error) {
                 console.log(error);
@@ -124,7 +124,7 @@ const UpdateProfile = () => {
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                <div className="grid place-content-center py-10">
+                {/* <div className="grid place-content-center py-10">
                     <div className="relative">
                         <img className="w-[200px] border h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full" src={formik.values.file ? URL.createObjectURL(formik.values.file) : currentImage} alt="" />
                         <input
@@ -134,8 +134,13 @@ const UpdateProfile = () => {
                             <AiFillEdit className="text-3xl rounded-full p-2 w-[50px] h-[50px] absolute top-0 right-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200 hover:shadow-green-200 shadow-md" />
                         </div>
                     </div>
-                </div>
-                <div className="mb-10 mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
+                </div> */}
+
+                {/* <div className="mx-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">
+                </div> */}
+
+                <div className="lg:mt-5 mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
+                    {/* <div className="mt-10"></div> */}
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Username</div>
                         <input type="text" onChange={formik.handleChange} name="username" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.username} />
@@ -162,7 +167,7 @@ const UpdateProfile = () => {
                         <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
                     </div>
                 </div>
-                <div className="grid place-content-center mb-10">
+                <div className="grid place-content-center m-10">
                     <Button onClick={() => debouncedHandleSubmit()} text={"Submit Changes"} />
                 </div>
             </div>

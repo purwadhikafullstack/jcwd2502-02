@@ -9,6 +9,8 @@ import { Link } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
+import { useEffect } from "react";
+
 const Navbar = () => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.users)
@@ -17,6 +19,9 @@ const Navbar = () => {
         // console.log('akan logout');
         await dispatch(logout())
     }
+
+    useEffect(() => {
+    }, [user?.profile_picture])
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">

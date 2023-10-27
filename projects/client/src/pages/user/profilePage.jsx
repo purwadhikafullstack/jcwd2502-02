@@ -2,12 +2,12 @@ import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer";
 import { AiFillEdit } from "react-icons/ai";
 import { Link } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { api } from "../../api/api";
-
 import { useDispatch, useSelector } from "react-redux";
-import { onCheckIsLogin } from "../../redux/Features/users";
+import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProfilePage = () => {
     const [username, setUsername] = useState('')
@@ -16,6 +16,11 @@ const ProfilePage = () => {
     const [birthdate, setBirthdate] = useState('')
     const apiInstance = api()
     const [data, setData] = useState('')
+    const [image, setImage] = useState()
+
+    const inputFileRef = useRef(null);
+
+    const user = useSelector(state => (state.users))
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -32,21 +37,67 @@ const ProfilePage = () => {
         } catch (error) {
         }
     }
+
+    const onSelectImages = async (event) => {
+        try {
+            const file = event.target.files[0]
+
+            if (file) {
+                // Check file size and type here (validation)
+                if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+                    message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+                }
+                console.log(file);
+
+                const formData = new FormData();
+                formData.append('image', file);
+
+                const response = await apiInstance.patch(`users/update-image`, formData)
+                console.log(response.data.data);
+                dispatch(setProfile_Picture(response.data.data.profile_picture))
+            }
+
+
+        } catch (error) {
+            toast.error(error.message)
+        }
+    };
+
     useEffect(() => {
         getUserData()
     }, [])
-    // console.log(data);
+
+    useEffect(() => {
+        getUserData();
+        console.log(user);
+    }, [user])
+
     return (
         <div>
+            <Toaster />
             <Navbar />
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
                 <div className="flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile <div className="grid place-content-center">
-                </div></div>
+                </div>
+
+                </div>
                 <div className="grid md:grid-cols-3 md:mb-20 ">
                     <div className="bg-gradient-to-r from-green-700 from-90% via-emerald-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
                         <div className="grid place-content-center py-10 ">
-                            <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={process.env.REACT_APP_URL + `${data?.profile_picture
-                                }`} alt="" />
+                            {/* <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={process.env.REACT_APP_URL + `${data?.profile_picture
+                                }`} alt="" /> */}
+
+                            <div className="relative">
+                                <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full" src={process.env.REACT_APP_URL + `${data?.profile_picture
+                                    }`} alt="" />
+                                <input
+                                    type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={inputFileRef} onChange={onSelectImages}
+                                />
+                                <div onClick={() => inputFileRef.current.click()}>
+                                    <AiFillEdit className="text-3xl rounded-full p-2 w-[50px] h-[50px] absolute top-0 right-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200 hover:shadow-green-200 shadow-md" />
+                                </div>
+                            </div>
+
                         </div>
                         <div className=" mb-5 p-5 md:p-5 text-white md:flex md:flex-col md:justify-center">
                             <div>

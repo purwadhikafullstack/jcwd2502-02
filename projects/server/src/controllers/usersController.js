@@ -8,6 +8,7 @@ const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
 const { log } = require('console');
+const { deleteFiles } = require('../helper/deleteFiles')
 
 module.exports = {
     login: async (req, res, next) => {
@@ -166,13 +167,16 @@ module.exports = {
     updateProfile: async (req, res, next) => {
         try {
             // const { id } = req.params
-            console.log(req.files.image);
+            // console.log(req.files.image)
             const data = JSON.parse(req.body.data)
-            console.log(data);
+            const image = req.files.image;
+            // console.log(data);
+            console.log(image);
+
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',
-                data: data
+                data: data, image
             })
 
         } catch (error) {
@@ -181,38 +185,42 @@ module.exports = {
     },
     updateImage: async (req, res, next) => {
         try {
-            // 1. Ambil id image
-            const { idImage } = req.params
+            // 1. Ambil id user
+            const { id } = req.dataToken;
             // 2. Ambil path image lama
-            const findImage = await db.product_category.findOne({
-                where: {
-                    id: idImage
-                }
-            })
+            const userId = await findId(id)
             // 3. Update new path on table
-            console.log(req.files);
-            const newImage = await db.product_category.update({
-                image: req.files.image[0].filename
+            console.log(userId.profile_picture);
+            console.log(req.files.image[0]);
+            const oldImage = userId.profile_picture
+            const findImage = await db.user.update({
+                profile_picture: req.files.image[0].filename
             }, {
                 where: {
-                    id: idImage
+                    id: id
                 }
             })
-            // 4. Delete image lama
+            // // 4. Delete image lama
             deleteFiles({
-                image: [findImage.dataValues.image
+                image: [oldImage
                 ]
             })
             // 5. Kirim response
+
+            const newUser = await findId(id)
+
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',
-                data: newImage
+                data: newUser
             })
         } catch (error) {
             console.log(error);
             deleteFiles(req.files)
             next(error)
         }
-    }
+    },
+
+
+
 }

@@ -6,7 +6,6 @@ module.exports = {
         log(files)
         files.image.forEach(filename => {
             // console.log(filename);
-
             fs.unlinkSync(__dirname + "/../public/" + filename)
         })
     }
