@@ -55,9 +55,6 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
                         </div>
 
                     </div>
-
-
-
                     :
                     children
             }
