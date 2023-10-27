@@ -4,7 +4,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from 'axios';
 import * as yup from 'yup';
 import Button from '../components/button';
-import {useNavigate} from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { api } from '../api/api';
 
 export default function RegistrationPage() {
@@ -36,10 +36,10 @@ export default function RegistrationPage() {
 
     const registerUser = async (e) => {
         e.preventDefault();
-        console.log(formik.values);
-        if(formik.values.email && formik.values.password && formik.values.username && formik.values.phone_number){
+        // console.log(formik.values);
+        if (formik.values.email && formik.values.password && formik.values.username && formik.values.phone_number) {
             try {
-                console.log(`proses register`);
+                // console.log(`proses register`);
                 setDisabled(true)
                 const response = await api().post(`/users/register`, formik.values)
                 toast.success(response.data.message);
@@ -48,7 +48,7 @@ export default function RegistrationPage() {
                     navigate('/login')
                 }, 3000)
             } catch (error) {
-                console.log(error.response.data.message);
+                // console.log(error.response.data.message);
                 toast.error(error.response.data.message);
             }
         } else {
@@ -59,7 +59,7 @@ export default function RegistrationPage() {
 
     const handleReferral = (e) => {
         e.preventDefault();
-        console.log('check referral');
+        // console.log('check referral');
         // setGetCoupon("true");
         // alert("Referral code succesfully applied")
         // console.log(getCoupon);

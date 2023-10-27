@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     gender: DataTypes.ENUM("male", "female"),
     profile_picture: {
       type: DataTypes.TEXT,
-      defaultValue: "public/user.jpg"
+      defaultValue: "user.jpg"
     },
     isVerified: {
       type: DataTypes.ENUM("verified", "unverified"),

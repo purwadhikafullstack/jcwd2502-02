@@ -20,13 +20,13 @@ export default function LoginPage() {
         },
         onSubmit: async (values) => {
             const data = await dispatch(login2({ ...values }))
-            console.log(data.payload);
+            // console.log(data.payload);
             const token = localStorage.getItem("accessToken");
             if (data.payload && token) {
                 toast.success('Login successful')
                 setTimeout(() => {
                     navigate('/')
-                }, 5000)
+                }, 3000)
             }
         },
         validationSchema: yup.object().shape({
@@ -41,7 +41,7 @@ export default function LoginPage() {
 
     return (
         <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-emerald-300">
-            <h1>{userSelector?.email}</h1>
+            <h1>{userSelector?.profile_picture}</h1>
             <Toaster />
             <div className='grid place-content-center'>
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
@@ -64,7 +64,6 @@ export default function LoginPage() {
                             :
                             null
                     }
-
                     <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
                 </form>
                 <div className='flex justify-center mt-10'>

@@ -26,7 +26,7 @@ const UpdateProfile = () => {
     const getUserData = async () => {
         try {
             const accessToken = localStorage.getItem("accessToken");
-            console.log("ini token", accessToken);
+            // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
             setData(data.data.data)
         } catch (error) {
@@ -118,7 +118,7 @@ const UpdateProfile = () => {
                 birthdate: '',
             });
     }, [data.id])
-    console.log('form values', formik.values);
+    // console.log('form values', formik.values);
     return (
         <div>
             <Toaster />
@@ -135,7 +135,6 @@ const UpdateProfile = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="mb-10 mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Username</div>

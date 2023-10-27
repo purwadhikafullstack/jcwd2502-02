@@ -1,10 +1,8 @@
 import { Toaster, toast } from "react-hot-toast";
 import { IoArrowBackOutline } from "react-icons/io5";
 import { IoArrowForwardOutline } from "react-icons/io5";
-
 const Pagination = ({ totalPost, postsPerPage, setCurrentPage, currentPage }) => {
     let pages = [];
-
     for (let i = 1; i <= Math.ceil(totalPost / postsPerPage); i++) {
         pages.push(i);
     }
@@ -54,5 +52,4 @@ const Pagination = ({ totalPost, postsPerPage, setCurrentPage, currentPage }) =>
         </div>
     );
 };
-
 export default Pagination;

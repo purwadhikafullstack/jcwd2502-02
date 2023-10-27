@@ -4,7 +4,6 @@ import axios from "axios"
 import { useRef, useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import { api1 } from "../api/api"
-
 const ModalNewCategory = () => {
     const inputCategoryName = useRef();
     const api = api1()
@@ -25,7 +24,6 @@ const ModalNewCategory = () => {
             console.log(error);
         }
     }
-
     return (
         <div>
             <button className="btn bg-yellow-400 ml-5 mt-3" onClick={() => document.getElementById('my_modal_3').showModal()}>Add Category</button>

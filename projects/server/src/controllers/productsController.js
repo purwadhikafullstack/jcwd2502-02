@@ -40,7 +40,6 @@ module.exports = {
     editCategory: async (req, res, next) => {
         try {
             const { id, name } = req.body;
-            console.log(req.files);
             const category = await editCategoryService1(id);
             const categoryUpdate = await editCategoryService2(id, name);
             res.status(201).send({
@@ -56,17 +55,12 @@ module.exports = {
         try {
             // 1. Ambil id image
             const { idImage } = req.params
-            // console.log(">>>>UI0");
-            // console.log(req.files.image[0]);
-            // console.log(">>>>UI1");
             // 2. Ambil path image lama
             const findImage = await db.product_category.findOne({
                 where: {
                     id: idImage
                 }
             })
-            // console.log(findImage);
-            // console.log(">>>>UI2");
             // 3. Update new path on table
             console.log(req.files);
             const newImage = await db.product_category.update({
@@ -76,14 +70,11 @@ module.exports = {
                     id: idImage
                 }
             })
-            // console.log('<<<');
-            // console.log(newImage);
             // 4. Delete image lama
             deleteFiles({
                 image: [findImage.dataValues.image
                 ]
             })
-
             // 5. Kirim response
             res.status(201).send({
                 isError: false,
@@ -115,7 +106,6 @@ module.exports = {
             const like = Op.like
             if (!catId && !searchQuery) {
                 const allProduct = await getAllProductsService2(sort);
-                console.log(allProduct);
                 res.status(201).send({
                     isError: false,
                     message: "Get All Products Success 0",
@@ -164,7 +154,6 @@ module.exports = {
         try {
             const { id } = req.params;
             const category = await db.product_category.findOne({ where: { id } });
-            console.log(category.dataValues.name);
             if (!category) {
                 return res.status(200).send({
                     isError: true,
@@ -183,10 +172,7 @@ module.exports = {
     saveEditCat: async (req, res, next) => {
         try {
             const { inputCat, id } = req.body;
-            console.log(inputCat);
-            console.log(id);
             const newCategory = await db.product_category.update({ name: inputCat }, { where: { id } });
-            console.log(newCategory);
             res.status(200).send({
                 isError: false,
                 message: "Changes Success!",

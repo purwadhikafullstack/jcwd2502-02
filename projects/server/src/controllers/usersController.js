@@ -21,7 +21,8 @@ module.exports = {
                     username: account.data.username,
                     email: account.data.email,
                     role: account.data.role,
-                    jwt: account.data.jwt
+                    jwt: account.data.jwt,
+                    profile_picture: account.data.profile_picture,
                 }
             })
         } catch (error) {
@@ -34,7 +35,6 @@ module.exports = {
             const { username, email, password, phone_number, referral } = req.body;
             const newUser = await registerUser(username, email, password, phone_number, referral)
             console.log(newUser);
-
             if (!newUser.isError) {
                 respondHandler(res, {
                     message: "Registration success, please check your email to verify your account!",
@@ -163,35 +163,12 @@ module.exports = {
             next(error)
         }
     },
-
-    getUserData: async (req, res, next) => {
-        try {
-            // const { id } = req.body
-            console.log(req.headers.authorization);
-            const findUser = await db.user.findOne({
-                where: {
-                    id: 4
-                }
-            })
-            res.status(201).send({
-                isError: false,
-                message: "Get User Success",
-                data: findUser
-            })
-        } catch (error) {
-            next(error)
-        }
-    },
-
-
     updateProfile: async (req, res, next) => {
         try {
             // const { id } = req.params
             console.log(req.files.image);
             const data = JSON.parse(req.body.data)
-
             console.log(data);
-
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',
@@ -202,7 +179,6 @@ module.exports = {
             next(error)
         }
     },
-
     updateImage: async (req, res, next) => {
         try {
             // 1. Ambil id image

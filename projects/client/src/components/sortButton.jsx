@@ -13,5 +13,4 @@ const SortButton = (props) => {
         </div>
     );
 };
-
 export default SortButton;

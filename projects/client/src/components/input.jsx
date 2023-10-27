@@ -1,6 +1,5 @@
 import { forwardRef } from "react";
 import React from "react";
-
 const Input = React.forwardRef((props, ref) => {
     return (
         <div>
@@ -15,5 +14,4 @@ const Input = React.forwardRef((props, ref) => {
         </div>
     );
 });
-
 export default Input;

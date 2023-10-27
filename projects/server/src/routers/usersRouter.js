@@ -19,7 +19,6 @@ Router.post('/update-profile/', upload, usersController.updateProfile)
 
 Router.get('/fetch-user', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);
-Router.get('/find-user', usersController.getUserData);
 
 
 

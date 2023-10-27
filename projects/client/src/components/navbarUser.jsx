@@ -9,13 +9,12 @@ import { Link } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
-
 const Navbar = () => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.users)
     const handleLogout = async (e) => {
         e.preventDefault()
-        console.log('akan logout');
+        // console.log('akan logout');
         await dispatch(logout())
     }
     return (
@@ -26,21 +25,16 @@ const Navbar = () => {
                         <img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" />
                     </div>
                 </Link>
-
-
                 <div className="grid items-center">
                     <div className=" flex rounded-full bg-white">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input type="text" className=" outline-none rounded-full h-[30px] w-[140px] md:w-[250px] lg:w-[300px] text-xs pl-2" placeholder=" Search on BuyFresh" />
                     </div>
-
                 </div>
-
                 <div className="flex gap-5">
                     <div className="grid items-center">
                         <HiShoppingCart className="text-white text-4xl" />
                     </div>
-
                     <div className="grid items-center">
                         <div className="drawer-end">
                             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -64,17 +58,13 @@ const Navbar = () => {
                                 {
                                     user.username ?
                                         <ul className="menu p-4 w-64 md:w-80 min-h-full bg-white border-l-4 border-yellow-300 text-xl text-black ">
-
                                             <div className="grid place-content-center">
                                                 <img className="w-[150px] h-[150px] bg-base-200 rounded-full drawer-button border-4 border-green-600" src={process.env.REACT_APP_URL + `${user?.profile_picture}`} alt="" />
                                             </div>
                                             <div className="bg-gradient-to-b from-yellow-300 to-green-600 rounded-3xl my-5 text-white">
-
                                                 <div className="flex justify-center text-xl font-black pt-5">Welcome, {user?.username}!</div>
                                                 <div className="flex justify-center text-md pb-5">{user?.email}</div>
-
                                             </div>
-
                                             <Link to={'/profile'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200">
                                                     <div className="flex gap-5 hover:text-white rounded-full "><FaUserLarge /> My Profile</div>
@@ -96,7 +86,7 @@ const Navbar = () => {
                                                 </li>
                                             </Link>
                                             <Link to={`/register`}>
-                                                <li className="hover:bg-red-600 rounded-full ease-in duration-200">
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200">
                                                     <div className="flex gap-5 hover:text-white rounded-full ease-in duration-200"><FaUserLarge />Sign Up</div></li>
                                             </Link>
                                         </ul>
@@ -105,10 +95,8 @@ const Navbar = () => {
                         </div>
                     </div>
                 </div>
-
             </div >
         </div>
     )
 }
-
 export default Navbar

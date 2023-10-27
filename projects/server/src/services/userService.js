@@ -101,7 +101,8 @@ module.exports = {
                     username: account.dataValues.username,
                     email: account.dataValues.email,
                     role: account.dataValues.role,
-                    jwt: token
+                    jwt: token,
+                    profile_picture: account.dataValues.profile_picture
                 }
             }
         } catch (error) {

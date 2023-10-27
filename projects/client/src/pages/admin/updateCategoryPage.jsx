@@ -7,7 +7,6 @@ import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import axios from "axios";
-
 const UpdateProductsCategoryPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
@@ -24,7 +23,7 @@ const UpdateProductsCategoryPage = () => {
     };
     const handleEditCategory = async (catId) => {
         try {
-            console.log("handleEditCategory" + catId);
+            // console.log("handleEditCategory" + catId);
             setCatId(catId);
             const res = await api.get(`products/onecategory/${catId}`);
             setInputCat(res.data.data);
@@ -34,12 +33,12 @@ const UpdateProductsCategoryPage = () => {
     };
     const handleSaveCat = async () => {
         try {
-            console.log("handleSaveCat" + catId);
+            // console.log("handleSaveCat" + catId);
             const res = await api.patch(`products/savecategory`, {
                 inputCat,
                 id: catId,
             });
-            console.log(res);
+            // console.log(res);
             setModal(!modal);
             onGetCategory();
         } catch (error) {
@@ -47,9 +46,7 @@ const UpdateProductsCategoryPage = () => {
         }
     };
     const debouncedSubmit = debounce((value) => {
-
     }, 1000);
-
     useEffect(() => {
         onGetCategory();
     }, []);
@@ -106,6 +103,5 @@ const UpdateProductsCategoryPage = () => {
             </div>
         </div>
     )
-
 }
 export default UpdateProductsCategoryPage

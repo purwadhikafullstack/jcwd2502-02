@@ -22,15 +22,12 @@ const ProductListPage = () => {
     const firstPostIndex = lastPostIndex - postPerPage;
     const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
-
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
-
     const debouncedSearch = debounce((value) => {
-        console.log(value);
+        // console.log(value);
         setSearchQuery(value);
     }, 1000);
-
     const onGetCategory = async () => {
         try {
             const category = await api.get(`/products/category`);
@@ -83,7 +80,6 @@ const ProductListPage = () => {
                                     <CategoryCard onClick={() => onFilterCat(value.id)} name={value.name} image={value.image} />
                                 </Link>
                             </div>
-
                         )
                     })}
                 </div>

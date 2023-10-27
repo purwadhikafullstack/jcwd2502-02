@@ -25,41 +25,29 @@ const ProfilePage = () => {
     const getUserData = async () => {
         try {
             const accessToken = localStorage.getItem("accessToken");
-            console.log("ini token", accessToken);
-
+            // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
-            console.log(data.data.data);
+            // console.log(data.data.data);
             setData(data.data.data)
         } catch (error) {
-
         }
     }
     useEffect(() => {
         getUserData()
     }, [])
-
-    console.log(data);
-
+    // console.log(data);
     return (
         <div>
-
             <Navbar />
-
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
-
                 <div className="flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile <div className="grid place-content-center">
-
                 </div></div>
-
                 <div className="grid md:grid-cols-3 md:mb-20 ">
-
                     <div className="bg-gradient-to-r from-green-700 from-90% via-emerald-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
                         <div className="grid place-content-center py-10 ">
-
                             <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={process.env.REACT_APP_URL + `${data?.profile_picture
                                 }`} alt="" />
                         </div>
-
                         <div className=" mb-5 p-5 md:p-5 text-white md:flex md:flex-col md:justify-center">
                             <div>
                                 <div className="font-bold text-xl">Main Shipping Address</div>
@@ -68,17 +56,14 @@ const ProfilePage = () => {
                                 <div>Tangerang Selatan</div>
                                 <div>Banten</div>
                             </div>
-
                             <div className="my-3">
                                 <div className="font-bold text-xl">Phone Number</div>
                                 <div>{data.phone_number}</div>
                             </div>
-
                             <div className="my-3">
                                 <div className="font-bold text-xl">Referral Code</div>
                                 <div>082112436747</div>
                             </div>
-
                             <div className=" mt-5 md:mt-10 grid gap-2 text-lg">
                                 <div className="hover:underline ease-in duration-200">Manage Address</div>
                                 <div className="hover:underline ease-in duration-200">Change Password</div>
@@ -88,7 +73,6 @@ const ProfilePage = () => {
                             </div>
                         </div>
                     </div>
-
                     <div className="my-5 md:my-0 md:p-10  mb-10 flex flex-col gap-3 border p-3 py-5 rounded-xl  md:rounded-none md:rounded-r-3xl md:col-span-2 shadow-xl">
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800 text-2xl">Username</div>
@@ -112,15 +96,10 @@ const ProfilePage = () => {
                             <div className="p-2 text-xl">{data.birthdate == null ? "Data is not Yet Set" : data.birthdate}</div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-
             <Footer />
-
         </div>
     )
 }
-
 export default ProfilePage

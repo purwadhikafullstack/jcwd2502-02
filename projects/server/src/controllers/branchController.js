@@ -16,14 +16,11 @@ module.exports = {
             next(error)
         }
     },
-
     nearestBranch: async (req, res, next) => {
         try {
             const { id } = req.params;
             const branch = await nearestBranchService1(id)
-
             const product = await nearestBranchService2(id)
-
             res.status(201).send({
                 isError: false,
                 message: "Get Nearest Branch Success",
