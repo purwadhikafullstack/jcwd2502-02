@@ -104,8 +104,6 @@ const UpdateProductsCategoryPage = () => {
                     {/* <button className="btn bg-red-600 text-white border-red-600 hover:bg-red-600 hover:border-black">Delete</button> */}
                 </div>
             </div>
-
-
         </div>
     )
 
