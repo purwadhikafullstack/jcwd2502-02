@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { AiFillEdit } from "react-icons/ai";
 
 
 const UpdateProfile = () => {
@@ -124,22 +123,11 @@ const UpdateProfile = () => {
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                {/* <div className="grid place-content-center py-10">
-                    <div className="relative">
-                        <img className="w-[200px] border h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full" src={formik.values.file ? URL.createObjectURL(formik.values.file) : currentImage} alt="" />
-                        <input
-                            type="file" accept=".jpg, .jpeg, .png" name="file" onChange={onSelectImages} hidden ref={inputFileRef}
-                        />
-                        <div onClick={() => inputFileRef.current.click()}>
-                            <AiFillEdit className="text-3xl rounded-full p-2 w-[50px] h-[50px] absolute top-0 right-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200 hover:shadow-green-200 shadow-md" />
-                        </div>
-                    </div>
-                </div> */}
 
-                {/* <div className="mx-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">
-                </div> */}
+                <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">
+                    Update Profile </div>
 
-                <div className="lg:mt-5 mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
+                <div className=" mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
                     {/* <div className="mt-10"></div> */}
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Username</div>

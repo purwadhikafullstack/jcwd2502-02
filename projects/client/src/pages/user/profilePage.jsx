@@ -94,7 +94,7 @@ const ProfilePage = () => {
                                     type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={inputFileRef} onChange={onSelectImages}
                                 />
                                 <div onClick={() => inputFileRef.current.click()}>
-                                    <AiFillEdit className="text-3xl rounded-full p-2 w-[50px] h-[50px] absolute top-0 right-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200 hover:shadow-green-200 shadow-md" />
+                                    <AiFillEdit className="text-3xl rounded-full p-2 w-[50px] h-[50px] absolute top-0 right-0 z-1 bg-white text-green-800 hover:scale-105 ease-in duration-200 " />
                                 </div>
                             </div>
 
