@@ -9,5 +9,4 @@ Router.get('/', verify, cartController.getCart)
 Router.post('/add/:productId', verify, cartController.addCart)
 
 
-
 module.exports = Router;
