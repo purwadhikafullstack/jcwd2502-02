@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { AiFillEdit } from "react-icons/ai";
 
 
 const UpdateProfile = () => {
@@ -33,21 +34,21 @@ const UpdateProfile = () => {
         }
     }
 
-    const onSelectImages = (event) => {
-        try {
-            const file = event.target.files;
+    // const onSelectImages = (event) => {
+    //     try {
+    //         const file = event.target.files;
 
-            if (file) {
-                // Check file size and type here (validation)
-                if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
-                    message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
-                }
-                formik.setFieldValue('file', file);
-            }
-        } catch (error) {
-            toast.error(error.message)
-        }
-    };
+    //         if (file) {
+    //             // Check file size and type here (validation)
+    //             if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+    //                 message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+    //             }
+    //             formik.setFieldValue('file', file);
+    //         }
+    //     } catch (error) {
+    //         toast.error(error.message)
+    //     }
+    // };
 
     const formik = useFormik({
         initialValues: {
@@ -60,21 +61,8 @@ const UpdateProfile = () => {
         },
         onSubmit: async (values) => {
             try {
-                const formData = new FormData();
-                // Append the selected file to the FormData object
 
-                formData.append('data', JSON.stringify({
-                    username: values.username,
-                    email: values.email,
-                    gender: values.gender,
-                    birthdate: values.birthdate,
-                }));
-
-                if (values.file) {
-                    formData.append('image', values.file);
-                }
-
-                const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formData)
+                const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
                 toast.success(updateUserData.data.message);
             } catch (error) {
                 console.log(error);
@@ -117,14 +105,16 @@ const UpdateProfile = () => {
                 birthdate: '',
             });
     }, [data.id])
-    // console.log('form values', formik.values);
+
     return (
         <div>
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
 
-                <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">
+
+
+                <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">   <div className="grid place-content-center"><AiFillEdit /></div>
                     Update Profile </div>
 
                 <div className=" mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">

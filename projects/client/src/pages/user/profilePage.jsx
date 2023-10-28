@@ -10,13 +10,8 @@ import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
 import toast, { Toaster } from "react-hot-toast";
 
 const ProfilePage = () => {
-    const [username, setUsername] = useState('')
-    const [email, setEmail] = useState('')
-    const [gender, setGender] = useState('')
-    const [birthdate, setBirthdate] = useState('')
     const apiInstance = api()
     const [data, setData] = useState('')
-    const [image, setImage] = useState()
 
     const inputFileRef = useRef(null);
 
@@ -55,6 +50,7 @@ const ProfilePage = () => {
                 const response = await apiInstance.patch(`users/update-image`, formData)
                 console.log(response.data.data);
                 dispatch(setProfile_Picture(response.data.data.profile_picture))
+                toast.success("Profile Picture Updated")
             }
 
 

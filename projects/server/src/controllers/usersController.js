@@ -206,7 +206,6 @@ module.exports = {
                 ]
             })
             // 5. Kirim response
-
             const newUser = await findId(id)
 
             res.status(201).send({
