@@ -104,7 +104,7 @@ const LandingPage = () => {
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">
+                <div className="flex justify-center px-3 md:justify-start md:ml-20 lg:ml-48 py-5">
                     <ModalAddress />
                 </div>
                 <Jumbotron />

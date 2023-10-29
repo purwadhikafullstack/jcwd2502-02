@@ -68,7 +68,7 @@ export default function RegistrationPage() {
     // console.log('form values', formik.values);
 
     return (
-        <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-emerald-300">
+        <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-yellow-300">
             <Toaster />
             <div className='grid place-content-center'>
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
@@ -89,7 +89,7 @@ export default function RegistrationPage() {
                     <div className='text-red-500 font-bold'> {formik.errors.phone_number} </div>
                     <label className='text-white' htmlFor="" >Reff. Code</label>
                     <div className='flex justify-between gap-5 '>
-                        <input type="text" id='referral' name='referral' onChange={() => formik.handleChange} value={formik.values.referral} className='rounded-md p-2 w-full' />
+                        <input type="text" id='referral' name='referral' onChange={formik.handleChange} value={formik.values.referral} className='rounded-md p-2 w-full' />
                         <Button text={'Confirm'} onClick={handleReferral} style={""} />
                     </div>
                     <div className='flex justify-center m-4'>

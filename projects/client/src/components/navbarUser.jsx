@@ -5,15 +5,17 @@ import { FaUserLarge } from "react-icons/fa6";
 import { RiFileList3Fill } from "react-icons/ri";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { RiLogoutBoxRFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
 import { getCartAsync } from "../redux/Features/cart";
 import { clearCart } from "../redux/Features/cart";
 import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
     const { cart } = useSelector((state) => state.cart)
     const user = useSelector((state) => state.users)
@@ -21,6 +23,8 @@ const Navbar = () => {
         e.preventDefault()
         dispatch(logout());
         dispatch(clearCart());
+        navigate('/')
+        window.location.reload();
     }
 
     useEffect(() => {
