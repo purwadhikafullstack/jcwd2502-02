@@ -1,10 +1,17 @@
 import Button from "./button"
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "../redux/Features/cart";
 
 const ProductCard = (props) => {
     const dispatch = useDispatch()
+    const cart = useSelector((state) => state.cart);
+    const isInCart = cart.cart.some(item => item.products_id === props.data);
+    // console.log(cart.cart.quantity);
 
+    const getProductQuantity = () => {
+        const productInCart = cart.cart.find(item => item.products_id === props.data);
+        return productInCart ? productInCart.quantity : 0;
+    };
 
 
     return (
@@ -17,8 +24,20 @@ const ProductCard = (props) => {
                     <div className="text-gray-400"> Stock(s): {props.stock}</div>
                     <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
                 </div>
-                <div className="flex justify-center pt-2 w-full"><Button style={"lg:w-[200px]"} text={"Add to Cart"}
-                    onClick={() => dispatch(addToCartAsync(props.data))} />
+                <div className="flex justify-center pt-2 w-full">
+
+                    {isInCart ? (
+                        <div className="flex items-center">
+                            <Button style={"lg:w-[50px]"} text="-" />
+                            <div>{getProductQuantity()}</div>
+                            <Button style={"lg:w-[50px]"} text="+" onClick={() => dispatch(addToCartAsync(props.data))} />
+                        </div>
+                    ) : (
+                        <Button style={"lg:w-[200px]"} text={"Add to Cart"} onClick={() => dispatch(addToCartAsync(props.data))} />
+                    )}
+
+                    {/* <Button style={"lg:w-[200px]"} text={"Add to Cart"}
+                        onClick={() => dispatch(addToCartAsync(props.data))} /> */}
                 </div>
             </div>
         </div >
