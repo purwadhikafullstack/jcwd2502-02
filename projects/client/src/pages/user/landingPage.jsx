@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 import { api1 } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
+
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
     const [products, setProducts] = useState("")
@@ -97,6 +98,7 @@ const LandingPage = () => {
     //     console.log("current", currentLocation);
     //     console.log("nearest", nearestLocation);
     // }, [nearestLocation])
+
     return (
         <div className="">
             <Toaster />
@@ -106,18 +108,21 @@ const LandingPage = () => {
                     <ModalAddress />
                 </div>
                 <Jumbotron />
-                <div className="h-[190px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
-                    {category.map((value, index) => {
-                        return (
-                            <div key={index}>
-                                <Link to={`/products?category=${value.id}`}>
-                                    <CategoryCard name={value.name} image={value.image} />
-                                </Link>
-                            </div>
+                <div className="">
+                    <div className="h-[190px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
+                        {category.map((value, index) => {
+                            return (
+                                <div key={index} className="">
+                                    <Link to={`/products?category=${value.id}`}>
+                                        <CategoryCard name={value.name} image={value.image} />
+                                    </Link>
+                                </div>
 
-                        )
-                    })}
+                            )
+                        })}
+                    </div>
                 </div>
+
                 <div className="mb-10">
                     <RecommendProducts data={products} branchName={branchName} />
                 </div>
