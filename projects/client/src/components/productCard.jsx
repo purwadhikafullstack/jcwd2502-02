@@ -1,6 +1,7 @@
 import Button from "./button"
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "../redux/Features/cart";
+import { deleteItemInCartAsync } from "../redux/Features/cart";
 
 const ProductCard = (props) => {
     const dispatch = useDispatch()
@@ -28,7 +29,7 @@ const ProductCard = (props) => {
 
                     {isInCart ? (
                         <div className="flex items-center gap-2 lg:gap-5">
-                            <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" />
+                            <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
                             <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
                             <Button style={"lg:w-[50px] text-xl rounded-full"} text="+" onClick={() => dispatch(addToCartAsync(props.data))} />
                         </div>

@@ -1,6 +1,6 @@
 const db = require("./../models")
 const respondHandler = require('../utils/resnpondHandler');
-const { cartUserId, addToCart } = require('../services/cartService')
+const { cartUserId, addToCart, itemDelete } = require('../services/cartService')
 
 module.exports = {
     getCart: async (req, res, next) => {
@@ -35,44 +35,35 @@ module.exports = {
             //     });
             // }
 
-            //this is service
-            // const updatedCart = await addToCart(id, productId);
-
-            const getProduct = await db.product.findOne({
-                where: { id: productId }
-            });
-
-            const checkCart = await db.cart.findOne({
-                where: {
-                    user_id: id,
-                    products_id: productId
-                }
-            });
-
-            if (checkCart) {
-                await db.cart.update(
-                    { quantity: checkCart.quantity + 1 },
-                    { where: { id: checkCart.id } }
-                );
-            } else {
-                await db.cart.create({ user_id: id, products_id: productId, quantity: 1 });
-            }
-
-            const updateCart = await db.cart.findAll({
-                where: {
-                    user_id: id,
-                }
-            });
+            const updatedCart = await addToCart(id, productId);
 
             respondHandler(res, {
                 message: "Get Cart Success",
-                data: updateCart
+                data: updatedCart
             })
 
         } catch (error) {
             next(error)
         }
     },
+
+    deleteItem: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+            const { productId } = req.params
+
+            const updatedCart = await itemDelete(id, productId);
+
+
+            respondHandler(res, {
+                message: "Get Cart Success",
+                data: updatedCart
+            })
+
+        } catch (error) {
+            next(error)
+        }
+    }
 
 
 
