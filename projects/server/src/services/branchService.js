@@ -3,7 +3,7 @@ module.exports = {
     getBranchService: async () => {
         try {
             return await db.store_branch.findAll({
-                attributes: ['id', 'longitude', 'latitude']
+                attributes: ['id', 'longitude', 'latitude', 'name']
             })
         } catch (error) {
             return error

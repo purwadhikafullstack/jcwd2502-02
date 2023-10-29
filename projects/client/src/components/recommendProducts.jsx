@@ -49,7 +49,7 @@ const RecommendProducts = (props) => {
                 <div className="pb-5">
                     <div className="text-4xl font-bold my-5">Only Made For You!</div>
                     <div className="flex justify-between">
-                        <div className="flex gap-2"> <FaLocationDot className="mt-1" /> Branch Tangerang Selatan</div>
+                        <div className="flex gap-2"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
                         <div className="text-green-600 hover:underline"> See More!</div>
                     </div>
                 </div>

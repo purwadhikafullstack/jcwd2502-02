@@ -16,8 +16,8 @@ import { api1 } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
-    const [storeID, setStoreID] = useState(null)
     const [products, setProducts] = useState("")
+    const [branchName, setBranchName] = useState()
     const [currentLocation, setCurrentLocation] = useState(null);
     const [nearestLocation, setNearestLocation] = useState(null);
     const [category, setCategory] = useState([]);
@@ -67,14 +67,15 @@ const LandingPage = () => {
                     nearest = location;
                 }
             });
-            // console.log(nearest);
+            console.log(nearest.name);
+            setBranchName(nearest.name)
             nearestBranch(nearest.id)
         });
     }
     const nearestBranch = async (storeId) => {
         try {
             const branch = await api.get(`/branch/nearest/${storeId}`)
-            // console.log(branch.data.data, "ini data branch");
+            console.log(branch.data.data, "ini data branch");
             setProducts(branch.data.data)
         } catch (error) {
             console.log(error);
@@ -89,8 +90,9 @@ const LandingPage = () => {
     }, []);
     useEffect(() => {
         if (branchLoc.length) calculation()
-        // console.log(branchLoc);
+        console.log(branchLoc);
     }, [branchLoc])
+
     // useEffect(() => {
     //     console.log("current", currentLocation);
     //     console.log("nearest", nearestLocation);
@@ -117,7 +119,7 @@ const LandingPage = () => {
                     })}
                 </div>
                 <div className="mb-10">
-                    <RecommendProducts data={products} />
+                    <RecommendProducts data={products} branchName={branchName} />
                 </div>
             </div>
             <Footer />

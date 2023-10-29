@@ -27,17 +27,14 @@ const ProductCard = (props) => {
                 <div className="flex justify-center pt-2 w-full">
 
                     {isInCart ? (
-                        <div className="flex items-center">
-                            <Button style={"lg:w-[50px]"} text="-" />
-                            <div>{getProductQuantity()}</div>
-                            <Button style={"lg:w-[50px]"} text="+" onClick={() => dispatch(addToCartAsync(props.data))} />
+                        <div className="flex items-center gap-2 lg:gap-5">
+                            <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" />
+                            <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
+                            <Button style={"lg:w-[50px] text-xl rounded-full"} text="+" onClick={() => dispatch(addToCartAsync(props.data))} />
                         </div>
                     ) : (
                         <Button style={"lg:w-[200px]"} text={"Add to Cart"} onClick={() => dispatch(addToCartAsync(props.data))} />
                     )}
-
-                    {/* <Button style={"lg:w-[200px]"} text={"Add to Cart"}
-                        onClick={() => dispatch(addToCartAsync(props.data))} /> */}
                 </div>
             </div>
         </div >
