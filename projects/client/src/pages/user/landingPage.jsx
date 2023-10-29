@@ -3,9 +3,6 @@ import Footer from "../../components/footer"
 import Jumbotron from "../../components/jumbotron"
 import RecommendProducts from "../../components/recommendProducts"
 import ModalAddress from "../../components/modalAddress"
-import { FaLocationDot } from "react-icons/fa6";
-import { BiSolidDownArrow } from "react-icons/bi";
-import ProductCard from "../../components/productCard"
 import CategoryCard from "../../components/categoryCard"
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
@@ -16,6 +13,7 @@ import { onCheckIsLogin } from "../../redux/Features/users";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 import { api1 } from "../../api/api";
+import toast, { Toaster } from "react-hot-toast";
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
     const [storeID, setStoreID] = useState(null)
@@ -99,6 +97,7 @@ const LandingPage = () => {
     // }, [nearestLocation])
     return (
         <div className="">
+            <Toaster />
             <Navbar />
             <div className="mt-[70px]">
                 <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">

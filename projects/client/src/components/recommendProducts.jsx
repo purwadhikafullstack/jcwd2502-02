@@ -5,8 +5,11 @@ import "slick-carousel/slick/slick-theme.css";
 import "../css/style.css"
 import { FaLocationDot } from "react-icons/fa6";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addToCartAsync } from "../redux/Features/cart";
 
 const RecommendProducts = (props) => {
+    const dispatch = useDispatch()
     const products = props.data
     // console.log(products);
     const settings = {
@@ -39,6 +42,7 @@ const RecommendProducts = (props) => {
             }
         ]
     };
+
     return (
         <div className="w-[auto] px-5 md:px-20 lg:px-48 mt-16 ">
             <div>
@@ -61,6 +65,7 @@ const RecommendProducts = (props) => {
                                             description={value.product.description}
                                             price={value.product.price}
                                             stock={value.stock}
+                                            data={value.id}
                                         />
                                     </div>
                                 ))

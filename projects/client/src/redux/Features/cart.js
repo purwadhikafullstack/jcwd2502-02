@@ -37,6 +37,21 @@ export const getCartAsync = () => async (dispatch) => {
     }
 }
 
+export const addToCartAsync = (data) => async (dispatch) => {
+    try {
+        console.log('???')
+        console.log(data)
+        const productId = data
+        const response1 = await api().post(`http://localhost:8905/api/cart/add/${productId}`)
+        console.log(response1);
+        toast.success("Item added to Cart");
+        console.log("POST SUCCESS");
+        dispatch(getCartAsync())
+    } catch (error) {
+        console.log(error)
+    }
+}
+
 
 export const { setCarts, clearCart } = cartSlice.actions
 

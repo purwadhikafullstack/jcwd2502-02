@@ -34,17 +34,46 @@ module.exports = {
             //         data: null
             //     });
             // }
-            const updatedCart = await addToCart(id, productId);
+
+            //this is service
+            // const updatedCart = await addToCart(id, productId);
+
+            const getProduct = await db.product.findOne({
+                where: { id: productId }
+            });
+
+            const checkCart = await db.cart.findOne({
+                where: {
+                    user_id: id,
+                    products_id: productId
+                }
+            });
+
+            if (checkCart) {
+                await db.cart.update(
+                    { quantity: checkCart.quantity + 1 },
+                    { where: { id: checkCart.id } }
+                );
+            } else {
+                await db.cart.create({ user_id: id, products_id: productId, quantity: 1 });
+            }
+
+            const updateCart = await db.cart.findAll({
+                where: {
+                    user_id: id,
+                }
+            });
 
             respondHandler(res, {
                 message: "Get Cart Success",
-                data: updatedCart
+                data: updateCart
             })
 
         } catch (error) {
             next(error)
         }
-    }
+    },
+
 
 
 }

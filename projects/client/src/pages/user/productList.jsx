@@ -107,6 +107,7 @@ const ProductListPage = () => {
                                     image={value.image}
                                     description={value.description}
                                     price={value.price}
+                                    data={value.id}
                                 />
                             </div>
                         );
