@@ -105,12 +105,15 @@ const LandingPage = () => {
                     <ModalAddress />
                 </div>
                 <Jumbotron />
-                <div className="h-[160px] pt-1 lg:h-[180px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex ">
+                <div className="h-[190px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
                     {category.map((value, index) => {
                         return (
-                            <Link to={`/products?category=${value.id}`}>
-                                <CategoryCard name={value.name} image={value.image} />
-                            </Link>
+                            <div key={index}>
+                                <Link to={`/products?category=${value.id}`}>
+                                    <CategoryCard name={value.name} image={value.image} />
+                                </Link>
+                            </div>
+
                         )
                     })}
                 </div>

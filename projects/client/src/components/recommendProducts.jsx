@@ -40,7 +40,7 @@ const RecommendProducts = (props) => {
         ]
     };
     return (
-        <div className="w-[auto] px-5 md:px-20 lg:px-48 ">
+        <div className="w-[auto] px-5 md:px-20 lg:px-48 mt-16 ">
             <div>
                 <div className="pb-5">
                     <div className="text-4xl font-bold my-5">Only Made For You!</div>
@@ -60,6 +60,7 @@ const RecommendProducts = (props) => {
                                             image={value.product.image}
                                             description={value.product.description}
                                             price={value.product.price}
+                                            stock={value.stock}
                                         />
                                     </div>
                                 ))
