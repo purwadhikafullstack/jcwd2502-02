@@ -5,23 +5,32 @@ import { FaUserLarge } from "react-icons/fa6";
 import { RiFileList3Fill } from "react-icons/ri";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { RiLogoutBoxRFill } from "react-icons/ri";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
+import { getCartAsync } from "../redux/Features/cart";
+import { clearCart } from "../redux/Features/cart";
 import { useEffect } from "react";
+import { Navigate } from "react-router-dom";
 
 const Navbar = () => {
+    const navigate = useNavigate()
     const dispatch = useDispatch()
+    const { cart } = useSelector((state) => state.cart)
     const user = useSelector((state) => state.users)
     const handleLogout = async (e) => {
         e.preventDefault()
-        // console.log('akan logout');
-        await dispatch(logout())
+        dispatch(logout());
+        dispatch(clearCart());
+        navigate('/')
+        window.location.reload();
     }
 
     useEffect(() => {
-    }, [user?.profile_picture])
+        dispatch(getCartAsync());
+    }, [dispatch]);
+
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
@@ -37,9 +46,11 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div className="flex gap-5">
-                    <div className="grid items-center">
-                        <HiShoppingCart className="text-white text-4xl" />
+                    <div className="grid items-center relative mt-2 px-5">
+                        <div><HiShoppingCart className="text-white text-4xl" /></div>
+                        <div className="absolute top-0 right-0 border-2 border-green-800 rounded-full px-2 font-black bg-yellow-300 text-green-800 text-sm">{cart?.length}</div>
                     </div>
+
                     <div className="grid items-center">
                         <div className="drawer-end">
                             <input id="my-drawer" type="checkbox" className="drawer-toggle" />

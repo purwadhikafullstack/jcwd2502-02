@@ -69,7 +69,7 @@ const ProductListPage = () => {
         <div className="">
             <Navbar />
             <div className="mt-[70px] pt-3">
-                <div className=" lg:h-[180px] lg:py-5 pt-5 px-2 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex w-auto lg:mt-10 ">
+                <div className="h-[190px] pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
                     {/* <Link to={`/products?category=`}>
                         <CategoryCard name={"Show All"} image={`public/showall.jpg`} onClick={() => onFilterCat("")} />
                     </Link> */}
@@ -107,6 +107,7 @@ const ProductListPage = () => {
                                     image={value.image}
                                     description={value.description}
                                     price={value.price}
+                                    data={value.id}
                                 />
                             </div>
                         );

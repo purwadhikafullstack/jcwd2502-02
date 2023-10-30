@@ -24,7 +24,7 @@ const ProfilePage = () => {
 
     const getUserData = async () => {
         try {
-            const accessToken = localStorage.getItem("accessToken");
+            // const accessToken = localStorage.getItem("accessToken");
             // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
             // console.log(data.data.data);
