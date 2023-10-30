@@ -1,64 +1,30 @@
 const db = require("./../models")
-const respondHandler = require('../utils/resnpondHandler');
+const responseHandler = require('../utils/responseHandler');
 const { cartUserId, addToCart, itemDelete } = require('../services/cartService')
 
 module.exports = {
     getCart: async (req, res, next) => {
         try {
-            const { id } = req.dataToken;
-            const cart = await cartUserId(id)
-
-            respondHandler(res, {
-                message: "Get Cart Success",
-                data: cart
-            })
-
+            const cart = await cartUserId(req.dataToken)
+            responseHandler(res, "Get Cart Success", cart)
         } catch (error) {
             next(error)
         }
     },
-
     addCart: async (req, res, next) => {
         try {
-            const { id } = req.dataToken;
-            const { productId } = req.params
-            // if (!id) {
-            //     return respondHandler(res, {
-            //         message: "Please log-in to add item to cart",
-            //         data: null
-            //     });
-            // }
-
-            const updatedCart = await addToCart(id, productId);
-
-            respondHandler(res, {
-                message: "Get Cart Success",
-                data: updatedCart
-            })
-
+            const updatedCart = await addToCart(req.dataToken, req.params);
+            responseHandler(res, "Get Cart Success", updatedCart)
         } catch (error) {
             next(error)
         }
     },
-
     deleteItem: async (req, res, next) => {
         try {
-            const { id } = req.dataToken;
-            const { productId } = req.params
-
-            const updatedCart = await itemDelete(id, productId);
-
-
-            respondHandler(res, {
-                message: "Get Cart Success",
-                data: updatedCart
-            })
-
+            const updatedCart = await itemDelete(req.dataToken, req.params);
+            responseHandler(res, "Get Cart Success", updatedCart)
         } catch (error) {
             next(error)
         }
     }
-
-
-
 }
