@@ -14,6 +14,7 @@ const UpdateProductsCategoryPage = () => {
     const [catId, setCatId] = useState("");
     const [inputCat, setInputCat] = useState("");
     const [modal, setModal] = useState(false);
+    const [newImage, setNewImage] = useState("");
     const api = api1();
     const onGetCategory = async () => {
         try {
@@ -47,6 +48,20 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
+    const onSelectImages = (event) => {
+        try {
+            const file = event.target.files[0];
+            if (file) {
+                // Check file size and type here (validation)
+                if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+                    message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+                }
+                setNewImage(file)
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const debouncedSubmit = debounce((value) => {
     }, 1000);
     useEffect(() => {
@@ -71,7 +86,7 @@ const UpdateProductsCategoryPage = () => {
                                 <div className="relative">
                                     <CategoryCard image={value.image} />
                                     <div className="absolute left-0 right-0 top-0 ">
-                                        <input type="file" ref={inputImage} hidden />
+                                        <input type="file" ref={inputImage} hidden onChange={onSelectImages} />
                                         <button onClick={() => inputImage.current.click()} className="btn-circle bg-green-400 text-xs">
                                             Edit
                                         </button>
