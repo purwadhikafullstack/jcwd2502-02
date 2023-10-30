@@ -58,32 +58,38 @@ const ModalNewCategory = () => {
     }, []);
     return (
         <div>
-            <button className="btn bg-yellow-300 ml-5 mt-3 border-4 border-green-700" onClick={() => document.getElementById('my_modal_3').showModal()}>Add Category</button>
-            <dialog id="my_modal_3" className="modal">
-                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600  w-[300px] ">
+            <Button text={"Add Category"} style={"w-[300px]"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
+
+            {/* <Button style={"rounded-full w-[50px] h-[50px] text-2xl "} text={"+"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button> */}
+
+
+            <dialog id="my_modal_3" className="modal backdrop-blur-md">
+                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[350px] ">
                     <h3 className="font-bold text-4xl text-white">New Category</h3>
                     <div className="flex flex-col gap-5 mt-5">
-                        <div>
-                            <div className="text-white pb-2"> Category Name</div>
-                            <Input
-                                ref={inputCategoryName}
-                                type={"text"}
-                                style={"input w-full"} />
-                            <div className="text-white pb-2"> Category Image</div>
+                        <div className="grid gap-5">
                             <div>
-                                <input className="file-input w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
+                                <div className="text-white pb-2"> Category Name
+                                </div>
+                                <Input
+                                    ref={inputCategoryName}
+                                    type={"text"}
+                                    style={"input w-full"} />
                             </div>
-                            {/* <Input
-                                onChange={(e) => onSelectImages(e)}
-                                type={"file"}
-                                style={"input w-full grid place-content-center"} /> */}
+                            <div>
+                                <div className="text-white pb-2"> Category Image</div>
+                                <div>
+                                    <input className="file-input file-input-warning w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
+                                </div>
+                            </div>
+
                         </div>
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
                             <div className="flex gap-2">
-                                <button className="btn bg">Cancel</button>
-                                <button onClick={onCreateCategory} className="btn bg">Submit</button>
+                                <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
+                                <button onClick={onCreateCategory} className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800">Submit</button>
                             </div>
                         </form>
                     </div>
