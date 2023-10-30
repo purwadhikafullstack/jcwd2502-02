@@ -58,9 +58,9 @@ const ModalNewCategory = () => {
     }, []);
     return (
         <div>
-            <button className="btn bg-yellow-400 ml-5 mt-3" onClick={() => document.getElementById('my_modal_3').showModal()}>Add Category</button>
+            <button className="btn bg-yellow-300 ml-5 mt-3 border-4 border-green-700" onClick={() => document.getElementById('my_modal_3').showModal()}>Add Category</button>
             <dialog id="my_modal_3" className="modal">
-                <div className="modal-box bg-green-600 w-[300px] ">
+                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600  w-[300px] ">
                     <h3 className="font-bold text-4xl text-white">New Category</h3>
                     <div className="flex flex-col gap-5 mt-5">
                         <div>
@@ -70,10 +70,13 @@ const ModalNewCategory = () => {
                                 type={"text"}
                                 style={"input w-full"} />
                             <div className="text-white pb-2"> Category Image</div>
-                            <Input
+                            <div>
+                                <input className="file-input w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
+                            </div>
+                            {/* <Input
                                 onChange={(e) => onSelectImages(e)}
                                 type={"file"}
-                                style={"input w-full grid place-content-center"} />
+                                style={"input w-full grid place-content-center"} /> */}
                         </div>
                     </div>
                     <div className="modal-action">

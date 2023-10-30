@@ -9,6 +9,7 @@ import ModalNewCategory from "../../components/modalNewCategory";
 import axios from "axios";
 import { FiEdit3 } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
+import { AiFillEdit } from "react-icons/ai";
 
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef()
@@ -110,36 +111,35 @@ const UpdateProductsCategoryPage = () => {
                         <ModalNewCategory />
                     </div>
                 </div>
-                <div className="mt-5 pt-3 px-2 overflow-x-auto m-5 md:mx-24 flex-wrap lg:mx-40 gap-5 flex w-auto border-2">
+                <div className="mt-5 pt-3 px-2 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5">
                     {category.map((value, index) => {
                         return (
-                            <div key={index} className="flex border-2 w-full p-3 ">
+                            <div key={index} className="flex w-[500px] gap-3 md:w-full p-3 border-b-2 border-green-600 shadow-lg justify-between">
                                 <div className="relative">
                                     <CategoryCard image={value.image} />
                                     <div className="absolute left-0 right-0 top-0 ">
                                         <input type="file" accept=".jpg, .jpeg, .png" ref={inputImage} hidden onChange={(event) => onSelectImages(event)} />
-                                        <button onClick={() => { inputImage.current.click(); onSelectId(value.id) }} className="btn-circle bg-green-400 text-xs">
+                                        {/* <button onClick={() => { inputImage.current.click(); onSelectId(value.id) }} className="btn-circle bg-green-600 text-xs">
                                             Edit
-                                        </button>
-                                        {/* <FiEdit3 size={20} className=" rounded-full bg-slate-100 hover:bg-slate-300 active:scale-90" /> */}
+                                        </button> */}
+                                        <div onClick={() => { inputImage.current.click(); onSelectId(value.id) }}>
+                                            <AiFillEdit className="text-3xl rounded-full p-2 w-[50px] h-[50px] absolute top-0 left-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200 " />
+                                        </div>
                                     </div>
                                 </div>
-                                <div className="w-1/4 h-[100px] flex items-center ml-5 text-xl border-2">
+                                <div className="h-[100px] flex items-center ml-5 text-xl">
                                     <button className="">{value.name}</button>
                                 </div>
-                                <div className="w-1/4 h-[100px] flex items-center ml-2 border-2">
-                                    <button className="btn bg-yellow-400"
+                                <div className="h-[100px] flex items-center ml-2">
+                                    <button className="btn bg-yellow-300 border-4 border-green-700"
                                         onClick={() => {
                                             setModal(true);
                                             handleEditCategory(value.id);
                                         }}>EDIT</button>
-                                    <button className="btn bg-red-400 ml-3"
+                                    <button className="btn bg-red-600 ml-3 text-white border-4 border-black"
                                         onClick={() => {
                                             onDeleteCategory(value.id)
                                         }}>DELETE</button>
-                                </div>
-                                <div>
-                                    {value.id}
                                 </div>
                             </div>
                         )
@@ -163,6 +163,7 @@ const UpdateProductsCategoryPage = () => {
                     {/* <button className="btn bg-red-600 text-white border-red-600 hover:bg-red-600 hover:border-black">Delete</button> */}
                 </div>
             </div>
+            <Footer />
         </div>
     )
 }
