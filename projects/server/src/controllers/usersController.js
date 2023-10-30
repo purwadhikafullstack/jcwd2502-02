@@ -165,10 +165,9 @@ module.exports = {
     },
     updateProfile: async (req, res, next) => {
         try {
-            // const { id } = req.params
-            console.log(req.files.image);
             const data = JSON.parse(req.body.data)
-            console.log(data);
+            const image = req.files
+            console.log("log data parse= " + data);
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',

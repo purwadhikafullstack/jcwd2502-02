@@ -1,13 +1,15 @@
 import CategoryCard from "../../components/categoryCard";
 import Navbar from "../../components/navbarUser";
 import Footer from "../../components/footer";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api1 } from "../../api/api";
 import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import axios from "axios";
+import { FiEdit3 } from "react-icons/fi";
 const UpdateProductsCategoryPage = () => {
+    const inputImage = useRef()
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
     const [inputCat, setInputCat] = useState("");
@@ -66,13 +68,20 @@ const UpdateProductsCategoryPage = () => {
                     {category.map((value, index) => {
                         return (
                             <div key={index} className="flex border-2 w-full p-3 ">
-                                <div>
+                                <div className="relative">
                                     <CategoryCard image={value.image} />
+                                    <div className="absolute left-0 right-0 top-0 ">
+                                        <input type="file" ref={inputImage} hidden />
+                                        <button onClick={() => inputImage.current.click()} className="btn-circle bg-green-400 text-xs">
+                                            Edit
+                                        </button>
+                                        {/* <FiEdit3 size={20} className=" rounded-full bg-slate-100 hover:bg-slate-300 active:scale-90" /> */}
+                                    </div>
                                 </div>
-                                <div className="w-1/4 h-[100px] flex items-center ml-5 text-xl">
+                                <div className="w-1/4 h-[100px] flex items-center ml-5 text-xl border-2">
                                     <button className="">{value.name}</button>
                                 </div>
-                                <div className="w-1/4 h-[100px] flex items-center ml-2">
+                                <div className="w-1/4 h-[100px] flex items-center ml-2 border-2">
                                     <button className="btn bg-yellow-400"
                                         onClick={() => {
                                             setModal(true);

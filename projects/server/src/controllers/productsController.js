@@ -139,8 +139,9 @@ module.exports = {
     },
     createCategory: async (req, res, next) => {
         try {
-            const data = req.body;
-            const addCategory = await db.product_category.create({ ...data });
+            const data = JSON.parse(req.body.data);
+            const dataImage = req.files.image[0].filename
+            const addCategory = await db.product_category.create({ ...data, image: dataImage });
             res.status(201).send({
                 isError: false,
                 message: "Product Added",

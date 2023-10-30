@@ -3,13 +3,12 @@ const fs = require('fs');
 const { log } = require('console');
 
 const defaultPath = __dirname + '/../public'
-// console.log(">>>>>>>>>>1");
-console.log(defaultPath);
+// console.log("defaultpath: " + defaultPath);
 
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
         const isDirectoryExist = fs.existsSync(defaultPath)
-        log(isDirectoryExist)
+        // console.log("isDirectoryExist: " + isDirectoryExist);
         // if (!isDirectoryExist) {
         //     await fs.promises.mkdir(defaultPath, { recursive: true })
         // }
@@ -18,15 +17,14 @@ const storage = multer.diskStorage({
     filename: function (req, file, cb) {
         const extension = file.mimetype.split('/')[1]
         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9) + `.${extension}`
-        console.log(file.fieldname + '-' + uniqueSuffix);
+        // console.log("file name: " + file.fieldname + '-' + uniqueSuffix);
         cb(null, file.fieldname + '-' + uniqueSuffix)
+        // console.log("create filename success");
     }
 })
 
 // Setup File Filter
 var fileFilter = (req, file, cb) => {
-    // console.log(file)
-    // console.log('>>>>');
     if (file.mimetype.split('/')[0] === 'image') {
         // Accept
         cb(null, true)

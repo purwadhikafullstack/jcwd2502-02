@@ -13,5 +13,6 @@ Router.get("/onecategory/:id", productsController.getOneCategory);
 Router.patch("/editcategory", productsController.editCategory);
 Router.patch("/editimage/:idImage", upload, productsController.updateImage);
 Router.patch("/savecategory", productsController.saveEditCat);
+Router.post("/addcategory", upload, productsController.createCategory);
 
 module.exports = Router;
