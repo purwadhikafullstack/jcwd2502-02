@@ -1,11 +1,11 @@
 const db = require("./../models");
 module.exports = {
 
-    cartUserId: async (id) => {
+    cartUserId: async (userId) => {
         try {
             return await db.cart.findAll({
                 where: {
-                    user_id: id,
+                    user_id: userId,
                 }
             });
         } catch (error) {

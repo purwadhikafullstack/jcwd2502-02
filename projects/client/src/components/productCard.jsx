@@ -3,11 +3,15 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "../redux/Features/cart";
 import { deleteItemInCartAsync } from "../redux/Features/cart";
 import { toast } from "react-hot-toast";
+import { Navigate, useNavigate } from "react-router-dom";
 
 const ProductCard = (props) => {
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
+    const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id === props.data);
+    const navigate = useNavigate()
+
 
     const getAvailableStock = () => {
         return props.stock;
@@ -19,10 +23,19 @@ const ProductCard = (props) => {
     const handleAddToCart = () => {
         const availableStock = getAvailableStock();
         const productQuantityInCart = getProductQuantity();
+
+        if (!user.username) {
+            toast.error("Please log in to add items to your cart");
+            setTimeout(() => {
+                navigate("/login"); // Step 4
+            }, 2000);
+            return
+        }
+
         if (productQuantityInCart < availableStock) {
             dispatch(addToCartAsync(props.data));
         } else {
-            toast.error("Cannot add more. Stock limit reached.");
+            toast.error("Oops, stock limit reached. No more items can be added");
         }
     };
 

@@ -6,14 +6,8 @@ module.exports = {
     getCart: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
-            // const cart = cartUserId(id)
+            const cart = await cartUserId(id)
 
-            const cart = await db.cart.findAll({
-                where: {
-                    user_id: id,
-                }
-            });
-            console.log(cart);
             respondHandler(res, {
                 message: "Get Cart Success",
                 data: cart
