@@ -146,7 +146,7 @@ const UpdateProductsCategoryPage = () => {
                     })}
                 </div>
             </div>
-            {modal ? (<div className="fixed backdrop-blur-md bg-black/80 h-screen w-full z-10 top-0 right-0 duration-600 ease-in"></div>) : ("")}
+            {modal ? (<div className="fixed backdrop-blur-md bg-black/80 h-screen w-full z-50 top-0 right-0 duration-600 ease-in"></div>) : ("")}
             <div className={modal ? `fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[90%] p-10 rounded-md ` : `hidden`}>
                 <h3 className="font-bold text-4xl text-white">Edit Category</h3>
                 <div className="flex flex-col gap-5 mt-5">
