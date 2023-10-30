@@ -58,7 +58,7 @@ export const login2 = createAsyncThunk("auth", async (account, thunkApi) => {
         localStorage.setItem("accessToken", data.data.jwt)
         return data.data;
     }).catch((err) => {
-        console.log('an error has occurred');
+        console.log(err);
         toast.error(err.response.data.message);
     })
 })

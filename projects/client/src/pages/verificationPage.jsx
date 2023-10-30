@@ -1,16 +1,17 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import { api1 } from "../api/api";
+import { api } from "../api/api";
 import { BsFillPatchCheckFill } from "react-icons/bs";
 
 export default function VerificationPage() {
     const accessToken = useParams()
+    console.log(accessToken);
     const [isVerified, setIsVerified] = useState(false);
     const navigate = useNavigate();
-    const apiInstance = api1();
+    const apiInstance = api();
     const verifyAccount = async () => {
-        const response = await apiInstance.patch(`/users/verify-user`, null, { headers: { authorization: "Bearer " + accessToken } })
+        const response = await apiInstance.patch(`/users/verify-user`, null, { headers: { authorization: `Bearer ${accessToken.id}` } })
         if (response.data.isError == false) {
             setIsVerified(true)
             setTimeout(() => {

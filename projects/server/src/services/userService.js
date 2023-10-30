@@ -78,7 +78,7 @@ module.exports = {
     },
 
     userLogin: async (email, password) => {
-        try {
+        // try {
             const account = await db.user.findOne({
                 where: { email }
             })
@@ -105,14 +105,15 @@ module.exports = {
                     profile_picture: account.dataValues.profile_picture
                 }
             }
-        } catch (error) {
-            console.log(error);
-            return error;
-        }
+        // } catch (error) {
+        //     console.log(error.message);
+        //     return error;
+        // }
     },
 
-    registerUser: async (username, email, password, referral, phone_number) => {
+    registerUser: async (user) => {
         try {
+            const { username, email, password, phone_number, referral} = user
             const existingAccount = await db.user.findOne({
                 where: { username }
             })
@@ -140,10 +141,10 @@ module.exports = {
                 username: username,
                 email: email,
                 password: hashedPassword,
-                phone_number: phone_number,
-                referral: newReferral
+                phone_number,
+                referral_code: newReferral
             }
-            console.log(userData);
+            console.log(userData,"ini data");
             const newUser = await db.user.create(userData)
             console.log(newUser);
             const token = createJWT(

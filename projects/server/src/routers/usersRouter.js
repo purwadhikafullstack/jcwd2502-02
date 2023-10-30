@@ -11,7 +11,8 @@ Router.post('/login', validateUserLogin, handleValidationErrors, usersController
 Router.post('/register', validateUserRegistration, handleValidationErrors, usersController.register);
 Router.post('/request-reset', usersController.requestResetPassword);
 
-Router.patch('/reset-password', usersController.resetPassword);
+Router.patch('/reset-password', verify, usersController.resetPassword);
+Router.patch('/update-password', verify, usersController.updatePassword);
 Router.patch('/update-user', usersController.updateUserData);
 Router.patch('/verify-user', verify, usersController.verifyUserAccount);
 Router.patch('/update-image', verify, upload, usersController.updateImage)

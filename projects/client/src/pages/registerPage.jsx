@@ -19,42 +19,29 @@ export default function RegistrationPage() {
             phone_number: "",
             referral: ""
         },
-        // onSubmit: () => registerUser(),
+        onSubmit: async (values) => {
+            try {
+                console.log(values);
+                const response = await api().post(`/users/register`, {...values})
+                toast.success(response.data.message);
+                setTimeout(() => {
+                    navigate('/login')
+                }, 3000)
+            } catch (error) {
+                toast.error(error.response.data.message);
+            }
+        },
         validationSchema: yup.object().shape({
             username: yup.string().required().min(3).max(10),
             email: yup.string().required().email(),
             password: yup.string().required(),
-            phone_number: yup.string().required(),
-            referral: yup.string().required()
-        })
+            phone_number: yup.string().required()
+                })
     });
 
     const handleForm = (event) => {
         const { target } = event;
         formik.setFieldValue(target.name, target.value);
-    }
-
-    const registerUser = async (e) => {
-        e.preventDefault();
-        // console.log(formik.values);
-        if (formik.values.email && formik.values.password && formik.values.username && formik.values.phone_number) {
-            try {
-                // console.log(`proses register`);
-                setDisabled(true)
-                const response = await api().post(`/users/register`, formik.values)
-                toast.success(response.data.message);
-                setTimeout(() => {
-                    setDisabled(false)
-                    navigate('/login')
-                }, 3000)
-            } catch (error) {
-                // console.log(error.response.data.message);
-                toast.error(error.response.data.message);
-            }
-        } else {
-            toast.error('Please fill in all required informations')
-        }
-
     }
 
     const handleReferral = (e) => {
@@ -65,7 +52,6 @@ export default function RegistrationPage() {
         // console.log(getCoupon);
     }
 
-    // console.log('form values', formik.values);
 
     return (
         <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-yellow-300">
@@ -74,7 +60,7 @@ export default function RegistrationPage() {
                 <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
             </div>
             <div className='grid place-content-center'>
-                <form className='flex flex-col rounded-2xl gap-2 bg-green-700 p-5 w-[350px] md:w-[450px] lg:w-[400px]'>
+                <form className='flex flex-col rounded-2xl gap-2 bg-green-700 p-5 w-[350px] md:w-[450px] lg:w-[400px]' onSubmit={formik.handleSubmit}>
                     <label className='text-white' htmlFor="" >Username</label>
                     <input type="text" id='username' name='username' onChange={formik.handleChange} value={formik.values.username} className='rounded-md p-2' />
                     <div className='text-red-500 font-bold'> {formik.errors.username} </div>
@@ -93,7 +79,7 @@ export default function RegistrationPage() {
                         <Button text={'Confirm'} onClick={handleReferral} style={""} />
                     </div>
                     <div className='flex justify-center m-4'>
-                        <Button disabled={disabled} text={disabled ? 'Loading' : 'Register'} onClick={registerUser} style={"w-[300px]"} />
+                        <Button text='Register' type='submit' style={"w-[300px]"} />
                     </div>
                 </form>
             </div>
