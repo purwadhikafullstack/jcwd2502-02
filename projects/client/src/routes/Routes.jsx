@@ -8,8 +8,11 @@ import ProfilePage from "../pages/user/profilePage";
 import UpdateProfile from "../pages/user/updateProfilePage";
 import VerificationPage from "../pages/verificationPage";
 import UpdateProductsCategoryPage from "../pages/admin/updateCategoryPage";
+import ForgotPasswordPage from "../pages/forgotPasswordPage";
+import ChangePasswordPage from "../pages/changePassPage";
 
 import Protected from "./protected";
+
 
 const routes = [
     <Route path='/' element={
@@ -50,6 +53,12 @@ const routes = [
     } />,
     <Route path='/verify/:id' element={
         <VerificationPage />
+    } />,
+    <Route path='/forgot-password' element={
+        <ForgotPasswordPage />
+    } />,
+    <Route path='/change-password/:id' element={
+        <ChangePasswordPage />
     } />,
 ]
 

@@ -3,7 +3,6 @@ import axios from 'axios';
 import * as yup from 'yup';
 import Button from '../components/button';
 import toast, { Toaster } from "react-hot-toast";
-
 import { login2 } from '../redux/Features/users';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../redux/App/Store';
@@ -20,7 +19,6 @@ export default function LoginPage() {
         },
         onSubmit: async (values) => {
             const data = await dispatch(login2({ ...values }))
-            // console.log(data.payload);
             const token = localStorage.getItem("accessToken");
             if (data.payload && token) {
                 toast.success('Login successful')
@@ -31,7 +29,7 @@ export default function LoginPage() {
         },
         validationSchema: yup.object().shape({
             email: yup.string().required().email(),
-            password: yup.string().required(),
+            password: yup.string().required().min(6),
         })
     });
     const handleForm = (event) => {
@@ -64,7 +62,9 @@ export default function LoginPage() {
                             :
                             null
                     }
-                    <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
+                    <Link to={'/forgot-password'}>
+                        <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
+                    </Link>
                 </form>
                 <div className='flex justify-center mt-10'>
                     <Button text={'Login'} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />

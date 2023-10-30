@@ -7,7 +7,6 @@ const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
-const { log } = require('console');
 
 module.exports = {
     login: async (req, res, next) => {
@@ -26,15 +25,14 @@ module.exports = {
                 }
             })
         } catch (error) {
+            console.log("masuk");
             next(error)
         }
     },
 
     register: async (req, res, next) => {
         try {
-            const { username, email, password, phone_number, referral } = req.body;
-            const newUser = await registerUser(username, email, password, phone_number, referral)
-            console.log(newUser);
+            const newUser = await registerUser(req.body)
             if (!newUser.isError) {
                 respondHandler(res, {
                     message: "Registration success, please check your email to verify your account!",
@@ -43,7 +41,6 @@ module.exports = {
                 throw { message: newUser.message }
             }
         } catch (error) {
-            console.log('error message:', error.message);
             next(error)
         }
     },
@@ -64,16 +61,16 @@ module.exports = {
 
     requestResetPassword: async (req, res, next) => {
         try {
-            // terima input email dari front-end
+            console.log(`nyampe endpoint`);
+            console.log(req.body);
             const { email } = req.body;
-            // cek jika ada akun dengan email tersebut
+            console.log(email);
             const response = await findEmail(email);
+            console.log(response);
             if (!response) throw { message: "user was not found, please enter a valid email address" };
-            // buatkan jwt durasi 1 jam berisikan id
             const token = createJWT({
                 id: response.dataValues.id
             }, '3h');
-            // kirimkan email akun tersebut dengan template request password berisikan link ber param jwt baru tersebut
             const readTemplate = await fs.readFile('./src/public/password-recovery.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ email, token })
@@ -82,7 +79,6 @@ module.exports = {
                 subject: 'password recovery mail',
                 html: newTemplate
             })
-            // notifikasi user
             respondHandler(res, {
                 message: "password reset email has been sent to your email"
             });
@@ -94,13 +90,19 @@ module.exports = {
     resetPassword: async (req, res, next) => {
         try {
             const data = req.headers;
-            if (data.newpassword !== data.confirmpassword) throw { message: "confirmation password must match the new password" }
-
-            // if(data.newPassword)
-            // terima data dari front end
-            // lewatkan data dengan express validator
-            //  
-
+            const id = (req.dataToken.id);
+            const account = await db.user.findOne({
+                where: {id}
+            })
+            console.log(account);
+            if (data.password !== data.confirmpassword) throw { message: "confirmation password must match the new password" }
+            const hashMatch = await match(data.password, account.dataValues.password)
+            if(hashMatch) throw { message: "The new password cannot be the same as the old one"}
+            const hashedPassword = await hash(data.password)
+            await db.user.update({
+                password: hashedPassword
+            }, { where: {id}}
+            )
             res.status(201).send({
                 isError: false,
                 message: "Password Changed"
@@ -112,7 +114,21 @@ module.exports = {
 
     updatePassword: async (req, res, next) => {
         try {
-
+            const account = await db.user.findOne({
+                where: { id }
+            })
+            const hashMatch = await match(data.oldpassword, account.dataValues.password)
+            if(!hashMatch) throw {message: "The old password given is incorrect"}
+            const hashedPassword = await hash(data.newpassword)
+            const updatedUser = await db.user.update(
+                { password: hashedPassword },
+                { where: { id } }
+            );
+            if(updatedUser) {
+                respondHandler(res, {
+                    message: "Password changed successfully"
+                })
+            }
         } catch (error) {
             next(error)
         }

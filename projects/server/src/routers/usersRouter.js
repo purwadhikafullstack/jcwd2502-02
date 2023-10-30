@@ -11,10 +11,11 @@ Router.post('/login', validateUserLogin, handleValidationErrors, usersController
 Router.post('/register', validateUserRegistration, handleValidationErrors, usersController.register);
 Router.post('/request-reset', usersController.requestResetPassword);
 
-Router.patch('/reset-password', usersController.resetPassword);
+Router.patch('/reset-password', verify, usersController.resetPassword);
+Router.patch('/update-password', verify, usersController.updatePassword);
 Router.patch('/update-user', usersController.updateUserData);
 Router.patch('/verify-user', verify, usersController.verifyUserAccount);
-Router.patch('/update-image/:id', upload, usersController.updateImage)
+Router.patch('/update-image/:token', upload, usersController.updateImage)
 Router.post('/update-profile/', upload, usersController.updateProfile)
 
 Router.get('/fetch-user', verify, usersController.getUser);
