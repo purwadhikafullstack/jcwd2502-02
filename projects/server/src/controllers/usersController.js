@@ -164,25 +164,6 @@ module.exports = {
             next(error)
         }
     },
-    updateProfile: async (req, res, next) => {
-        try {
-            // const { id } = req.params
-            // console.log(req.files.image)
-            const data = JSON.parse(req.body.data)
-            const image = req.files.image;
-            // console.log(data);
-            console.log(image);
-
-            res.status(201).send({
-                isError: false,
-                message: 'Update Image Success!',
-                data: data, image
-            })
-
-        } catch (error) {
-            next(error)
-        }
-    },
     updateImage: async (req, res, next) => {
         try {
             // 1. Ambil id user

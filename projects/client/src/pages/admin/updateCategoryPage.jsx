@@ -1,17 +1,22 @@
 import CategoryCard from "../../components/categoryCard";
 import Navbar from "../../components/navbarUser";
 import Footer from "../../components/footer";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { api1 } from "../../api/api";
 import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import axios from "axios";
+import { FiEdit3 } from "react-icons/fi";
+import toast, { Toaster } from "react-hot-toast";
+
 const UpdateProductsCategoryPage = () => {
+    const inputImage = useRef()
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
     const [inputCat, setInputCat] = useState("");
     const [modal, setModal] = useState(false);
+    const [newImage, setNewImage] = useState("");
     const api = api1();
     const onGetCategory = async () => {
         try {
@@ -45,6 +50,48 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
+    const onSelectId = async (categoryId) => {
+        try {
+            setCatId(categoryId)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const onSelectImages = async (event) => {
+        try {
+            console.log(catId);
+            const file = event.target.files[0]
+            if (file) {
+                // Check file size and type here (validation)
+                if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+                    message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+                }
+                console.log(file);
+                const formData = new FormData();
+                formData.append('image', file);
+                const response = await api.patch(`/products/editimage/${catId}`, formData)
+                console.log(response.data.data);
+                toast.success("Category Image Updated")
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const onDeleteCategory = async (catId) => {
+        try {
+            const deleteCategory = await api.patch(`/products/deletecategory/${catId}`)
+            console.log(deleteCategory);
+            toast.success("Delete Category Success")
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const debouncedSubmit = debounce((value) => {
     }, 1000);
     useEffect(() => {
@@ -52,6 +99,7 @@ const UpdateProductsCategoryPage = () => {
     }, []);
     return (
         <div className="">
+            <Toaster />
             <Navbar />
             <div className="">
                 <div className="flex flex-row mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
@@ -66,18 +114,32 @@ const UpdateProductsCategoryPage = () => {
                     {category.map((value, index) => {
                         return (
                             <div key={index} className="flex border-2 w-full p-3 ">
-                                <div>
+                                <div className="relative">
                                     <CategoryCard image={value.image} />
+                                    <div className="absolute left-0 right-0 top-0 ">
+                                        <input type="file" accept=".jpg, .jpeg, .png" ref={inputImage} hidden onChange={(event) => onSelectImages(event)} />
+                                        <button onClick={() => { inputImage.current.click(); onSelectId(value.id) }} className="btn-circle bg-green-400 text-xs">
+                                            Edit
+                                        </button>
+                                        {/* <FiEdit3 size={20} className=" rounded-full bg-slate-100 hover:bg-slate-300 active:scale-90" /> */}
+                                    </div>
                                 </div>
-                                <div className="w-1/4 h-[100px] flex items-center ml-5 text-xl">
+                                <div className="w-1/4 h-[100px] flex items-center ml-5 text-xl border-2">
                                     <button className="">{value.name}</button>
                                 </div>
-                                <div className="w-1/4 h-[100px] flex items-center ml-2">
+                                <div className="w-1/4 h-[100px] flex items-center ml-2 border-2">
                                     <button className="btn bg-yellow-400"
                                         onClick={() => {
                                             setModal(true);
                                             handleEditCategory(value.id);
                                         }}>EDIT</button>
+                                    <button className="btn bg-red-400 ml-3"
+                                        onClick={() => {
+                                            onDeleteCategory(value.id)
+                                        }}>DELETE</button>
+                                </div>
+                                <div>
+                                    {value.id}
                                 </div>
                             </div>
                         )
