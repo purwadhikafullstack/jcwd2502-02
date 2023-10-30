@@ -19,6 +19,9 @@ module.exports = {
             const getProduct = await db.product.findOne({
                 where: { id: productId }
             });
+            console.log(getProduct.dataValues.price);
+
+            const price = getProduct.dataValues.price
 
             const checkCart = await db.cart.findOne({
                 where: {
@@ -29,11 +32,14 @@ module.exports = {
 
             if (checkCart) {
                 await db.cart.update(
-                    { quantity: checkCart.quantity + 1 },
+                    {
+                        quantity: checkCart.quantity + 1,
+                        subtotal: (checkCart.quantity + 1) * price
+                    },
                     { where: { id: checkCart.id } }
                 );
             } else {
-                await db.cart.create({ user_id: userId, products_id: productId, quantity: 1 });
+                await db.cart.create({ user_id: userId, products_id: productId, quantity: 1, subtotal: price });
             }
 
             return await db.cart.findAll({
@@ -52,6 +58,10 @@ module.exports = {
                 where: { id: productId }
             });
 
+            console.log(getProduct.dataValues.price);
+
+            const price = getProduct.dataValues.price
+
             const checkCart = await db.cart.findOne({
                 where: {
                     user_id: userId,
@@ -69,8 +79,12 @@ module.exports = {
                     },
                 });
             } else if (checkCart) {
+
+                const newQuantity = checkCart.dataValues.quantity - 1;
+                const newSubtotal = newQuantity * price;
+
                 await db.cart.update(
-                    { quantity: checkCart.dataValues.quantity - 1, },
+                    { quantity: newQuantity, subtotal: newSubtotal },
                     { where: { id: checkCart.id } }
                 );
             }
