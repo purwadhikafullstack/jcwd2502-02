@@ -73,9 +73,10 @@ const UpdateProductsCategoryPage = () => {
                 const response = await api.patch(`/products/editimage/${catId}`, formData)
                 console.log(response.data.data);
                 toast.success("Category Image Updated")
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 1000);
+                onGetCategory();
             }
         } catch (error) {
             console.log(error);
@@ -86,9 +87,10 @@ const UpdateProductsCategoryPage = () => {
             const deleteCategory = await api.patch(`/products/deletecategory/${catId}`)
             console.log(deleteCategory);
             toast.success("Delete Category Success")
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 1000);
+            onGetCategory();
         } catch (error) {
             console.log(error);
         }
