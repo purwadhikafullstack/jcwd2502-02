@@ -45,6 +45,9 @@ const ModalNewCategory = () => {
                 const data = await api.post(`products/addcategory`, fd)
                 toast.success('Create Category Success')
                 console.log(data);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             }
         } catch (error) {
             console.log(error);

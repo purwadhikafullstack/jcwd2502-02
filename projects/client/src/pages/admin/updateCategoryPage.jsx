@@ -8,6 +8,8 @@ import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import axios from "axios";
 import { FiEdit3 } from "react-icons/fi";
+import toast, { Toaster } from "react-hot-toast";
+
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef()
     const [category, setCategory] = useState([]);
@@ -48,16 +50,44 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
-    const onSelectImages = (event) => {
+    const onSelectId = async (categoryId) => {
         try {
-            const file = event.target.files[0];
+            setCatId(categoryId)
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const onSelectImages = async (event) => {
+        try {
+            console.log(catId);
+            const file = event.target.files[0]
             if (file) {
                 // Check file size and type here (validation)
                 if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
                     message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
                 }
-                setNewImage(file)
+                console.log(file);
+                const formData = new FormData();
+                formData.append('image', file);
+                const response = await api.patch(`/products/editimage/${catId}`, formData)
+                console.log(response.data.data);
+                toast.success("Category Image Updated")
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const onDeleteCategory = async (catId) => {
+        try {
+            const deleteCategory = await api.patch(`/products/deletecategory/${catId}`)
+            console.log(deleteCategory);
+            toast.success("Delete Category Success")
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
         } catch (error) {
             console.log(error);
         }
@@ -69,6 +99,7 @@ const UpdateProductsCategoryPage = () => {
     }, []);
     return (
         <div className="">
+            <Toaster />
             <Navbar />
             <div className="">
                 <div className="flex flex-row mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
@@ -86,8 +117,8 @@ const UpdateProductsCategoryPage = () => {
                                 <div className="relative">
                                     <CategoryCard image={value.image} />
                                     <div className="absolute left-0 right-0 top-0 ">
-                                        <input type="file" ref={inputImage} hidden onChange={onSelectImages} />
-                                        <button onClick={() => inputImage.current.click()} className="btn-circle bg-green-400 text-xs">
+                                        <input type="file" accept=".jpg, .jpeg, .png" ref={inputImage} hidden onChange={(event) => onSelectImages(event)} />
+                                        <button onClick={() => { inputImage.current.click(); onSelectId(value.id) }} className="btn-circle bg-green-400 text-xs">
                                             Edit
                                         </button>
                                         {/* <FiEdit3 size={20} className=" rounded-full bg-slate-100 hover:bg-slate-300 active:scale-90" /> */}
@@ -102,6 +133,13 @@ const UpdateProductsCategoryPage = () => {
                                             setModal(true);
                                             handleEditCategory(value.id);
                                         }}>EDIT</button>
+                                    <button className="btn bg-red-400 ml-3"
+                                        onClick={() => {
+                                            onDeleteCategory(value.id)
+                                        }}>DELETE</button>
+                                </div>
+                                <div>
+                                    {value.id}
                                 </div>
                             </div>
                         )

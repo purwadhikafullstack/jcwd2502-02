@@ -51,42 +51,6 @@ module.exports = {
             next(error);
         }
     },
-    updateImage: async (req, res, next) => {
-        try {
-            // 1. Ambil id image
-            const { idImage } = req.params
-            // 2. Ambil path image lama
-            const findImage = await db.product_category.findOne({
-                where: {
-                    id: idImage
-                }
-            })
-            // 3. Update new path on table
-            console.log(req.files);
-            const newImage = await db.product_category.update({
-                image: req.files.image[0].filename
-            }, {
-                where: {
-                    id: idImage
-                }
-            })
-            // 4. Delete image lama
-            deleteFiles({
-                image: [findImage.dataValues.image
-                ]
-            })
-            // 5. Kirim response
-            res.status(201).send({
-                isError: false,
-                message: 'Update Image Success!',
-                data: newImage
-            })
-        } catch (error) {
-            console.log(error);
-            deleteFiles(req.files)
-            next(error)
-        }
-    },
     getProductByCategory: async (req, res, next) => {
         try {
             const { catId } = req.query;
@@ -174,6 +138,56 @@ module.exports = {
         try {
             const { inputCat, id } = req.body;
             const newCategory = await db.product_category.update({ name: inputCat }, { where: { id } });
+            res.status(200).send({
+                isError: false,
+                message: "Changes Success!",
+                data: newCategory
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateCategoryImage: async (req, res, next) => {
+        try {
+            // 1. Ambil id user
+            const { idImage } = req.params;
+            console.log(idImage);
+            // 2. Ambil path image lama
+            const catId = await db.product_category.findOne({ where: { id: idImage } })
+            // // 3. Update new path on table
+            console.log(catId.image);
+            console.log(req.files.image[0]);
+            const oldImage = catId.image
+            const findImage = await db.product_category.update({
+                image: req.files.image[0].filename
+            }, {
+                where: {
+                    id: idImage
+                }
+            })
+            // // // 4. Delete image lama
+            deleteFiles({
+                image: [oldImage
+                ]
+            })
+            // // 5. Kirim response
+            const newCategoryImage = await db.product_category.findOne({ where: { id: idImage } })
+
+            res.status(201).send({
+                isError: false,
+                message: 'Update Image Success!',
+                data: newCategoryImage
+            })
+        } catch (error) {
+            console.log(error);
+            deleteFiles(req.files)
+            next(error)
+        }
+    },
+    deleteCategory: async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            const newCategory = await db.product_category.update({ isDeleted: 1 }, { where: { id } });
             res.status(200).send({
                 isError: false,
                 message: "Changes Success!",
