@@ -30,22 +30,6 @@ const UpdateProfile = () => {
         }
     }
 
-    // const onSelectImages = (event) => {
-    //     try {
-    //         const file = event.target.files;
-
-    //         if (file) {
-    //             // Check file size and type here (validation)
-    //             if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
-    //                 message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
-    //             }
-    //             formik.setFieldValue('file', file);
-    //         }
-    //     } catch (error) {
-    //         toast.error(error.message)
-    //     }
-    // };
-
     const formik = useFormik({
         initialValues: {
             file: null,

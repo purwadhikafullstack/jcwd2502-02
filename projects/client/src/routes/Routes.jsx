@@ -13,10 +13,9 @@ import ChangePasswordPage from "../pages/changePassPage";
 import UpdatePasswordPage from "../pages/user/profilePasswordPage";
 import NotFoundPage from "../pages/404";
 import UpdatePass2 from "../pages/user/profilePassword";
+import ManageAddress from "../pages/user/manageAddressPage";
 
 import Protected from "./protected";
-
-
 
 const routes = [
     <Route path='/' element={
@@ -65,16 +64,21 @@ const routes = [
         <ChangePasswordPage />
     } />,
     <Route path='/profile-password' element={
-        < UpdatePasswordPage/>
+        < UpdatePasswordPage />
     } />,
 
     <Route path='/profile-password2' element={
-        < UpdatePass2/>
+        < UpdatePass2 />
+    } />,
+
+    <Route path='/manage-address' element={
+        < ManageAddress />
     } />,
 
     <Route path='/*' element={
-        < NotFoundPage/>
+        < NotFoundPage />
     } />,
+
 ]
 
 export default routes;
