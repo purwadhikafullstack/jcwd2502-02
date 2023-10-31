@@ -14,11 +14,12 @@ module.exports = {
 
     verify: (req, res, next) => {
         try {
-            console.log(req);
+            console.log(req.headers);
             console.log(`nyampe middleware`);
-            console.log(`jwt.js: "ini token jwt =>"`, req.token);
+            // console.log(`jwt.js: "ini token jwt =>"`, req.token);
             // const { authorization } = req.headers;
             const authorization = req.token;
+            console.log(`ini authorization ` + authorization);
             if (!authorization) throw { message: `token was not found` };
             const decodeData = jwt.verify(authorization, 'abc123');
             req.dataToken = decodeData;

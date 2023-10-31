@@ -78,37 +78,32 @@ module.exports = {
     },
 
     userLogin: async (email, password) => {
-        // try {
-            const account = await db.user.findOne({
-                where: { email }
-            })
-            console.log(account);
-            if (!account) throw { status: 401, message: "Account was not found!" };
-            const hashMatch = await match(password, account.dataValues.password)
-            if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
-            const token = await createJWT(
-                {
-                    id: account.dataValues.id,
-                    role: account.dataValues.role,
-                },
-                "1d"
-            )
-            return {
-                isError: false,
-                message: "login successful",
-                data: {
-                    id: account.dataValues.id,
-                    username: account.dataValues.username,
-                    email: account.dataValues.email,
-                    role: account.dataValues.role,
-                    jwt: token,
-                    profile_picture: account.dataValues.profile_picture
-                }
+        const account = await db.user.findOne({
+            where: { email }
+        })
+        console.log(account);
+        if (!account) throw { status: 401, message: "Account was not found!" };
+        const hashMatch = await match(password, account.dataValues.password)
+        if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
+        const token = await createJWT(
+            {
+                id: account.dataValues.id,
+                role: account.dataValues.role,
+            },
+            "1d"
+        )
+        return {
+            isError: false,
+            message: "login successful",
+            data: {
+                id: account.dataValues.id,
+                username: account.dataValues.username,
+                email: account.dataValues.email,
+                role: account.dataValues.role,
+                jwt: token,
+                profile_picture: account.dataValues.profile_picture
             }
-        // } catch (error) {
-        //     console.log(error.message);
-        //     return error;
-        // }
+        }
     },
 
     registerUser: async (user) => {

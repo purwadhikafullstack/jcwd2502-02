@@ -10,8 +10,12 @@ import VerificationPage from "../pages/verificationPage";
 import UpdateProductsCategoryPage from "../pages/admin/updateCategoryPage";
 import ForgotPasswordPage from "../pages/forgotPasswordPage";
 import ChangePasswordPage from "../pages/changePassPage";
+import UpdatePasswordPage from "../pages/user/profilePasswordPage";
+import NotFoundPage from "../pages/404";
+import UpdatePass2 from "../pages/user/profilePassword";
 
 import Protected from "./protected";
+
 
 
 const routes = [
@@ -59,6 +63,17 @@ const routes = [
     } />,
     <Route path='/change-password/:id' element={
         <ChangePasswordPage />
+    } />,
+    <Route path='/profile-password' element={
+        < UpdatePasswordPage/>
+    } />,
+
+    <Route path='/profile-password2' element={
+        < UpdatePass2/>
+    } />,
+
+    <Route path='/*' element={
+        < NotFoundPage/>
     } />,
 ]
 

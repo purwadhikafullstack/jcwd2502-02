@@ -19,7 +19,6 @@ Router.patch('/update-image', verify, upload, usersController.updateImage)
 
 Router.get('/fetch-user', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);
-
-
+Router.get('/check-token', usersController.checkPasswordToken);
 
 module.exports = Router;

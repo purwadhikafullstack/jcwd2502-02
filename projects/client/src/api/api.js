@@ -1,4 +1,5 @@
 import axios from "axios";
+// import { useParams } from "react-router-dom";
 
 export const api = () => axios.create({
     baseURL: process.env.REACT_APP_API_BASE_URL,
@@ -15,7 +16,6 @@ export const api1 = () => axios.create({
         secretKey: process.env.REACT_APP_API_SECRET_KEY
     }
 })
-
 
 // function ApiInstance(authorization = null) {
 // 	return axios.create({

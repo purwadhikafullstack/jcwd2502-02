@@ -7,7 +7,7 @@ const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
-const { log } = require('console');
+const { log, error } = require('console');
 const { deleteFiles } = require('../helper/deleteFiles')
 
 module.exports = {
@@ -63,12 +63,8 @@ module.exports = {
 
     requestResetPassword: async (req, res, next) => {
         try {
-            console.log(`nyampe endpoint`);
-            console.log(req.body);
             const { email } = req.body;
-            console.log(email);
             const response = await findEmail(email);
-            console.log(response);
             if (!response) throw { message: "user was not found, please enter a valid email address" };
             const token = createJWT({
                 id: response.dataValues.id
@@ -76,6 +72,11 @@ module.exports = {
             const readTemplate = await fs.readFile('./src/public/password-recovery.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ email, token })
+            await db.used_token.create({
+                token: token,
+                isValid: true,
+                user_id: response.dataValues.id
+            })
             await transporter.sendMail({
                 to: `aryosetyotama27@gmail.com`,
                 subject: 'password recovery mail',
@@ -90,13 +91,14 @@ module.exports = {
     },
 
     resetPassword: async (req, res, next) => {
+        // Di execute sebelum login
         try {
             const data = req.headers;
             const id = (req.dataToken.id);
+            const token = req.token;
             const account = await db.user.findOne({
                 where: { id }
-            })
-            console.log(account);
+            });
             if (data.password !== data.confirmpassword) throw { message: "confirmation password must match the new password" }
             const hashMatch = await match(data.password, account.dataValues.password)
             if (hashMatch) throw { message: "The new password cannot be the same as the old one" }
@@ -104,6 +106,10 @@ module.exports = {
             await db.user.update({
                 password: hashedPassword
             }, { where: { id } }
+            )
+            await db.used_token.update(
+                {isValid: "false"},
+                {where: {token}}
             )
             res.status(201).send({
                 isError: false,
@@ -115,10 +121,13 @@ module.exports = {
     },
 
     updatePassword: async (req, res, next) => {
+        // Di execute dari profile page
         try {
+            const id = (req.dataToken.id);
+            const data = req.headers;
             const account = await db.user.findOne({
                 where: { id }
-            })
+            });
             const hashMatch = await match(data.oldpassword, account.dataValues.password)
             if (!hashMatch) throw { message: "The old password given is incorrect" }
             const hashedPassword = await hash(data.newpassword)
@@ -218,6 +227,25 @@ module.exports = {
         }
     },
 
-
-
+    checkPasswordToken: async (req, res, next) => {
+        try {
+            console.log(`sampe endpoint cek token`);
+            console.log(req.headers);
+            const {authorization} = req.headers;
+            const token = authorization.split(" ")[1]
+            const validToken = await db.used_token.findOne({
+                where: {token: token}
+            })
+            if (validToken.dataValues.isValid== "false")  
+            throw new Error('invalid token')
+            respondHandler(res, {
+                message: "token is still valid",
+                data: validToken
+            })
+        } catch (error) {
+            console.log('>>>>');
+            console.log(error);
+            next(error)
+        }
+    }
 }

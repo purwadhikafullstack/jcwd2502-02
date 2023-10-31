@@ -113,7 +113,9 @@ const ProfilePage = () => {
                             </div>
                             <div className=" mt-5 md:mt-10 grid gap-2 text-lg">
                                 <div className="hover:underline ease-in duration-200">Manage Address</div>
-                                <div className="hover:underline ease-in duration-200">Change Password</div>
+                                <Link to={'/profile-password'}>
+                                    <div className="hover:underline ease-in duration-200">Change Password</div>
+                                </Link>
                                 <Link to={'/updateprofile'}>
                                     <div className="hover:underline ease-in duration-200 flex gap-1">Update Profile <div className="grid place-content-center pt-1"> <AiFillEdit /></div></div>
                                 </Link>
