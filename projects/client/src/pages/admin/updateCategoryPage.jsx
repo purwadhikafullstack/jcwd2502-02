@@ -3,21 +3,16 @@ import Navbar from "../../components/navbarUser";
 import Footer from "../../components/footer";
 import React, { useEffect, useRef, useState } from "react";
 import { api1 } from "../../api/api";
-import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
-import axios from "axios";
-import { FiEdit3 } from "react-icons/fi";
 import toast, { Toaster } from "react-hot-toast";
 import { AiFillEdit } from "react-icons/ai";
-
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef()
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
     const [inputCat, setInputCat] = useState("");
     const [modal, setModal] = useState(false);
-    const [newImage, setNewImage] = useState("");
     const api = api1();
     const onGetCategory = async () => {
         try {
@@ -29,7 +24,6 @@ const UpdateProductsCategoryPage = () => {
     };
     const handleEditCategory = async (catId) => {
         try {
-            // console.log("handleEditCategory" + catId);
             setCatId(catId);
             const res = await api.get(`products/onecategory/${catId}`);
             setInputCat(res.data.data);
@@ -39,12 +33,10 @@ const UpdateProductsCategoryPage = () => {
     };
     const handleSaveCat = async () => {
         try {
-            // console.log("handleSaveCat" + catId);
             const res = await api.patch(`products/savecategory`, {
                 inputCat,
                 id: catId,
             });
-            // console.log(res);
             setModal(!modal);
             onGetCategory();
         } catch (error) {
@@ -63,7 +55,6 @@ const UpdateProductsCategoryPage = () => {
             console.log(catId);
             const file = event.target.files[0]
             if (file) {
-                // Check file size and type here (validation)
                 if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
                     message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
                 }
@@ -73,9 +64,6 @@ const UpdateProductsCategoryPage = () => {
                 const response = await api.patch(`/products/editimage/${catId}`, formData)
                 console.log(response.data.data);
                 toast.success("Category Image Updated")
-                // setTimeout(() => {
-                //     window.location.reload();
-                // }, 1000);
                 onGetCategory();
             }
         } catch (error) {
@@ -87,9 +75,6 @@ const UpdateProductsCategoryPage = () => {
             const deleteCategory = await api.patch(`/products/deletecategory/${catId}`)
             console.log(deleteCategory);
             toast.success("Delete Category Success")
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 1000);
             onGetCategory();
         } catch (error) {
             console.log(error);
@@ -109,13 +94,10 @@ const UpdateProductsCategoryPage = () => {
                     <div className="text-4xl font-bold gap-2 py-5 text-green-800">
                         Edit Category
                     </div>
-
                 </div>
                 <div className="grid place-content-center md:place-content-start md:ml-20 lg:ml-32">
                     <ModalNewCategory />
                 </div>
-
-
                 <div className="overflow-x-auto px-5 my-8 md:px-20 lg:px-32">
                     <table className="table">
                         <thead>

@@ -1,4 +1,3 @@
-import axios from "axios";
 import { toast } from "react-hot-toast";
 import { api } from "../../api/api";
 
@@ -26,7 +25,7 @@ export const cartSlice = createSlice({
 //masih belum bisa pake api instance..
 export const getCartAsync = () => async (dispatch) => {
     try {
-        const response = await axios.get('http://localhost:8905/api/cart/', {
+        const response = await api().get('/cart/', {
             headers: { 'authorization': 'Bearer ' + localStorage.getItem('accessToken') }
         });
         console.log("GET SUCCESS");
@@ -41,7 +40,7 @@ export const addToCartAsync = (data) => async (dispatch) => {
     try {
         console.log(data)
         const productId = data
-        const response1 = await api().post(`http://localhost:8905/api/cart/add/${productId}`)
+        const response1 = await api().post(`/cart/add/${productId}`)
         console.log(response1);
         toast.success("Item added to Cart");
         console.log("POST SUCCESS");
@@ -55,7 +54,7 @@ export const deleteItemInCartAsync = (data) => async (dispatch) => {
     try {
         console.log(data)
         const productId = data
-        const response1 = await api().delete(`http://localhost:8905/api/cart/delete/${productId}`)
+        const response1 = await api().delete(`/cart/delete/${productId}`)
         console.log(response1);
         toast.success("Item deleted from Cart");
         console.log("DELETE SUCCESS");

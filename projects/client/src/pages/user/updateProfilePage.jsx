@@ -1,7 +1,6 @@
 import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer"
 import Button from "../../components/button"
-import axios from "axios";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import toast, { Toaster } from "react-hot-toast";
@@ -9,7 +8,6 @@ import debounce from 'lodash/debounce';
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { AiFillEdit } from "react-icons/ai";
 
 
@@ -20,9 +18,7 @@ const UpdateProfile = () => {
     const [preview, setPreview] = useState();
     const inputFileRef = useRef(null);
     const [currentImage, setCurrentImage] = useState(null)
-
     let today = new Date().toISOString().split('T')[0];
-
     const getUserData = async () => {
         try {
             const accessToken = localStorage.getItem("accessToken");
@@ -62,7 +58,7 @@ const UpdateProfile = () => {
         onSubmit: async (values) => {
             try {
 
-                const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
+                const updateUserData = await apiInstance.patch('/users/update-user', formik.values)
                 toast.success(updateUserData.data.message);
             } catch (error) {
                 console.log(error);
@@ -88,7 +84,7 @@ const UpdateProfile = () => {
 
     useEffect(() => {
         getUserData();
-        setCurrentImage(`http://localhost:8905/${data?.profile_picture}`);
+        setCurrentImage(process.env.REACT_APP_URL + `${data?.profile_picture}`);
         data.id
             ? formik.setValues({
                 id: data.id,
