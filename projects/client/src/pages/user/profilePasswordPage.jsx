@@ -26,6 +26,7 @@ const UpdatePasswordPage = () => {
             try {
                 // const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
                 // toast.success(updateUserData.data.message);
+                alert('Jalan nih')
             } catch (error) {
                 console.log(error);
             }
@@ -57,7 +58,7 @@ const UpdatePasswordPage = () => {
                     <div className="grid place-content-center"><AiFillEdit /></div>
                         Update Password 
                 </div>
-                <form>
+                <form onSubmit={(formik.handleSubmit)}>
                     <div className=" mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Old Password</div>
@@ -76,7 +77,7 @@ const UpdatePasswordPage = () => {
                     </div>
                 </div>
                 <div className="grid place-content-center m-10">
-                    <Button  text={"Submit Changes"} />
+                    <Button type="submit" text={"Submit Changes"} />
                 </div>
             </form>
             </div>

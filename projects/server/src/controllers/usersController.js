@@ -7,7 +7,7 @@ const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
-const { log } = require('console');
+const { log, error } = require('console');
 const { deleteFiles } = require('../helper/deleteFiles')
 
 module.exports = {
@@ -93,9 +93,9 @@ module.exports = {
     resetPassword: async (req, res, next) => {
         // Di execute sebelum login
         try {
-            console.log(req.headers);
             const data = req.headers;
             const id = (req.dataToken.id);
+            const token = req.token;
             const account = await db.user.findOne({
                 where: { id }
             });
@@ -106,6 +106,10 @@ module.exports = {
             await db.user.update({
                 password: hashedPassword
             }, { where: { id } }
+            )
+            await db.used_token.update(
+                {isValid: "false"},
+                {where: {token}}
             )
             res.status(201).send({
                 isError: false,
@@ -232,12 +236,16 @@ module.exports = {
             const validToken = await db.used_token.findOne({
                 where: {token: token}
             })
+            if (validToken.dataValues.isValid== "false")  
+            throw new Error('invalid token')
             respondHandler(res, {
                 message: "token is still valid",
-                data: validToken.isValid
+                data: validToken
             })
         } catch (error) {
+            console.log('>>>>');
             console.log(error);
+            next(error)
         }
     }
 }
