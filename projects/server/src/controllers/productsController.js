@@ -14,6 +14,7 @@ const { createCategoryService } = require("./../services/productsService");
 const { getOneCategoryService } = require("./../services/productsService");
 const { saveEditCategoryService } = require("./../services/productsService");
 const { updateCategoryImageService } = require("./../services/productsService");
+const { getOneProductService } = require("./../services/productsService");
 const { Sequelize } = require("sequelize");
 
 const Op = Sequelize.Op;
@@ -115,4 +116,12 @@ module.exports = {
             next(error);
         }
     },
+    getOneProduct: async (req, res, next) => {
+        try {
+            const product = await getOneProductService(req.params)
+            responseHandler(res, "Get One Product Success", product)
+        } catch (error) {
+            next(error)
+        }
+    }
 }

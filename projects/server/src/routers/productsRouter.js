@@ -6,6 +6,7 @@ const upload = require("./../middlewares/upload");
 
 
 Router.get('/all', productsController.getAllProducts)
+Router.get('/detail/:id', productsController.getOneProduct)
 Router.get('/category', productsController.getCategory)
 Router.get("/filtered", productsController.getAllProductsByCat);
 Router.get("/productbycat", productsController.getProductByCategory);

@@ -101,15 +101,18 @@ const ProductListPage = () => {
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
                     {currentPosts.map((value, index) => {
                         return (
-                            <div key={index}>
-                                <ProductCard
-                                    name={value.name}
-                                    image={value.image}
-                                    description={value.description}
-                                    price={value.price}
-                                    data={value.id}
-                                />
-                            </div>
+                            <a href={`/products/detail/${value.id}`}>
+                                <div key={index}>
+                                    <ProductCard
+                                        name={value.name}
+                                        image={value.image}
+                                        description={value.description}
+                                        price={value.price}
+                                        data={value.id}
+                                    />
+                                </div>
+                            </a>
+
                         );
                     })}
                 </div>

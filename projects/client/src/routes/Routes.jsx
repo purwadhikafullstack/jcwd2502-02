@@ -13,6 +13,7 @@ import ChangePasswordPage from "../pages/changePassPage";
 import UpdatePasswordPage from "../pages/user/profilePasswordPage";
 import NotFoundPage from "../pages/404";
 import UpdatePass2 from "../pages/user/profilePassword";
+import ProductDetailPage from "../pages/user/productDetailPage";
 
 import Protected from "./protected";
 
@@ -55,6 +56,9 @@ const routes = [
     <Route path='/products' element={
         <ProductListPage />
     } />,
+    <Route path='/products/detail/:id' element={
+        <ProductDetailPage />
+    } />,
     <Route path='/verify/:id' element={
         <VerificationPage />
     } />,
@@ -65,15 +69,15 @@ const routes = [
         <ChangePasswordPage />
     } />,
     <Route path='/profile-password' element={
-        < UpdatePasswordPage/>
+        < UpdatePasswordPage />
     } />,
 
     <Route path='/profile-password2' element={
-        < UpdatePass2/>
+        < UpdatePass2 />
     } />,
 
     <Route path='/*' element={
-        < NotFoundPage/>
+        < NotFoundPage />
     } />,
 ]
 

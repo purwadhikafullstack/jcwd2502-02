@@ -111,5 +111,13 @@ module.exports = {
         } catch (error) {
             return error
         }
+    },
+    getOneProductService: async (params) => {
+        try {
+            const { id } = params;
+            return await db.product.findOne({ where: { id, isDeleted: 0, } });
+        } catch (error) {
+            return error
+        }
     }
 }
