@@ -14,6 +14,10 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     isPrimary: DataTypes.ENUM('true', 'false'),
     coordinate: DataTypes.STRING,
+    longitude: DataTypes.FLOAT,
+    latitude: DataTypes.FLOAT,
+    city_name: DataTypes.STRING,
+    province_name: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

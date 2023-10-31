@@ -4,9 +4,8 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class owned_coupon extends Model {
-    static associate({ user, discount }) {
+    static associate({ user }) {
       this.belongsTo(user, { foreignKey: 'user_id' })
-      this.belongsTo(discount, { foreignKey: 'discount_id' })
     }
   }
   owned_coupon.init({

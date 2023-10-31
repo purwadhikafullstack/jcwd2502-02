@@ -4,8 +4,7 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
     class discount_type extends Model {
-        static associate({ discount }) {
-            this.hasMany(discount, { foreignKey: 'discount_type_id' })
+        static associate({ }) {
         }
     }
     discount_type.init({
