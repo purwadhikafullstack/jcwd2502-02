@@ -24,18 +24,17 @@ const UpdatePasswordPage = () => {
         },
         onSubmit: async (values) => {
             try {
-                // const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
-                // toast.success(updateUserData.data.message);
-                alert('Jalan nih')
+                const updatePassword = await api().patch('/users/update-password', null, {headers: {"oldpassword": formik.values.oldPassword, "newpassword": formik.values.newPassword, "confirmpassword": formik.values.confirmPassword }})
+                toast.success('Password has been updated')
             } catch (error) {
-                console.log(error);
+                toast.error(error.response.data.message);
             }
             
         },
         validationSchema: yup.object().shape({
-            oldPassword: yup.string().required(),
-            newPassword: yup.string().required(),
-            confirmPassword: yup.string().required().oneOf([yup.ref('newPassword')], `Password must match`)
+            oldPassword: yup.string().required().min(6, 'Must be 6 characters atleast'),
+            newPassword: yup.string().required().min(6, 'Must be 6 characters atleast'),
+            confirmPassword: yup.string().required().min(6, 'Must be 6 characters atleast').oneOf([yup.ref('newPassword')], `Password must match`)
         })
     });
     const handleForm = (event) => {

@@ -34,7 +34,7 @@ export default function RegistrationPage() {
         validationSchema: yup.object().shape({
             username: yup.string().required().min(3).max(10),
             email: yup.string().required().email(),
-            password: yup.string().required(),
+            password: yup.string().required().min(6),
             phone_number: yup.string().required()
                 })
     });
@@ -51,7 +51,6 @@ export default function RegistrationPage() {
         // alert("Referral code succesfully applied")
         // console.log(getCoupon);
     }
-
 
     return (
         <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-yellow-300">

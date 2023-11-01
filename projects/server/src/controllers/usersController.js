@@ -121,25 +121,23 @@ module.exports = {
     },
 
     updatePassword: async (req, res, next) => {
-        // Di execute dari profile page
+        // Di execute dari profile page || Status: UDAH BENER DI POSTMAN
         try {
-            const id = (req.dataToken.id);
+            const {id} = req.dataToken;
             const data = req.headers;
             const account = await db.user.findOne({
                 where: { id }
             });
             const hashMatch = await match(data.oldpassword, account.dataValues.password)
-            if (!hashMatch) throw { message: "The old password given is incorrect" }
+            if (!hashMatch) throw { message: "The old password is incorrect" }
             const hashedPassword = await hash(data.newpassword)
             const updatedUser = await db.user.update(
                 { password: hashedPassword },
                 { where: { id } }
             );
-            if (updatedUser) {
-                respondHandler(res, {
-                    message: "Password changed successfully"
-                })
-            }
+            respondHandler(res, {
+                message: "Password changed successfully"
+            })
         } catch (error) {
             next(error)
         }
@@ -159,7 +157,6 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
-            console.log(`>>>>>>>`);
             const { id } = req.dataToken;
             const account = await findId(id)
             respondHandler(res, {
