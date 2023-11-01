@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     isPrimary: DataTypes.ENUM('true', 'false'),
     longitude: DataTypes.FLOAT,
     latitude: DataTypes.FLOAT,
+    isDeleted: DataTypes.INTEGER,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
@@ -25,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'user_address',
+    modelName: 'user_address', paranoid: true
   });
   return user_address;
 };
