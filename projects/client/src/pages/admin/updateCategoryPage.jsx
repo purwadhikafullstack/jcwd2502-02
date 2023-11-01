@@ -17,6 +17,7 @@ const UpdateProductsCategoryPage = () => {
     const onGetCategory = async () => {
         try {
             const category = await api.get(`/products/category`);
+            category.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);
