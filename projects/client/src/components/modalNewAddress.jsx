@@ -91,15 +91,10 @@ const ModalNewAddress = () => {
                             <div className=" pl-3 text-red-600">{inputAddress.errors.name}</div>
                         </div>
                         <div className="flex flex-col gap-2">
-                            <div className="font-bold text-green-800">Complete Address:</div>
+                            <div className="font-bold text-green-800">Complete Address (inc. City and Province):</div>
                             <input type="text" onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.address} />
                             <div className=" pl-3 text-red-600">{inputAddress.errors.address}</div>
                         </div>
-                        {/* <div className="flex flex-col gap-2">
-                            <div className="font-bold text-green-800">City:</div>
-                            <input type="text" onChange={inputAddress.handleChange} name="city_name" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.city_name} />
-                            <div className=" pl-3 text-red-600">{inputAddress.errors.city_name}</div>
-                        </div> */}
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">City:</div>
                             <select name="city_name" onChange={inputAddress.handleChange} className="rounded-2xl border border-green-800 select " defaultValue={inputAddress.values.city_name}>
