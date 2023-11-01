@@ -11,5 +11,4 @@ const Searchbar = (props) => {
         </div>
     );
 };
-
 export default Searchbar;

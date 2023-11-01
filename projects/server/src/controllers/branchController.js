@@ -1,34 +1,21 @@
 const db = require('../models');
 const fs = require('fs').promises;
+const responseHandler = require("./../utils/responseHandler")
 const { getBranchService } = require("./../services/branchService");
-const { nearestBranchService1 } = require("./../services/branchService");
-const { nearestBranchService2 } = require("./../services/branchService");
+const { nearestBranchService } = require("./../services/branchService");
 module.exports = {
     getbranch: async (req, res, next) => {
         try {
             const allBranch = await getBranchService()
-            res.status(201).send({
-                isError: false,
-                message: "Get All Branch Success",
-                data: allBranch
-            })
+            responseHandler(res, "Get All Branch Success", allBranch)
         } catch (error) {
             next(error)
         }
     },
-
     nearestBranch: async (req, res, next) => {
         try {
-            const { id } = req.params;
-            const branch = await nearestBranchService1(id)
-
-            const product = await nearestBranchService2(id)
-
-            res.status(201).send({
-                isError: false,
-                message: "Get Nearest Branch Success",
-                data: product
-            })
+            const product = await nearestBranchService(req.params)
+            responseHandler(res, "Get Nearest Branch Success", product)
         } catch (error) {
             next(error)
         }

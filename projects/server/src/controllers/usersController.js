@@ -1,84 +1,48 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
+const { log, error } = require('console');
+const { deleteFiles } = require('../helper/deleteFiles')
 
 module.exports = {
     login: async (req, res, next) => {
         try {
             const { email, password } = req.body;
-            const account = await findEmail(email)
-            if (!account) throw { status: 401, message: "Account was not found!" };
-            const hashMatch = await match(password, account.dataValues.password)
-            if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
-            const token = await createJWT(
-                {
-                    id: account.dataValues.id,
-                    role: account.dataValues.role,
-                },
-                "1d"
-            )
+            const account = await userLogin(email, password);
             respondHandler(res, {
                 message: "login is succesful",
                 data: {
-                    id: account.dataValues.id,
-                    username: account.dataValues.username,
-                    email: account.dataValues.email,
-                    role: account.dataValues.role,
-                    jwt: token
+                    id: account.data.id,
+                    username: account.data.username,
+                    email: account.data.email,
+                    role: account.data.role,
+                    jwt: account.data.jwt,
+                    profile_picture: account.data.profile_picture,
                 }
             })
         } catch (error) {
-            console.log(error);
+            console.log("masuk");
             next(error)
         }
     },
 
     register: async (req, res, next) => {
         try {
-            const { username, email, password, phone_number, referral } = req.body;
-            const existingAccount = await findUsername(username)
-            const existingEmail = await findEmail(email)
-            if (existingAccount) throw { message: "Username has already been taken" };
-            if (existingEmail) throw { message: "Email has already been taken" };
-            const hashedPassword = await hash(password);
-            const newReferral = Math.round(Math.random() * 1e9);
-            const validReferral = await findReferral(referral)
-            if (validReferral) {
-                // beri kupon
-            }            
-            const userData = {
-                username: username,
-                email: email,
-                password: hashedPassword,
-                phone_number: phone_number,
-                referral: newReferral 
+            const newUser = await registerUser(req.body)
+            if (!newUser.isError) {
+                respondHandler(res, {
+                    message: "Registration success, please check your email to verify your account!",
+                })
+            } else {
+                throw { message: newUser.message }
             }
-            const newUser = await createUser(userData)
-            console.log(newUser);
-            const token = createJWT(
-                {
-                    id: newUser.dataValues.id,
-                    role: newUser.dataValues.role,
-                }, '12h')
-            const readTemplate = await fs.readFile('./src/public/template.html', 'utf-8');
-            const compiledTemplate = await handlebars.compile(readTemplate);
-            const newTemplate = compiledTemplate({ username, token })
-            await transporter.sendMail({
-                to: `bkprasetya@gmail.com`,
-                subject: "Verification",
-                html: newTemplate
-            });
-            respondHandler(res, {
-                message: "Registration success, please check your email to verify your account!",
-            })
         } catch (error) {
-            console.log('error message:', error.message);
             next(error)
         }
     },
@@ -87,7 +51,7 @@ module.exports = {
         try {
             const { id } = req.dataToken;
             const account = await findId(id)
-            if(!account) throw {message: "User account was not found"}
+            if (!account) throw { message: "User account was not found" }
             await verifyUser(id)
             respondHandler(res, {
                 message: "User account succesfully verified",
@@ -97,17 +61,85 @@ module.exports = {
         }
     },
 
-    changePassword: async (req, res, next) => {
+    requestResetPassword: async (req, res, next) => {
         try {
-
+            const { email } = req.body;
+            const response = await findEmail(email);
+            if (!response) throw { message: "user was not found, please enter a valid email address" };
+            const token = createJWT({
+                id: response.dataValues.id
+            }, '3h');
+            const readTemplate = await fs.readFile('./src/public/password-recovery.html', 'utf-8');
+            const compiledTemplate = await handlebars.compile(readTemplate);
+            const newTemplate = compiledTemplate({ email, token })
+            await db.used_token.create({
+                token: token,
+                isValid: true,
+                user_id: response.dataValues.id
+            })
+            await transporter.sendMail({
+                to: `aryosetyotama27@gmail.com`,
+                subject: 'password recovery mail',
+                html: newTemplate
+            })
+            respondHandler(res, {
+                message: "password reset email has been sent to your email"
+            });
         } catch (error) {
             next(error)
         }
     },
 
     resetPassword: async (req, res, next) => {
+        // Di execute sebelum login
         try {
+            const data = req.headers;
+            const id = (req.dataToken.id);
+            const token = req.token;
+            const account = await db.user.findOne({
+                where: { id }
+            });
+            if (data.password !== data.confirmpassword) throw { message: "confirmation password must match the new password" }
+            const hashMatch = await match(data.password, account.dataValues.password)
+            if (hashMatch) throw { message: "The new password cannot be the same as the old one" }
+            const hashedPassword = await hash(data.password)
+            await db.user.update({
+                password: hashedPassword
+            }, { where: { id } }
+            )
+            await db.used_token.update(
+                {isValid: "false"},
+                {where: {token}}
+            )
+            res.status(201).send({
+                isError: false,
+                message: "Password Changed"
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
 
+    updatePassword: async (req, res, next) => {
+        // Di execute dari profile page
+        try {
+            const id = (req.dataToken.id);
+            const data = req.headers;
+            const account = await db.user.findOne({
+                where: { id }
+            });
+            const hashMatch = await match(data.oldpassword, account.dataValues.password)
+            if (!hashMatch) throw { message: "The old password given is incorrect" }
+            const hashedPassword = await hash(data.newpassword)
+            const updatedUser = await db.user.update(
+                { password: hashedPassword },
+                { where: { id } }
+            );
+            if (updatedUser) {
+                respondHandler(res, {
+                    message: "Password changed successfully"
+                })
+            }
         } catch (error) {
             next(error)
         }
@@ -127,7 +159,7 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
-            console.log(`ini dari getUser di controller`, req.dataToken);
+            console.log(`>>>>>>>`);
             const { id } = req.dataToken;
             const account = await findId(id)
             respondHandler(res, {
@@ -158,21 +190,61 @@ module.exports = {
             next(error)
         }
     },
-
-    getUserData: async (req, res, next) => {
+    updateImage: async (req, res, next) => {
         try {
-            // const { id } = req.body
-            const findUser = await db.user.findOne({
+            // 1. Ambil id user
+            const { id } = req.dataToken;
+            // 2. Ambil path image lama
+            const userId = await findId(id)
+            // 3. Update new path on table
+            console.log(userId.profile_picture);
+            console.log(req.files.image[0]);
+            const oldImage = userId.profile_picture
+            const findImage = await db.user.update({
+                profile_picture: req.files.image[0].filename
+            }, {
                 where: {
-                    id: 4
+                    id: id
                 }
             })
+            // // 4. Delete image lama
+            deleteFiles({
+                image: [oldImage
+                ]
+            })
+            // 5. Kirim response
+            const newUser = await findId(id)
+
             res.status(201).send({
                 isError: false,
-                message: "Get User Success",
-                data: findUser
+                message: 'Update Image Success!',
+                data: newUser
             })
         } catch (error) {
+            console.log(error);
+            deleteFiles(req.files)
+            next(error)
+        }
+    },
+
+    checkPasswordToken: async (req, res, next) => {
+        try {
+            console.log(`sampe endpoint cek token`);
+            console.log(req.headers);
+            const {authorization} = req.headers;
+            const token = authorization.split(" ")[1]
+            const validToken = await db.used_token.findOne({
+                where: {token: token}
+            })
+            if (validToken.dataValues.isValid== "false")  
+            throw new Error('invalid token')
+            respondHandler(res, {
+                message: "token is still valid",
+                data: validToken
+            })
+        } catch (error) {
+            console.log('>>>>');
+            console.log(error);
             next(error)
         }
     }

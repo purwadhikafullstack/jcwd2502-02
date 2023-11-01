@@ -7,8 +7,8 @@ module.exports = (sequelize, DataTypes) => {
   class user extends Model {
     static associate({ user_address, store_branch, cart, used_token, owned_coupon, transactions }) {
       this.hasMany(user_address, { foreignKey: 'user_id' })
+      this.hasMany(cart, { foreignKey: 'user_id' })
       this.belongsTo(store_branch, { foreignKey: 'store_branch_id' })
-      this.belongsToMany(cart, { through: 'user_cart' })
       this.hasMany(used_token, { foreignKey: 'user_id' })
       this.hasMany(owned_coupon, { foreignKey: 'user_id' })
       this.hasMany(transactions, { foreignKey: 'user_id' })
@@ -23,14 +23,17 @@ module.exports = (sequelize, DataTypes) => {
     gender: DataTypes.ENUM("male", "female"),
     profile_picture: {
       type: DataTypes.TEXT,
-      defaultValue: "public/user.jpg"
+      defaultValue: "user.jpg"
     },
     isVerified: {
       type: DataTypes.ENUM("verified", "unverified"),
       defaultValue: "unverified"
     },
     referral_code: DataTypes.STRING,
-    role: DataTypes.ENUM("customer", "superadmin", "admin"),
+    role: {
+      type: DataTypes.ENUM("customer", "superadmin", "admin"),
+      defaultValue: "customer"
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

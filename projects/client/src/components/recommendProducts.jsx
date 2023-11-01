@@ -5,15 +5,13 @@ import "slick-carousel/slick/slick-theme.css";
 import "../css/style.css"
 import { FaLocationDot } from "react-icons/fa6";
 import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { addToCartAsync } from "../redux/Features/cart";
 
 const RecommendProducts = (props) => {
-
-
+    const dispatch = useDispatch()
     const products = props.data
-
-    console.log(products);
-
-
+    // console.log(products);
     const settings = {
         dots: false,
         infinite: true,
@@ -31,9 +29,9 @@ const RecommendProducts = (props) => {
                 }
             },
             {
-                breakpoint: 600,
+                breakpoint: 900,
                 settings: {
-                    slidesToShow: 2,
+                    slidesToShow: 3,
                 }
             },
             {
@@ -46,42 +44,41 @@ const RecommendProducts = (props) => {
     };
 
     return (
-        <div className="w-[auto] px-5 md:px-20 lg:px-48 py-5 ">
-
+        <div className="w-[auto] px-5 md:px-20 lg:px-48 mt-16 ">
             <div>
                 <div className="pb-5">
                     <div className="text-4xl font-bold my-5">Only Made For You!</div>
-
                     <div className="flex justify-between">
-                        <div className="flex gap-2"> <FaLocationDot className="mt-1" /> Branch Tangerang Selatan</div>
+                        <div className="flex gap-2"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
                         <div className="text-green-600 hover:underline"> See More!</div>
                     </div>
                 </div>
-
                 <div className="">
-
-                    <Slider {...settings}>
-                        {products
-                            ? products.map((value, index) => (
-                                <div key={index} className="">
-                                    <ProductCard
-                                        name={value.product.name}
-                                        image={value.product.image}
-                                        description={value.product.description}
-                                        price={value.product.price}
-                                    />
-                                </div>
-                            ))
-                            : <span className="loading loading-spinner loading-lg"></span>
-                        }
-                    </Slider>
-
+                    <div>
+                        <Slider {...settings}>
+                            {products
+                                ? products.map((value, index) => (
+                                    <div key={index} className="w-64 mx-4">
+                                        <ProductCard
+                                            name={value.product.name}
+                                            image={value.product.image}
+                                            description={value.product.description}
+                                            price={value.product.price}
+                                            stock={value.stock}
+                                            data={value.products_id}
+                                        />
+                                    </div>
+                                ))
+                                : null
+                            }
+                        </Slider>
+                    </div>
+                    <div className="grid place-content-center pt-5">
+                        {!products && <span className="loading loading-spinner w-[100px] text-green-700"></span>}
+                    </div>
                 </div>
-
-
             </div>
         </div >
     )
 }
-
 export default RecommendProducts

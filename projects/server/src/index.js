@@ -3,6 +3,7 @@ require("dotenv/config");
 const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
+const bearerToken = require("express-bearer-token");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -17,6 +18,11 @@ app.use(cors());
 // );
 
 app.use(express.json());
+app.use(bearerToken());
+app.use((req, res, next) => {
+  console.log(req?.headers?.authorization)
+  next();
+})
 
 //#region API ROUTES
 
@@ -38,11 +44,11 @@ app.get("/api/greetings", (req, res, next) => {
 
 app.use(express.static('src/public'))
 
-const { productsRouter, branchRouter } = require('./routers')
+const { productsRouter, branchRouter, cartRouter } = require('./routers');
+const { log } = require("handlebars");
 app.use('/api/products', productsRouter)
 app.use('/api/branch', branchRouter)
-
-
+app.use('/api/cart', cartRouter)
 
 // ===========================
 

@@ -4,6 +4,10 @@
     height: 30px;
 }
 
+::-webkit-scrollbar {
+    width: 0;
+}
+
 .slick-item {
     margin-right: 50px;
     /* Add margin between items horizontally */
@@ -31,8 +35,10 @@
 
 .slick-arrow {
     margin-left: 50px;
+    /* margin-bottom: 300px; */
     margin-right: 50px;
     z-index: 1;
+    top: 100px
 }
 
 .slick-item:last-child {
@@ -51,5 +57,6 @@
         top: 90%;
     }
 }
+
 
 @media only screen and (min-width: 980px) {}

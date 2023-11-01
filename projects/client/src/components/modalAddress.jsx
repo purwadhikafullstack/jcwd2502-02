@@ -1,19 +1,17 @@
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
 import Button from '../components/button'
-
 const ModalAddress = () => {
     return (
         <div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
-            <div onClick={() => document.getElementById('my_modal_1').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto mx-2 md:mx-0 justify-center gap-3 hover:bg-green-200 ease-in duration-200 hover:shadow-lg">
+            <div onClick={() => document.getElementById('my_modal_1').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto mx-2 md:mx-0 justify-center gap-3 hover:bg-green-700 ease-in duration-200 hover:text-white">
                 <div className="grid place-content-center">
                     <FaLocationDot />
                 </div>
                 <div className="">Delivered to Rumah Bayu</div>
                 <div className="grid place-content-center"><BiSolidDownArrow /></div>
             </div>
-
             <dialog id="my_modal_1" className="modal modal-bottom sm:modal-middle backdrop-blur-sm">
                 <div className="modal-box">
                     <div className="font-bold text-xl">Where Should We Deliver?</div>
@@ -39,8 +37,6 @@ const ModalAddress = () => {
                             <div>Banten</div>
                             <div className="bg-green-800 text-white justify-center flex rounded-md"></div>
                         </div>
-
-
                     </div>
                     <div className="modal-action">
                         <form method="dialog">
@@ -49,12 +45,10 @@ const ModalAddress = () => {
                                 <Button text={"Manage Address"} />
                                 <Button text={"Close"} />
                             </div>
-
                         </form>
                     </div>
                 </div>
             </dialog>
-
         </div>
     )
 }

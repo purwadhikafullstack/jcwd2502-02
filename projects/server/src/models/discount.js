@@ -4,15 +4,12 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class discount extends Model {
-    static associate({ product, product_category }) {
-      this.belongsTo(product, { foreignKey: 'products_id' })
-      this.belongsTo(product_category, { foreignKey: 'products_id' })
+    static associate({ product_stock }) {
+      this.hasMany(product_stock, { foreignKey: 'discount_id' })
     }
   }
   discount.init({
-    name: DataTypes.STRING,
-    amount: DataTypes.INTEGER,
-    expire: DataTypes.DATE,
+    type: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
@@ -23,6 +20,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
+    paranoid: true,
     modelName: 'discount',
   });
   return discount;

@@ -1,38 +1,64 @@
 import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer"
 import Button from "../../components/button"
-import axios from "axios";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import toast, { Toaster } from "react-hot-toast";
 import debounce from 'lodash/debounce';
 import { useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useEffect, useRef, useState } from "react";
+import { AiFillEdit } from "react-icons/ai";
 
 
 const UpdateProfile = () => {
     const navigate = useNavigate()
     const apiInstance = api()
     const [data, setData] = useState('')
-
-
-
-
+    const [preview, setPreview] = useState();
+    const inputFileRef = useRef(null);
+    const [currentImage, setCurrentImage] = useState(null)
     let today = new Date().toISOString().split('T')[0];
+    const getUserData = async () => {
+        try {
+            const accessToken = localStorage.getItem("accessToken");
+            // console.log("ini token", accessToken);
+            const data = await apiInstance.get("/users/fetch-user")
+            setData(data.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // const onSelectImages = (event) => {
+    //     try {
+    //         const file = event.target.files;
+
+    //         if (file) {
+    //             // Check file size and type here (validation)
+    //             if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+    //                 message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+    //             }
+    //             formik.setFieldValue('file', file);
+    //         }
+    //     } catch (error) {
+    //         toast.error(error.message)
+    //     }
+    // };
 
     const formik = useFormik({
         initialValues: {
+            file: null,
             id: "",
             username: "",
             email: "",
             gender: "",
             birthdate: "",
         },
-        onSubmit: async () => {
+        onSubmit: async (values) => {
             try {
-                const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
+
+                const updateUserData = await apiInstance.patch('/users/update-user', formik.values)
                 toast.success(updateUserData.data.message);
             } catch (error) {
                 console.log(error);
@@ -49,11 +75,6 @@ const UpdateProfile = () => {
         const { target } = event;
         formik.setFieldValue(target.name, target.value);
     }
-
-    const debouncedHandleChange = debounce((name, value) => {
-        formik.setFieldValue(name, value);
-    }, 1500);
-
     const debouncedHandleSubmit = debounce(() => {
         formik.handleSubmit();
         setTimeout(() => {
@@ -61,66 +82,53 @@ const UpdateProfile = () => {
         }, 1500);
     }, 1000);
 
-    const getUserData = async () => {
-        try {
-            const accessToken = localStorage.getItem("accessToken");
-            console.log("ini token", accessToken);
-
-            const data = await apiInstance.get("/users/finduser")
-            setData(data.data.data)
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     useEffect(() => {
-        getUserData()
-
+        getUserData();
+        setCurrentImage(process.env.REACT_APP_URL + `${data?.profile_picture}`);
         data.id
             ? formik.setValues({
                 id: data.id,
                 username: data.username,
                 email: data.email,
-                gender: data.gender, // Set default values or fetch from data
-                birthdate: data.birthdate, // Set default values or fetch from data
+                gender: data.gender,
+                birthdate: data.birthdate,
             })
             : formik.setValues({
-                id: 'Loading',
-                username: 'Loading',
-                email: 'Loading',
-                gender: 'Loading', // Set default values or fetch from data
-                birthdate: 'Loading', // Set default values or fetch from data
+                id: '',
+                username: '',
+                email: '',
+                gender: '',
+                birthdate: '',
             });
     }, [data.id])
-
-    console.log(data);
-    console.log(data.username);
-    console.log('form values', formik.values);
 
     return (
         <div>
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                <div className="grid place-content-center py-10 ">
-                    <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src="" alt="" />
-                </div>
-                <div className="my-10 mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
+
+
+
+                <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">   <div className="grid place-content-center"><AiFillEdit /></div>
+                    Update Profile </div>
+
+                <div className=" mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
+                    {/* <div className="mt-10"></div> */}
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Username</div>
-                        <input type="text" onChange={(e) => debouncedHandleChange('username', e.target.value)} name="username" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.username} />
+                        <input type="text" onChange={formik.handleChange} name="username" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.username} />
                         <div className=" pl-3 text-red-600">{formik.errors.username}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Email</div>
-                        <input type="text" onChange={(e) => debouncedHandleChange('email', e.target.value)} name="email" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.email} />
+                        <input type="text" onChange={formik.handleChange} name="email" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.email} />
                         <div className="pl-3 text-red-600">{formik.errors.email}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Gender</div>
-                        <select onChange={(e) => debouncedHandleChange('gender', e.target.value)} name="gender" defaultValue={formik.values.gender} className="rounded-2xl border border-green-800 p-3">
-                            {formik.values.gender != "male" ? (
-                                <option value="male">Male</option>
+                        <select onChange={formik.handleChange} name="gender" defaultValue={formik.values.gender} className="rounded-2xl border border-green-800 p-3">
+                            {formik.values.gender != "male" ? (<option value="male">Male</option>
                             ) : (<option value="male" selected>Male</option>
                             )}
                             {formik.values.gender == "female" ? (
@@ -130,10 +138,10 @@ const UpdateProfile = () => {
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="font-bold text-green-800">Birthdate</div>
-                        <input type="date" name="birthdate" onChange={(e) => debouncedHandleChange('birthdate', e.target.value)} className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
+                        <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
                     </div>
                 </div>
-                <div className="grid place-content-center mb-10">
+                <div className="grid place-content-center m-10">
                     <Button onClick={() => debouncedHandleSubmit()} text={"Submit Changes"} />
                 </div>
             </div>
@@ -141,6 +149,4 @@ const UpdateProfile = () => {
         </div>
     )
 }
-
-
 export default UpdateProfile
