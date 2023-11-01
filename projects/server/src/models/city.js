@@ -4,8 +4,9 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class city extends Model {
-    static associate({ province }) {
-      this.hasMany(province, { foreignKey: 'city_id' })
+    static associate({ user_address, province }) {
+      this.hasMany(user_address, { foreignKey: 'city_id' })
+      this.belongsTo(province, { foreignKey: 'province_id' })
     }
   }
   city.init({
