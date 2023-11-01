@@ -73,9 +73,7 @@ const ProfilePage = () => {
             <Toaster />
             <Navbar />
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
-                <div className="flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile <div className="grid place-content-center">
-                </div>
-
+                <div className="flex text-5xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile
                 </div>
                 <div className="grid md:grid-cols-3 md:mb-20 ">
                     <div className="bg-gradient-to-r from-green-700 from-90% via-emerald-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
@@ -112,7 +110,9 @@ const ProfilePage = () => {
                                 <div>082112436747</div>
                             </div>
                             <div className=" mt-5 md:mt-10 grid gap-2 text-lg">
-                                <div className="hover:underline ease-in duration-200">Manage Address</div>
+                                <Link to={'/manage-address'}>
+                                    <div className="hover:underline ease-in duration-200">Manage Address</div>
+                                </Link>
                                 <Link to={'/profile-password'}>
                                     <div className="hover:underline ease-in duration-200">Change Password</div>
                                 </Link>

@@ -1,18 +1,20 @@
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
 import Button from '../components/button'
+import { Link } from "react-router-dom";
+
 const ModalAddress = () => {
     return (
         <div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
-            <div onClick={() => document.getElementById('my_modal_1').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto mx-2 md:mx-0 justify-center gap-3 hover:bg-green-700 ease-in duration-200 hover:text-white">
+            <div onClick={() => document.getElementById('my_modal_2').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto mx-2 md:mx-0 justify-center gap-3 hover:bg-green-700 ease-in duration-200 hover:text-white">
                 <div className="grid place-content-center">
                     <FaLocationDot />
                 </div>
                 <div className="">Delivered to Rumah Bayu</div>
                 <div className="grid place-content-center"><BiSolidDownArrow /></div>
             </div>
-            <dialog id="my_modal_1" className="modal modal-bottom sm:modal-middle backdrop-blur-sm">
+            <dialog id="my_modal_2" className="modal modal-bottom sm:modal-middle backdrop-blur-sm">
                 <div className="modal-box">
                     <div className="font-bold text-xl">Where Should We Deliver?</div>
                     <div className="mt-3 flex gap-2 overflow-x-auto p-3">
@@ -42,7 +44,9 @@ const ModalAddress = () => {
                         <form method="dialog">
                             {/* if there is a button in form, it will close the modal */}
                             <div className="flex gap-2">
-                                <Button text={"Manage Address"} />
+                                <Link to={'/manage-address'}>
+                                    <Button text={"Manage Address"} />
+                                </Link>
                                 <Button text={"Close"} />
                             </div>
                         </form>

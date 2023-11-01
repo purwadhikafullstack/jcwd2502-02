@@ -108,8 +108,8 @@ module.exports = {
             }, { where: { id } }
             )
             await db.used_token.update(
-                {isValid: "false"},
-                {where: {token}}
+                { isValid: "false" },
+                { where: { token } }
             )
             res.status(201).send({
                 isError: false,
@@ -231,13 +231,13 @@ module.exports = {
         try {
             console.log(`sampe endpoint cek token`);
             console.log(req.headers);
-            const {authorization} = req.headers;
+            const { authorization } = req.headers;
             const token = authorization.split(" ")[1]
             const validToken = await db.used_token.findOne({
-                where: {token: token}
+                where: { token: token }
             })
-            if (validToken.dataValues.isValid== "false")  
-            throw new Error('invalid token')
+            if (validToken.dataValues.isValid == "false")
+                throw new Error('invalid token')
             respondHandler(res, {
                 message: "token is still valid",
                 data: validToken
