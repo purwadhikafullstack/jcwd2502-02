@@ -139,9 +139,7 @@ module.exports = {
                 phone_number,
                 referral_code: newReferral
             }
-            console.log(userData,"ini data");
             const newUser = await db.user.create(userData)
-            console.log(newUser);
             const token = createJWT(
                 {
                     id: newUser.dataValues.id,
