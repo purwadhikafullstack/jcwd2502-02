@@ -8,9 +8,37 @@ import toast, { Toaster } from "react-hot-toast";
 import debounce from 'lodash/debounce';
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 const ModalNewAddress = () => {
     const apiInstance = api()
+
+    const [provinceId, setProvinceId] = useState()
+    const [cityId, setCityId] = useState()
+
+    const getProvinceId = async () => {
+        try {
+            const provinceId = await apiInstance.get(`/location/province`)
+            // console.log(cityId.data.message.data.rajaongkir.results);
+            setProvinceId(provinceId.data.message.data.rajaongkir.results)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getCityId = async () => {
+        try {
+            const cityId = await apiInstance.get(`/location/city`)
+            // console.log(cityId.data.message.data.rajaongkir.results);
+            const cityData = cityId.data.message.data.rajaongkir.results;
+            cityData.sort((a, b) => a.city_name.localeCompare(b.city_name));
+            setCityId(cityId.data.message.data.rajaongkir.results)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
 
     const inputAddress = useFormik({
         initialValues: {
@@ -39,6 +67,13 @@ const ModalNewAddress = () => {
 
     console.log(inputAddress.values);
 
+
+    useEffect(() => {
+        getProvinceId()
+        getCityId()
+    }, [])
+
+
     return (
         <div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
@@ -60,15 +95,40 @@ const ModalNewAddress = () => {
                             <input type="text" onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.address} />
                             <div className=" pl-3 text-red-600">{inputAddress.errors.address}</div>
                         </div>
-                        <div className="flex flex-col gap-2">
+                        {/* <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">City:</div>
                             <input type="text" onChange={inputAddress.handleChange} name="city_name" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.city_name} />
                             <div className=" pl-3 text-red-600">{inputAddress.errors.city_name}</div>
+                        </div> */}
+                        <div className="flex flex-col gap-2">
+                            <div className="font-bold text-green-800">City:</div>
+                            <select name="city_name" onChange={inputAddress.handleChange} className="rounded-2xl border border-green-800 select " defaultValue={inputAddress.values.city_name}>
+                                <option value="">Select a City</option>
+                                {
+                                    cityId ?
+
+                                        cityId.map((city, index) => (
+                                            <option key={index} value={city.city_id}>
+                                                {city.city_name}
+                                            </option>
+                                        )) : null
+                                }
+                            </select>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Province:</div>
-                            <input type="text" onChange={inputAddress.handleChange} name="province_name" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.province_name} />
-                            <div className=" pl-3 text-red-600">{inputAddress.errors.province_name}</div>
+                            <select name="province_name" onChange={inputAddress.handleChange} className="rounded-2xl border border-green-800 select " defaultValue={inputAddress.values.province_name}>
+                                <option value="">Select a province</option>
+                                {
+                                    provinceId ?
+
+                                        provinceId.map((province, index) => (
+                                            <option key={index} value={province.province_id}>
+                                                {province.province}
+                                            </option>
+                                        )) : null
+                                }
+                            </select>
                         </div>
                     </div>
 
