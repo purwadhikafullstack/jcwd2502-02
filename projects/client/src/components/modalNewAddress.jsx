@@ -11,6 +11,7 @@ import { api } from "../api/api";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
+
 const ModalNewAddress = () => {
     const apiInstance = api()
     const [selectedProvince, setSelectedProvince] = useState("");
@@ -20,7 +21,6 @@ const ModalNewAddress = () => {
     const getProvinceId = async () => {
         try {
             const province = await apiInstance.get(`/location/province`)
-            console.log(province.data.data);
             setProvinceId(province.data.data)
         } catch (error) {
             console.log(error);
@@ -30,7 +30,6 @@ const ModalNewAddress = () => {
     const getCityId = async () => {
         try {
             const cityId = await apiInstance.get(`/location/city`)
-            // console.log(cityId.data.message.data.rajaongkir.results);
             const cityData = cityId.data.data;
             cityData.sort((a, b) => a.name.localeCompare(b.name));
             setCityId(cityId.data.data)
@@ -38,19 +37,35 @@ const ModalNewAddress = () => {
             console.log(error);
         }
     }
-
     const inputAddress = useFormik({
         initialValues: {
             name: "",
             address: "",
+            province_id: "",
             city_id: "",
+            isPrimary: "false",
         },
         onSubmit: async (values) => {
-            alert("Halo")
+            try {
+                if (!values.name || !values.address || !values.province_id || !values.city_id) {
+                    toast.error("Please fill in all required fields.");
+                } else {
+                    const newAddress = await apiInstance.post('/location/add-address', values);
+                    toast.success("New Address Successfully Added!");
+                    inputAddress.resetForm();
+                    document.getElementById('my_modal_1').close();
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                }
+            } catch (error) {
+                toast.error("Please fill all the data")
+            }
         },
         validationSchema: yup.object().shape({
             name: yup.string().required(),
             address: yup.string().required(),
+            province_id: yup.string().required(),
             city_id: yup.string().required(),
         })
     });
@@ -73,6 +88,8 @@ const ModalNewAddress = () => {
 
     return (
         <div>
+            <Toaster />
+
             {/* Open the modal using document.getElementById('ID').showModal() method */}
             <div onClick={() => document.getElementById('my_modal_1').showModal()} className="">
                 <Button text={"+ Add New Address"} style={"w-full"}></Button>
@@ -84,24 +101,25 @@ const ModalNewAddress = () => {
                     <div className="flex flex-col gap-3 mt-5">
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Address Name:</div>
-                            <input type="text" onChange={inputAddress.handleChange} name="name" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.name} />
+                            <input type="text" onChange={inputAddress.handleChange} name="name" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.name} />
                             <div className=" pl-3 text-red-600">{inputAddress.errors.name}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Complete Address:</div>
-                            <input type="text" onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" defaultValue={inputAddress.values.address} />
+                            <input type="text" onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.address} />
                             <div className=" pl-3 text-red-600">{inputAddress.errors.address}</div>
                         </div>
 
                         <div className="flex flex-col gap-2">
+                            <div className="font-bold text-green-800">Province:</div>
                             <select
-                                name="province_name"
+                                name="province_id"
                                 onChange={(e) => {
-                                    // inputAddress.handleChange(e); // Handle formik change
+                                    inputAddress.handleChange(e); // Handle formik change
                                     setSelectedProvince(e.target.value); // Update selectedProvince
                                 }}
                                 className="rounded-2xl border border-green-800 select"
-                                defaultValue={inputAddress.values.province_name}>
+                                value={inputAddress.values.province_id}>
                                 <option value="">Select a province</option>
                                 {provinceId
                                     ? provinceId.map((province, index) => (
@@ -119,7 +137,7 @@ const ModalNewAddress = () => {
                                 name="city_id"
                                 onChange={inputAddress.handleChange}
                                 className="rounded-2xl border border-green-800 select"
-                                defaultValue={inputAddress.values.city_id}
+                                value={inputAddress.values.city_id}
                             >
                                 <option value="">Select a City</option>
                                 {cityId
@@ -134,6 +152,25 @@ const ModalNewAddress = () => {
                             </select>
                         </div>
 
+                        <div className="flex flex-col gap-2 my-5">
+                            <div className="flex gap-3">
+                                <div className="font-bold text-green-800">Create as a Main Address
+                                </div>
+                                <input
+                                    className="text-xl checkbox"
+                                    type="checkbox"
+                                    name="isPrimary"
+                                    value={inputAddress.values.isPrimary}
+                                    onChange={(e) => {
+                                        const isChecked = e.target.checked;
+                                        const newValue = isChecked ? "true" : "false";
+                                        inputAddress.setFieldValue("isPrimary", newValue);
+                                    }}
+                                />
+                            </div>
+
+                        </div>
+
                     </div>
 
                     <div className="modal-action flex justify-center">
@@ -144,10 +181,11 @@ const ModalNewAddress = () => {
                                 <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
                                 >CANCEL</button>
 
-                                <Button text={"SUBMIT"} />
+
 
                             </div>
                         </form>
+                        <Button type={"button"} onClick={() => debouncedHandleSubmit()} text={"SUBMIT"} />
                     </div>
                 </div>
             </dialog>

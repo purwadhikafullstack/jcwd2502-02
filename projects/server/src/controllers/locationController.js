@@ -17,7 +17,31 @@ module.exports = {
         try {
             const city = await db.city.findAll()
             responseHandler(res, "Get City Success", city)
+        } catch (error) {
+            next(error)
+        }
+    },
 
+    getAddress: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+            const userAddress = await db.user_address.findAll({
+                include: [
+                    {
+                        model: db.city,
+                        attributes: ['name'],
+                        include: [
+                            {
+                                model: db.province,
+                                attributes: ['name']
+                            }
+
+                        ]
+                    },
+                ],
+                where: { user_id: id, isDeleted: 0 },
+            },)
+            responseHandler(res, "Get Address Success", userAddress);
         } catch (error) {
             next(error)
         }
@@ -26,39 +50,118 @@ module.exports = {
     addAddress: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
-            const { name, address, city_id } = req.body
+            const { name, address, city_id, isPrimary } = req.body
 
-            //db.create dulu untuk addressnya dengan data yg ada
+            if (isPrimary == "true") {
+                const checkMainAddress = await db.user_address.findOne({ where: { user_id: id, isPrimary: "true" } })
 
-            const createAddress = await db.user_address.create({ address, user_id: id, name, city_id })
+                if (checkMainAddress) {
 
-            const findCity = await db.city.findOne({ where: { id: city_id } })
-            const provinceId = findCity.dataValues.province_id
-            const findProvince = await db.province.findOne({ where: { id: provinceId } })
-            const provinceName = findProvince.dataValues.name
-            const cityName = findCity.dataValues.name
+                    const isMainId = checkMainAddress.dataValues.id
+                    await db.user_address.update({ isPrimary: "false" }, { where: { id: isMainId } })
 
-            //gabung address + city name + province name untuk forward geocoding
-            const query = `${address}, ${cityName}, ${provinceName}`;
-            const apiKey = 'f45e314fcd39480d852216b132606295'; // Replace with your OpenCage Data API key
-            const geocoding = `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${apiKey}`;
+                    const createAddress = await db.user_address.create({ address, user_id: id, name, city_id, isPrimary })
 
-            const response = await axios.get(geocoding);
+                    const findCity = await db.city.findOne({ where: { id: city_id } })
+                    const provinceId = findCity.dataValues.province_id
+                    const findProvince = await db.province.findOne({ where: { id: provinceId } })
+                    const provinceName = findProvince.dataValues.name
+                    const cityName = findCity.dataValues.name
 
-            if (response.status === 200) {
-                const latitude = response.data.results[0].geometry.lat;
-                const longitude = response.data.results[0].geometry.lng;
+                    const query = `${address}, ${cityName}, ${provinceName}`;
+                    const apiKey = 'f45e314fcd39480d852216b132606295';
+                    const geocoding = `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${apiKey}`;
 
-                await db.user_address.update({ longitude, latitude }, { where: { id: createAddress.id } })
+                    const response = await axios.get(geocoding);
 
-                const finalAddress = await db.user_address.findOne({ where: { id: createAddress.id } })
+                    if (response.status === 200) {
+                        const latitude = response.data.results[0].geometry.lat;
+                        const longitude = response.data.results[0].geometry.lng;
 
-                responseHandler(res, "Get Address Success", finalAddress);
-            } else {
-                // Handle errors, e.g., when no results are found
-                responseHandler(res, "Error: Geocoding failed");
+                        await db.user_address.update({ longitude, latitude }, { where: { id: createAddress.id } })
+
+                        const finalAddress = await db.user_address.findOne({ where: { id: createAddress.id } })
+
+                        responseHandler(res, "Get Address Success", finalAddress);
+                    } else {
+
+                        responseHandler(res, "Error: Geocoding failed");
+                    }
+                }
+
+                else {
+                    const createAddress = await db.user_address.create({ address, user_id: id, name, city_id, isPrimary })
+
+                    const findCity = await db.city.findOne({ where: { id: city_id } })
+                    const provinceId = findCity.dataValues.province_id
+                    const findProvince = await db.province.findOne({ where: { id: provinceId } })
+                    const provinceName = findProvince.dataValues.name
+                    const cityName = findCity.dataValues.name
+
+                    const query = `${address}, ${cityName}, ${provinceName}`;
+                    const apiKey = 'f45e314fcd39480d852216b132606295';
+                    const geocoding = `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${apiKey}`;
+
+                    const response = await axios.get(geocoding);
+
+                    if (response.status === 200) {
+                        const latitude = response.data.results[0].geometry.lat;
+                        const longitude = response.data.results[0].geometry.lng;
+
+                        await db.user_address.update({ longitude, latitude }, { where: { id: createAddress.id } })
+
+                        const finalAddress = await db.user_address.findOne({ where: { id: createAddress.id } })
+
+                        responseHandler(res, "Get Address Success", finalAddress);
+                    } else {
+
+                        responseHandler(res, "Error: Geocoding failed");
+                    }
+                }
             }
 
+
+            else if (isPrimary == "false") {
+                const createAddress = await db.user_address.create({ address, user_id: id, name, city_id, isPrimary })
+
+                const findCity = await db.city.findOne({ where: { id: city_id } })
+                const provinceId = findCity.dataValues.province_id
+                const findProvince = await db.province.findOne({ where: { id: provinceId } })
+                const provinceName = findProvince.dataValues.name
+                const cityName = findCity.dataValues.name
+
+                const query = `${address}, ${cityName}, ${provinceName}`;
+                const apiKey = 'f45e314fcd39480d852216b132606295';
+                const geocoding = `https://api.opencagedata.com/geocode/v1/json?q=${query}&key=${apiKey}`;
+
+                const response = await axios.get(geocoding);
+
+                if (response.status === 200) {
+                    const latitude = response.data.results[0].geometry.lat;
+                    const longitude = response.data.results[0].geometry.lng;
+
+                    await db.user_address.update({ longitude, latitude }, { where: { id: createAddress.id } })
+
+                    const finalAddress = await db.user_address.findOne({ where: { id: createAddress.id } })
+
+                    responseHandler(res, "Get Address Success", finalAddress);
+                } else {
+
+                    responseHandler(res, "Error: Geocoding failed");
+                }
+            }
+
+
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    deleteAddress: async (req, res, next) => {
+        try {
+            const { id } = req.params;
+            await db.user_address.update({ isDeleted: 1 }, { where: { id } });
+            responseHandler(res, "Delete Success", id);
         } catch (error) {
             next(error)
         }
