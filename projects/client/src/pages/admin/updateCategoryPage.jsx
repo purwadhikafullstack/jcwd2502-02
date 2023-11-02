@@ -14,6 +14,9 @@ const UpdateProductsCategoryPage = () => {
     const [inputCat, setInputCat] = useState("");
     const [modal, setModal] = useState(false);
     const api = api1();
+    const pageTopRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredCategory, setFilteredCategory] = useState([]);
     const onGetCategory = async () => {
         try {
             const category = await api.get(`/products/category`);
@@ -22,6 +25,9 @@ const UpdateProductsCategoryPage = () => {
         } catch (error) {
             console.log(error);
         }
+    };
+    const handleSearchInputChange = (event) => {
+        setSearchQuery(event.target.value);
     };
     const handleEditCategory = async (catId) => {
         try {
@@ -39,6 +45,10 @@ const UpdateProductsCategoryPage = () => {
                 id: catId,
             });
             setModal(!modal);
+            if (pageTopRef.current) {
+                pageTopRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+            setSearchQuery("");
             onGetCategory();
         } catch (error) {
             console.log(error);
@@ -81,13 +91,20 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
-    const debouncedSubmit = debounce((value) => {
+    const debouncedSetFilteredCategory = debounce((filtered) => {
+        setFilteredCategory(filtered);
     }, 1000);
     useEffect(() => {
         onGetCategory();
     }, []);
+    useEffect(() => {
+        const filtered = category.filter((cat) =>
+            cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        debouncedSetFilteredCategory(filtered);
+    }, [searchQuery, category]);
     return (
-        <div className="">
+        <div ref={pageTopRef} className="">
             <Toaster />
             <Navbar />
             <div className="">
@@ -99,6 +116,15 @@ const UpdateProductsCategoryPage = () => {
                 <div className="grid place-content-center md:place-content-start md:ml-20 lg:ml-32">
                     <ModalNewCategory />
                 </div>
+                <div className="ml-32 mt-5 ">
+                    <input
+                        type="text"
+                        placeholder="Search categories"
+                        className="input w-1/4 bg-gradient-to-r from-yellow-300 to-green-600"
+                        value={searchQuery}
+                        onChange={handleSearchInputChange}
+                    />
+                </div>
                 <div className="overflow-x-auto px-5 my-8 md:px-20 lg:px-32">
                     <table className="table">
                         <thead>
@@ -108,7 +134,7 @@ const UpdateProductsCategoryPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {category.map((value, index) => {
+                            {filteredCategory.map((value, index) => {
                                 return (
                                     <tr key={index} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
                                         <td>
