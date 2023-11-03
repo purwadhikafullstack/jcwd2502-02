@@ -8,73 +8,81 @@ import toast, { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react"
 import { api } from "../../api/api";
 import { useRef } from "react"
-import Swal from 'sweetalert2'
 import "../../css/sweet.css"
+import Swal from "sweetalert2";
+import DeleteConfirmation from "../../components/deleteModal"
+import MyForm from "../../components/modal"
 
 
 const ManageAddress = () => {
     const apiInstance = api()
+
     const [address, setAddress] = useState()
     const pageTopRef = useRef(null);
+    const [provinceId, setProvinceId] = useState()
+    const [cityId, setCityId] = useState()
+
+
+
+    const getProvinceId = async () => {
+        try {
+            const province = await apiInstance.get(`/location/province`)
+            setProvinceId(province.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getCityId = async () => {
+        try {
+            const cityId = await apiInstance.get(`/location/city`)
+            const cityData = cityId.data.data;
+            cityData.sort((a, b) => a.name.localeCompare(b.name));
+            setCityId(cityId.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const getAddress = async () => {
         try {
             const userAddress = await apiInstance.get('/location/')
             console.log(userAddress.data.data);
-            // userAddress.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+            userAddress.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             setAddress(userAddress.data.data)
         } catch (error) {
             console.log(error);
         }
     }
-    const deleteAddress = (addressId) => {
-        const swalWithBootstrapButtons = Swal.mixin({
-            customClass: {
-                confirmButton: 'btn btn-success', cancelButton: 'btn btn-danger'
-            }, buttonsStyling: false
-        });
 
-        swalWithBootstrapButtons
-            .fire({
-                title: 'Are you sure?', text: "You won't be able to revert this!", icon: 'warning',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, delete it!',
-                cancelButtonText: 'No, cancel!',
-                reverseButtons: true
-            })
-            .then(async (result) => {
-                if (result.isConfirmed) {
-                    try {
-                        const softDeleteAddress = await apiInstance.patch(`/location/${addressId}`);
-                        swalWithBootstrapButtons.fire(
-                            'Deleted!',
-                            'Your file has been deleted.',
-                            'success'
-                        );
-                        getAddress()
-                    } catch (error) {
-                        console.log(error);
-                        // Handle the error, e.g., display an error message.
-                    }
-                } else if (result.dismiss === Swal.DismissReason.cancel) {
-                    swalWithBootstrapButtons.fire(
-                        'Cancelled',
-                        'Your imaginary file is safe :)',
-                        'error'
-                    );
-                }
-            });
-    };
-
-
-
-
+    const updateMain = async (addressId) => {
+        try {
+            console.log(addressId);
+            const mainAddress = await apiInstance.patch(`/location/main/${addressId}`)
+            Swal.fire("Success!", "Main Address Successfully Updated", "success");
+            getAddress()
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     useEffect(() => {
+        getCityId()
+        getProvinceId()
         getAddress()
+
     }, [])
 
+
+    const UpdateAddres = async (addressId) => {
+        try {
+            console.log(addressId);
+        } catch (error) {
+        }
+    }
+
     console.log(address);
+
 
     return (
         <div ref={pageTopRef}>
@@ -90,6 +98,7 @@ const ManageAddress = () => {
                     <div className="mt-5 md:mt-0">
                         <ModalNewAddress />
                     </div>
+
                 </div>
 
                 <div className="mt-10 flex flex-col gap-5">
@@ -109,29 +118,29 @@ const ManageAddress = () => {
                                             <div className="font-semibold">{value.city.name} - {value.city.province.name}</div>
                                         </div>
 
-                                        {value.isPrimary == "false" ? <div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div> : null}
-
-
+                                        {value.isPrimary == "false" ? <div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} onClick={() => updateMain(value.id)} /></div> : null}
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">
-                                            <ModalUpdateAddress />
-
-                                            <button onClick={() => deleteAddress(value.id)} className="border-black">Delete Adress</button>
+                                            <ModalUpdateAddress
+                                                id={value.id}
+                                                onClick={() => UpdateAddres(value.id)} />
+                                            <div className="text-red-600 hover:underline">
+                                                <DeleteConfirmation
+                                                    itemId={value.id} // Pass the item ID to delete
+                                                    onDelete={getAddress} // Pass a callback function to execute after deletion
+                                                    apiEndpoint="/location" // Pass the API endpoint to customize the request URL
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             )
                         })
-
                         : null
-
                     }
-
                 </div>
-
             </div>
-
             <Footer />
-        </div>
+        </div >
     )
 }
 

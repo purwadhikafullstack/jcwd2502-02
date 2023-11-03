@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import Swal from "sweetalert2";
 
 
 const ModalNewAddress = () => {
@@ -51,12 +52,13 @@ const ModalNewAddress = () => {
                     toast.error("Please fill in all required fields.");
                 } else {
                     const newAddress = await apiInstance.post('/location/add-address', values);
-                    toast.success("New Address Successfully Added!");
+                    // toast.success("New Address Successfully Added!");
                     inputAddress.resetForm();
                     document.getElementById('my_modal_1').close();
+                    Swal.fire("Success!", "Address Successfully Added", "success");
                     setTimeout(() => {
                         window.location.reload();
-                    }, 1500);
+                    }, 1000);
                 }
             } catch (error) {
                 toast.error("Please fill all the data")
@@ -85,6 +87,7 @@ const ModalNewAddress = () => {
         getCityId()
     }, [])
 
+    console.log(cityId);
 
     return (
         <div>
@@ -141,13 +144,11 @@ const ModalNewAddress = () => {
                             >
                                 <option value="">Select a City</option>
                                 {cityId
-                                    ? cityId
-                                        .filter((city) => city.province_id == selectedProvince) // Filter cities by selected province
-                                        .map((city, index) => (
-                                            <option key={index} value={city.id}>
-                                                {city.name}
-                                            </option>
-                                        ))
+                                    ? cityId.map((city, index) => (
+                                        <option key={index} value={city.id}>
+                                            {city.name}
+                                        </option>
+                                    ))
                                     : null}
                             </select>
                         </div>

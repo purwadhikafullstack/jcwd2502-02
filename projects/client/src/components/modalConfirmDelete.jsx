@@ -1,39 +1,44 @@
-import React, { useState } from 'react';
+import Button from './button'
+import { Link } from "react-router-dom";
 
-const ModalDelete = ({
-    title,
-    text,
-    onConfirm,
-    confirmText = 'Confirm',
-    cancelText = 'Cancel',
-}) => {
-    const [showDialog, setShowDialog] = useState(false);
+const ModalDelete = ({ button, content, message, click }) => {
 
-    const handleConfirm = async () => {
-        try {
-            await onConfirm();
-            setShowDialog(false);
-        } catch (error) {
-            console.error(error);
-            // Handle the error as needed.
-        }
-    };
+    console.log(click);
 
     return (
         <div>
-            <button onClick={() => setShowDialog(true)}>Open Dialog</button>
-            {showDialog && (
-                <div className="modal">
-                    <div className="modal-content">
-                        <h2>{title}</h2>
-                        <p>{text}</p>
-                        <button onClick={() => setShowDialog(false)}>{cancelText}</button>
-                        <button onClick={handleConfirm}>{confirmText}</button>
+            {/* Open the modal using document.getElementById('ID').showModal() method */}
+            <div onClick={() => document.getElementById('my_modal_4').showModal()} className="">
+                {button}
+            </div>
+            <dialog id="my_modal_4" className="modal sm:modal-middle backdrop-blur-sm">
+                <div className="modal-box">
+
+                    <div className='flex justify-center text-center flex-col gap-3'>
+                        <div className="font-bold text-3xl ">{content}</div>
+                        <div>{message}</div>
+                    </div>
+
+
+                    <div className="modal-action flex justify-center">
+                        <form method="dialog">
+                            {/* if there is a button in form, it will close the modal */}
+                            <div className="flex gap-2">
+
+                                <button className="btn bg-gray-200 ml-3 text-black border-4 border-black hover:bg-gray-200 hover:border-black rounded-2xl"
+                                >CANCEL</button>
+
+
+                                <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
+                                    onClick={click} >DELETE</button>
+
+                            </div>
+                        </form>
                     </div>
                 </div>
-            )}
+            </dialog>
         </div>
-    );
-};
+    )
+}
 
-export default ModalDelete;
+export default ModalDelete
