@@ -60,9 +60,6 @@ const ModalNewCategory = () => {
         <div>
             <Button text={"Add Category"} style={"w-[300px]"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
 
-            {/* <Button style={"rounded-full w-[50px] h-[50px] text-2xl "} text={"+"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button> */}
-
-
             <dialog id="my_modal_3" className="modal backdrop-blur-md">
                 <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[350px] ">
                     <h3 className="font-bold text-4xl text-white">New Category</h3>

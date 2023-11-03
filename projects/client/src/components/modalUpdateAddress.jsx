@@ -1,18 +1,12 @@
-import { FaLocationDot } from "react-icons/fa6";
-import { BiSolidDownArrow } from "react-icons/bi";
-import Button from '../components/button'
-import { Link } from "react-router-dom";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import toast, { Toaster } from "react-hot-toast";
 import debounce from 'lodash/debounce';
-import { useNavigate } from "react-router-dom";
 import { api } from "../api/api";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 
-const ModalUpdateAddress = ({ id, onClick }) => {
+const ModalUpdateAddress = ({ id, onClick, name }) => {
 
     const apiInstance = api()
     const [selectedProvince, setSelectedProvince] = useState("");
@@ -72,14 +66,6 @@ const ModalUpdateAddress = ({ id, onClick }) => {
     }, 1000);
 
 
-    const updateButton = () => {
-        try {
-            onClick(id)
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     const getAddress = async () => {
         try {
             const addressDetail = await apiInstance.get(`/location/${id}`)
@@ -102,25 +88,10 @@ const ModalUpdateAddress = ({ id, onClick }) => {
         getProvinceId()
         getCityId()
         getAddress()
-        // addressData ? dataUpdate.setValues({
-        //     name: addressData.name,
-        //     address: addressData.address,
-        //     province_id: addressData.city.province.id,
-        //     city_id: addressData.city.id
-        // }) : dataUpdate.setValues({
-        //     name: "",
-        //     address: "",
-        //     province_id: "",
-        //     city_id: ""
-        // })
     }, [])
-
-
-
 
     return (
         <div>
-            {/* Open the modal using document.getElementById('ID').showModal() method */}
             <div
                 onClick={() => document.getElementById('my_modal_' + id).showModal()}
                 className="">
@@ -128,7 +99,7 @@ const ModalUpdateAddress = ({ id, onClick }) => {
             </div>
             <dialog id={"my_modal_" + id} className="modal sm:modal-middle backdrop-blur-sm">
                 <div className="modal-box">
-                    <div className="font-bold text-3xl text-green-700 ">Update Address {id} </div>
+                    <div className="font-bold text-3xl text-green-700 ">Update Address: {name} </div>
 
                     <div className="flex flex-col gap-3 mt-5">
                         <div className="flex flex-col gap-2">
@@ -174,7 +145,7 @@ const ModalUpdateAddress = ({ id, onClick }) => {
                                 <option value="">Select a City</option>
                                 {cityId
                                     ? cityId
-                                        .filter((city) => city.province_id == selectedProvince)   // Filter cities by selected province
+                                        .filter((city) => city.province_id == selectedProvince)
                                         .map((city, index) => (
                                             <option key={index} value={city.id}>
                                                 {city.name}
@@ -201,6 +172,3 @@ const ModalUpdateAddress = ({ id, onClick }) => {
 }
 
 export default ModalUpdateAddress
-
-
- // .filter((city) => city.province_id == selectedProvince) 

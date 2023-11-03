@@ -122,7 +122,8 @@ const ManageAddress = () => {
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">
                                             <ModalUpdateAddress
                                                 id={value.id}
-                                                onClick={() => UpdateAddres(value.id)} />
+                                                onClick={() => UpdateAddres(value.id)}
+                                                name={value.name} />
                                             <div className="text-red-600 hover:underline">
                                                 <DeleteConfirmation
                                                     itemId={value.id} // Pass the item ID to delete

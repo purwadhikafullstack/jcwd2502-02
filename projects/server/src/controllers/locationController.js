@@ -238,7 +238,6 @@ module.exports = {
             const { idAddress } = req.params
             const { name, address, city_id } = req.body
 
-
             const addressPatch = await db.user_address.update({ address, name, city_id }, { where: { id: idAddress } })
 
             const findCity = await db.city.findOne({ where: { id: city_id } })
