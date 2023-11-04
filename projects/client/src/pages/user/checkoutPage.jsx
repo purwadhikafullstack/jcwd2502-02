@@ -25,13 +25,13 @@ const CheckoutPage = () => {
     return (
         <div>
             <Toaster />
-            <Navbar />
+            {/* <Navbar /> */}
 
-            <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
+            <div className="mx-5 pt-5 md:mx-20 lg:mx-32 ">
 
-                <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Checkout
+                <div className="flex text-5xl font-bold gap-2 text-green-800">Checkout
                 </div>
-                <div className="flex mb-5 text-lg">
+                <div className="flex my-5 text-lg">
                     <div className="pt-1 pr-3"><FaLocationDot /> </div>
                     <div> Branch Name</div>
                 </div>
@@ -50,12 +50,80 @@ const CheckoutPage = () => {
                                 </div>)
                         })}
                     </div>
+                    <div className="bg-green-800 my-10 lg:my-0 p-5 rounded-xl lg:w-[400px]">
+                        <div className="text-2xl font-bold text-white">Order Detail:</div>
+                        <div className="text-white">
+                            <div className="my-3">
+                                <div className="font-bold">Shipping Address</div>
+                                <div>Rumah XXXX</div>
+                            </div>
 
-                    <div className="bg-green-800 my-10 lg:my-0 p-3 rounded-xl md:h-[120px] lg:w-[400px]">
-                        <div className="text-2xl md:text-xl font-bold text-white flex justify-between">
-                            <div>Order Detail:</div>
-                            <div>Rp {totalSubtotal.toLocaleString()}</div>
+                            <div className="grid gap-2">
+                                <div className="grid gap-2">
+                                    <div className="font-bold">Shipping Service</div>
+                                    <div>
+                                        <select className="select select-bordered w-full  text-black">
+                                            <option disabled selected>Select shipping service</option>
+                                            <option>JNE</option>
+                                            <option>POS INDONESIA</option>
+                                            <option>Tiki</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="grid gap-2">
+                                    <div className="font-bold">Shipping Option</div>
+                                    <div>
+                                        <select className="select select-bordered w-full  text-black">
+                                            <option disabled selected>Select shipping option</option>
+                                            <option>tba</option>
+                                            <option>tba</option>
+                                            <option>tba</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div className="grid gap-2">
+                                    <div className="font-bold">Voucher</div>
+                                    <div>
+                                        <select className="select select-bordered w-full  text-black">
+                                            <option disabled selected>Select Voucher</option>
+                                            <option>Voucher 1</option>
+                                            <option>Voucher 2</option>
+                                            <option>Voucher 3</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="grid gap-2 mt-3">
+                                <div className="flex justify-between">
+                                    <div>Total Weight</div>
+                                    <div className="font-bold">500 gr</div>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <div>Subtotal</div>
+                                    <div className="font-bold">Rp {totalSubtotal.toLocaleString()}</div>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <div>Shipping Cost</div>
+                                    <div className="font-bold">Rp XXX</div>
+                                </div>
+
+                                <div className="flex justify-between">
+                                    <div>Voucher Discount</div>
+                                    <div className="font-bold">Rp XXX</div>
+                                </div>
+                            </div>
+
+                            <div className="h-[3px] bg-white my-2"></div>
+
+                            <div className="flex justify-between text-xl ">
+                                <div>Grand Total</div>
+                                <div className="font-bold">Rp XXX</div>
+                            </div>
                         </div>
+
                         <div className="my-3">
                             <Link >
                                 <Button style={"w-full"} text={"Confirm Order"} />

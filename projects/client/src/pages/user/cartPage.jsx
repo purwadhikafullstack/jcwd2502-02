@@ -28,9 +28,9 @@ const Cart = () => {
 
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
 
-                <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">My Cart
+                <div className="flex text-5xl font-bold gap-2 text-green-800">My Cart
                 </div>
-                <div className="flex mb-5 text-lg">
+                <div className="flex my-5 text-lg">
                     <div className="pt-1 pr-3"><FaLocationDot /> </div>
                     <div> Branch Name</div>
                 </div>
