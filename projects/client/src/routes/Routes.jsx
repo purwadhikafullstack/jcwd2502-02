@@ -15,6 +15,8 @@ import NotFoundPage from "../pages/404";
 import UpdatePass2 from "../pages/user/profilePassword";
 import ProductDetailPage from "../pages/user/productDetailPage";
 import ManageAddress from "../pages/user/manageAddressPage";
+import Cart from "../pages/user/cartPage";
+import CheckoutPage from "../pages/user/checkoutPage";
 
 import Protected from "./protected";
 
@@ -78,7 +80,12 @@ const routes = [
     <Route path='/manage-address' element={
         < ManageAddress />
     } />,
-
+    <Route path='/cart' element={
+        <Cart />
+    } />,
+    <Route path='/checkout' element={
+        <CheckoutPage />
+    } />,
     <Route path='/*' element={
         < NotFoundPage />
     } />,

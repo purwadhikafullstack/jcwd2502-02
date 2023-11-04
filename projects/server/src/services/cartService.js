@@ -6,7 +6,13 @@ module.exports = {
             return await db.cart.findAll({
                 where: {
                     user_id: id,
-                }
+                },
+                include: [
+                    {
+                        model: db.product, // The model to join
+                        required: true, // You can set it to false if it's not a mandatory join
+                    },
+                ],
             });
         } catch (error) {
             return error
