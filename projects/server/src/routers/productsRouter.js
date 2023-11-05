@@ -6,15 +6,17 @@ const upload = require("./../middlewares/upload");
 
 
 Router.get('/all', productsController.getAllProducts)
-Router.get('/detail/:id', productsController.getOneProduct)
-Router.get('/category', productsController.getCategory)
+Router.get('/allproducts', productsController.getAllProductsAndCategoryName)
 Router.get("/filtered", productsController.getAllProductsByCat);
 Router.get("/productbycat", productsController.getProductByCategory);
-Router.get("/onecategory/:id", productsController.getOneCategory);
-Router.patch("/editcategory", productsController.editCategory);
-Router.patch("/editimage/:idImage", upload, productsController.updateCategoryImage);
-Router.patch("/deletecategory/:id", productsController.deleteCategory);
-Router.patch("/savecategory", productsController.saveEditCat);
-Router.post("/addcategory", upload, productsController.createCategory);
+Router.post("/addproduct", upload, productsController.createProduct);
+Router.patch("/deleteproduct/:id", productsController.deleteProduct);
+Router.patch("/editimage/:idImage", upload, productsController.updateProductImage);
+Router.get("/oneproduct/:id", productsController.getOneProduct);
+Router.patch("/saveproduct", productsController.saveEditProduct);
+
+
+
+
 
 module.exports = Router;

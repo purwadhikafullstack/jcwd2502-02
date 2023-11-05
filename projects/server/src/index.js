@@ -44,9 +44,10 @@ app.get("/api/greetings", (req, res, next) => {
 
 app.use(express.static('src/public'))
 
-const { productsRouter, branchRouter, cartRouter, locationRouter } = require('./routers');
+const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter } = require('./routers');
 const { log } = require("handlebars");
 app.use('/api/products', productsRouter)
+app.use('/api/category', categoryRouter)
 app.use('/api/branch', branchRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/location', locationRouter)

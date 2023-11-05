@@ -1,5 +1,6 @@
 const usersRouter = require('./usersRouter')
 const productsRouter = require('./productsRouter')
+const categoryRouter = require('./categoryRouter')
 const branchRouter = require('./branchRouter')
 const cartRouter = require('./cartRouter')
 const locationRouter = require('./locationRouter')
@@ -7,6 +8,7 @@ const locationRouter = require('./locationRouter')
 module.exports = {
     usersRouter,
     productsRouter,
+    categoryRouter,
     branchRouter,
     cartRouter,
     locationRouter

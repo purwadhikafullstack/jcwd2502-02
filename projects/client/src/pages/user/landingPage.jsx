@@ -26,7 +26,7 @@ const LandingPage = () => {
     const api = api1();
     const onGetCategory = async () => {
         try {
-            const category = await api.get(`/products/category`);
+            const category = await api.get(`/category/all`);
             // console.log(category.data.data);
             setCategory(category.data.data);
         } catch (error) {

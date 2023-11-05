@@ -11,7 +11,7 @@ const ModalNewCategory = () => {
     const api = api1()
     const onGetCategory = async () => {
         try {
-            const category = await api.get(`/products/category`);
+            const category = await api.get(`/category/all`);
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);
@@ -42,7 +42,7 @@ const ModalNewCategory = () => {
                 toast.error("Please Fill All Data")
             } else {
                 console.log(inputs);
-                const data = await api.post(`products/addcategory`, fd)
+                const data = await api.post(`category/addcategory`, fd)
                 toast.success('Create Category Success')
                 console.log(data);
                 setTimeout(() => {

@@ -43,7 +43,7 @@ const ProductCard = (props) => {
         <div>
             <div className={`hover:border-green-700  hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl ${props.style}`}>
                 <div>
-                    <img className="object-fill rounded-t-xl h-[160px] lg:h-[220px] w-full z-0" src={process.env.REACT_APP_URL + `${props.image.substring(7)}`} alt="" /></div>
+                    <img className="object-fill rounded-t-xl h-[160px] lg:h-[220px] w-full z-0" src={process.env.REACT_APP_URL + `${props.image}`} alt="" /></div>
                 <div className="h-[110px] lg:h-[110px] flex flex-col justify-between p-2 pl-4">
                     <div className="font-semibold truncate">{props.name}</div>
                     <div className="text-gray-400"> Stock(s): {props.stock}</div>

@@ -30,7 +30,7 @@ const ProductListPage = () => {
     }, 1000);
     const onGetCategory = async () => {
         try {
-            const category = await api.get(`/products/category`);
+            const category = await api.get(`category/all`);
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);

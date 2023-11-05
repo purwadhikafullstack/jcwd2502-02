@@ -7,7 +7,7 @@ import debounce from 'lodash/debounce';
 import { useParams } from "react-router-dom";
 import Button from "../../components/button";
 
-const ProductDetailPage = () => {
+const BranchProductDetailPage = () => {
     const [product, setProduct] = useState([]);
     const api = api1();
     const { id } = useParams()
@@ -28,7 +28,7 @@ const ProductDetailPage = () => {
             <Navbar />
             <div className="mt-[70px] pt-3">
                 <div className='w-auto px-3 py-3'>
-                    <img className="px-3 py-3 rounded-xl shadow-xl md:h-[500px] lg:h-[300px]" src={process.env.REACT_APP_URL + `${product?.image}`} alt={"image of" + `${product.name}`} />
+                    <img className="px-3 py-3 rounded-xl shadow-xl md:h-[500px] lg:h-[300px]" src={process.env.REACT_APP_URL + `${product?.image?.substring(7)}`} alt={"image of" + `${product.name}`} />
                 </div>
                 <div className="font-semibold truncate text-2xl px-5 pt-2 h-[50px] overflow-auto">
                     {product.name}
@@ -59,4 +59,4 @@ const ProductDetailPage = () => {
         </div>
     )
 }
-export default ProductDetailPage
+export default BranchProductDetailPage
