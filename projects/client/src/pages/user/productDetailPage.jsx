@@ -13,7 +13,7 @@ const ProductDetailPage = () => {
     const { id } = useParams()
     const onGetProduct = async () => {
         try {
-            const oneProduct = await api.get(`/products/detail/${id}`);
+            const oneProduct = await api.get(`products/oneproduct/${id}`);
             console.log(oneProduct);
             setProduct(oneProduct.data.data);
         } catch (error) {

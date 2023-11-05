@@ -59,6 +59,7 @@ const UpdateProductsPage = () => {
                 pageTopRef.current.scrollIntoView({ behavior: "smooth" });
             }
             setSearchQuery("");
+            toast.success("Update Product Success")
             fetchData();
         } catch (error) {
             console.log(error);
@@ -101,12 +102,8 @@ const UpdateProductsPage = () => {
             console.log(error);
         }
     };
-    const debouncedSaveProducts = debounce(() => {
-        handleSaveProduct()
-    }, 1000);
-    const debouncedSetFilteredProducts = debounce((filtered) => {
-        setFilteredProducts(filtered);
-    }, 1000);
+    const debouncedSaveProducts = debounce(() => { handleSaveProduct() }, 1000);
+    const debouncedSetFilteredProducts = debounce((filtered) => { setFilteredProducts(filtered); }, 1000);
     useEffect(() => {
         fetchData()
     }, []);
