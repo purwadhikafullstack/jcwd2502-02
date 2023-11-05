@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "../redux/Features/cart";
 import { deleteItemInCartAsync } from "../redux/Features/cart";
 import { toast } from "react-hot-toast";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const CartComponent = (props) => {
     const dispatch = useDispatch();
@@ -54,7 +54,7 @@ const CartComponent = (props) => {
                         </div>
                         <div className="flex items-center gap-2 lg:gap-5 py-3 md:pr-5">
                             <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
-                            <div className="text-xl border-b-2 border-green-800 p-2">{props.quantity}</div>
+                            <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
                             <Button style={"lg:w-[50px]  text-lg rounded-full"} text="+" onClick={() => handleAddToCart()} />
                         </div>
                     </div>

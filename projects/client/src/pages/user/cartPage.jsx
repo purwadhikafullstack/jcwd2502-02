@@ -6,20 +6,36 @@ import toast, { Toaster } from "react-hot-toast";
 import Button from "../../components/button";
 import { Link } from "react-router-dom";
 import { FaLocationDot } from "react-icons/fa6";
+import { api } from "../../api/api";
+import { useEffect, useState } from "react";
+
 
 const Cart = () => {
     const dispatch = useDispatch()
     const cart = useSelector((state) => state.cart);
+    const apiInstance = api()
+    const [products, setProducts] = useState()
+    const [loading, setLoading] = useState(true);
 
-    // ambil cart dari redux 
-    // ambil neaerest stock (untuk sementara nembak dulu wkwk)
-    // pakai productCard untuk mapping
-    // cb amblil sub total dr front end, kalau gabisa call endpoint dr backend
+    const cartProductIds = cart.cart.map((cartItem) => cartItem.products_id);
 
-    console.log(cart.cart);
+    const productStock = async () => {
+        try {
+            const branch = await apiInstance.get(`/branch/nearest/1`);
+            console.log(branch.data.data, "ini data branch");
+            setProducts(branch.data.data);
+            setLoading(false);
+        } catch (error) {
+            console.log(error);
+            setLoading(false);
+        }
+    }
+
+    useEffect(() => {
+        productStock()
+    }, [])
 
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
-
 
     return (
         <div>
@@ -35,18 +51,24 @@ const Cart = () => {
                     <div> Branch Name</div>
                 </div>
                 <div className="lg:flex lg:gap-12 md:mb-10">
-                    <div className="grid gap-3 lg:flex-1 h-[500px] overflow-y-auto ">
-                        {cart.cart.map((value, index) => {
-                            return (
-                                <div key={index}>
-                                    <CartComponent
-                                        name={value.product.name}
-                                        image={value.product.image}
-                                        price={value.product.price}
-                                        quantity={value.quantity}
-                                        data={value.product.id} />
-                                </div>)
-                        })}
+
+                    <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto ">
+                        {loading ? <span className="loading loading-spinner loading-md"></span> :
+                            products
+                                .filter((value) => cartProductIds.includes(value.products_id))
+                                .map((filteredProduct, index) => (
+                                    <div className="" key={index}>
+                                        <CartComponent
+                                            name={filteredProduct.product.name}
+                                            price={filteredProduct.product.price}
+                                            image={filteredProduct.product.image}
+                                            stock={filteredProduct.stock}
+                                            data={filteredProduct.products_id}
+                                        />
+                                    </div>
+                                ))
+
+                        }
                     </div>
 
                     <div className="bg-green-800 my-10 lg:my-0 p-3 rounded-xl md:h-[120px] lg:w-[400px]">
