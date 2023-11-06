@@ -2,6 +2,9 @@ import Button from './button'
 import { Link } from "react-router-dom";
 
 const ModalDelete = ({ button, content, message, click }) => {
+
+    console.log(click);
+
     return (
         <div>
             {/* Open the modal using document.getElementById('ID').showModal() method */}
@@ -24,6 +27,8 @@ const ModalDelete = ({ button, content, message, click }) => {
 
                                 <button className="btn bg-gray-200 ml-3 text-black border-4 border-black hover:bg-gray-200 hover:border-black rounded-2xl"
                                 >CANCEL</button>
+
+
                                 <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
                                     onClick={click} >DELETE</button>
 
