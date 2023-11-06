@@ -18,7 +18,14 @@ module.exports = (sequelize, DataTypes) => {
     price: DataTypes.INTEGER,
     image: DataTypes.TEXT,
     description: DataTypes.TEXT,
-    isDeleted: DataTypes.INTEGER,
+    weight: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    isDeleted: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
