@@ -8,32 +8,38 @@ import { Link } from "react-router-dom";
 import { FaLocationDot } from "react-icons/fa6";
 import { api } from "../../api/api";
 import { useEffect, useState } from "react";
-
-
+import { nearestBranch } from "../../redux/Features/branch";
 const Cart = () => {
     const dispatch = useDispatch()
     const cart = useSelector((state) => state.cart);
     const apiInstance = api()
     const [products, setProducts] = useState()
     const [loading, setLoading] = useState(true);
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
+    console.log(closestBranch);
 
     const cartProductIds = cart.cart.map((cartItem) => cartItem.products_id);
 
     const productStock = async () => {
         try {
-            const branch = await apiInstance.get(`/branch/nearest/1`);
-            console.log(branch.data.data, "ini data branch");
+            const branch = await apiInstance.get(`/branch/nearest/${closestBranch.id}`);
+            console.log(branch.data.data);
             setProducts(branch.data.data);
             setLoading(false);
+            nearestBranch()
         } catch (error) {
             console.log(error);
             setLoading(false);
         }
     }
-
     useEffect(() => {
-        productStock()
-    }, [])
+        dispatch(nearestBranch())
+    }, [dispatch])
+    useEffect(() => {
+        if (closestBranch) {
+            productStock()
+        }
+    }, [closestBranch])
 
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
 
@@ -48,7 +54,7 @@ const Cart = () => {
                 </div>
                 <div className="flex my-5 text-lg">
                     <div className="pt-1 pr-3"><FaLocationDot /> </div>
-                    <div> Branch Name</div>
+                    <div> {closestBranch.name}</div>
                 </div>
                 <div className="lg:flex lg:gap-12 md:mb-10">
 

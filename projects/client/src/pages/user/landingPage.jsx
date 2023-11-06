@@ -24,6 +24,7 @@ const LandingPage = () => {
     const [category, setCategory] = useState([]);
     const dispatch = useDispatch();
     const api = api1();
+
     const onGetCategory = async () => {
         try {
             const category = await api.get(`/category/all`);

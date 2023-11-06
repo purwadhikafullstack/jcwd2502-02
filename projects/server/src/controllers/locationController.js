@@ -57,6 +57,18 @@ module.exports = {
         }
     },
 
+    getMainAddress: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken
+            const mainAddress = await db.user_address.findOne({
+                where: { user_id: id, isPrimary: 'true' }
+            })
+            responseHandler(res, "Get Main Address Success", mainAddress)
+        } catch (error) {
+            next(error)
+        }
+    },
+
     getAddressById: async (req, res, next) => {
         try {
             const { id } = req.params;

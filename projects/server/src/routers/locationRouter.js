@@ -10,6 +10,7 @@ Router.get('/city', locationController.getCity)
 Router.get('/', verify, locationController.getAddress)
 Router.get('/:id', locationController.getAddressById)
 Router.get('/city/:id', locationController.getCitybyProv)
+Router.get('/address/main', verify, locationController.getMainAddress)
 
 Router.post('/add-address', verify, locationController.addAddress)
 

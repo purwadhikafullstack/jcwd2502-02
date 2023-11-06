@@ -105,4 +105,20 @@ module.exports = {
             return error
         }
     },
+    getProductStockService: async (query) => {
+        try {
+            console.log(query);
+            const { productId, branchId } = query
+            return await db.product_stock.findOne({
+                where: { products_id: productId, store_branch_id: branchId },
+                include: [
+                    {
+                        model: db.product
+                    }
+                ]
+            })
+        } catch (error) {
+            return error
+        }
+    }
 }

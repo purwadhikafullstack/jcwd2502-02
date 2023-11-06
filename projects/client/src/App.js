@@ -12,6 +12,8 @@ import UpdateProductsCategoryPage from "./pages/admin/updateCategoryPage";
 import { onCheckIsLogin } from "./redux/Features/users";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
+import { onGetBranchAsync } from "./redux/Features/branch";
+import { nearestBranch } from "./redux/Features/branch";
 
 // import routes baru
 import routes from "./routes/Routes";
@@ -19,7 +21,9 @@ import routes from "./routes/Routes";
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(onCheckIsLogin())
+    dispatch(onCheckIsLogin());
+    dispatch(onGetBranchAsync())
+    dispatch(nearestBranch())
   }, [])
 
   return (

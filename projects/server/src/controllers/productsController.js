@@ -13,6 +13,7 @@ const { createProductService } = require("./../services/productsService");
 const { deleteProductService } = require("./../services/productsService");
 const { updateProductImageService } = require("./../services/productsService");
 const { saveEditProductService } = require("./../services/productsService");
+const { getProductStockService } = require("./../services/productsService");
 const { Sequelize } = require("sequelize");
 const Op = Sequelize.Op;
 module.exports = {
@@ -105,4 +106,12 @@ module.exports = {
             next(error);
         }
     },
+    getProductStock: async (req, res, next) => {
+        try {
+            const productStock = await getProductStockService(req.query)
+            responseHandler(res, "Get Product Stock Success", productStock)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
