@@ -2,7 +2,7 @@ import React from "react";
 import Swal from "sweetalert2";
 import { api } from "../api/api";
 
-const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint }) => {
+const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint, button }) => {
     const apiInstance = api()
 
     const handleDelete = async () => {
@@ -13,26 +13,32 @@ const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint }) => {
             showCancelButton: true,
             cancelButtonColor: "#039E57",
             confirmButtonColor: "#d33",
-            cancelButtonText: "Cancel", // Change the cancel button text
-            confirmButtonText: "Delete", // Change the confirm button text
-            reverseButtons: true, // Reverse the button positions
+            cancelButtonText: "Cancel",
+            confirmButtonText: "Delete",
+            reverseButtons: true,
         });
 
         if (result.isConfirmed) {
             try {
                 const softDeleteResponse = await apiInstance.patch(`${apiEndpoint}/${itemId}`);
-                Swal.fire("Deleted!", "Your item has been deleted.", "success");
+                Swal.fire({
+                    icon: "success",
+                    html: 'Your item has been deleted.',
+                    customClass: {
+                        confirmButton: "custom-ok-button-class",
+                    },
+                    confirmButtonColor: "#039E57",
+                });
                 onDelete();
             } catch (error) {
                 console.log(error);
-                // Handle the error, e.g., display an error message.
             }
         }
     };
 
     return (
         <div className="" onClick={handleDelete}>
-            Delete
+            {button}
         </div>
     );
 };

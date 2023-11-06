@@ -129,6 +129,7 @@ const ManageAddress = () => {
                                                     itemId={value.id} // Pass the item ID to delete
                                                     onDelete={getAddress} // Pass a callback function to execute after deletion
                                                     apiEndpoint="/location" // Pass the API endpoint to customize the request URL
+                                                    button={"Delete"}
                                                 />
                                             </div>
                                         </div>
