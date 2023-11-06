@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -243,6 +243,63 @@ module.exports = {
             console.log('>>>>');
             console.log(error);
             next(error)
+        }
+    },
+
+    registerBranchAdmin: async (req, res, next) => {
+        try {
+            const newUser = await createBranchManager(req)
+            respondHandler(res, {
+                message: newUser.message
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getAllBranchAdmin: async (req, res, next) => {
+        try {
+            const branchAdmins = await db.user.findAll({
+                attributes: ["username", "email", "phone_number", "profile_picture", "isVerified", "store_branch_id", "birthdate"],
+                where: {role: "admin"},
+                include: [
+                    {
+                        model: db.store_branch,
+                        attributes: ["name"],
+                        required: true
+                    }
+                ]
+            })
+            console.log(branchAdmins);
+            respondHandler(res, {
+                message: "get admins",
+                data: branchAdmins
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    deactivateAdmin: async (req, res, next) => {
+        try {
+            console.log(req.body);
+            const {email} = req.body;
+            const response = await db.user.findOne({
+                where: {email},
+            })
+            if(!response) throw {message: "User account was not found"};
+            const adminStatus = response.dataValues.isVerified;
+            console.log(`adminStatus: ${adminStatus}`);
+            if(adminStatus == 'verified') {
+                const deactivate = await db.user.update({isVerified: 'unverified'}, {where: {email}})
+            } else if(adminStatus=='unverified') {
+                const activate = await db.user.update({isVerified: 'verified'}, {where: {email}})
+            }
+            respondHandler(res, {
+                message: "Admin status has been updated"
+            })
+        } catch (error) {
+            next(error);
         }
     }
 }

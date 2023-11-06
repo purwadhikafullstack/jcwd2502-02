@@ -160,5 +160,33 @@ module.exports = {
         } catch (error) {
             return error
         }
+    },
+
+    createBranchManager: async (req) => {
+        const {email, username, phone_number, password, store_branch_id, birthdate, gender } = req.body;
+        const usedEmail = await db.user.findOne({
+            where: {email}
+        });
+        const usedUsername = await db.user.findOne({
+            where: {username}
+        });
+        if(usedEmail || usedUsername) throw {status: 401, message: "Username or Email has already been taken"}
+        const hashedPassword = await hash(password);
+        const userData = {
+            username,
+            email,
+            password: hashedPassword,
+            phone_number,
+            isVerified: "verified",
+            role: "admin",
+            birthdate,
+            gender,
+            store_branch_id
+        }
+        await db.user.create(userData)
+        return {
+            isError: false,
+            message: "Branch admin created"
+        }
     }
 }

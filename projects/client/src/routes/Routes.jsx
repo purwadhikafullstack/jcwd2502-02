@@ -19,6 +19,7 @@ import BranchProductDetailPage from "../pages/user/branchProductDetailPage";
 import ManageAddress from "../pages/user/manageAddressPage";
 import Cart from "../pages/user/cartPage";
 import CheckoutPage from "../pages/user/checkoutPage";
+import CreateAdminPage from "../pages/admin/createAdminPage";
 
 import Protected from "./protected";
 
@@ -55,7 +56,7 @@ const routes = [
         </Protected>
     } />,
     <Route path='/login' element={
-        <Protected guestPage={false}>
+        <Protected guestPage={true}>
             <LoginPage />
         </Protected>
     } />,
@@ -94,6 +95,11 @@ const routes = [
     <Route path='/checkout' element={
         <CheckoutPage />
     } />,
+
+    <Route path='/user-management' element={
+        < CreateAdminPage />
+    } />,
+
     <Route path='/*' element={
         < NotFoundPage />
     } />,
