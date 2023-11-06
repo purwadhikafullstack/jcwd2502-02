@@ -15,6 +15,7 @@ import NotFoundPage from "../pages/404";
 import UpdatePass2 from "../pages/user/profilePassword";
 import ProductDetailPage from "../pages/user/productDetailPage";
 import ManageAddress from "../pages/user/manageAddressPage";
+import CreateAdminPage from "../pages/admin/createAdminPage";
 
 import Protected from "./protected";
 
@@ -48,7 +49,7 @@ const routes = [
         </Protected>
     } />,
     <Route path='/login' element={
-        <Protected guestPage={false}>
+        <Protected guestPage={true}>
             <LoginPage />
         </Protected>
     } />,
@@ -77,6 +78,10 @@ const routes = [
 
     <Route path='/manage-address' element={
         < ManageAddress />
+    } />,
+
+    <Route path='/user-management' element={
+        < CreateAdminPage />
     } />,
 
     <Route path='/*' element={
