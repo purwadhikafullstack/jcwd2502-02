@@ -6,6 +6,8 @@ import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { BsFillTrash3Fill } from "react-icons/bs";
 import DeleteConfirmation from "./deleteModal";
+import { getCartAsync } from "../redux/Features/cart"; // Replace with the actual path
+
 
 const CartComponent = (props) => {
     const dispatch = useDispatch();
@@ -13,6 +15,10 @@ const CartComponent = (props) => {
     const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id === props.data);
     const navigate = useNavigate()
+
+    const handleGetCart = () => {
+        dispatch(getCartAsync());
+    };
 
     const getAvailableStock = () => {
         return props.stock;
@@ -58,9 +64,10 @@ const CartComponent = (props) => {
                         <div className="flex items-center gap-2 lg:gap-5 py-3 md:pr-5 justify-center ">
                             <DeleteConfirmation
                                 button={<div className="text-xl"><BsFillTrash3Fill /></div>}
-
+                                apiEndpoint={"/cart/delete-all"}
+                                itemId={props.id}
+                                onDelete={() => handleGetCart()}
                             />
-
                             <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
                             <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
                             <Button style={"lg:w-[50px]  text-lg rounded-full"} text="+" onClick={() => handleAddToCart()} />

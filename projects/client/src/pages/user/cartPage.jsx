@@ -64,6 +64,7 @@ const Cart = () => {
                                             image={filteredProduct.product.image}
                                             stock={filteredProduct.stock}
                                             data={filteredProduct.products_id}
+                                            id={filteredProduct.products_id}
                                         />
                                     </div>
                                 ))

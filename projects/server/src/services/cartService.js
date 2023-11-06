@@ -9,8 +9,8 @@ module.exports = {
                 },
                 include: [
                     {
-                        model: db.product, // The model to join
-                        required: true, // You can set it to false if it's not a mandatory join
+                        model: db.product,
+                        required: true,
                     },
                 ],
             });
@@ -22,12 +22,7 @@ module.exports = {
         try {
             const { id } = dataToken;
             const { productId } = params
-            // if (!id) {
-            //     return respondHandler(res, {
-            //         message: "Please log-in to add item to cart",
-            //         data: null
-            //     });
-            // }
+
             const getProduct = await db.product.findOne({
                 where: { id: productId }
             });
@@ -97,5 +92,22 @@ module.exports = {
             return error
         }
     },
-    // deleteCartByItem: async
+    deleteCartItem: async (userId, product_Id) => {
+        try {
+            const deleteProduct = await db.cart.destroy({
+                where: {
+                    user_id: userId,
+                    products_id: product_Id,
+                },
+            });
+            const result = await db.cart.findAll({
+                where: {
+                    user_id: userId,
+                },
+            });
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }
