@@ -6,7 +6,13 @@ module.exports = {
             return await db.cart.findAll({
                 where: {
                     user_id: id,
-                }
+                },
+                include: [
+                    {
+                        model: db.product,
+                        required: true,
+                    },
+                ],
             });
         } catch (error) {
             return error
@@ -16,12 +22,7 @@ module.exports = {
         try {
             const { id } = dataToken;
             const { productId } = params
-            // if (!id) {
-            //     return respondHandler(res, {
-            //         message: "Please log-in to add item to cart",
-            //         data: null
-            //     });
-            // }
+
             const getProduct = await db.product.findOne({
                 where: { id: productId }
             });
@@ -91,4 +92,22 @@ module.exports = {
             return error
         }
     },
+    deleteCartItem: async (userId, product_Id) => {
+        try {
+            const deleteProduct = await db.cart.destroy({
+                where: {
+                    user_id: userId,
+                    products_id: product_Id,
+                },
+            });
+            const result = await db.cart.findAll({
+                where: {
+                    user_id: userId,
+                },
+            });
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

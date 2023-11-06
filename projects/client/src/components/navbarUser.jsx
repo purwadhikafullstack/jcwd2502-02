@@ -31,6 +31,8 @@ const Navbar = () => {
         dispatch(getCartAsync());
     }, [dispatch]);
 
+    // console.log(cart);
+
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
@@ -47,7 +49,9 @@ const Navbar = () => {
                 </div>
                 <div className="flex gap-5">
                     <div className="grid items-center relative mt-2 px-5">
-                        <div><HiShoppingCart className="text-white text-4xl" /></div>
+                        <Link to={'/cart'}>
+                            <div><HiShoppingCart className="text-white text-4xl" /></div>
+                        </Link>
                         <div className="absolute top-0 right-0 border-2 border-green-800 rounded-full px-2 font-black bg-yellow-300 text-green-800 text-sm">{cart?.length}</div>
                     </div>
 

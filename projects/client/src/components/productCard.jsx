@@ -12,7 +12,6 @@ const ProductCard = (props) => {
     const isInCart = cart.cart.some(item => item.products_id === props.data);
     const navigate = useNavigate()
 
-
     const getAvailableStock = () => {
         return props.stock;
     };
