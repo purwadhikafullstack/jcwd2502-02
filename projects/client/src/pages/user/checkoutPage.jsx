@@ -36,7 +36,7 @@ const CheckoutPage = () => {
                     <div> Branch Name</div>
                 </div>
                 <div className="lg:flex lg:gap-12 md:mb-10">
-                    <div className="grid gap-3 lg:flex-1 h-[500px] overflow-y-auto">
+                    <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto">
                         {cart.cart.map((value, index) => {
                             return (
                                 <div key={index}>

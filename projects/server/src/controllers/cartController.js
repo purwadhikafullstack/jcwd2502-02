@@ -26,5 +26,16 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    deleteCartbyItem: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken
+            const { productId } = req.params
+
+            const deleteProduct = await 
+
+        } catch (error) {
+            next(error)
+        }
     }
 }

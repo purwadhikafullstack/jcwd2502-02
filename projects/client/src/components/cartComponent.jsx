@@ -4,6 +4,8 @@ import { addToCartAsync } from "../redux/Features/cart";
 import { deleteItemInCartAsync } from "../redux/Features/cart";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import { BsFillTrash3Fill } from "react-icons/bs";
+import DeleteConfirmation from "./deleteModal";
 
 const CartComponent = (props) => {
     const dispatch = useDispatch();
@@ -41,18 +43,24 @@ const CartComponent = (props) => {
     return (
         <div>
             <div className={`w-full ${props.style}`}>
-                <div className="flex w-full rounded-xl border">
+                <div className="flex w-full rounded-xl border h-auto">
                     <div className="">
-                        <img className="object-fill h-[170px] w-[150px] md:w-[200px] rounded-l-xl" src={process.env.REACT_APP_URL + `${props.image}`} alt="product_image" />
+                        <img className="object-fill h-[170px] w-[140px] md:w-[200px] rounded-l-xl" src={process.env.REACT_APP_URL + `${props.image}`} alt="product_image" />
                     </div>
 
                     <div className="md:flex md:justify-between p-2 pl-4 w-[200px] md:w-full">
-                        <div className="md:grid md:place-content-center md:gap-3">
+                        <div className="md:grid md:place-content-center md:gap-3 w-auto">
                             <div className=" text-xl font-semibold truncate">{props.name}</div>
                             <div className="text-gray-400"> Stock(s): {props.stock}</div>
                             <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
                         </div>
-                        <div className="flex items-center gap-2 lg:gap-5 py-3 md:pr-5">
+
+                        <div className="flex items-center gap-2 lg:gap-5 py-3 md:pr-5 justify-center ">
+                            <DeleteConfirmation
+                                button={<div className="text-xl"><BsFillTrash3Fill /></div>}
+
+                            />
+
                             <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
                             <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
                             <Button style={"lg:w-[50px]  text-lg rounded-full"} text="+" onClick={() => handleAddToCart()} />
