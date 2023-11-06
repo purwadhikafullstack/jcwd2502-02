@@ -7,6 +7,8 @@ import debounce from 'lodash/debounce';
 import ModalNewProduct from "../../components/modalNewProduct";
 import toast, { Toaster } from "react-hot-toast";
 import { AiFillEdit } from "react-icons/ai";
+import DeleteConfirmation from "../../components/deleteModal"
+
 const UpdateProductsPage = () => {
     const inputImage = useRef()
     const [category, setCategory] = useState([]);
@@ -174,10 +176,16 @@ const UpdateProductsPage = () => {
                                             </button>
                                         </td>
                                         <td>
-                                            <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black"
+                                            {/* <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black"
                                                 onClick={() => {
                                                     onDeleteProducts(value.id);
-                                                }}>DELETE</button>
+                                                }}>DELETE</button> */}
+                                            <DeleteConfirmation
+                                                button={<button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">DELETE</button>}
+                                                itemId={value.id}
+                                                apiEndpoint={`/products/deleteproduct`}
+                                                onDelete={() => fetchData()}
+                                            />
                                         </td>
                                     </tr>
                                 );
