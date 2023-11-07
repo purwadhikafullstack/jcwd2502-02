@@ -46,32 +46,42 @@ export default function LoginPage() {
             </div>
             <div className='grid place-content-center'>
                 <form className='flex flex-col rounded-2xl gap-2 bg-green-700 p-5 w-[350px] md:w-[450px] lg:w-[400px]'>
-                    <label className='text-white' htmlFor="" >Email</label>
-                    <input type="email" id='email' name='email' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} className='rounded-xl p-2' placeholder='' />
+                    <label className='text-white font-bold text-sm' htmlFor="" >Email</label>
+                    <input type="email" id='email' name='email' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.email} className='rounded-full p-2 pl-3' placeholder='' />
                     {
                         formik.touched.email && formik.errors.email ?
-                            <div className='text-red-500 font-bold'> {formik.errors.email} </div>
+                            <div className='text-orange-400 font-medium'> {formik.errors.email} </div>
                             :
                             null
                     }
-                    <label className='text-white' htmlFor="" >Password</label>
-                    <input type="password" id='password' name='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className='rounded-xl p-2' />
+                    <label className='text-white font-bold text-sm pt-2' htmlFor="" >Password</label>
+                    <input type="password" id='password' name='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className='rounded-full p-2 pl-3' />
                     {
                         formik.touched.password && formik.errors.password ?
-                            <div className='text-red-500 font-bold'> {formik.errors.password} </div>
+                            <div className='text-orange-400 font-medium'> {formik.errors.password} </div>
                             :
                             null
                     }
-                    <Link to={'/forgot-password'}>
-                        <div className=' flex justify-end text-white hover:underline'>Forgot Password?</div>
-                    </Link>
+
+                    <div className='flex justify-start text-yellow-300 hover:underline'>
+                        <Link to={'/forgot-password'}>
+                            <div className='hover:underline'>Forgot Password?</div>
+                        </Link>
+                    </div>
+
+
+                    <div className='flex justify-center mt-5'>
+                        <Button text={'Login'} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />
+                    </div>
+
+                    <div className='flex justify-center text-white'>Don't have account?
+                        <Link to={'/register'}>
+                            <div className='pl-2 flex justify-center text-yellow-300  hover:underline'>Register Here!</div>
+                        </Link>
+                    </div>
                 </form>
-                <div className='flex justify-center mt-10'>
-                    <Button text={'Login'} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />
-                </div>
-                <Link to={'/register'}>
-                    <div className='flex justify-center text-green-800 font-semibold text-xl underline mt-5'>Register Here!</div>
-                </Link>
+
+
             </div>
         </div>
     )

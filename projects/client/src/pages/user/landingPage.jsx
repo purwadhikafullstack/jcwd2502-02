@@ -72,12 +72,12 @@ const LandingPage = () => {
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                <div className="flex justify-center px-3 md:justify-start md:ml-20 lg:ml-48 py-5">
+                <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">
                     <ModalAddress />
                 </div>
                 <Jumbotron />
                 <div className="">
-                    <div className="h-[190px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
+                    <div className="h-[180px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600  border-yellow-300">
                         {category.map((value, index) => {
                             return (
                                 <div key={index} className="">
@@ -91,7 +91,9 @@ const LandingPage = () => {
                     </div>
                 </div>
 
-                <div className="mb-10">
+                <div className="mt-12 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 m-5 md:mx-24 lg:mx-48 rounded-full"></div>
+
+                <div className="pb-10 mt-5 md:mt-10">
                     <RecommendProducts data={products} branchName={closestBranch.name} />
                 </div>
             </div>

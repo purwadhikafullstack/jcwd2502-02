@@ -44,12 +44,12 @@ const RecommendProducts = (props) => {
     };
 
     return (
-        <div className="w-[auto] px-5 md:px-20 lg:px-48 mt-16 ">
-            <div>
+        <div className="w-[auto] px-5 md:px-20 lg:px-48 ">
+            <div className="">
                 <div className="pb-5">
-                    <div className="text-4xl font-bold my-5">Only Made For You!</div>
+                    <div className="text-4xl font-bold my-5 ">Products Nearby!</div>
                     <div className="flex justify-between">
-                        <div className="flex gap-2"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
+                        <div className="flex gap-2 text-lg"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
                         <div className="text-green-600 hover:underline"> See More!</div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@ const RecommendProducts = (props) => {
                         <Slider {...settings}>
                             {products
                                 ? products.map((value, index) => (
-                                    <div key={index} className="w-64 mx-4">
+                                    <div key={index} className="w-auto mx-1 md:mx-3">
                                         <ProductCard
                                             name={value.product.name}
                                             image={value.product.image}

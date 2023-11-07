@@ -76,7 +76,7 @@ const ProfilePage = () => {
                 <div className="flex text-5xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile
                 </div>
                 <div className="grid md:grid-cols-3 md:mb-20 ">
-                    <div className="bg-gradient-to-r from-green-700 from-90% via-emerald-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
+                    <div className="bg-gradient-to-r from-green-700 from-90% via-green-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
                         <div className="grid place-content-center py-10 ">
                             {/* <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={process.env.REACT_APP_URL + `${data?.profile_picture
                                 }`} alt="" /> */}
@@ -94,7 +94,7 @@ const ProfilePage = () => {
 
                         </div>
                         <div className=" mb-5 p-5 md:p-5 text-white md:flex md:flex-col md:justify-center">
-                            <div>
+                            <div className="w-[90%] flex flex-col gap-3">
                                 <div className="font-bold text-xl">Main Shipping Address</div>
                                 <div>Rumah Bayu Krisna</div>
                                 <div>Melia Grove Graha Raya Blok GMB/22</div>

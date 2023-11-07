@@ -89,7 +89,7 @@ const ManageAddress = () => {
             <Toaster />
             <Navbar />
 
-            <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 mb-10">
+            <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 mb-10 h-screen">
 
                 <div className="md:flex md:justify-between mt-5 md:mt-10">
                     <div className="text-4xl md:text-5xl font-bold gap-2 text-green-800">Manage Address

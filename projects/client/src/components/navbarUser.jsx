@@ -62,7 +62,7 @@ const Navbar = () => {
                                 <label htmlFor="my-drawer" className="drawer-button">
                                     {user.username ? (
                                         <img
-                                            className="w-[45px] h-[45px] bg-base-200 rounded-full drawer-button"
+                                            className="w-[45px] border-4 border-yellow-300 h-[45px] bg-base-200 rounded-full drawer-button"
                                             src={process.env.REACT_APP_URL + (user?.profile_picture || '')}
                                             alt=""
                                         />
@@ -77,14 +77,20 @@ const Navbar = () => {
                                 <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                                 {
                                     user.username ?
-                                        <ul className="menu p-4 w-64 md:w-80 min-h-full bg-white border-l-4 border-yellow-300 text-xl text-black ">
-                                            <div className="grid place-content-center">
-                                                <img className="w-[150px] h-[150px] bg-base-200 rounded-full drawer-button border-4 border-green-600" src={process.env.REACT_APP_URL + `${user?.profile_picture}`} alt="" />
+                                        <ul className="menu p-4 w-64 md:w-80 min-h-full bg-white text-xl text-black ">
+
+                                            <div>
+                                                <div className="grid place-content-center">
+                                                    <img className="w-[150px] h-[150px] bg-base-200 rounded-full drawer-button " src={process.env.REACT_APP_URL + `${user?.profile_picture}`} alt="" />
+                                                </div>
+
+                                                <div className="bg-gradient-to-b from-yellow-300 to-green-600 rounded-3xl my-5 text-white">
+                                                    <div className="flex justify-center text-xl font-black pt-5">Welcome, {user?.username}!</div>
+                                                    <div className="flex justify-center text-md pb-5">{user?.email}</div>
+                                                </div>
                                             </div>
-                                            <div className="bg-gradient-to-b from-yellow-300 to-green-600 rounded-3xl my-5 text-white">
-                                                <div className="flex justify-center text-xl font-black pt-5">Welcome, {user?.username}!</div>
-                                                <div className="flex justify-center text-md pb-5">{user?.email}</div>
-                                            </div>
+
+
                                             <Link to={'/profile'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200">
                                                     <div className="flex gap-5 hover:text-white rounded-full "><FaUserLarge /> My Profile</div>
