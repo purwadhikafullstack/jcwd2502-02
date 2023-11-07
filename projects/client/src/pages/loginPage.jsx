@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../redux/App/Store';
 import { useNavigate, Link } from 'react-router-dom';
 
+
 export default function LoginPage() {
     const navigate = useNavigate();
     const userSelector = useAppSelector((state) => state.users)
@@ -42,7 +43,9 @@ export default function LoginPage() {
             <h1>{userSelector?.profile_picture}</h1>
             <Toaster />
             <div className='grid place-content-center'>
-                <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
+                <Link to={'/'}>
+                    <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
+                </Link>
             </div>
             <div className='grid place-content-center'>
                 <form className='flex flex-col rounded-2xl gap-2 bg-green-700 p-5 w-[350px] md:w-[450px] lg:w-[400px]'>

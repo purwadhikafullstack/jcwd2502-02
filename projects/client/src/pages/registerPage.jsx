@@ -57,7 +57,7 @@ export default function RegistrationPage() {
         <div className=" h-full md:h-screen bg-gradient-to-b from-green-700 to-yellow-300 pb-20 grid place-content-center">
             <Toaster />
             <div className='grid place-content-center'>
-                <Link to={'/login'}>
+                <Link to={'/'}>
                     <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
                 </Link>
             </div>

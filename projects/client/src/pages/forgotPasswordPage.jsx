@@ -24,7 +24,7 @@ export default function ForgotPasswordPage() {
         <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-yellow-300">
             <Toaster />
             <div className='grid place-content-center'>
-                <Link to={'/login'}>
+                <Link to={'/'}>
                     <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
                 </Link>
             </div>

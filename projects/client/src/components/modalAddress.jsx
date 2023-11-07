@@ -28,7 +28,7 @@ const ModalAddress = () => {
 
     return (
         <div>
-            <div onClick={() => document.getElementById('my_modal_2').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto md:mx-0 border-t-4 border-r-4 border-l-2 border-b-2 border-green-600 hover:underline justify-center gap-3 text-green-700 ">
+            <div onClick={() => document.getElementById('my_modal_2').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 ">
                 <div className="grid place-content-center ">
                     <FaLocationDot />
                 </div>
