@@ -6,6 +6,7 @@ const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const { log } = require('console');
+const respondHandler = require('../utils/resnpondHandler');
 
 module.exports = {
     findAllUsers: async () => {
@@ -188,5 +189,33 @@ module.exports = {
             isError: false,
             message: "Branch admin created"
         }
+    },
+
+    editBranchManager: async (req) => {
+        try {
+            console.log(req.body);
+            console.log(`sampai endpoint edit admin data`);
+            const {email, branch} = req.body;
+            const account = await db.user.findOne({
+                where: {email}
+            });
+            console.log(account);
+            if(!account) throw {status: 401, message: "Error, account was not found!"};
+        } catch (error) {
+            console.log(`masuk catch`);
+            console.log(error);
+            return error
+        }
+        // const userData = {
+        //     // store_branch_id: branch
+        // }
+        // await db.user.update({
+        //     userData
+        // },
+        // {where: {email}})
+        // return {
+        //     isError: false,
+        //     message: "Admin profile updated!"
+        // }
     }
 }

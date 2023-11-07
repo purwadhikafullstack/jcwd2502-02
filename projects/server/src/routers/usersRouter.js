@@ -19,6 +19,7 @@ Router.patch('/update-user', usersController.updateUserData);
 Router.patch('/verify-user', verify, usersController.verifyUserAccount);
 Router.patch('/update-image', verify, upload, usersController.updateImage)
 Router.patch('/deactivate-admin', usersController.deactivateAdmin);
+Router.patch('/edit-admin', verify, usersController.editAdmin);
 
 Router.get('/fetch-user', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);

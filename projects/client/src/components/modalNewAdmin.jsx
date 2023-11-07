@@ -6,7 +6,7 @@ import Input from "./input";
 import { useRef, useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
-const ModalNewAdmin = () => {
+const ModalNewAdmin = ({getAdmin}) => {
     const [image, setImage] = useState([])
     const [branch, setBranch] = useState("")
     const formik = useFormik({
@@ -22,11 +22,13 @@ const ModalNewAdmin = () => {
         },
         onSubmit: async(values) => {
             try {
-                const response = await api().post(`/users/branch-manager`, formik.values)
+                const response = await api().post(`/users/branch-manager`, formik.values);
+                document.getElementById('my_modal_3').close();
                 toast.success(response.data.message);
-                setTimeout(() => {
-                    window.location.reload();
-                }, 3000);
+                getAdmin()
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 3000);
             } catch (error) {
                 toast.error(error.response.data.message);
             }

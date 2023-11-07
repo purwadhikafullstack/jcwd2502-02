@@ -17,13 +17,14 @@ const ModalEditAdmin = ({adminData}) => {
             phone_number: adminData.phone_number,
             birthdate: adminData.birthdate,
             store_branch_id: adminData.store_branch_id,
-            gender: adminData.gender
+            // gender: adminData.gender
             // profile_picture: ""
         },
         onSubmit: async(values) => {
             try {
-                console.log(`dari model`);
-                console.log(adminData);
+                console.log(`akan mengirimkan data dibawah untuk edit data admin`);
+                console.log(formik.values);
+                alert(`proses edit data admin`)
                 // const response = await api().post(``, formik.values)
                 // toast.success(response.data.message);
                 // setTimeout(() => {
@@ -43,7 +44,7 @@ const ModalEditAdmin = ({adminData}) => {
                 const today = new Date();
                 return value <= today
             }),
-            gender: yup.string().required(),
+            // gender: yup.string().required(),
             store_branch_id: yup.string().required()
         })
     })
@@ -85,8 +86,8 @@ const ModalEditAdmin = ({adminData}) => {
     return(
         <div>
             < Toaster/>
-            <Button text={"Edit"} style={"lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full"} onClick={() => document.getElementById('my_modal_4').showModal()}></Button>
-            <dialog id="my_modal_4" className="modal backdrop-blur-md">
+            <Button text={"Edit"} style={"lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full"} onClick={() => document.getElementById(`my_modal_${adminData.username}`).showModal()}></Button>
+            <dialog id={`my_modal_${adminData.username}`} className="modal backdrop-blur-md">
                 <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[650px] ">
                     <h3 className="font-bold text-4xl text-white">Edit Admin {adminData.username}</h3>
                     <div className="flex flex-col gap-5 mt-5">
@@ -132,7 +133,7 @@ const ModalEditAdmin = ({adminData}) => {
                                 </select>
                                 <div className='text-red-500 font-bold'> {formik.errors.store_branch_id} </div>
                             </div>
-                            <div>
+                            {/* <div>
                                 <div className="text-white pb-2"> Gender </div>
                                     <select name="gender" id="gender" onChange={formik.handleChange} value={formik.values.gender} className="rounded-md w-3/4 p-2">
                                         <option value="" disabled>
@@ -146,7 +147,7 @@ const ModalEditAdmin = ({adminData}) => {
                                         </option>
                                     </select>
                                 <div className='text-red-500 font-bold'> {formik.errors.gender} </div>
-                            </div>
+                            </div> */}
                             {/* <div>
                                 <div className="text-white pb-2"> Profile Picture </div>
                                 <div>
@@ -157,7 +158,7 @@ const ModalEditAdmin = ({adminData}) => {
                     </div>
                     <div className="modal-action">                        
                         <div className="flex gap-2">
-                            <button onClick={() => document.getElementById('my_modal_4').close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
+                            <button onClick={() => document.getElementById(`my_modal_${adminData.username}`).close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
                             <form method="dialog" onClick={formik.handleSubmit}>
                                 <button type="submit" className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800">Submit</button>
                             </form>
