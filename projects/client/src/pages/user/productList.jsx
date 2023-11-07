@@ -9,6 +9,7 @@ import React, { useEffect, useState } from "react";
 import { api1 } from "../../api/api";
 import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
+import { useSelector } from "react-redux";
 
 const ProductListPage = () => {
     const [category, setCategory] = useState([]);
@@ -18,16 +19,27 @@ const ProductListPage = () => {
     const [sort, setSort] = useState("ASC");
     const [currentPage, setCurrentPage] = useState(1);
     const [postPerPage, setPostsPerPage] = useState(8);
+    const [stock, setStock] = useState()
     const lastPostIndex = currentPage * postPerPage;
     const firstPostIndex = lastPostIndex - postPerPage;
     const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
     const debouncedSearch = debounce((value) => {
         // console.log(value);
         setSearchQuery(value);
     }, 1000);
+    const nearestBranch = async () => {
+        try {
+            const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
+            console.log(branch.data.data);
+            setStock(branch.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const onGetCategory = async () => {
         try {
             const category = await api.get(`category/all`);
@@ -38,6 +50,7 @@ const ProductListPage = () => {
     };
     const onGetFilteredProducts = async () => {
         try {
+            nearestBranch()
             const response = await api.get(
                 `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}`
             );
@@ -64,7 +77,17 @@ const ProductListPage = () => {
     useEffect(() => {
         onGetCategory();
         onGetFilteredProducts();
+        nearestBranch()
     }, [catId, searchQuery, sort]);
+
+    useEffect(() => {
+        nearestBranch()
+    }, []);
+
+    console.log(stock);
+    console.log(currentPosts);
+
+
     return (
         <div className="">
             <Navbar />
@@ -99,10 +122,14 @@ const ProductListPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
-                    {currentPosts.map((value, index) => {
-                        return (
-                            <a href={`/products/detail/${value.id}`}>
-                                <div key={index}>
+
+                    {currentPosts
+                        // .filter(item => {
+                        //     return stock.some(stockItem => stockItem.products_id === item.id);
+                        // })
+                        .map((value, index) => (
+                            <a key={index}>
+                                <div>
                                     <ProductCard
                                         name={value.name}
                                         image={value.image}
@@ -112,9 +139,9 @@ const ProductListPage = () => {
                                     />
                                 </div>
                             </a>
+                        ))
+                    }
 
-                        );
-                    })}
                 </div>
             </div>
             <div className="pt-4 mb-10">

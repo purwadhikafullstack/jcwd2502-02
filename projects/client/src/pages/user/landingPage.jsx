@@ -24,6 +24,7 @@ const LandingPage = () => {
     const [category, setCategory] = useState([]);
     const dispatch = useDispatch();
     const api = api1();
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
 
     const onGetCategory = async () => {
         try {
@@ -42,41 +43,10 @@ const LandingPage = () => {
             console.log(error);
         }
     }
-    const calculation = () => {
-        let nearest = null;
-        navigator.geolocation.getCurrentPosition((position) => {
-            const userLatitude = position.coords.latitude;
-            const userLongitude = position.coords.longitude;
-            setCurrentLocation({ latitude: userLatitude, longitude: userLongitude });
-            // Rumus untuk mencari nearest location
-            let minDistance = Infinity;
-            branchLoc.forEach((location, idx) => {
-                const lat1 = userLatitude;
-                const lon1 = userLongitude;
-                const lat2 = location.latitude;
-                const lon2 = location.longitude;
-                const R = 6371; // Earth's radius in km
-                const dLat = (lat2 - lat1) * (Math.PI / 180);
-                const dLon = (lon2 - lon1) * (Math.PI / 180);
-                const a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                const distance = R * c;
-                // console.log(distance, minDistance, idx);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = location;
-                }
-            });
-            console.log(nearest.name);
-            setBranchName(nearest.name)
-            nearestBranch(nearest.id)
-        });
-    }
-    const nearestBranch = async (storeId) => {
+
+    const nearestBranch = async () => {
         try {
-            const branch = await api.get(`/branch/nearest/${storeId}`)
+            const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
             console.log(branch.data.data, "ini data branch");
             setProducts(branch.data.data)
         } catch (error) {
@@ -86,19 +56,16 @@ const LandingPage = () => {
     useEffect(() => {
         onGetCategory();
         getBranch()
-        // Check if user is logged in
-        // console.log('checking if logged in');
-        // dispatch(onCheckIsLogin())
+        nearestBranch()
     }, []);
-    useEffect(() => {
-        if (branchLoc.length) calculation()
-        console.log(branchLoc);
-    }, [branchLoc])
+
 
     // useEffect(() => {
-    //     console.log("current", currentLocation);
-    //     console.log("nearest", nearestLocation);
-    // }, [nearestLocation])
+    //     if (branchLoc.length) calculation()
+    //     console.log(branchLoc);
+    // }, [branchLoc])
+
+
 
     return (
         <div className="">
@@ -125,7 +92,7 @@ const LandingPage = () => {
                 </div>
 
                 <div className="mb-10">
-                    <RecommendProducts data={products} branchName={branchName} />
+                    <RecommendProducts data={products} branchName={closestBranch.name} />
                 </div>
             </div>
             <Footer />

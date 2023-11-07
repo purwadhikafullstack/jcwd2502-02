@@ -1,3 +1,4 @@
+const { query } = require("express");
 const db = require("./../models");
 module.exports = {
     cartUserId: async (dataToken) => {
@@ -18,10 +19,10 @@ module.exports = {
             return error
         }
     },
-    addToCart: async (dataToken, params) => {
+    addToCart: async (dataToken, query) => {
         try {
             const { id } = dataToken;
-            const { productId } = params
+            const { productId, stroreId } = query
 
             const getProduct = await db.product.findOne({
                 where: { id: productId }
@@ -34,16 +35,33 @@ module.exports = {
                     products_id: productId
                 }
             });
+
+            const stock = await db.product_stock.findOne({
+                where: { products_id: productId, store_branch_id: stroreId }
+            })
+
+            const productStock = stock.stock
+
             if (checkCart) {
-                await db.cart.update(
-                    {
-                        quantity: checkCart.quantity + 1,
-                        subtotal: (checkCart.quantity + 1) * price
-                    },
-                    { where: { id: checkCart.id } }
-                );
-            } else {
-                await db.cart.create({ user_id: id, products_id: productId, quantity: 1, subtotal: price });
+                if (checkCart.quantity < productStock) {
+                    await db.cart.update(
+                        {
+                            quantity: checkCart.quantity + 1,
+                            subtotal: (checkCart.quantity + 1) * price
+                        },
+                        { where: { id: checkCart.id } }
+                    );
+                }
+                else if (checkCart.quantity >= productStock) {
+                    return { isError: true, message: "Oops, stock limit reached. No more items can be added" }
+                }
+            }
+
+            else {
+                if (productStock === 0) return { isError: true, message: "Oops, Item is Unavailable" }
+                else {
+                    await db.cart.create({ user_id: id, products_id: productId, quantity: 1, subtotal: price });
+                }
             }
             return await db.cart.findAll({
                 where: {

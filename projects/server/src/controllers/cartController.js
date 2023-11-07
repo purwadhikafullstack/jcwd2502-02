@@ -13,8 +13,8 @@ module.exports = {
     },
     addCart: async (req, res, next) => {
         try {
-            const updatedCart = await addToCart(req.dataToken, req.params);
-            responseHandler(res, "Get Cart Success", updatedCart)
+            const updatedCart = await addToCart(req.dataToken, req.query);
+            responseHandler(res, "Item added to Cart", updatedCart.message, null, updatedCart.isError)
         } catch (error) {
             next(error)
         }

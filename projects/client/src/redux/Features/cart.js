@@ -36,15 +36,19 @@ export const getCartAsync = () => async (dispatch) => {
     }
 }
 
-export const addToCartAsync = (data) => async (dispatch) => {
+export const addToCartAsync = (productId, stroreId) => async (dispatch) => {
     try {
-        console.log(data)
-        const productId = data
-        const response1 = await api().post(`/cart/add/${productId}`)
+        const response1 = await api().post(`/cart/add?productId=${productId}&stroreId=${stroreId}`)
         console.log(response1);
-        toast.success("Item added to Cart");
-        console.log("POST SUCCESS");
-        dispatch(getCartAsync())
+        if (!response1) return console.log("Data is not found")
+        if (response1.data.isError == false) {
+            toast.success(response1.data.message);
+            dispatch(getCartAsync())
+        } else if (response1.data.isError) {
+            toast.error(response1.data.data);
+            dispatch(getCartAsync())
+        }
+
     } catch (error) {
         console.log(error)
     }

@@ -34,28 +34,28 @@ module.exports = {
     },
     getAllProductsService2: async (sort) => {
         try {
-            return await db.product.findAll({ where: { isDeleted: 0, }, order: [["name", sort]], });
+            return await db.product.findAll({ where: { isDeleted: 0, }, include: [{ model: db.product_stock }], order: [["name", sort]], });
         } catch (error) {
             return error;
         }
     },
     getAllProductsByCatService: async (catId, sort) => {
         try {
-            return await db.product.findAll({ where: { product_categories_id: catId, }, order: [["name", sort]], });
+            return await db.product.findAll({ where: { product_categories_id: catId, }, include: [{ model: db.product_stock }], order: [["name", sort]], });
         } catch (error) {
             return error;
         }
     },
     getAllProductsBySearchService: async (like, searchQuery, sort) => {
         try {
-            return await db.product.findAll({ where: { name: { [like]: `%${searchQuery}%`, }, }, order: [["name", sort]], });
+            return await db.product.findAll({ where: { name: { [like]: `%${searchQuery}%`, }, }, include: [{ model: db.product_stock }], order: [["name", sort]], });
         } catch (error) {
             return error
         }
     },
     getAllProductsFilteredService: async (like, catId, searchQuery, sort) => {
         try {
-            return await db.product.findAll({ where: { product_categories_id: catId, name: { [like]: `%${searchQuery}%`, }, }, order: [["name", sort]], });
+            return await db.product.findAll({ where: { product_categories_id: catId, name: { [like]: `%${searchQuery}%`, }, }, include: [{ model: db.product_stock }], order: [["name", sort]], });
         } catch (error) {
             return error
         }
@@ -120,5 +120,27 @@ module.exports = {
         } catch (error) {
             return error
         }
-    }
+    },
+    getAllProductStockService: async (params) => {
+        try {
+            console.log(params);
+            const { branchId } = params
+            return await db.product_stock.findOne({
+                where: { store_branch_id: branchId }
+            })
+        } catch (error) {
+            return error
+        }
+    },
+    getAllProductBranchStockService: async (params) => {
+        try {
+            console.log(params);
+            const { branchId } = params
+            return await db.product_stock.findOne({
+                where: { store_branch_id: branchId }
+            })
+        } catch (error) {
+            return error
+        }
+    },
 }

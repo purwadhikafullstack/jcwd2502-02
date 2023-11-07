@@ -11,6 +11,7 @@ Router.get("/filtered", productsController.getAllProductsByCat);
 Router.get("/productbycat", productsController.getProductByCategory);
 Router.get("/oneproduct/:id", productsController.getOneProduct);
 Router.get("/product-stock", productsController.getProductStock);
+Router.get("/all-product-stock/:branchId", productsController.getAllProductStock);
 
 
 Router.post("/addproduct", upload, productsController.createProduct);

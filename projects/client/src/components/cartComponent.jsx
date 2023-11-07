@@ -15,22 +15,17 @@ const CartComponent = (props) => {
     const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id === props.data);
     const navigate = useNavigate()
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
+
 
     const handleGetCart = () => {
         dispatch(getCartAsync());
-    };
-
-    const getAvailableStock = () => {
-        return props.stock;
     };
     const getProductQuantity = () => {
         const productInCart = cart.cart.find(item => item.products_id === props.data);
         return productInCart ? productInCart.quantity : 0;
     };
     const handleAddToCart = () => {
-        const availableStock = getAvailableStock();
-        const productQuantityInCart = getProductQuantity();
-
         if (!user.username) {
             toast.error("Please log in to add items to your cart");
             setTimeout(() => {
@@ -39,10 +34,9 @@ const CartComponent = (props) => {
             return
         }
 
-        if (productQuantityInCart < availableStock) {
-            dispatch(addToCartAsync(props.data));
-        } else {
-            toast.error("Oops, stock limit reached. No more items can be added");
+        if (user.username) {
+            dispatch(addToCartAsync(props.data, closestBranch.id));
+
         }
     };
 
@@ -57,7 +51,7 @@ const CartComponent = (props) => {
                     <div className="md:flex md:justify-between p-2 pl-4 w-[200px] md:w-full">
                         <div className="md:grid md:place-content-center md:gap-3 w-auto">
                             <div className=" text-xl font-semibold truncate">{props.name}</div>
-                            <div className="text-gray-400"> Stock(s): {props.stock}</div>
+                            {/* <div className="text-gray-400"> Stock(s): {props.stock}</div> */}
                             <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
                         </div>
 

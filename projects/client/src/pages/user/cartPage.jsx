@@ -18,28 +18,11 @@ const Cart = () => {
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     console.log(closestBranch);
 
-    const cartProductIds = cart.cart.map((cartItem) => cartItem.products_id);
+    console.log(cart.cart);
 
-    const productStock = async () => {
-        try {
-            const branch = await apiInstance.get(`/branch/nearest/${closestBranch.id}`);
-            console.log(branch.data.data);
-            setProducts(branch.data.data);
-            setLoading(false);
-            nearestBranch()
-        } catch (error) {
-            console.log(error);
-            setLoading(false);
-        }
-    }
     useEffect(() => {
         dispatch(nearestBranch())
     }, [dispatch])
-    useEffect(() => {
-        if (closestBranch) {
-            productStock()
-        }
-    }, [closestBranch])
 
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
 
@@ -59,23 +42,21 @@ const Cart = () => {
                 <div className="lg:flex lg:gap-12 md:mb-10">
 
                     <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto ">
-                        {loading ? <span className="loading loading-spinner loading-md"></span> :
-                            products
-                                .filter((value) => cartProductIds.includes(value.products_id))
-                                .map((filteredProduct, index) => (
-                                    <div className="" key={index}>
-                                        <CartComponent
-                                            name={filteredProduct.product.name}
-                                            price={filteredProduct.product.price}
-                                            image={filteredProduct.product.image}
-                                            stock={filteredProduct.stock}
-                                            data={filteredProduct.products_id}
-                                            id={filteredProduct.products_id}
-                                        />
-                                    </div>
-                                ))
+                        {cart.cart.map((value, index) => {
+                            return (
+                                <div>
+                                    <CartComponent
+                                        name={value.product.name}
+                                        price={value.product.price}
+                                        image={value.product.image}
+                                        // stock={value.stock}
+                                        data={value.products_id}
+                                        id={value.products_id}
+                                    />
 
-                        }
+                                </div>
+                            )
+                        })}
                     </div>
 
                     <div className="bg-green-800 my-10 lg:my-0 p-3 rounded-xl md:h-[120px] lg:w-[400px]">

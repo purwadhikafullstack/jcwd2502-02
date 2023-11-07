@@ -7,50 +7,45 @@ import debounce from 'lodash/debounce';
 import { useParams } from "react-router-dom";
 import Button from "../../components/button";
 import { useDispatch, useSelector } from "react-redux";
-import { toast } from "react-hot-toast";
-// import { addToCartAsync } from "../redux/Features/cart";
-// import { deleteItemInCartAsync } from "../redux/Features/cart";
-// import { Navigate, useNavigate } from "react-router-dom";
-
+import { addToCartAsync } from "../../redux/Features/cart";
+import { deleteItemInCartAsync } from "../../redux/Features/cart";
+import { Navigate, useNavigate } from "react-router-dom";
+import { nearestBranch } from "../../redux/Features/branch";
+import toast, { Toaster } from "react-hot-toast";
 
 const ProductDetailPage = () => {
+    const dispatch = useDispatch()
     const [product, setProduct] = useState([]);
     const api = api1();
     const { id } = useParams()
-    // const dispatch = useDispatch();
-    // const cart = useSelector((state) => state.cart);
-    // const user = useSelector((state) => state.users);
-    // const isInCart = cart.cart.some(item => item.products_id === props.data);
-    // const navigate = useNavigate()
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
+    console.log(closestBranch.id);
+    const cart = useSelector((state) => state.cart);
+    const user = useSelector((state) => state.users);
+    const isInCart = cart.cart.some(item => item.products_id == id);
+    const navigate = useNavigate()
 
-    // const getAvailableStock = () => {
-    //     return props.stock;
-    // };
-    // const getProductQuantity = () => {
-    //     const productInCart = cart.cart.find(item => item.products_id === props.data);
-    //     return productInCart ? productInCart.quantity : 0;
-    // };
-    // const handleAddToCart = () => {
-    //     const availableStock = getAvailableStock();
-    //     const productQuantityInCart = getProductQuantity();
+    const getProductQuantity = () => {
+        const productInCart = cart.cart.find(item => item.products_id == id);
+        return productInCart ? productInCart.quantity : 0;
+    };
+    const handleAddToCart = () => {
+        if (!user.username) {
+            toast.error("Please log in to add items to your cart");
+            setTimeout(() => {
+                navigate("/login"); // Step 4
+            }, 2000);
+            return
+        }
 
-    //     if (!user.username) {
-    //         toast.error("Please log in to add items to your cart");
-    //         setTimeout(() => {
-    //             navigate("/login"); // Step 4
-    //         }, 2000);
-    //         return
-    //     }
+        if (user.username) {
+            dispatch(addToCartAsync(id, closestBranch.id));
 
-    //     if (productQuantityInCart < availableStock) {
-    //         dispatch(addToCartAsync(props.data));
-    //     } else {
-    //         toast.error("Oops, stock limit reached. No more items can be added");
-    //     }
-    // };
+        }
+    };
     const onGetProduct = async () => {
         try {
-            const oneProduct = await api.get(`products/oneproduct/${id}`);
+            const oneProduct = await api.get(`products/product-stock?productId=${id}&branchId=${closestBranch.id}`);
             console.log(oneProduct);
             setProduct(oneProduct.data.data);
         } catch (error) {
@@ -58,40 +53,46 @@ const ProductDetailPage = () => {
         }
     };
     useEffect(() => {
-        onGetProduct();
-    }, [id]);
+        dispatch(nearestBranch())
+    }, [dispatch]);
+    useEffect(() => {
+        if (closestBranch) {
+            onGetProduct();
+        }
+    }, [id, closestBranch]);
     return (
         <div className="">
+            <Toaster />
             <Navbar />
             <div className="mt-[70px] pt-3">
                 <div className='w-auto px-3 py-3'>
-                    <img className="px-3 py-3 rounded-xl shadow-xl md:h-[500px] lg:h-[300px]" src={process.env.REACT_APP_URL + `${product?.image}`} alt={"image of" + `${product.name}`} />
+                    <img className="px-3 py-3 rounded-xl shadow-xl md:h-[500px] lg:h-[300px]" src={product && product.product ? process.env.REACT_APP_URL + product.product.image : null} alt={"image of" + (product && product.product ? product.product.name : "")} />
+
                 </div>
                 <div className="font-semibold truncate text-2xl px-5 pt-2 h-[50px] overflow-auto">
-                    {product.name}
-                </div>
+                    {product && product.product ? product.product.name : null}                </div>
                 <div className="font-semibold truncate text-xl px-5 pt-2 text-green-500">
-                    RP. {product?.price?.toLocaleString()}
+                    Rp {product && product.product ? product?.product.price?.toLocaleString() : null}
                 </div>
                 <div className="font-semibold truncate text-lg px-5 pt-2 pb-5">
-                    {product.description}
+                    {product && product.product ? product.product.description : null}
                 </div>
                 <div className="flex justify-center mt-5 mb-5">
                     <Link to={`/products?category=`}>
                         <Button style={"lg:w-[200px] rounded-full"} text={"Back to Product List"} />
                     </Link>
                 </div>
-                {/* <div className="flex justify-center pt-2 w-full">
+                <div className="flex justify-center pt-2 w-full">
                     {isInCart ? (
                         <div className="flex items-center gap-2 lg:gap-5">
-                            <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
+                            <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(id))} />
                             <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
                             <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
                         </div>
                     ) : (
                         <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
                     )}
-                </div> */}
+                </div>
             </div>
             <Footer />
         </div>

@@ -4,6 +4,7 @@ import { addToCartAsync } from "../redux/Features/cart";
 import { deleteItemInCartAsync } from "../redux/Features/cart";
 import { toast } from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const ProductCard = (props) => {
     const dispatch = useDispatch();
@@ -11,18 +12,14 @@ const ProductCard = (props) => {
     const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id === props.data);
     const navigate = useNavigate()
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
 
-    const getAvailableStock = () => {
-        return props.stock;
-    };
+
     const getProductQuantity = () => {
         const productInCart = cart.cart.find(item => item.products_id === props.data);
         return productInCart ? productInCart.quantity : 0;
     };
     const handleAddToCart = () => {
-        const availableStock = getAvailableStock();
-        const productQuantityInCart = getProductQuantity();
-
         if (!user.username) {
             toast.error("Please log in to add items to your cart");
             setTimeout(() => {
@@ -31,23 +28,25 @@ const ProductCard = (props) => {
             return
         }
 
-        if (productQuantityInCart < availableStock) {
-            dispatch(addToCartAsync(props.data));
-        } else {
-            toast.error("Oops, stock limit reached. No more items can be added");
+        if (user.username) {
+            dispatch(addToCartAsync(props.data, closestBranch.id));
+
         }
     };
 
     return (
         <div>
             <div className={`hover:border-green-700  hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl ${props.style}`}>
-                <div>
-                    <img className="object-fill rounded-t-xl h-[160px] lg:h-[220px] w-full z-0" src={process.env.REACT_APP_URL + `${props.image}`} alt="" /></div>
-                <div className="h-[110px] lg:h-[110px] flex flex-col justify-between p-2 pl-4">
-                    <div className="font-semibold truncate">{props.name}</div>
-                    <div className="text-gray-400"> Stock(s): {props.stock}</div>
-                    <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
-                </div>
+                <Link to={`/products/detail/${props.data}`}>
+                    <div>
+                        <img className="object-fill rounded-t-xl h-[160px] lg:h-[220px] w-full z-0" src={process.env.REACT_APP_URL + `${props.image}`} alt="" />
+                    </div>
+                    <div className="h-[110px] lg:h-[110px] flex flex-col justify-between p-2 pl-4">
+                        <div className="font-semibold truncate">{props.name}</div>
+                        <div className="text-gray-400"> Stock(s): {props.stock}</div>
+                        <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
+                    </div>
+                </Link>
                 <div className="flex justify-center pt-2 w-full">
                     {isInCart ? (
                         <div className="flex items-center gap-2 lg:gap-5">
