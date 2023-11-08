@@ -193,16 +193,20 @@ module.exports = {
 
     editBranchManager: async (req) => {
         try {
-            console.log(req.body);
-            console.log(`sampai endpoint edit admin data`);
-            const {email, branch} = req.body;
+            const {email, store_branch_id} = req.body;
             const account = await db.user.findOne({
                 where: {email}
             });
-            console.log(account);
+            console.log(store_branch_id);
+            console.log(account.dataValues.store_branch_id);
             if(!account) throw {status: 401, message: "Error, account was not found!"};
+            if(store_branch_id == account.dataValues.store_branch_id) throw {error: 401, message: "Admin was already assigned to the designated branch"};
+            await db.user.update({store_branch_id}, {where: {email}})
+            return {
+                isError: false,
+                message: "Admin assigned to new branch"
+            }
         } catch (error) {
-            console.log(`masuk catch`);
             console.log(error);
             return error
         }

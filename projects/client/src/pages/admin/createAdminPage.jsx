@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Button from "../../components/button"
 import { api } from "../../api/api"
 import ModalNewAdmin from "../../components/modalNewAdmin";
@@ -11,6 +11,10 @@ const [modal, setModal] = useState(false);
 const [modalEdit, setModalEdit] = useState(false);
 const [admin, setAdmin] = useState("");
 const [username, setUsername] = useState("");
+const [adminName, setAdminName] = useState("");
+
+const findName = useRef();
+const branchName = useRef();
 
 const onGetAdmins = async () => {
     try {
@@ -26,6 +30,12 @@ const handleDeactivateAdmin = async (email) => {
     const response = await api().patch('/users/deactivate-admin', {email: email})
     toast.success(response.data.message);
     onGetAdmins()
+}
+
+const handleInputChange = () => {
+    const nameFilter= findName.current.value;
+    const branchFilter = branchName.current.value;
+    console.log(`filter nama: ${nameFilter} & filter branch: ${branchFilter}`);
 }
 
 useEffect(() => {
@@ -73,10 +83,10 @@ return(
             </div> */}
         </div>
         <div className="flex justify-end mx-10 gap-3">
-            <input type="text" className="w-1/4 px-4" placeholder="Look up names here"/>
-            <input type="text" className="w-1/6 px-4" placeholder="look up branch here"/>
+            <input type="text" className="w-1/4 px-4" placeholder="Look up names here" ref={findName} onChange={handleInputChange}/>
+            <input type="text" className="w-1/6 px-4" placeholder="look up branch here" ref={branchName} onChange={handleInputChange}/>
             {/* <Button onClick={() => setModal(!modal)} style={"w-[150px] bg-gray-300 hover:bg-gray-400 my-1 text-md font-semibold rounded-full"} text={"Create Admin"}/> */}
-            <ModalNewAdmin getAdmin={() => onGetAdmins()}/>
+            <ModalNewAdmin getAdmins={() => onGetAdmins()}/>
         </div>
         {
             admin && admin.map((value, index) => {
@@ -113,11 +123,11 @@ return(
                             </div>
                                 <div className="m-5 flex items-center font-semibold md:w-1/4">
                                     <div className="md:flex md:gap-4">
-                                        <ModalEditAdmin adminData={value} key={index} />
+                                        <ModalEditAdmin getAdmins={onGetAdmins} adminData={value} key={index} />
                                         <Button onClick={() => handleDeactivateAdmin(value.email)} style={value.isVerified == "verified" ? "lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full bg-red-400 hover:bg-red-500" : "lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full bg-green-400 hover:bg-green-500" } text={value.isVerified == "verified" ? "Deactivate" : "Activate"}/>
                                     </div>
                                 </div>
-                            </div>
+                            </div>  
                         </div>
 
 

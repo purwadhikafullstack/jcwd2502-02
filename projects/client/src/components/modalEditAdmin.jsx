@@ -3,19 +3,19 @@ import * as yup from 'yup';
 import { api } from "../api/api";
 import Button from "./button";
 import Input from "./input";
-import { useRef, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 
-const ModalEditAdmin = ({adminData}) => {
+const ModalEditAdmin = ({adminData, getAdmins}) => {
     const [image, setImage] = useState([])
     const [branch, setBranch] = useState("")
     const formik = useFormik({
         initialValues: {
             username: adminData.username,
             email: adminData.email,
-            password: "",
-            phone_number: adminData.phone_number,
-            birthdate: adminData.birthdate,
+            // password: "",
+            // phone_number: adminData.phone_number,
+            // birthdate: adminData.birthdate,
             store_branch_id: adminData.store_branch_id,
             // gender: adminData.gender
             // profile_picture: ""
@@ -24,28 +24,25 @@ const ModalEditAdmin = ({adminData}) => {
             try {
                 console.log(`akan mengirimkan data dibawah untuk edit data admin`);
                 console.log(formik.values);
-                alert(`proses edit data admin`)
-                // const response = await api().post(``, formik.values)
-                // toast.success(response.data.message);
-                // setTimeout(() => {
-                //     window.location.reload();
-                // }, 3000);
+                const response = await api().patch(`/users/edit-admin`, formik.values)
+                toast.success(response.data.message);
+                document.getElementById(`my_modal_${adminData.username}`).close();
+                getAdmins()
             } catch (error) {
                 toast.error(error.response.data.message);
             }
-            },
+        },
         validationSchema: yup.object().shape({
             username: yup.string().required(),
             email: yup.string().email().required(),
-            password: yup.string().required(),
-            phone_number: yup.string().required(),
-            store_branch_id: yup.string().required(),
-            birthdate: yup.date().required().test(`date-not-in-the-future`, 'Date cannot be in the future', function(value){
-                const today = new Date();
-                return value <= today
-            }),
+            // password: yup.string().required(),
+            // phone_number: yup.string().required(),
+            store_branch_id: yup.string().required().notOneOf([adminData.store_branch_id], "Admin must be reassigned to a different branch"),
+            // birthdate: yup.date().required().test(`date-not-in-the-future`, 'Date cannot be in the future', function(value){
+            //     const today = new Date();
+            //     return value <= today
+            // }),
             // gender: yup.string().required(),
-            store_branch_id: yup.string().required()
         })
     })
 
@@ -89,10 +86,10 @@ const ModalEditAdmin = ({adminData}) => {
             <Button text={"Edit"} style={"lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full"} onClick={() => document.getElementById(`my_modal_${adminData.username}`).showModal()}></Button>
             <dialog id={`my_modal_${adminData.username}`} className="modal backdrop-blur-md">
                 <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[650px] ">
-                    <h3 className="font-bold text-4xl text-white">Edit Admin {adminData.username}</h3>
+                    <h3 className="font-bold text-4xl text-white">Reassign Branch Admin {adminData.username}</h3>
                     <div className="flex flex-col gap-5 mt-5">
                         <div className="grid gap-5">
-                            <div>
+                            {/* <div>
                                 <div className="text-white pb-2"> Username </div>
                                 <input type="text" id='username' name='username' onChange={formik.handleChange} value={formik.values.username} className='rounded-md w-3/4 p-2' placeholder={adminData.username} />
                                 <div className='text-red-500 font-bold'> {formik.errors.username} </div>
@@ -111,7 +108,7 @@ const ModalEditAdmin = ({adminData}) => {
                                 <div className="text-white pb-2"> Phone Number </div>
                                 <input type="text" id='phone_number' name='phone_number' onChange={formik.handleChange} value={formik.values.phone_number} className='rounded-md w-3/4 p-2' placeholder={adminData.phone_number} />
                                 <div className='text-red-500 font-bold'> {formik.errors.phone_number} </div>
-                            </div>
+                            </div> */}
                             {/* <div>
                                 <div className="text-white pb-2"> Date of Birth </div>
                                 <input type="date" id='birthdate' name='birthdate' onChange={formik.handleChange} value={formik.values.birthdate} className='rounded-md w-3/4 p-2'/>
