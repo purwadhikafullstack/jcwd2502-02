@@ -34,7 +34,6 @@ const ProductListPage = () => {
     const nearestBranch = async () => {
         try {
             const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
-            console.log(branch.data.data);
             setStock(branch.data.data)
         } catch (error) {
             console.log(error);
@@ -84,7 +83,6 @@ const ProductListPage = () => {
         nearestBranch()
     }, []);
     console.log(currentPosts);
-    // console.log(currentPosts[0].product_stocks[0].stock);
 
 
     return (
