@@ -21,6 +21,7 @@ app.use(express.json());
 app.use(bearerToken());
 app.use((req, res, next) => {
   console.log(req?.headers?.authorization)
+  console.log("kalau kosong, ini mungkin karena postman (index.js");
   next();
 })
 
@@ -44,13 +45,14 @@ app.get("/api/greetings", (req, res, next) => {
 
 app.use(express.static('src/public'))
 
-const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter } = require('./routers');
+const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter, transactionRouter } = require('./routers');
 const { log } = require("handlebars");
 app.use('/api/products', productsRouter)
 app.use('/api/category', categoryRouter)
 app.use('/api/branch', branchRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/location', locationRouter)
+app.use('/api/transaction', transactionRouter)
 
 // ===========================
 

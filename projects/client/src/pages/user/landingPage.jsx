@@ -14,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 import { api1 } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
+import { nearestBranch } from "../../redux/Features/branch"
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
@@ -57,14 +58,15 @@ const LandingPage = () => {
         onGetCategory();
         getBranch()
         nearestBranch()
+        // dispatch(nearestBranch());
     }, []);
 
 
     // useEffect(() => {
-    //     if (branchLoc.length) calculation()
-    //     console.log(branchLoc);
-    // }, [branchLoc])
 
+    //     dispatch(nearestBranch());
+
+    // }, []);
 
 
     return (

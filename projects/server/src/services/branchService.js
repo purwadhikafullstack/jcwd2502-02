@@ -2,7 +2,7 @@ const db = require("./../models");
 module.exports = {
     getBranchService: async () => {
         try {
-            return await db.store_branch.findAll({ attributes: ['id', 'longitude', 'latitude', 'name'] })
+            return await db.store_branch.findAll({ attributes: ['id', 'longitude', 'latitude', 'name', 'city_id'] })
         } catch (error) {
             return error
         }

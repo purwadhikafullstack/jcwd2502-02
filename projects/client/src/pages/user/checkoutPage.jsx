@@ -7,20 +7,59 @@ import Button from "../../components/button";
 import { Link } from "react-router-dom";
 import { FaLocationDot } from "react-icons/fa6";
 import CheckoutComponent from "../../components/checkoutComponent";
+import { api } from "../../api/api";
+import { useEffect, useState } from "react";
+import { nearestBranch } from "../../redux/Features/branch";
+import { getMainAddress } from "../../redux/Features/branch";
+import { getCartAsync } from "../../redux/Features/cart";
 
 const CheckoutPage = () => {
     const dispatch = useDispatch()
+    const [shippingService, setShippingService] = useState();
+    const [shippingOption, setShippingOption] = useState()
+    const [cost, setCost] = useState()
     const cart = useSelector((state) => state.cart);
-
-    // ambil cart dari redux 
-    // ambil neaerest stock (untuk sementara nembak dulu wkwk)
-    // pakai productCard untuk mapping
-    // cb amblil sub total dr front end, kalau gabisa call endpoint dr backend
-
-    console.log(cart.cart);
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
 
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
 
+    const handleShippingService = async (event) => {
+        try {
+            const selectedService = event.target.value;
+
+            setShippingOption(null);
+            setCost(0);
+
+            const getOption = await api().post('/transaction/option', { origin: closestBranch.city_id, destination: mainAddress.city_id, weight: 1700, courier: selectedService })
+
+            setShippingOption(getOption.data.data[0].costs)
+            setCost(null)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleShippingOption = async (event) => {
+        try {
+            const selectedOption = event.target.value;
+            console.log(selectedOption);
+            setCost(Number(selectedOption))
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    //nanti pakai handleshipoption untuk set shipping cost
+
+    useEffect(() => {
+        dispatch(getCartAsync());
+        dispatch(nearestBranch());
+        dispatch(getMainAddress());
+    }, []);
+
+
+    console.log(shippingOption);
 
     return (
         <div>
@@ -62,22 +101,24 @@ const CheckoutPage = () => {
                                 <div className="grid gap-2">
                                     <div className="font-bold">Shipping Service</div>
                                     <div>
-                                        <select className="select select-bordered w-full  text-black">
+                                        <select onChange={handleShippingService} className="select select-bordered w-full  text-black">
                                             <option disabled selected>Select shipping service</option>
-                                            <option>JNE</option>
-                                            <option>POS INDONESIA</option>
-                                            <option>Tiki</option>
+                                            <option value={"jne"}>JNE</option>
+                                            <option value={"pos"}>POS INDONESIA</option>
+                                            <option value={"tiki"}>Tiki</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div className="grid gap-2">
                                     <div className="font-bold">Shipping Option</div>
                                     <div>
-                                        <select className="select select-bordered w-full  text-black">
+                                        <select onChange={handleShippingOption} className="select select-bordered w-full  text-black">
                                             <option disabled selected>Select shipping option</option>
-                                            <option>tba</option>
-                                            <option>tba</option>
-                                            <option>tba</option>
+                                            {shippingOption ? shippingOption.map((value, index) => {
+                                                return (
+                                                    <option value={value.cost[0].value} key={index}>{value.description} - estimation {value.cost[0].etd} day(s) arrival</option>
+                                                )
+                                            }) : <option >Finding shipping option...</option>}
                                         </select>
                                     </div>
                                 </div>
@@ -97,7 +138,7 @@ const CheckoutPage = () => {
                             <div className="grid gap-2 mt-3">
                                 <div className="flex justify-between">
                                     <div>Total Weight</div>
-                                    <div className="font-bold">500 gr</div>
+                                    <div className="font-bold">XXX gr</div>
                                 </div>
 
                                 <div className="flex justify-between">
@@ -107,7 +148,7 @@ const CheckoutPage = () => {
 
                                 <div className="flex justify-between">
                                     <div>Shipping Cost</div>
-                                    <div className="font-bold">Rp XXX</div>
+                                    <div className="font-bold">Rp {cost ? cost.toLocaleString() : 0}</div>
                                 </div>
 
                                 <div className="flex justify-between">

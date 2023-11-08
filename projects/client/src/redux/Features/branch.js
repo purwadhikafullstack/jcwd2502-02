@@ -2,7 +2,7 @@ import { api } from "../../api/api";
 const { createSlice } = require("@reduxjs/toolkit");
 
 const initialState = {
-    branch: [], closestBranch: []
+    branch: [], closestBranch: [], mainAddress: []
 }
 
 export const branchSlice = createSlice({
@@ -17,7 +17,10 @@ export const branchSlice = createSlice({
         },
         setClosestBranch: (state, action) => {
             state.closestBranch = action.payload
-        }
+        },
+        setMainAddress: (state, action) => {
+            state.mainAddress = action.payload
+        },
     }
 })
 
@@ -27,6 +30,16 @@ export const onGetBranchAsync = () => async (dispatch) => {
         console.log(data);
         console.log(data.data);
         dispatch(setBranch(data.data))
+    } catch (error) {
+        console.log(error);
+    }
+}
+export const getMainAddress = () => async (dispatch) => {
+    try {
+        const { data } = await api().get('/location/address/main')
+        console.log(data.data);
+        console.log(data);
+        dispatch(setMainAddress(data.data))
     } catch (error) {
         console.log(error);
     }
@@ -68,5 +81,5 @@ export const nearestBranch = () => async (dispatch) => {
     }
 }
 
-export const { setBranch, clearBranch, setClosestBranch } = branchSlice.actions;
+export const { setBranch, clearBranch, setClosestBranch, setMainAddress } = branchSlice.actions;
 export default branchSlice.reducer;
