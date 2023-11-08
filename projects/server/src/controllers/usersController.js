@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, editBranchManager } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -268,9 +268,9 @@ module.exports = {
                         attributes: ["name"],
                         required: true
                     }
-                ]
+                ],
+                order: [["updatedAt", "DESC"]]
             })
-            console.log(branchAdmins);
             respondHandler(res, {
                 message: "get admins",
                 data: branchAdmins
@@ -297,6 +297,17 @@ module.exports = {
             }
             respondHandler(res, {
                 message: "Admin status has been updated"
+            })
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    editAdmin: async (req, res, next) => {
+        try {
+            editBranchManager(req)
+            respondHandler(res, {
+                message: "Admin data has been updated"
             })
         } catch (error) {
             next(error);

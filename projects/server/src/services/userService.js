@@ -6,6 +6,7 @@ const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const { log } = require('console');
+const respondHandler = require('../utils/resnpondHandler');
 
 module.exports = {
     findAllUsers: async () => {
@@ -188,5 +189,37 @@ module.exports = {
             isError: false,
             message: "Branch admin created"
         }
+    },
+
+    editBranchManager: async (req) => {
+        try {
+            const {email, store_branch_id} = req.body;
+            const account = await db.user.findOne({
+                where: {email}
+            });
+            console.log(store_branch_id);
+            console.log(account.dataValues.store_branch_id);
+            if(!account) throw {status: 401, message: "Error, account was not found!"};
+            if(store_branch_id == account.dataValues.store_branch_id) throw {error: 401, message: "Admin was already assigned to the designated branch"};
+            await db.user.update({store_branch_id}, {where: {email}})
+            return {
+                isError: false,
+                message: "Admin assigned to new branch"
+            }
+        } catch (error) {
+            console.log(error);
+            return error
+        }
+        // const userData = {
+        //     // store_branch_id: branch
+        // }
+        // await db.user.update({
+        //     userData
+        // },
+        // {where: {email}})
+        // return {
+        //     isError: false,
+        //     message: "Admin profile updated!"
+        // }
     }
 }
