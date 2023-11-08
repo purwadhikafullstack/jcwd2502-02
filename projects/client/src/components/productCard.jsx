@@ -36,7 +36,7 @@ const ProductCard = (props) => {
 
     return (
         <div>
-            <div className={`hover:border-green-700  hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl ${props.style}`}>
+            <div className={isProductInStock ? `hover:border-green-700  hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl ${props.style}` : `hover:border-green-700 bg-gray-300   hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl opacity-50 ${props.style}`}>
                 <Link to={`/products/detail/${props.data}`}>
                     <div>
                         <img className="object-fill rounded-t-xl h-[160px] lg:h-[220px] w-full z-0" src={process.env.REACT_APP_URL + `${props.image}`} alt="" />
@@ -59,7 +59,7 @@ const ProductCard = (props) => {
                             <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
                         )
                     ) : (
-                        <div className="text-red-600">Out of Stock</div>
+                        <div className="text-black">Out of Stock</div>
                     )}
                 </div>
             </div>

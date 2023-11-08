@@ -45,19 +45,19 @@ module.exports = {
     },
     getAllProductsByCat: async (req, res, next) => {
         try {
-            const { catId, searchQuery, sort } = req.query;
+            const { catId, searchQuery, sort, branchId } = req.query;
             const like = Op.like
             if (!catId && !searchQuery) {
-                const allProduct = await getAllProductsService2(sort);
+                const allProduct = await getAllProductsService2(sort, branchId);
                 responseHandler(res, "Get All Products Success 0", allProduct)
             } else if (!searchQuery) {
-                const allProductByCat = await getAllProductsByCatService(catId, sort);
+                const allProductByCat = await getAllProductsByCatService(catId, sort, branchId);
                 responseHandler(res, "Get All Product By Category Success 1", allProductByCat)
             } else if (!catId) {
-                const allProductBySearch = await getAllProductsBySearchService(like, searchQuery, sort)
+                const allProductBySearch = await getAllProductsBySearchService(like, searchQuery, sort, branchId)
                 responseHandler(res, "Get All Product By Category Success 2", allProductBySearch)
             } else {
-                const allProductFiltered = await getAllProductsFilteredService(like, catId, searchQuery, sort)
+                const allProductFiltered = await getAllProductsFilteredService(like, catId, searchQuery, sort, branchId)
                 responseHandler(res, "Get All Product By Category Success 3", allProductFiltered)
             }
         } catch (error) {

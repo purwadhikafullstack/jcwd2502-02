@@ -51,7 +51,8 @@ const ProductListPage = () => {
         try {
             nearestBranch()
             const response = await api.get(
-                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}`
+                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}`
+
             );
             setProducts(response.data.data);
         } catch (error) {
@@ -77,11 +78,11 @@ const ProductListPage = () => {
         onGetCategory();
         onGetFilteredProducts();
         nearestBranch()
-    }, [catId, searchQuery, sort]);
+    }, [catId, searchQuery, sort, closestBranch]);
 
-    useEffect(() => {
-        nearestBranch()
-    }, []);
+    // useEffect(() => {
+    //     nearestBranch()
+    // }, []);
     console.log(currentPosts);
 
 
