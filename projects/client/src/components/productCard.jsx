@@ -13,8 +13,8 @@ const ProductCard = (props) => {
     const isInCart = cart.cart.some(item => item.products_id === props.data);
     const navigate = useNavigate()
     const closestBranch = useSelector((state) => state.branch.closestBranch);
-
-
+    const productStock = Array.isArray(props.stock) ? props.stock[0]?.stock : props.stock;
+    const isProductInStock = productStock !== null && productStock !== undefined && productStock !== '' && productStock !== 0;
     const getProductQuantity = () => {
         const productInCart = cart.cart.find(item => item.products_id === props.data);
         return productInCart ? productInCart.quantity : 0;
@@ -43,19 +43,23 @@ const ProductCard = (props) => {
                     </div>
                     <div className="h-[110px] lg:h-[110px] flex flex-col justify-between p-2 pl-4">
                         <div className="font-semibold truncate">{props.name}</div>
-                        <div className="text-gray-400"> Stock(s): {props.stock}</div>
+                        <div className="text-gray-400"> Stock(s): {productStock ? productStock : "0"}</div>
                         <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
                     </div>
                 </Link>
                 <div className="flex justify-center pt-2 w-full">
-                    {isInCart ? (
-                        <div className="flex items-center gap-2 lg:gap-5">
-                            <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
-                            <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
-                            <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
-                        </div>
+                    {isProductInStock ? (
+                        isInCart ? (
+                            <div className="flex items-center gap-2 lg:gap-5">
+                                <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
+                                <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
+                                <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
+                            </div>
+                        ) : (
+                            <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
+                        )
                     ) : (
-                        <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
+                        <div className="text-red-600">Out of Stock</div>
                     )}
                 </div>
             </div>

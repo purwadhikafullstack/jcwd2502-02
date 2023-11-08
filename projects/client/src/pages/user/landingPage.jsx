@@ -85,7 +85,6 @@ const LandingPage = () => {
                                         <CategoryCard name={value.name} image={value.image} />
                                     </Link>
                                 </div>
-
                             )
                         })}
                     </div>

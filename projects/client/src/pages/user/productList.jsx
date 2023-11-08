@@ -83,9 +83,8 @@ const ProductListPage = () => {
     useEffect(() => {
         nearestBranch()
     }, []);
-
-    console.log(stock);
     console.log(currentPosts);
+    // console.log(currentPosts[0].product_stocks[0].stock);
 
 
     return (
@@ -122,26 +121,20 @@ const ProductListPage = () => {
                     </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
-
-                    {currentPosts
-                        // .filter(item => {
-                        //     return stock.some(stockItem => stockItem.products_id === item.id);
-                        // })
-                        .map((value, index) => (
-                            <a key={index}>
-                                <div>
-                                    <ProductCard
-                                        name={value.name}
-                                        image={value.image}
-                                        description={value.description}
-                                        price={value.price}
-                                        data={value.id}
-                                    />
-                                </div>
-                            </a>
-                        ))
-                    }
-
+                    {currentPosts.map((value, index) => (
+                        <a key={index}>
+                            <div>
+                                <ProductCard
+                                    name={value.name}
+                                    image={value.image}
+                                    description={value.description}
+                                    price={value.price}
+                                    stock={value.product_stocks}
+                                    data={value.id}
+                                />
+                            </div>
+                        </a>
+                    ))}
                 </div>
             </div>
             <div className="pt-4 mb-10">
