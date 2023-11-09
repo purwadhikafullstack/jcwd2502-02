@@ -20,4 +20,44 @@ module.exports = {
             next(error);
         }
     },
+
+    createOrder: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+
+            const { subtotal, shipping_cost, discount, final_total, shipping_method } = req.body
+            const invoice = Date.now() + Math.round(Math.random() * 1E9)
+            const transaction = await db.transactions.create({ invoice, subtotal, shipping_cost, discount, final_total, shipping_method, user_id: id, status: "pending" })
+
+            const inMyCart = await db.cart.findAll({
+                include: [
+                    {
+                        model: db.product,
+                        required: true,
+                    },
+                ], where: { user_id: id }
+            })
+
+            for (const product of inMyCart) {
+                await db.transaction_detail.create({
+                    id_product: product.product.id,
+                    name: product.product.name,
+                    price: product.product.price,
+                    quantity: product.quantity,
+                    subtotal: product.subtotal,
+                    transaction_id: transaction.id
+                })
+            }
+
+            await db.cart.destroy({ where: { user_id: id } })
+
+            const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id } })
+
+            responseHandler(res, "Get Shipping Option Success", transactionDetails)
+
+
+        } catch (error) {
+            next(error)
+        }
+    }
 }

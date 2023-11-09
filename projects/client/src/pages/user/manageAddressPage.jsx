@@ -118,19 +118,33 @@ const ManageAddress = () => {
                                             <div className="font-semibold">{value.city.name} - {value.city.province.name}</div>
                                         </div>
 
-                                        {value.isPrimary == "false" ? <div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} onClick={() => updateMain(value.id)} /></div> : null}
+                                        {value.isPrimary == "false" ? <DeleteConfirmation
+                                            itemId={value.id}
+                                            button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
+                                            onDelete={getAddress}
+                                            apiEndpoint={"/location/main"}
+                                            text={"Your cart will be emptied if you change your main address. "}
+                                            textOnButton={"Confirm"}
+                                            message={"Main address successfully updated!"}
+                                        />
+                                            : null}
+
+
+                                        {/* {value.isPrimary == "false" ? <div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} onClick={() => updateMain(value.id)} /></div> : null} */}
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">
                                             <ModalUpdateAddress
                                                 id={value.id}
                                                 onClick={() => UpdateAddres(value.id)}
                                                 name={value.name} />
-                                            <DeleteConfirmation
-                                            />
+
                                             <div className="text-red-600 hover:underline">
                                                 <DeleteConfirmation
                                                     itemId={value.id} // Pass the item ID to delete
                                                     onDelete={getAddress} // Pass a callback function to execute after deletion
                                                     apiEndpoint="/location" // Pass the API endpoint to customize the request URL
+                                                    text={""}
+                                                    textOnButton={"Delete"}
+                                                    message={"Address successfully deleted"}
                                                     button={"Delete"}
                                                 />
                                             </div>
