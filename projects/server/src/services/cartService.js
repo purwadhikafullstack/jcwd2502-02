@@ -27,8 +27,10 @@ module.exports = {
             const getProduct = await db.product.findOne({
                 where: { id: productId }
             });
+            console.log(getProduct.dataValues.weight);
             console.log(getProduct.dataValues.price);
             const price = getProduct.dataValues.price
+            const weightPerUnit = getProduct.dataValues.weight
             const checkCart = await db.cart.findOne({
                 where: {
                     user_id: id,
@@ -44,10 +46,16 @@ module.exports = {
 
             if (checkCart) {
                 if (checkCart.quantity < productStock) {
+
+                    const newQuantity = checkCart.quantity + 1;
+                    const newSubtotal = newQuantity * price;
+                    const newWeight = newQuantity * weightPerUnit;
+
                     await db.cart.update(
                         {
-                            quantity: checkCart.quantity + 1,
-                            subtotal: (checkCart.quantity + 1) * price
+                            quantity: newQuantity,
+                            subtotal: newSubtotal,
+                            total_weight: newWeight
                         },
                         { where: { id: checkCart.id } }
                     );
@@ -60,7 +68,8 @@ module.exports = {
             else {
                 if (productStock === 0) return { isError: true, message: "Oops, Item is Unavailable" }
                 else {
-                    await db.cart.create({ user_id: id, products_id: productId, quantity: 1, subtotal: price });
+
+                    await db.cart.create({ user_id: id, products_id: productId, quantity: 1, subtotal: price, total_weight: weightPerUnit });
                 }
             }
             return await db.cart.findAll({
@@ -80,6 +89,7 @@ module.exports = {
                 where: { id: productId }
             });
             const price = getProduct.dataValues.price
+            const weightPerUnit = getProduct.dataValues.weight
             const checkCart = await db.cart.findOne({
                 where: {
                     user_id: id,
@@ -96,8 +106,9 @@ module.exports = {
             } else if (checkCart) {
                 const newQuantity = checkCart.dataValues.quantity - 1;
                 const newSubtotal = newQuantity * price;
+                const newWeight = newQuantity * weightPerUnit;
                 await db.cart.update(
-                    { quantity: newQuantity, subtotal: newSubtotal },
+                    { quantity: newQuantity, subtotal: newSubtotal, total_weight: newWeight },
                     { where: { id: checkCart.id } }
                 );
             }

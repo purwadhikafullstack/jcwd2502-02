@@ -124,6 +124,8 @@ const ManageAddress = () => {
                                                 id={value.id}
                                                 onClick={() => UpdateAddres(value.id)}
                                                 name={value.name} />
+                                            <DeleteConfirmation
+                                            />
                                             <div className="text-red-600 hover:underline">
                                                 <DeleteConfirmation
                                                     itemId={value.id} // Pass the item ID to delete

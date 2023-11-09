@@ -8,11 +8,11 @@ import { api } from "../../api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
 import toast, { Toaster } from "react-hot-toast";
-
+import { getMainAddress } from "../../redux/Features/branch";
 const ProfilePage = () => {
     const apiInstance = api()
     const [data, setData] = useState('')
-
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
     const inputFileRef = useRef(null);
 
     const user = useSelector(state => (state.users))
@@ -68,6 +68,10 @@ const ProfilePage = () => {
         console.log(user);
     }, [user])
 
+    useEffect(() => {
+        dispatch(getMainAddress());
+    }, []);
+
     return (
         <div>
             <Toaster />
@@ -94,12 +98,11 @@ const ProfilePage = () => {
 
                         </div>
                         <div className=" mb-5 p-5 md:p-5 text-white md:flex md:flex-col md:justify-center">
-                            <div className="w-[90%] flex flex-col gap-3">
+                            <div className="w-[90%] flex flex-col gap-3 mb-3">
                                 <div className="font-bold text-xl">Main Shipping Address</div>
-                                <div>Rumah Bayu Krisna</div>
-                                <div>Melia Grove Graha Raya Blok GMB/22</div>
-                                <div>Tangerang Selatan</div>
-                                <div>Banten</div>
+                                <div>{mainAddress?.name}</div>
+                                <div>{mainAddress?.address}</div>
+                                <div>{mainAddress?.city?.name} - {mainAddress?.city?.province?.name}</div>
                             </div>
                             <div className="my-3">
                                 <div className="font-bold text-xl">Phone Number</div>
@@ -107,7 +110,7 @@ const ProfilePage = () => {
                             </div>
                             <div className="my-3">
                                 <div className="font-bold text-xl">Referral Code</div>
-                                <div>082112436747</div>
+                                <div>xxx</div>
                             </div>
                             <div className=" mt-5 md:mt-10 grid gap-2 text-lg">
                                 <Link to={'/manage-address'}>

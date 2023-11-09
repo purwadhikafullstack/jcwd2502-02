@@ -61,6 +61,19 @@ module.exports = {
         try {
             const { id } = req.dataToken
             const mainAddress = await db.user_address.findOne({
+                include: [
+                    {
+                        model: db.city,
+                        attributes: ['name'],
+                        include: [
+                            {
+                                model: db.province,
+                                attributes: ['name']
+                            }
+
+                        ]
+                    },
+                ],
                 where: { user_id: id, isPrimary: 'true' }
             })
             responseHandler(res, "Get Main Address Success", mainAddress)
@@ -216,11 +229,12 @@ module.exports = {
                 const isMainId = checkMainAddress.dataValues.id
                 await db.user_address.update({ isPrimary: "false" }, { where: { id: isMainId } })
                 await db.user_address.update({ isPrimary: "true" }, { where: { id: addressId } })
+                await db.cart.destroy({ where: { user_id: id } })
             }
 
             else {
                 await db.user_address.update({ isPrimary: "true" }, { where: { id: addressId } })
-
+                await db.cart.destroy({ where: { user_id: id } })
             }
 
             const checkMainAddress2 = await db.user_address.findOne({ where: { user_id: id, isPrimary: "true" } })

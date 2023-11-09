@@ -49,7 +49,7 @@ const Cart = () => {
                                         name={value.product.name}
                                         price={value.product.price}
                                         image={value.product.image}
-                                        // stock={value.stock}
+                                        weight={value.product.weight}
                                         data={value.products_id}
                                         id={value.products_id}
                                     />

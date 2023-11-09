@@ -47,16 +47,19 @@ const CheckoutComponent = (props) => {
                     </div>
 
                     <div className="md:flex md:justify-between p-2 flex flex-col justify-between pl-4 w-[200px] md:w-full">
-                        <div className="">
+                        <div className="flex flex-col justify-center">
                             <div className=" text-xl font-semibold truncate">{props.name}</div>
-
+                            <div className="pt-2 text-sm text-gray-400">{props.weight} gr</div>
                         </div>
-                        <div className="text-xl">x {props.quantity}</div>
 
-                        <div className="text-green-700 font-bold pt-3 md:pt-0">Rp {props.price.toLocaleString()}</div>
+                        <div className="flex">
+                            <div className="text-green-700 text-xl font-bold md:pt-0 grid place-content-center ">Rp {props.price.toLocaleString()}</div>
+                            <div className=" pl-3 text-xl grid place-content-center">x {props.quantity}</div>
+                        </div>
+
 
                         <div className="h-[3px] bg-green-800"></div>
-                        <div className="font-semibold text-sm border-green-800">Subtotal: Rp {props.subtotal.toLocaleString()}</div>
+                        <div className="font-semibold text-sm py-2 border-green-800">Subtotal: Rp {props.subtotal.toLocaleString()}</div>
                     </div>
                 </div>
             </div>

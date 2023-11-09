@@ -51,7 +51,7 @@ const CartComponent = (props) => {
                     <div className="md:flex md:justify-between p-2 pl-4 w-[200px] md:w-full">
                         <div className="md:grid md:place-content-center md:gap-3 w-auto">
                             <div className=" text-xl font-semibold truncate">{props.name}</div>
-                            {/* <div className="text-gray-400"> Stock(s): {props.stock}</div> */}
+                            <div className="text-gray-400">{props.weight} gr</div>
                             <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
                         </div>
 
