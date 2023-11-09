@@ -25,5 +25,6 @@ Router.get('/fetch-user', verify, usersController.getUser);
 Router.get('/find-all', usersController.getAllUsers);
 Router.get('/check-token', usersController.checkPasswordToken);
 Router.get('/get-admin', usersController.getAllBranchAdmin);
+Router.get('/admin-filter', usersController.filterBranchAdmin);
 
 module.exports = Router;

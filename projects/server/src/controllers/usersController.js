@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, editBranchManager } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -277,6 +277,19 @@ module.exports = {
             })
         } catch (error) {
             next(error)
+        }
+    },
+
+    filterBranchAdmin: async (req, res, next) => {
+        try {
+            const admins = await getFilteredAdmin(req);
+            respondHandler(res, {
+                isError: false,
+                message: "filtered admins fetched",
+                data: admins
+            })
+        } catch (error) {
+            next(error);
         }
     },
 

@@ -25,9 +25,11 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
                 console.log(`akan mengirimkan data dibawah untuk edit data admin`);
                 console.log(formik.values);
                 const response = await api().patch(`/users/edit-admin`, formik.values)
-                toast.success(response.data.message);
-                document.getElementById(`my_modal_${adminData.username}`).close();
                 getAdmins()
+                document.getElementById(`my_modal_${adminData.username}`).close();
+                toast.success(response.data.message);
+                
+                console.log(`habis fetch data`);
             } catch (error) {
                 toast.error(error.response.data.message);
             }
@@ -156,7 +158,7 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
                     <div className="modal-action">                        
                         <div className="flex gap-2">
                             <button onClick={() => document.getElementById(`my_modal_${adminData.username}`).close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
-                            <form method="dialog" onClick={formik.handleSubmit}>
+                            <form method="dialog" onClick={()=>formik.handleSubmit()}>
                                 <button type="submit" className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800">Submit</button>
                             </form>
                         </div>
