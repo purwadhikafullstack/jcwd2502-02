@@ -16,6 +16,10 @@ module.exports = (sequelize, DataTypes) => {
     name: DataTypes.STRING,
     longitude: DataTypes.DECIMAL(11, 8),
     latitude: DataTypes.DECIMAL(10, 8),
+    isDeleted: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

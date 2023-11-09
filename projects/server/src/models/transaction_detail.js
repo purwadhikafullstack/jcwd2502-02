@@ -4,14 +4,16 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class transaction_detail extends Model {
-    static associate({ product }) {
-      this.belongsTo(product, { foreignKey: 'products_id' })
+    static associate({ transactions }) {
+      this.belongsTo(transactions, { foreignKey: 'transaction_id' })
     }
   }
   transaction_detail.init({
     name: DataTypes.STRING,
     price: DataTypes.INTEGER,
+    id_product: DataTypes.INTEGER,
     quantity: DataTypes.INTEGER,
+    subtotal: DataTypes.INTEGER,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

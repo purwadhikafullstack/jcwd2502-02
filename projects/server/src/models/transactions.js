@@ -4,8 +4,9 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class transactions extends Model {
-    static associate({ user }) {
+    static associate({ user, transaction_detail }) {
       this.belongsTo(user, { foreignKey: 'user_id' })
+      this.hasMany(transaction_detail, { foreignKey: 'transaction_id' })
     }
   }
   transactions.init({
@@ -17,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     final_total: DataTypes.INTEGER,
     shipping_method: DataTypes.STRING,
     note: DataTypes.STRING,
+    status: DataTypes.STRING,
+    isDeleted: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
