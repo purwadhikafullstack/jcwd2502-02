@@ -27,16 +27,13 @@ const CheckoutPage = () => {
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
 
 
-
     const handleShippingService = async (event) => {
         try {
             const selectedService = event.target.value;
             setShippingService(selectedService)
             setShippingOption(null);
             setCost(0);
-
             const getOption = await api().post('/transaction/option', { origin: closestBranch.city_id, destination: mainAddress.city_id, weight: totalWeight, courier: selectedService })
-
             setShippingOption(getOption.data.data[0].costs)
             setCost(null)
         } catch (error) {
@@ -50,7 +47,19 @@ const CheckoutPage = () => {
             const selectedOptionDescription = event.target.options[event.target.selectedIndex].text;
             setCourier(selectedOptionDescription)
             setCost(Number(selectedOption))
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
+    const submitOrder = async () => {
+        try {
+            if (cost == null) {
+                toast.error("Please complete the shipping data")
+            } else {
+                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}` })
+                toast.success("Order created!")
+            }
         } catch (error) {
             console.log(error);
         }
@@ -64,22 +73,13 @@ const CheckoutPage = () => {
 
     useEffect(() => {
         if (cost) {
-            setTotalFinal(((totalSubtotal) + (cost)).toLocaleString())
-        } else { setTotalFinal(totalSubtotal.toLocaleString()) }
+            setTotalFinal(((totalSubtotal) + (cost)))
+        } else { setTotalFinal(totalSubtotal) }
     }, [cost, totalSubtotal]);
-
-
-    console.log(mainAddress);
-    console.log(shippingService);
-    console.log(courier);
-    console.log(cost);
-    console.log(totalFinal);
 
     return (
         <div>
             <Toaster />
-            {/* <Navbar /> */}
-
             <div className="mx-5 pt-5 md:mx-20 lg:mx-32 ">
 
                 <div className="flex text-5xl font-bold gap-2 text-green-800">Checkout
@@ -89,7 +89,7 @@ const CheckoutPage = () => {
                     <div>{closestBranch?.name}</div>
                 </div>
                 <div className="lg:flex lg:gap-12 md:mb-10">
-                    <div className="flex flex-col gap-3 border lg:flex-1 h-[500px] overflow-y-auto">
+                    <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto">
                         {cart.cart.map((value, index) => {
                             return (
                                 <div key={index}>
@@ -113,7 +113,6 @@ const CheckoutPage = () => {
                                 <div>{mainAddress?.address}</div>
                                 <div>{mainAddress?.city?.name} - {mainAddress?.city?.province?.name}</div>
                             </div>
-
                             <div className="grid gap-2">
                                 <div className="grid gap-2">
                                     <div className="font-bold">Shipping Service</div>
@@ -151,7 +150,6 @@ const CheckoutPage = () => {
                                     </div>
                                 </div>
                             </div>
-
                             <div className="grid gap-2 mt-3">
                                 <div className="flex justify-between">
                                     <div>Total Weight</div>
@@ -178,13 +176,12 @@ const CheckoutPage = () => {
 
                             <div className="flex justify-between text-xl font-black">
                                 <div>Grand Total</div>
-                                <div className="">Rp {totalFinal ? totalFinal : null}</div>
+                                <div className="">Rp {totalFinal ? totalFinal.toLocaleString() : null}</div>
                             </div>
                         </div>
-
                         <div className="my-3">
                             <Link >
-                                <Button style={"w-full"} text={"Confirm Order"} />
+                                <Button onClick={() => submitOrder()} style={"w-full"} text={"Confirm Order"} />
                             </Link>
                         </div>
                     </div>
@@ -195,5 +192,4 @@ const CheckoutPage = () => {
         </div >
     )
 }
-
 export default CheckoutPage

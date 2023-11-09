@@ -30,7 +30,6 @@ const LandingPage = () => {
     const onGetCategory = async () => {
         try {
             const category = await api.get(`/category/all`);
-            // console.log(category.data.data);
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);
@@ -48,7 +47,7 @@ const LandingPage = () => {
     const nearestBranch = async () => {
         try {
             const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
-            console.log(branch.data.data, "ini data branch");
+            // console.log(branch.data.data, "ini data branch");
             setProducts(branch.data.data)
         } catch (error) {
             console.log(error);
@@ -58,23 +57,14 @@ const LandingPage = () => {
         onGetCategory();
         getBranch()
         nearestBranch()
-        // dispatch(nearestBranch());
     }, []);
-
-
-    // useEffect(() => {
-
-    //     dispatch(nearestBranch());
-
-    // }, []);
-
 
     return (
         <div className="">
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                <div className="flex justify-center px-3 md:justify-end md:mr-20 lg:mr-48 py-5">
+                <div className="flex justify-center mx-5 md:justify-end md:mr-20 lg:mr-48 py-5">
                     <ModalAddress />
                 </div>
                 <Jumbotron />

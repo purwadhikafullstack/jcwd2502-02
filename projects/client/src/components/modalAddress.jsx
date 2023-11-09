@@ -4,11 +4,15 @@ import Button from '../components/button'
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react"
 import { api } from "../api/api"
+import { useDispatch, useSelector } from "react-redux";
+import { getMainAddress } from "../redux/Features/branch";
 
 const ModalAddress = () => {
 
     const apiInstance = api()
     const [address, setAddress] = useState()
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
+    const dispatch = useDispatch();
 
     const getAddress = async () => {
         try {
@@ -26,13 +30,17 @@ const ModalAddress = () => {
 
     }, [])
 
+    useEffect(() => {
+        dispatch(getMainAddress());
+    }, []);
+
     return (
         <div>
-            <div onClick={() => document.getElementById('my_modal_2').showModal()} className="flex p-1 px-3 rounded-full w-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 ">
+            <div onClick={() => document.getElementById('my_modal_2').showModal()} className="flex p-1 px-3 w-[350px] rounded-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 bg-yellow-300">
                 <div className="grid place-content-center ">
                     <FaLocationDot />
                 </div>
-                <div className="">Delivered to Rumah Bayu</div>
+                <div className="font-bold truncate">Delivered to {mainAddress?.name}</div>
                 <div className="grid place-content-center "><BiSolidDownArrow /></div>
             </div>
             <dialog id="my_modal_2" className="modal modal-bottom sm:modal-middle backdrop-blur-sm">

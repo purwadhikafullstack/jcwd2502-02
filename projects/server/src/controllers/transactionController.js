@@ -55,7 +55,6 @@ module.exports = {
 
             responseHandler(res, "Get Shipping Option Success", transactionDetails)
 
-
         } catch (error) {
             next(error)
         }
