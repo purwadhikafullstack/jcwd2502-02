@@ -4,6 +4,7 @@ import { api } from "../../api/api"
 import ModalNewAdmin from "../../components/modalNewAdmin";
 import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
+import Searchbar from "../../components/searchBar";
 
 export default function CreateAdminPage() {
 
@@ -20,6 +21,7 @@ export default function CreateAdminPage() {
         try {
             const { data } = await api().get(`/users/get-admin`)
             setAdmin(data.data);
+            console.log("GOBLOK LU ANJING");
         } catch (error) {
             console.log(error);
         }

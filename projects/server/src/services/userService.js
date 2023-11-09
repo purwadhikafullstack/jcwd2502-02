@@ -7,6 +7,7 @@ const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const { log } = require('console');
 const respondHandler = require('../utils/resnpondHandler');
+const { Op, where } = require('sequelize');
 
 module.exports = {
     findAllUsers: async () => {
@@ -221,5 +222,22 @@ module.exports = {
         //     isError: false,
         //     message: "Admin profile updated!"
         // }
+    },
+    
+    getFilteredAdmin: async (req) => {
+        const {username, branch} = req.query;
+        let whereCondition = {};
+        if(username) {
+            whereCondition.username = {
+                [Op.like]: `%${username}%`,
+            }
+        }
+        if(branch) {
+            whereCondition.store_branch_id = branch
+        }
+        console.log(whereCondition);
+        const filteredAdmins = await db.user.findAll({ where: whereCondition});
+        console.log(filteredAdmins);
+        return filteredAdmins;
     }
 }
