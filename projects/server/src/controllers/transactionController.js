@@ -2,7 +2,7 @@ const db = require("./../models")
 const responseHandler = require("./../utils/responseHandler")
 const { Sequelize } = require("sequelize");
 const axios = require('axios');
-const { Op } = require("sequelize");
+const { Op, literal } = require("sequelize");
 
 module.exports = {
     getShippingOption: async (req, res, next) => {
@@ -72,7 +72,7 @@ module.exports = {
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
             //kurang branchId
-            if (createdAt) whereClause.createdAt = { [Op.gte]: new Date(createdAt) };
+            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
 
             // Calculate the total number of records
             const totalRecords = await db.transactions.count({ where: whereClause });
