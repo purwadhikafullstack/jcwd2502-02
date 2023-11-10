@@ -2,6 +2,7 @@ const db = require("./../models")
 const responseHandler = require("./../utils/responseHandler")
 const { Sequelize } = require("sequelize");
 const axios = require('axios');
+const { Op } = require("sequelize");
 
 module.exports = {
     getShippingOption: async (req, res, next) => {
@@ -58,5 +59,43 @@ module.exports = {
         } catch (error) {
             next(error)
         }
-    }
+    },
+
+
+    getOrders: async (req, res, next) => {
+        try {
+            const { invoice, status, createdAt, page, branchId } = req.query;
+            const limit = 6;  // Number of records per page
+
+            // Build the where clause based on the provided filters
+            const whereClause = {};
+            if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
+            if (status) whereClause.status = status;
+            //kurang branchId
+            if (createdAt) whereClause.createdAt = { [Op.gte]: new Date(createdAt) };
+
+            // Calculate the total number of records
+            const totalRecords = await db.transactions.count({ where: whereClause });
+
+            // Calculate the maximum number of pages
+            const maxPages = Math.ceil(totalRecords / limit);
+
+            // Use limit and offset to paginate the actual data
+            const offset = (page - 1) * limit;
+            const orders = await db.transactions.findAll({
+                where: whereClause,
+                limit,
+                offset,
+                order: [['createdAt', 'DESC']]
+            });
+
+            res.json({
+                orders,
+                maxPages,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
 }
