@@ -54,13 +54,12 @@ module.exports = {
                 order: [['createdAt', 'DESC']]
             });
 
-
-            // responseHandler(res, "Get Orders Success", { orders, maxPages });
-
-            res.json({
+            const result = res.json({
                 orders,
                 maxPages,
             });
+
+            // responseHandler(res, "Get Orders Success", result);
         } catch (error) {
             next(error);
         }

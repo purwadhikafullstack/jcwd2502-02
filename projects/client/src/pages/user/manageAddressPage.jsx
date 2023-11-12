@@ -12,11 +12,12 @@ import "../../css/sweet.css"
 import Swal from "sweetalert2";
 import DeleteConfirmation from "../../components/deleteModal"
 import MyForm from "../../components/modal"
-
+import PaginationFixed from "../../components/paginationComponent"
 
 const ManageAddress = () => {
     const apiInstance = api()
-
+    const [page, setPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
     const [address, setAddress] = useState()
     const pageTopRef = useRef(null);
     const [provinceId, setProvinceId] = useState()
@@ -45,10 +46,9 @@ const ManageAddress = () => {
 
     const getAddress = async () => {
         try {
-            const userAddress = await apiInstance.get('/location/')
-            console.log(userAddress.data.data);
-            userAddress.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
-            setAddress(userAddress.data.data)
+            const userAddress = await apiInstance.get(`/location/pagination/${page}`)
+            setMaxPage(userAddress.data.maxPages)
+            setAddress(userAddress.data.userAddress)
         } catch (error) {
             console.log(error);
         }
@@ -60,17 +60,36 @@ const ManageAddress = () => {
             const mainAddress = await apiInstance.patch(`/location/main/${addressId}`)
             Swal.fire("Success!", "Main Address Successfully Updated", "success");
             getAddress()
+
         } catch (error) {
             console.log(error);
         }
     }
+
+    const handlePageChange = async (newPage) => {
+        if (newPage >= 1 && newPage <= maxPage) {
+            setPage(newPage);
+            await getAddress()
+        } else {
+            toast.error("Invalid page number!");
+        }
+    };
+
+    const handleNextPage = () => {
+        handlePageChange(page + 1);
+    };
+
+    const handlePrevPage = () => {
+        handlePageChange(page - 1);
+    };
+
 
     useEffect(() => {
         getCityId()
         getProvinceId()
         getAddress()
 
-    }, [])
+    }, [page])
 
 
     const UpdateAddres = async (addressId) => {
@@ -117,17 +136,18 @@ const ManageAddress = () => {
                                             <div className="font-semibold">{value.city.name} - {value.city.province.name}</div>
                                         </div>
 
-                                        {value.isPrimary == "false" ? <DeleteConfirmation
-                                            itemId={value.id}
-                                            button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
-                                            onDelete={getAddress}
-                                            apiEndpoint={"/location/main"}
-                                            text={"Your cart will be emptied if you change your main address. "}
-                                            textOnButton={"Confirm"}
-                                            message={"Main address successfully updated!"}
-                                        />
-                                            : null}
-
+                                        <div className="md:grid md:place-content-center">
+                                            {value.isPrimary == "false" ? <DeleteConfirmation
+                                                itemId={value.id}
+                                                button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
+                                                onDelete={getAddress}
+                                                apiEndpoint={"/location/main"}
+                                                text={"Your cart will be emptied if you change your main address. "}
+                                                textOnButton={"Confirm"}
+                                                message={"Main address successfully updated!"}
+                                            />
+                                                : null}
+                                        </div>
 
                                         {/* {value.isPrimary == "false" ? <div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} onClick={() => updateMain(value.id)} /></div> : null} */}
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">
@@ -155,6 +175,17 @@ const ManageAddress = () => {
                         : null
                     }
                 </div>
+
+                <div className="flex justify-center my-10">
+                    <PaginationFixed
+                        page={page}
+                        maxPage={maxPage}
+                        handlePageChange={handlePageChange}
+                        handlePrevPage={handlePrevPage}
+                        handleNextPage={handleNextPage}
+                    />
+                </div>
+
             </div>
             <Footer />
         </div >

@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 
 const ModalUpdateAddress = ({ id, onClick, name }) => {
 
+    console.log(id);
+
     const apiInstance = api()
     const [selectedProvince, setSelectedProvince] = useState("");
     const [provinceId, setProvinceId] = useState()
@@ -45,7 +47,7 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
             try {
                 const UpdateAddres = await apiInstance.patch(`/location/address/${id}`, dataUpdate.values)
                 document.getElementById('my_modal_' + id).close();
-                Swal.fire("Success!", "Address Successfully Added", "success");
+                Swal.fire("Success!", "Address Successfully Updated", "success");
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);

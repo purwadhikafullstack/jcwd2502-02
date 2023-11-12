@@ -30,6 +30,9 @@ const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, textO
                     confirmButtonColor: "#039E57",
                 });
                 onDelete();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
             } catch (error) {
                 console.log(error);
             }
