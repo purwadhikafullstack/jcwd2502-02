@@ -28,6 +28,7 @@ const SuperOrderList = () => {
 
     const handleStatus = (event) => {
         try {
+            setPage(1);
             setStatus(event.target.value)
         } catch (error) {
             console.log(error);
@@ -36,6 +37,7 @@ const SuperOrderList = () => {
 
     const handleDate = (event) => {
         try {
+            setPage(1);
             setCreatedAt(event.target.value);
         } catch (error) {
             console.log(error);
@@ -99,12 +101,12 @@ const SuperOrderList = () => {
                 </div>
 
                 <div className="mb-10 lg:flex border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 p-3 shadow-xl rounded-2xl lg:justify-center">
-                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3">
+                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[350px]">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full lg:w-[500px] text-lg pl-2" placeholder=" Search your order invoice" />
                     </div>
 
-                    <div className="flex gap-2 justify-between overflow-x-auto my-3">
+                    <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" className="h-[48px] px-2 border-2 rounded-xl w-[170px] lg:w-[200px]">
                                 <option value={""} disabled selected>Store Branch</option>
