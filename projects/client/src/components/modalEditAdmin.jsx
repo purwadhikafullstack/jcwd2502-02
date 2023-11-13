@@ -23,9 +23,9 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
         onSubmit: async(values) => {
             try {
                 console.log(`akan mengirimkan data dibawah untuk edit data admin`);
-                console.log(formik.values);
-                const response = await api().patch(`/users/edit-admin`, formik.values)
-                getAdmins()
+                // console.log(getAdmins);
+                const response = await api().patch(`/users/edit-admin`, {...values, username: adminData.username, email: adminData.email,})
+                await getAdmins()
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
                 
