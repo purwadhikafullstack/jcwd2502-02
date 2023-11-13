@@ -11,7 +11,7 @@ import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
 
-const ProductListPage = () => {
+const ProductListAdminPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
     const [products, setProducts] = useState([]);
@@ -80,18 +80,23 @@ const ProductListPage = () => {
         nearestBranch()
     }, [catId, searchQuery, sort, closestBranch]);
 
+    // useEffect(() => {
+    //     nearestBranch()
+    // }, []);
+
+
     return (
         <div className="">
             <Navbar />
-            <div className="mt-[70px] pt-3">
-                <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
-                    {/* <Link to={`/products?category=`}>
+            <div className="mt-[50px] pt-3">
+                <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
+                    {/* <Link to={`/all-product-list?category=`}>
                         <CategoryCard name={"Show All"} image={`public/showall.jpg`} onClick={() => onFilterCat("")} />
                     </Link> */}
                     {category.map((value, index) => {
                         return (
                             <div key={index}>
-                                <Link to={`/products?category=${value.id}`}>
+                                <Link to={`/all-product-list?category=${value.id}`}>
                                     <CategoryCard onClick={() => onFilterCat(value.id)} name={value.name} image={value.image} />
                                 </Link>
                             </div>
@@ -99,9 +104,9 @@ const ProductListPage = () => {
                     })}
                 </div>
             </div>
-            <div className="mx-5 md:mx-24 lg:mx-40 my-10">
-                <div className="flex  justify-center gap-2 my-5 py-3 ">
-                    <div className=" grid place-content-center">
+            <div className="mx-5 ">
+                <div className="flex justify-center gap-2 my-5 py-3 ">
+                    <div className="grid place-content-center">
                         <Searchbar value={searchQuery} onChange={(e) => debouncedSearch(e.target.value)} />
                     </div>
                     <div>
@@ -113,26 +118,40 @@ const ProductListPage = () => {
                         />
                     </div>
                     <div>
-                        <Link to={`/products?category= `}>
+                        <Link to={`/all-product-list?category=`}>
                             <button className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900" onClick={() => setCatId("")}>Show All Products</button>
                         </Link>
                     </div>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
-                    {currentPosts.map((value, index) => (
-                        <a key={index}>
-                            <div>
-                                <ProductCard
-                                    name={value.name}
-                                    image={value.image}
-                                    description={value.description}
-                                    price={value.price}
-                                    stock={value.product_stocks}
-                                    data={value.id}
-                                />
-                            </div>
-                        </a>
-                    ))}
+                <div className="overflow-x-auto px-5 my-8  ">
+                    <table className="table border-b-2">
+                        <thead>
+                            <tr>
+                                <th className="text-xl">Image</th>
+                                <th className="text-xl">Name</th>
+                                <th className="text-xl">Price</th>
+                                <th className="text-xl">Description</th>
+                                <th className="text-xl">Weight (gr)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentPosts.map((value) => {
+                                return (
+                                    <tr key={value.id} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
+                                        <td>
+                                            <div className="relative pt-5">
+                                                <img className="object-fit rounded-full h-[100px] w-[100px]" src={process.env.REACT_APP_URL + `${value.image}`} />
+                                            </div>
+                                        </td>
+                                        <th className="text-lg">{value.name}</th>
+                                        <th className="text-lg">{value.price}</th>
+                                        <th className="text-lg">{value.description}</th>
+                                        <th className="text-lg">{value.weight}</th>
+                                    </tr>
+                                );
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             </div>
             <div className="pt-4 mb-10">
@@ -149,4 +168,4 @@ const ProductListPage = () => {
         </div>
     )
 }
-export default ProductListPage
+export default ProductListAdminPage

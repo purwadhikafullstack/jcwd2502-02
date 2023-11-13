@@ -20,8 +20,8 @@ app.use(cors());
 app.use(express.json());
 app.use(bearerToken());
 app.use((req, res, next) => {
-  console.log(req?.headers?.authorization)
-  console.log("kalau kosong, ini mungkin karena postman (index.js");
+  // console.log(req?.headers?.authorization)
+  // console.log("kalau kosong, ini mungkin karena postman (index.js");
   next();
 })
 

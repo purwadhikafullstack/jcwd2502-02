@@ -18,7 +18,8 @@ module.exports = {
                         model: db.product_category,
                         attributes: ["name"]
                     }
-                ]
+                ],
+                order: [['updatedAt', 'DESC']]
             })
         } catch (error) {
             return error;
@@ -72,7 +73,10 @@ module.exports = {
         try {
             const data = JSON.parse(body);
             const dataImage = file
-            return await db.product.create({ ...data, image: dataImage });
+            const newProduct = await db.product.create({ ...data, image: dataImage });
+            const branches = await db.store_branch.findAll()
+            for (const branch of branches) await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 });
+            return newProduct
         } catch (error) {
             return error
         }

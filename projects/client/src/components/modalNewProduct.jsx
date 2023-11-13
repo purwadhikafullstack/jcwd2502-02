@@ -10,6 +10,7 @@ const ModalNewProduct = () => {
     const inputProductPrice = useRef();
     const inputProductDescription = useRef();
     const inputProductCategory = useRef();
+    const inputProductWeigth = useRef();
     const [image, setImage] = useState([])
     const [filteredCategory, setFilteredCategory] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -41,13 +42,14 @@ const ModalNewProduct = () => {
                 price: Number(inputProductPrice.current.value),
                 description: inputProductDescription.current.value,
                 product_categories_id: Number(inputProductCategory.current.value),
+                weight: inputProductWeigth.current.value
             }
             const fd = new FormData()
             fd.append('data', JSON.stringify(inputs))
             image.forEach(value => {
                 fd.append('image', value)
             })
-            if (inputs.name === "" || inputs.image === "" || inputs.description === "" || inputs.product_categories_id === "") {
+            if (inputs.name === "" || inputs.image === "" || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "") {
                 toast.error("Please Fill All Data")
             } else {
                 console.log(inputs);
@@ -127,6 +129,13 @@ const ModalNewProduct = () => {
                                         })
                                     }
                                 </select>
+                            </div>
+                            <div>
+                                <div className="text-white pb-2">Product Weigth</div>
+                                <Input
+                                    ref={inputProductWeigth}
+                                    type={"number"}
+                                    style={"input w-full"} />
                             </div>
                             <div>
                                 <div className="text-white pb-2">Description</div>

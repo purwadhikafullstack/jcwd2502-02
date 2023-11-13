@@ -3,7 +3,7 @@ const { deleteFiles } = require('./../helper/deleteFiles');
 module.exports = {
     getCategoryService: async () => {
         try {
-            return await db.product_category.findAll({ where: { isDeleted: 0, }, });
+            return await db.product_category.findAll({ where: { isDeleted: 0, }, order: [['updatedAt', 'DESC']] });
         } catch (error) {
             return error;
         }

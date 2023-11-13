@@ -4,6 +4,7 @@ import LandingPage2 from "../pages/user/landingPage2";
 import RegistrationPage from "../pages/registerPage";
 import LoginPage from "../pages/loginPage";
 import ProductListPage from "../pages/user/productList";
+import ProductListAdminPage from "../pages/admin/productListAdmin";
 import ProfilePage from "../pages/user/profilePage";
 import UpdateProfile from "../pages/user/updateProfilePage";
 import VerificationPage from "../pages/verificationPage";
@@ -62,6 +63,9 @@ const routes = [
     } />,
     <Route path='/products' element={
         <ProductListPage />
+    } />,
+    <Route path='/all-product-list' element={
+        <ProductListAdminPage />
     } />,
     <Route path='/products/detail/:id' element={
         <ProductDetailPage />

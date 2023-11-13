@@ -17,6 +17,7 @@ const UpdateProductsPage = () => {
     const [inputName, setInputName] = useState("");
     const [inputPrice, setInputPrice] = useState("");
     const [inputDescription, setInputDescription] = useState("");
+    const [inputWeight, setInputWeight] = useState("");
     const [inputCategory, setInputCategory] = useState("");
     const [modal, setModal] = useState(false);
     const api = api1();
@@ -26,10 +27,9 @@ const UpdateProductsPage = () => {
     const fetchData = async () => {
         try {
             const category = await api.get(`category/all`);
-            category.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             setCategory(category.data.data);
             const products = await api.get(`products/allproducts`);
-            products.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+
             setProducts(products.data.data);
         } catch (error) {
             console.log(error);
@@ -45,6 +45,7 @@ const UpdateProductsPage = () => {
             setInputName(res.data.data.name);
             setInputPrice(res.data.data.price);
             setInputDescription(res.data.data.description);
+            setInputWeight(res.data.data.weight);
             setInputCategory(res.data.data.product_categories_id);
         } catch (error) {
             console.log(error);
@@ -94,16 +95,6 @@ const UpdateProductsPage = () => {
             console.log(error);
         }
     };
-    const onDeleteProducts = async (productId) => {
-        try {
-            const deleteProduct = await api.patch(`products/deleteproduct/${productId}`)
-            console.log(deleteProduct);
-            toast.success("Delete Product Success")
-            fetchData()
-        } catch (error) {
-            console.log(error);
-        }
-    };
     const debouncedSaveProducts = debounce(() => { handleSaveProduct() }, 1000);
     const debouncedSetFilteredProducts = debounce((filtered) => { setFilteredProducts(filtered); }, 1000);
     useEffect(() => {
@@ -145,13 +136,14 @@ const UpdateProductsPage = () => {
                                 <th className="text-xl">Name</th>
                                 <th className="text-xl">Price</th>
                                 <th className="text-xl">Description</th>
+                                <th className="text-xl">Weight (gr)</th>
                                 <th className="text-xl">Category</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredProducts.map((value, index) => {
+                            {filteredProducts.map((value) => {
                                 return (
-                                    <tr key={index} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
+                                    <tr key={value.id} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
                                         <td>
                                             <div className="relative pt-5">
                                                 <img className="object-fit rounded-full h-[100px] w-[100px]" src={process.env.REACT_APP_URL + `${value.image}`} />
@@ -166,6 +158,7 @@ const UpdateProductsPage = () => {
                                         <th className="text-lg">{value.name}</th>
                                         <th className="text-lg">{value.price}</th>
                                         <th className="text-lg">{value.description}</th>
+                                        <th className="text-lg">{value.weight}</th>
                                         <th className="text-lg">{value.product_category.name}</th>
                                         <td>
                                             <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800"
@@ -211,16 +204,20 @@ const UpdateProductsPage = () => {
                         <input className="input w-full" type="text" value={inputDescription} onChange={(e) => setInputDescription(e.target.value)} />
                     </div>
                     <div>
+                        <div className="text-white pb-2"> Product Weight</div>
+                        <input className="input w-full" type="text" value={inputWeight} onChange={(e) => setInputWeight(e.target.value)} />
+                    </div>
+                    <div>
                         <div className="text-white pb-2"> Product Category</div>
                         <select
                             value={inputCategory}
                             onChange={(e) => setInputCategory(e.target.value)}
                             className="select select-bordered w-full">
-                            <option disabled selected></option>
+                            <option disabled value=""></option>
                             {
                                 category.map((value) => {
                                     return (
-                                        <option value={value.id}>{value.name}</option>
+                                        <option key={value.id} value={value.id}>{value.name}</option>
                                     )
                                 })
                             }
