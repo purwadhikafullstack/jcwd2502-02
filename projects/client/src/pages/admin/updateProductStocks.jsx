@@ -1,25 +1,30 @@
 import CategoryCard from "../../components/categoryCard"
 import Searchbar from "../../components/searchBar";
 import SortButton from "../../components/sortButton";
-import ProductCard from "../../components/productCard";
 import Pagination from "../../components/pagination";
 import Navbar from "../../components/navbarUser";
 import Footer from "../../components/footer";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { api1 } from "../../api/api";
 import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
+import toast, { Toaster } from "react-hot-toast";
+import ModalUpdateProductStock from "../../components/modalUpdateProductStock";
+
 
 const UpdateProductStocksPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
+    const [productId, setProductId] = useState("");
     const [products, setProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [sort, setSort] = useState("ASC");
     const [currentPage, setCurrentPage] = useState(1);
     const [postPerPage, setPostsPerPage] = useState(8);
     const [stock, setStock] = useState()
+    const pageTopRef = useRef(null);
+    const [inputStock, setInputStock] = useState("");
     const lastPostIndex = currentPage * postPerPage;
     const firstPostIndex = lastPostIndex - postPerPage;
     const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
@@ -27,8 +32,9 @@ const UpdateProductStocksPage = () => {
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
+    const [isModalOpen, setModalOpen] = useState(false);
+    const [currentStock, setCurrentStock] = useState(0);
     const debouncedSearch = debounce((value) => {
-        // console.log(value);
         setSearchQuery(value);
     }, 1000);
     const nearestBranch = async () => {
@@ -74,6 +80,15 @@ const UpdateProductStocksPage = () => {
             console.log(error);
         }
     };
+    const handleOpenModal = (productId, productStock) => {
+        setProductId(productId);
+        setCurrentStock(productStock);
+        setModalOpen(true);
+    };
+
+    const handleCloseModal = () => {
+        setModalOpen(false);
+    };
     useEffect(() => {
         onGetCategory();
         onGetFilteredProducts();
@@ -83,6 +98,7 @@ const UpdateProductStocksPage = () => {
     console.log(currentPosts);
     return (
         <div className="">
+            <Toaster />
             <Navbar />
             <div className="mt-[50px] pt-3">
                 <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
@@ -128,6 +144,7 @@ const UpdateProductStocksPage = () => {
                                 <th className="text-xl">Image</th>
                                 <th className="text-xl">Name</th>
                                 <th className="text-xl">Stock</th>
+                                <th className="text-xl"></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -141,6 +158,9 @@ const UpdateProductStocksPage = () => {
                                         </td>
                                         <th className="text-lg">{value.name}</th>
                                         <th className="text-lg">{(value.product_stocks[0].stock === 0) ? "Out of Stock" : value.product_stocks[0].stock}</th>
+                                        <th className="text-lg">
+                                            <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModal(value.id, value.product_stocks[0].stock)}>Update Stock</button>
+                                        </th>
                                     </tr>
                                 );
                             })}
@@ -158,6 +178,14 @@ const UpdateProductStocksPage = () => {
                     currentPage={currentPage}
                 />
             </div>
+            <ModalUpdateProductStock
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+                productId={productId}
+                branchId={closestBranch.id}
+                onStockUpdated={onGetFilteredProducts}
+                currentStock={currentStock}
+            />
             <Footer />
         </div>
     )

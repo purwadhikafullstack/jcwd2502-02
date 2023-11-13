@@ -10,7 +10,6 @@ module.exports = {
     },
     getAllProductsAndCategoryNameService: async () => {
         try {
-            // const { id } = params;
             return await db.product.findAll({
                 where: { isDeleted: 0 },
                 include: [
@@ -111,7 +110,6 @@ module.exports = {
     },
     getProductStockService: async (query) => {
         try {
-            console.log(query);
             const { productId, branchId } = query
             return await db.product_stock.findOne({
                 where: { products_id: productId, store_branch_id: branchId },
@@ -127,7 +125,6 @@ module.exports = {
     },
     getAllProductStockService: async (params) => {
         try {
-            console.log(params);
             const { branchId } = params
             return await db.product_stock.findOne({
                 where: { store_branch_id: branchId }
@@ -138,11 +135,28 @@ module.exports = {
     },
     getAllProductBranchStockService: async (params) => {
         try {
-            console.log(params);
             const { branchId } = params
             return await db.product_stock.findOne({
                 where: { store_branch_id: branchId }
             })
+        } catch (error) {
+            return error
+        }
+    },
+    updateProductStockService: async (body) => {
+        try {
+            const { inputStock, productId, branchId } = body
+            const updatedProductStock = await db.product_stock.update({ stock: inputStock }, { where: { products_id: productId, store_branch_id: branchId } })
+            await db.stock_history.create({ stock: inputStock, products_id: productId, store_branch_id: branchId, description: 'Re-Stock Product', });
+            return updatedProductStock
+        } catch (error) {
+            return error
+        }
+    },
+    getDiscountService: async (params) => {
+        try {
+            const { id } = params
+            return await db.discount.findOne({ where: { id } })
         } catch (error) {
             return error
         }
