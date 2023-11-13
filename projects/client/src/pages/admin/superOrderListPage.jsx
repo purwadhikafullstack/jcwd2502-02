@@ -145,7 +145,8 @@ const SuperOrderList = () => {
                                     status={value.status}
                                     invoice={value.invoice}
                                     total={value.final_total.toLocaleString()}
-                                    date={moment(value.createdAt).format('dddd, Do MMMM YYYY')} />
+                                    date={moment(value.createdAt).format('dddd, Do MMMM YYYY')}
+                                    address={value.address} />
                             </div>
                         )
                     }) : null}

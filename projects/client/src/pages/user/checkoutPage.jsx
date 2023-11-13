@@ -26,6 +26,7 @@ const CheckoutPage = () => {
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
 
+    const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
 
     const handleShippingService = async (event) => {
         try {
@@ -57,7 +58,8 @@ const CheckoutPage = () => {
             if (cost == null) {
                 toast.error("Please complete the shipping data")
             } else {
-                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}` })
+                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address })
+                console.log(createOrder.data);
                 toast.success("Order created!")
             }
         } catch (error) {
@@ -70,6 +72,8 @@ const CheckoutPage = () => {
         dispatch(nearestBranch());
         dispatch(getMainAddress());
     }, []);
+
+    console.log(address);
 
     useEffect(() => {
         if (cost) {

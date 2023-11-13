@@ -18,7 +18,7 @@ module.exports = {
         }
     },
 
-    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method }) => {
+    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address }) => {
         try {
             const invoice = Date.now() + Math.round(Math.random() * 1E9);
             const transaction = await db.transactions.create({
@@ -28,6 +28,7 @@ module.exports = {
                 discount,
                 final_total,
                 shipping_method,
+                address,
                 user_id: userId,
                 status: "pending"
             });
