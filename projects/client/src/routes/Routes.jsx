@@ -10,6 +10,7 @@ import UpdateProfile from "../pages/user/updateProfilePage";
 import VerificationPage from "../pages/verificationPage";
 import UpdateProductsCategoryPage from "../pages/admin/updateCategoryPage";
 import UpdateProductsPage from "../pages/admin/updateProductsPage";
+import UpdateProductStocksPage from "../pages/admin/updateProductStocks";
 import ForgotPasswordPage from "../pages/forgotPasswordPage";
 import ChangePasswordPage from "../pages/changePassPage";
 import UpdatePasswordPage from "../pages/user/profilePasswordPage";
@@ -72,6 +73,9 @@ const routes = [
     } />,
     <Route path='/branch/products/detail/:id' element={
         <BranchProductDetailPage />
+    } />,
+    <Route path='/update-product-stocks' element={
+        <UpdateProductStocksPage />
     } />,
     <Route path='/verify/:id' element={
         <VerificationPage />

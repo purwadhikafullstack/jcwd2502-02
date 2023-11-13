@@ -11,7 +11,7 @@ import { Link, useLocation } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
 
-const ProductListAdminPage = () => {
+const UpdateProductStocksPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
     const [products, setProducts] = useState([]);
@@ -86,13 +86,10 @@ const ProductListAdminPage = () => {
             <Navbar />
             <div className="mt-[50px] pt-3">
                 <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
-                    {/* <Link to={`/all-product-list?category=`}>
-                        <CategoryCard name={"Show All"} image={`public/showall.jpg`} onClick={() => onFilterCat("")} />
-                    </Link> */}
                     {category.map((value, index) => {
                         return (
                             <div key={index}>
-                                <Link to={`/all-product-list?category=${value.id}`}>
+                                <Link to={`/update-product-stocks?category=${value.id}`}>
                                     <CategoryCard onClick={() => onFilterCat(value.id)} name={value.name} image={value.image} />
                                 </Link>
                             </div>
@@ -114,13 +111,13 @@ const ProductListAdminPage = () => {
                         />
                     </div>
                     <div>
-                        <Link to={`/all-product-list?category=`}>
-                            <button className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900" onClick={() => setCatId("")}>Show All Products</button>
+                        <Link to={`/update-product-stocks?category=`}>
+                            <button className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900" onClick={() => setCatId("")}>Show All Products Stocks</button>
                         </Link>
                     </div>
                     <div>
-                        <Link to={`/update-product-stocks?category=`}>
-                            <button className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900" >Update Products Stock</button>
+                        <Link to={`/all-product-list?category=`}>
+                            <button className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900" >All Product List</button>
                         </Link>
                     </div>
                 </div>
@@ -130,9 +127,6 @@ const ProductListAdminPage = () => {
                             <tr>
                                 <th className="text-xl">Image</th>
                                 <th className="text-xl">Name</th>
-                                <th className="text-xl">Price</th>
-                                <th className="text-xl">Description</th>
-                                <th className="text-xl">Weight (gr)</th>
                                 <th className="text-xl">Stock</th>
                             </tr>
                         </thead>
@@ -146,9 +140,6 @@ const ProductListAdminPage = () => {
                                             </div>
                                         </td>
                                         <th className="text-lg">{value.name}</th>
-                                        <th className="text-lg">{value.price}</th>
-                                        <th className="text-lg">{value.description}</th>
-                                        <th className="text-lg">{value.weight}</th>
                                         <th className="text-lg">{(value.product_stocks[0].stock === 0) ? "Out of Stock" : value.product_stocks[0].stock}</th>
                                     </tr>
                                 );
@@ -171,4 +162,4 @@ const ProductListAdminPage = () => {
         </div>
     )
 }
-export default ProductListAdminPage
+export default UpdateProductStocksPage
