@@ -18,7 +18,7 @@ module.exports = {
         }
     },
 
-    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address }) => {
+    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId }) => {
         try {
             const invoice = Date.now() + Math.round(Math.random() * 1E9);
             const transaction = await db.transactions.create({
@@ -30,6 +30,7 @@ module.exports = {
                 shipping_method,
                 address,
                 user_id: userId,
+                store_branch_id: branchId,
                 status: "pending"
             });
 
@@ -63,13 +64,14 @@ module.exports = {
         }
     },
 
-    filteredAllOrder: async ({ invoice, status, createdAt, page }) => {
+    filteredAllOrder: async ({ invoice, status, createdAt, page, branchId }) => {
         try {
             const limit = 6;
             const whereClause = {};
 
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
+            if (branchId) whereClause.store_branch_id = branchId;
             if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
 
             const totalRecords = await db.transactions.count({ where: whereClause });

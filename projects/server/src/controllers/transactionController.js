@@ -36,7 +36,7 @@ module.exports = {
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
-            //kurang branchId
+            if (branchId) whereClause.store_branch_id = branchId;
             if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
 
             // Calculate the total number of records
