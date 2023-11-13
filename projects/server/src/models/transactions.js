@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
     shipping_method: DataTypes.STRING,
     note: DataTypes.STRING,
     status: DataTypes.STRING,
+    address: DataTypes.STRING,
     isDeleted: {
       type: DataTypes.INTEGER,
       defaultValue: 0

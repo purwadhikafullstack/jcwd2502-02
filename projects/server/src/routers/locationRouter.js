@@ -8,6 +8,7 @@ const { locationController } = require("../controllers");
 Router.get('/province', locationController.getProvince)
 Router.get('/city', locationController.getCity)
 Router.get('/', verify, locationController.getAddress)
+Router.get('/pagination/:page', verify, locationController.addressPagination)
 Router.get('/:id', locationController.getAddressById)
 Router.get('/city/:id', locationController.getCitybyProv)
 Router.get('/address/main', verify, locationController.getMainAddress)

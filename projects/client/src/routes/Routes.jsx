@@ -22,7 +22,7 @@ import ManageAddress from "../pages/user/manageAddressPage";
 import Cart from "../pages/user/cartPage";
 import CheckoutPage from "../pages/user/checkoutPage";
 import CreateAdminPage from "../pages/admin/createAdminPage";
-
+import SuperOrderList from "../pages/admin/superOrderListPage";
 import Protected from "./protected";
 
 const routes = [
@@ -102,6 +102,9 @@ const routes = [
     } />,
     <Route path='/checkout' element={
         <CheckoutPage />
+    } />,
+    <Route path='/order-list' element={
+        <SuperOrderList />
     } />,
 
     <Route path='/user-management' element={

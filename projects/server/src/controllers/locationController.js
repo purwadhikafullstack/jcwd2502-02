@@ -50,12 +50,65 @@ module.exports = {
                     },
                 ],
                 where: { user_id: id, isDeleted: 0 },
+                order: [
+                    // Ensure addresses with isPrimary = true appear first
+                    [db.sequelize.literal('isPrimary = "true" DESC')],
+                    ['createdAt', 'DESC'], // You can adjust this based on your sorting criteria
+                ],
             },)
             responseHandler(res, "Get Address Success", userAddress);
         } catch (error) {
             next(error)
         }
     },
+
+    addressPagination: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+            const { page } = req.params;
+            const totalRecords = await db.user_address.count({ where: { user_id: id, isDeleted: 0 } });
+            const limit = 6;  // Number of records per page
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            const userAddress = await db.user_address.findAll({
+                include: [
+                    {
+                        model: db.city,
+                        attributes: ['name'],
+                        include: [
+                            {
+                                model: db.province,
+                                attributes: ['name']
+                            }
+                        ]
+                    },
+                ],
+                where: { user_id: id, isDeleted: 0 },
+                order: [
+                    // Ensure addresses with isPrimary = true appear first
+                    [db.sequelize.literal('isPrimary = "true" DESC')],
+                    ['createdAt', 'DESC'], // You can adjust this based on your sorting criteria
+                ],
+                limit,
+                offset,
+            });
+
+
+            res.json({
+                userAddress,
+                maxPages,
+            });
+
+            // const totalRecords = userAddress.count()
+            // responseHandler(res, "Get Address Success", result);
+        } catch (error) {
+            next(error)
+        }
+    },
+
+
+
+
 
     getMainAddress: async (req, res, next) => {
         try {
