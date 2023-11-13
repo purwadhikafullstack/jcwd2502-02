@@ -198,7 +198,7 @@ module.exports = {
             const account = await db.user.findOne({
                 where: {email}
             });
-            console.log(store_branch_id);
+            console.log(store_branch_id, email);
             console.log(account.dataValues.store_branch_id);
             if(!account) throw {status: 401, message: "Error, account was not found!"};
             if(store_branch_id == account.dataValues.store_branch_id) throw {error: 401, message: "Admin was already assigned to the designated branch"};
@@ -211,22 +211,12 @@ module.exports = {
             console.log(error);
             return error
         }
-        // const userData = {
-        //     // store_branch_id: branch
-        // }
-        // await db.user.update({
-        //     userData
-        // },
-        // {where: {email}})
-        // return {
-        //     isError: false,
-        //     message: "Admin profile updated!"
-        // }
     },
     
     getFilteredAdmin: async (req) => {
         const {username, branch} = req.query;
         let whereCondition = {};
+        whereCondition.role = "admin"
         if(username) {
             whereCondition.username = {
                 [Op.like]: `%${username}%`,
@@ -235,9 +225,15 @@ module.exports = {
         if(branch) {
             whereCondition.store_branch_id = branch
         }
-        console.log(whereCondition);
-        const filteredAdmins = await db.user.findAll({ where: whereCondition});
-        console.log(filteredAdmins);
+        const filteredAdmins = await db.user.findAll({ 
+            where: whereCondition,
+            order: [["updatedAt", "DESC"]],
+            include: [
+                {
+                    model: db.store_branch
+                }
+            ]
+        });
         return filteredAdmins;
     }
 }

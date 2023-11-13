@@ -20,6 +20,8 @@ import ManageAddress from "../pages/user/manageAddressPage";
 import Cart from "../pages/user/cartPage";
 import CheckoutPage from "../pages/user/checkoutPage";
 import CreateAdminPage from "../pages/admin/createAdminPage";
+import AdminDashboardPage from "../pages/admin/adminDashboard";
+import ProductStockHistoryPage from "../pages/admin/productStockHistory";
 
 import Protected from "./protected";
 
@@ -100,10 +102,17 @@ const routes = [
         < CreateAdminPage />
     } />,
 
+    <Route path='/admin-dashboard' element={
+        < AdminDashboardPage />
+    } />,
+
+    <Route path='/stock-history' element={
+        < ProductStockHistoryPage />
+    } />,
+
     <Route path='/*' element={
         < NotFoundPage />
     } />,
-
 ]
 
 export default routes;
