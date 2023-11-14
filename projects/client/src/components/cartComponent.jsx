@@ -43,7 +43,18 @@ const CartComponent = (props) => {
     return (
         <div>
             <div className={`w-full ${props.style}`}>
-                <div className="flex w-full rounded-xl border h-auto">
+                <div className="flex w-full rounded-xl border h-auto relative">
+                    <div className="absolute left-0 top-0">
+                        {
+                            (props.discount_id === 3)
+                                ?
+                                <div className="">
+                                    <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white  font-bold rounded-b-xl">Buy 1 Get 1 Free</div>
+                                </div>
+                                :
+                                null
+                        }
+                    </div>
                     <div className="">
                         <img className="object-fill h-[170px] w-[140px] md:w-[200px] rounded-l-xl" src={process.env.REACT_APP_URL + `${props.image}`} alt="product_image" />
                     </div>
@@ -52,7 +63,22 @@ const CartComponent = (props) => {
                         <div className="md:grid md:place-content-center md:gap-3 w-auto">
                             <div className=" text-xl font-semibold truncate">{props.name}</div>
                             <div className="text-gray-400">{props.weight} gr</div>
-                            <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
+                            {
+                                (props.discount_id === 1 || props.discount_id === 2 || props.discount_id === null)
+                                    ? (
+                                        <div className="flex gap-2">
+                                            <div className="text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
+                                            {(props.discount_id === 1 || props.discount_id === 2) && (
+                                                <div className="text-red-600 line-through font-bold">Rp {props.price.toLocaleString()}</div>
+                                            )}
+                                        </div>
+                                    )
+                                    : (props.discount_id === 3) && (
+                                        <div className="flex gap-2">
+                                            <div className="text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
+                                        </div>
+                                    )
+                            }
                         </div>
 
                         <div className="flex items-center gap-2 lg:gap-5 py-3 md:pr-5 justify-center ">

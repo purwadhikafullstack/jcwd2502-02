@@ -127,6 +127,8 @@ const ProductListPage = () => {
                                     image={value.image}
                                     description={value.description}
                                     price={value.price}
+                                    final_price={value.final_price}
+                                    discount_id={value.discount_id}
                                     stock={value.product_stocks}
                                     data={value.id}
                                 />

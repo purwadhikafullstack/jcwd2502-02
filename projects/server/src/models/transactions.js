@@ -21,6 +21,7 @@ module.exports = (sequelize, DataTypes) => {
     note: DataTypes.STRING,
     status: DataTypes.STRING,
     address: DataTypes.STRING,
+    payment_proof: DataTypes.STRING,
     isDeleted: {
       type: DataTypes.INTEGER,
       defaultValue: 0

@@ -38,13 +38,38 @@ const ProductCard = (props) => {
         <div>
             <div className={isProductInStock ? `hover:border-green-700  hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl ${props.style}` : `hover:border-green-700 bg-gray-300   hover:border-4 ease-in duration-200 border w-[165px] md:w-[180px] lg:w-[240px] h-[350px] lg:h-[410px] rounded-xl opacity-50 ${props.style}`}>
                 <Link to={`/products/detail/${props.data}`}>
-                    <div>
+                    <div className="relative">
+                        {
+                            (props.discount_id === 3)
+                                ?
+                                <div className="absolute right-3 top-0">
+                                    <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white  font-bold rounded-b-xl">Buy 1 Get 1 Free</div>
+                                </div>
+                                :
+                                null
+                        }
                         <img className="object-fill rounded-t-xl h-[160px] lg:h-[220px] w-full z-0" src={process.env.REACT_APP_URL + `${props.image}`} alt="" />
                     </div>
                     <div className="h-[110px] lg:h-[110px] flex flex-col justify-between p-2 pl-4">
                         <div className="font-semibold truncate">{props.name}</div>
                         <div className="text-gray-400"> Stock(s): {productStock ? productStock : "0"}</div>
-                        <div className="text-green-700 font-bold">Rp {props.price.toLocaleString()}</div>
+                        {
+                            (props.discount_id === 1 || props.discount_id === 2 || props.discount_id === null)
+                                ? (
+                                    <div className="lg:flex gap-2">
+                                        <div className="text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
+                                        {(props.discount_id === 1 || props.discount_id === 2) && (
+                                            <div className="text-red-600 line-through font-bold">Rp {props.price.toLocaleString()}</div>
+                                        )}
+                                    </div>
+                                )
+                                : (props.discount_id === 3) && (
+                                    <div className="lg:flex gap-2">
+                                        <div className="text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
+                                    </div>
+                                )
+                        }
+
                     </div>
                 </Link>
                 <div className="flex justify-center pt-2 w-full">

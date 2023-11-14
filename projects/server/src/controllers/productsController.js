@@ -160,4 +160,26 @@ module.exports = {
             next(error)
         }
     },
+    clonePriceToFinalPrice: async (req, res, next) => {
+        try {
+            const products = await db.product.findAll({ attributes: ["id", "price", "final_price"] });
+
+            const updatedProducts = await Promise.all(
+                products.map(async (product) => {
+                    if (!product.final_price) {
+                        // If final_price is null, clone the price
+                        await db.product.update({ final_price: product.price }, { where: { id: product.id } });
+                        return product;
+                    } else {
+                        return product;
+                    }
+                })
+            );
+
+            responseHandler(res, "Clone Price to Final Price Success", updatedProducts);
+        } catch (error) {
+            next(error);
+        }
+    }
+
 }

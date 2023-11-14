@@ -68,8 +68,11 @@ const RecommendProducts = (props) => {
                                             image={value.product.image}
                                             description={value.product.description}
                                             price={value.product.price}
+                                            final_price={value.product.final_price}
+                                            discount_id={value.product.discount_id}
                                             stock={value.stock}
                                             data={value.products_id}
+
                                         />
                                     </div>
                                 ))

@@ -45,12 +45,14 @@ module.exports = {
 
             for (const product of inMyCart) {
                 await db.transaction_detail.create({
-                    id_product: product.product.id,
+                    products_id: product.product.id,
                     name: product.product.name,
-                    price: product.product.price,
+                    price: product.product.final_price,
                     quantity: product.quantity,
                     subtotal: product.subtotal,
-                    transaction_id: transaction.id
+                    transaction_id: transaction.id,
+                    discount_id: product.product.discount_id,
+                    discount_value: product.product.discount_value
                 });
             }
 

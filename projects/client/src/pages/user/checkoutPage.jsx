@@ -109,6 +109,8 @@ const CheckoutPage = () => {
                                         weight={value.product.weight}
                                         image={value.product.image}
                                         price={value.product.price}
+                                        final_price={value.product.final_price}
+                                        discount_id={value.product.discount_id}
                                         quantity={value.quantity}
                                         subtotal={value.subtotal}
                                     />

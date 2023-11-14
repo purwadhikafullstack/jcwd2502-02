@@ -48,6 +48,8 @@ const Cart = () => {
                                     <CartComponent
                                         name={value.product.name}
                                         price={value.product.price}
+                                        final_price={value.product.final_price}
+                                        discount_id={value.product.discount_id}
                                         image={value.product.image}
                                         weight={value.product.weight}
                                         data={value.products_id}

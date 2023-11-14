@@ -162,11 +162,20 @@ module.exports = {
     },
     updateProductDiscountService: async (body) => {
         try {
-            const { id, nominal, percent, discountId } = body
-            if (discountId === 1) { return await db.product.update({ discount_percent: percent, discount_nominal: null, discount_id: discountId }, { where: { id } }) }
-            else if (discountId === 2) { return await db.product.update({ discount_percent: null, discount_nominal: nominal, discount_id: discountId }, { where: { id } }) }
-            else if (discountId === 3) { return await db.product.update({ discount_percent: null, discount_nominal: null, discount_id: discountId }, { where: { id } }) }
-            else { return await db.product.update({ discount_percent: null, discount_nominal: null, discount_id: null }, { where: { id } }) }
+            const { id, discount_value, discountId } = body
+            const products = await db.product.findOne({ where: { id } })
+            if (discountId === 1) {
+                const percentValue = products.price - (products.price * discount_value / 100)
+                return await db.product.update({ discount_value, final_price: percentValue, discount_id: discountId }, { where: { id } })
+            }
+            else if (discountId === 2) {
+                const nominalValue = products.price - discount_value
+                return await db.product.update({ discount_value, final_price: nominalValue, discount_id: discountId }, { where: { id } })
+            }
+            else if (discountId === 3) {
+                return await db.product.update({ discount_value: null, final_price: products.price, discount_id: discountId }, { where: { id } })
+            }
+            else { return await db.product.update({ discount_value: null, final_price: products.price, discount_id: null }, { where: { id } }) }
         } catch (error) {
             return error
         }

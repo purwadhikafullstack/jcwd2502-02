@@ -4,12 +4,13 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class product extends Model {
-    static associate({ product_category, coupon, cart, stock_history, product_stock, discount }) {
+    static associate({ product_category, coupon, cart, stock_history, product_stock, transaction_detail, discount }) {
       this.belongsTo(product_category, { foreignKey: 'product_categories_id' })
       this.hasMany(cart, { foreignKey: 'products_id' })
       this.hasMany(coupon, { foreignKey: 'products_id' })
       this.hasMany(stock_history, { foreignKey: 'products_id' })
       this.hasMany(product_stock, { foreignKey: 'products_id' })
+      this.hasMany(transaction_detail, { foreignKey: 'products_id' })
       this.belongsTo(discount, { foreignKey: 'discount_id' })
     }
   }
@@ -22,8 +23,8 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       defaultValue: 0
     },
-    discount_percent: DataTypes.INTEGER,
-    discount_nominal: DataTypes.INTEGER,
+    discount_value: DataTypes.INTEGER,
+    final_price: DataTypes.INTEGER,
     isDeleted: {
       type: DataTypes.INTEGER,
       defaultValue: 0
