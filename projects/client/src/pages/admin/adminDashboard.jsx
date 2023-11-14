@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import NavbarAdmin from "../../components/navbarAdmin";
 import { useAppSelector } from '../../redux/App/Store';
+import { FiUsers } from 'react-icons/fi';
 
 // data visualization
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
@@ -10,6 +11,10 @@ const AdminDashboardPage = () => {
     const [userData, setUserData] = useState("");
     const [transactionData, setTransactionData] = useState("");
     const userSelector = useAppSelector((state) => state.users)
+
+    const onFetchData = () => {
+
+    }
 
     const data = [
         {
@@ -99,22 +104,39 @@ const AdminDashboardPage = () => {
     ]
     return(
         <div className="h-full bg-gray-300">
-            {/* <NavbarAdmin/> */}
-
             <div>
-                <div className="lg:grid lg:grid-cols-5">
-                    {/* Admin Welcome Card */}
-                    <div className="lg:grid lg:col-start-2 lg:col-span-2 lg:gap-3 lg:m-2    ">
-                        <div className="lg:rounded-xl lg:shadow-2xl bg-white lg:p-3 flex flex-col justify-center items-center">
+                <div className="">
+                    <div className="flex flex-col mx-60">
+                        <div className="rounded-xl lg:shadow-2xl bg-white lg:p-3 flex flex-col justify-center items-center m-4 p-3">
                             <div>
                                 Hello {userSelector?.role} <span className="font-bold">{userSelector?.username}</span>!  Welcome to Buyfresh's admin dashboard!
                             </div>  
-                            <div>
-                                We hope that you will have a productive day!
-                            </div>
                         </div>
+                        <div className="flex justify-around">
+                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
+                                <h1>total sales</h1>
+                            </div>
+                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
+                                <div className="flex flex-col items-center mt-7">
+                                    <h1 className="fontbold">total users:</h1>
+                                    <span className="flex text-6xl justify-center align-middle items-center">18<FiUsers /></span>
+                                </div>
+                            </div>
+                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
+                                <div className="flex flex-col items-center mt-7">
+                                    <h1 className="fontbold">total users:</h1>
+                                    <span className="flex text-6xl justify-center align-middle items-center">18<FiUsers /></span>
+                                </div>
+                            </div>
+                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
+                                <div className="flex flex-col items-center mt-7">
+                                    <h1 className="fontbold">total users:</h1>
+                                    <span className="flex text-6xl justify-center align-middle items-center">18<FiUsers /></span>
+                                </div>
+                            </div>
+                        </div>  
                     {/* User Data Card, user registration */}
-                        <div className="rounded-xl shadow-2xl border bg-white p-4">
+                        <div className="rounded-xl shadow-2xl border bg-white m-4 p-4">
                             <div className="flex gap-4">
                                 <h1 className="font-bold">User Report</h1>
                                 <select name="" id="">
@@ -126,7 +148,7 @@ const AdminDashboardPage = () => {
                             </div>  
                         </div>
                     {/* Transaction Report */}
-                        <div className="rounded-xl shadow-2xl border bg-white p-4">
+                        <div className="rounded-xl shadow-2xl border bg-white mx-4 p-4">
                             <div className="font-bold">
                                 Revenue Report
                             </div>
@@ -139,7 +161,7 @@ const AdminDashboardPage = () => {
                                 </BarChart>
                             </div>
                         </div>
-                        <div className="rounded-xl shadow-2xl border bg-white p-4">
+                        <div className="rounded-xl shadow-2xl border bg-white m-4 p-4">
                             <div className="font-bold">
                                 Order Count
                             </div>  
@@ -167,24 +189,14 @@ const AdminDashboardPage = () => {
                         </div>
                     </div>
 
-                    <div className="grid col-start-4 col-span-2 gap-3 h-[500px] w-[300px] m-2">
-                        <div className="flex gap-3">
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-1/3 h-[200px]">
-                                total sales
-                            </div>
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-1/3 h-[200px]">
-                                total users
-                            </div>
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-1/3 h-[200px]">
-                                total stocks
-                            </div>
-                        </div>
+                    {/* <div className="grid col-start-4 col-span-2 gap-3 h-[500px] w-[300px] m-2">
+
                         <div className="rounded-xl shadow-2xl bg-white p-4">
                             <div className="font-bold">
                                 Profit
                             </div>
                             <div className="m-4">
-                                {/* <ResponsiveContainer> */}
+                                <ResponsiveContainer>
                                     <LineChart
                                     width={600}
                                     height={300}
@@ -204,7 +216,7 @@ const AdminDashboardPage = () => {
                                     <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
                                     <Line type="monotone" dataKey="amt" stroke="#82ca9d" />
                                     </LineChart>
-                                {/* </ResponsiveContainer> */}
+                                </ResponsiveContainer>
                             </div>
                         </div>
 
@@ -213,7 +225,7 @@ const AdminDashboardPage = () => {
                                 Sales
                             </h1>
                         </div>
-                    </div>
+                    </div> */}
 
                     
                 </div>

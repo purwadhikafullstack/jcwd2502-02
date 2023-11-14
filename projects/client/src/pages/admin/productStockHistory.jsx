@@ -2,10 +2,10 @@ import ProductStockHistoryChart from "../../components/stockHistoryChart";
 
 const ProductStockHistoryPage = () => {
     const data = [
-        {id: 1, name: "apel", stock: 10, description: "stock", updatedAt: "2023-11-05 13:22:59", product_id: 1, store_branch_id: 1},
-        {id: 2, name: "Jeruk", stock: 10, description: "stock", updatedAt: "2023-11-05 13:22:59", product_id: 2, store_branch_id: 1},
-        {id: 3, name: "apel", stock: 5, description: "sale", updatedAt: "2023-11-05 13:22:59", product_id: 1, store_branch_id: 1},
-        {id: 4, name: "apel", stock: 10, description: "restock", updatedAt: "2023-11-05 13:22:59", product_id: 1, store_branch_id: 1}
+        {id: 1, name: "apel", stock: 10, description: "stock", createdAt: "2023-11-05 13:22:59", product_id: 1, store_branch_id: 1},
+        {id: 2, name: "Jeruk", stock: 10, description: "stock", createdAt: "2023-11-05 13:22:59", product_id: 2, store_branch_id: 1},
+        {id: 3, name: "apel", stock: 5, description: "sale", createdAt: "2023-11-05 13:22:59", product_id: 1, store_branch_id: 1},
+        {id: 4, name: "apel", stock: 10, description: "restock", createdAt: "2023-11-05 13:22:59", product_id: 1, store_branch_id: 1}
     ]
     return(
         <div className="h-screen">

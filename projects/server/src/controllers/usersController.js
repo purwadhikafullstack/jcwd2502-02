@@ -121,7 +121,6 @@ module.exports = {
     },
 
     updatePassword: async (req, res, next) => {
-        // Di execute dari profile page || Status: UDAH BENER DI POSTMAN
         try {
             const { id } = req.dataToken;
             const data = req.headers;
@@ -129,7 +128,9 @@ module.exports = {
                 where: { id }
             });
             const hashMatch = await match(data.oldpassword, account.dataValues.password)
+            const hashMatchNew = await match(data.newpassword, account.dataValues.password)
             if (!hashMatch) throw { message: "The old password is incorrect" }
+            if(hashMatchNew) throw { message: "Cannot use the same password"}
             const hashedPassword = await hash(data.newpassword)
             const updatedUser = await db.user.update(
                 { password: hashedPassword },

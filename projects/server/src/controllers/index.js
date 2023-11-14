@@ -5,6 +5,8 @@ const branchController = require('./branchController')
 const cartController = require('./cartController')
 const locationController = require('./locationController')
 const transactionController = require('./transactionController')
+const stockController = require('./stockController');
+const chartController = require('./chartController');
 
 module.exports = {
     usersController,
@@ -13,5 +15,7 @@ module.exports = {
     branchController,
     cartController,
     locationController,
-    transactionController
+    transactionController,
+    stockController,
+    chartController
 }

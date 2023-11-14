@@ -68,7 +68,6 @@ module.exports = {
         try {
             const limit = 6;
             const whereClause = {};
-
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
             if (branchId) whereClause.store_branch_id = branchId;

@@ -18,17 +18,16 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
         if (user.role && guestPage) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/')
-
+        // nendang customer dari page admin
         if (user && user.role == "customer" && adminPage) return setTimeout(() => {
             setLoading(false)
             console.log(`protected.jsx: user access denied`);
         }, 1500), navigate('/')
-
+        // nendang tuyul dari page customer
         if (user && user.role !== "customer" && userPage) return setTimeout(() => {
             setLoading(false)
             console.log(`protected.jsx: user access denied`);
         }, 1500), navigate('/')
-
         setTimeout(() => {
             setLoading(false)
         }, 3000)
