@@ -123,7 +123,7 @@ module.exports = {
     updatePassword: async (req, res, next) => {
         // Di execute dari profile page || Status: UDAH BENER DI POSTMAN
         try {
-            const {id} = req.dataToken;
+            const { id } = req.dataToken;
             const data = req.headers;
             const account = await db.user.findOne({
                 where: { id }
@@ -194,9 +194,8 @@ module.exports = {
             // 2. Ambil path image lama
             const userId = await findId(id)
             // 3. Update new path on table
-            console.log(userId.profile_picture);
-            console.log(req.files.image[0]);
             const oldImage = userId.profile_picture
+            const image = await db.user.findOne({ where: { id } })
             const findImage = await db.user.update({
                 profile_picture: req.files.image[0].filename
             }, {
@@ -204,11 +203,14 @@ module.exports = {
                     id: id
                 }
             })
-            // // 4. Delete image lama
-            deleteFiles({
-                image: [oldImage
-                ]
-            })
+            if (oldImage !== "user.jpg") {
+                // // 4. Delete image lama
+                deleteFiles({
+                    image: [oldImage
+                    ]
+                })
+            }
+
             // 5. Kirim response
             const newUser = await findId(id)
 
@@ -261,7 +263,7 @@ module.exports = {
         try {
             const branchAdmins = await db.user.findAll({
                 attributes: ["username", "email", "phone_number", "profile_picture", "isVerified", "store_branch_id", "birthdate"],
-                where: {role: "admin"},
+                where: { role: "admin" },
                 include: [
                     {
                         model: db.store_branch,
@@ -296,17 +298,17 @@ module.exports = {
     deactivateAdmin: async (req, res, next) => {
         try {
             console.log(req.body);
-            const {email} = req.body;
+            const { email } = req.body;
             const response = await db.user.findOne({
-                where: {email},
+                where: { email },
             })
-            if(!response) throw {message: "User account was not found"};
+            if (!response) throw { message: "User account was not found" };
             const adminStatus = response.dataValues.isVerified;
             console.log(`adminStatus: ${adminStatus}`);
-            if(adminStatus == 'verified') {
-                const deactivate = await db.user.update({isVerified: 'unverified'}, {where: {email}})
-            } else if(adminStatus=='unverified') {
-                const activate = await db.user.update({isVerified: 'verified'}, {where: {email}})
+            if (adminStatus == 'verified') {
+                const deactivate = await db.user.update({ isVerified: 'unverified' }, { where: { email } })
+            } else if (adminStatus == 'unverified') {
+                const activate = await db.user.update({ isVerified: 'verified' }, { where: { email } })
             }
             respondHandler(res, {
                 message: "Admin status has been updated"

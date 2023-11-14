@@ -32,22 +32,22 @@ import Protected from "./protected";
 
 const routes = [
     <Route path='/' element={
-        <Protected userPage={true}>
+        <Protected userPage={false}>
             <LandingPage />
         </Protected>
     } />,
     <Route path='/v2' element={
-        <Protected userPage={true}>
+        <Protected userPage={false}>
             <LandingPage2 />
         </Protected>
     } />,
     <Route path='/profile' element={
-        <Protected userPage={true}>
+        <Protected userPage={false}>
             <ProfilePage />
         </Protected>
     } />,
     <Route path='/updateprofile' element={
-        <Protected userPage={true}>
+        <Protected userPage={false}>
             <UpdateProfile />
         </Protected>
     } />,
