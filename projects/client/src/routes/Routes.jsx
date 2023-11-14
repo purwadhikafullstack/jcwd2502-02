@@ -25,7 +25,7 @@ import CreateAdminPage from "../pages/admin/createAdminPage";
 import SuperOrderList from "../pages/admin/superOrderListPage";
 import AdminDashboardPage from "../pages/admin/adminDashboard";
 import ProductStockHistoryPage from "../pages/admin/productStockHistory";
-
+import ManageProductDiscountPage from "../pages/admin/manageDiscountPage";
 import Protected from "./protected";
 
 const routes = [
@@ -79,6 +79,9 @@ const routes = [
     } />,
     <Route path='/update-product-stocks' element={
         <UpdateProductStocksPage />
+    } />,
+    <Route path='/manage-product-discount' element={
+        <ManageProductDiscountPage />
     } />,
     <Route path='/verify/:id' element={
         <VerificationPage />

@@ -153,10 +153,20 @@ module.exports = {
             return error
         }
     },
-    getDiscountService: async (params) => {
+    getDiscountService: async () => {
         try {
-            const { id } = params
-            return await db.discount.findOne({ where: { id } })
+            return await db.discount.findAll()
+        } catch (error) {
+            return error
+        }
+    },
+    updateProductDiscountService: async (body) => {
+        try {
+            const { id, nominal, percent, discountId } = body
+            if (discountId === 1) { return await db.product.update({ discount_percent: percent, discount_nominal: null, discount_id: discountId }, { where: { id } }) }
+            else if (discountId === 2) { return await db.product.update({ discount_percent: null, discount_nominal: nominal, discount_id: discountId }, { where: { id } }) }
+            else if (discountId === 3) { return await db.product.update({ discount_percent: null, discount_nominal: null, discount_id: discountId }, { where: { id } }) }
+            else { return await db.product.update({ discount_percent: null, discount_nominal: null, discount_id: null }, { where: { id } }) }
         } catch (error) {
             return error
         }

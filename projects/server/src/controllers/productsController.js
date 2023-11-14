@@ -18,6 +18,7 @@ const { getAllProductStockService } = require("./../services/productsService");
 const { getAllProductBranchStockService } = require("./../services/productsService");
 const { updateProductStockService } = require("./../services/productsService");
 const { getDiscountService } = require("./../services/productsService");
+const { updateProductDiscountService } = require("./../services/productsService");
 const { Sequelize } = require("sequelize");
 const Op = Sequelize.Op;
 module.exports = {
@@ -145,9 +146,16 @@ module.exports = {
     },
     getDiscount: async (req, res, next) => {
         try {
-            const discount = await getDiscountService(req.params)
-            console.log(discount);
+            const discount = await getDiscountService()
             responseHandler(res, "Get Discount Type Success", discount)
+        } catch (error) {
+            next(error)
+        }
+    },
+    updateProductDiscount: async (req, res, next) => {
+        try {
+            const productDiscount = await updateProductDiscountService(req.body)
+            responseHandler(res, "Update Product Discount Success", productDiscount)
         } catch (error) {
             next(error)
         }

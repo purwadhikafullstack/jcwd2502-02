@@ -12,7 +12,7 @@ Router.get("/productbycat", productsController.getProductByCategory);
 Router.get("/oneproduct/:id", productsController.getOneProduct);
 Router.get("/product-stock", productsController.getProductStock);
 Router.get("/all-product-stock/:branchId", productsController.getAllProductStock);
-Router.get("/discount/:id", productsController.getDiscount);
+Router.get("/discount", productsController.getDiscount);
 
 
 Router.post("/addproduct", upload, productsController.createProduct);
@@ -21,6 +21,7 @@ Router.patch("/deleteproduct/:id", productsController.deleteProduct);
 Router.patch("/editimage/:idImage", upload, productsController.updateProductImage);
 Router.patch("/saveproduct", productsController.saveEditProduct);
 Router.patch("/updatestock", productsController.updateProductStock);
+Router.patch("/updatediscount", productsController.updateProductDiscount);
 
 
 
