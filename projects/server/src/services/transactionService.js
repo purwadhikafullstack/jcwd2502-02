@@ -58,7 +58,7 @@ module.exports = {
 
             const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id } });
 
-            return transactionDetails;
+            return transaction;
         } catch (error) {
             throw error;
         }

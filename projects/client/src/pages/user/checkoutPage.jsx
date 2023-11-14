@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CartComponent from "../../components/cartComponent";
 import toast, { Toaster } from "react-hot-toast";
 import Button from "../../components/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaLocationDot } from "react-icons/fa6";
 import CheckoutComponent from "../../components/checkoutComponent";
 import { api } from "../../api/api";
@@ -15,6 +15,7 @@ import { getCartAsync } from "../../redux/Features/cart";
 
 const CheckoutPage = () => {
     const dispatch = useDispatch()
+    const nav = useNavigate()
     const [shippingService, setShippingService] = useState();
     const [shippingOption, setShippingOption] = useState()
     const [courier, setCourier] = useState()
@@ -60,7 +61,12 @@ const CheckoutPage = () => {
             } else {
                 const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id })
                 console.log(createOrder.data);
-                toast.success("Order created!")
+
+                toast.success("Order created!");
+
+                setTimeout(() => {
+                    nav(`/order/${createOrder.data.data.id}`);
+                }, 2500); // Adjust the delay time as needed
             }
         } catch (error) {
             console.log(error);

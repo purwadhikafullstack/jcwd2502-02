@@ -25,6 +25,7 @@ import CreateAdminPage from "../pages/admin/createAdminPage";
 import SuperOrderList from "../pages/admin/superOrderListPage";
 import AdminDashboardPage from "../pages/admin/adminDashboard";
 import ProductStockHistoryPage from "../pages/admin/productStockHistory";
+import UserOrderDetail from "../pages/user/orderDetailPage";
 
 import Protected from "./protected";
 
@@ -106,7 +107,10 @@ const routes = [
     <Route path='/checkout' element={
         <CheckoutPage />
     } />,
-    <Route path='/order-list' element={
+    <Route path='/order/:id' element={
+        <UserOrderDetail />
+    } />,
+    <Route path='/admin/order-list' element={
         <SuperOrderList />
     } />,
 
