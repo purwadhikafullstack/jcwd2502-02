@@ -23,7 +23,6 @@ export const userSlice = createSlice({
             localStorage.removeItem("accessToken")
             return state = initialState;
         },
-
         setId: (state, { payload }) => {
             state.id = payload;
         },

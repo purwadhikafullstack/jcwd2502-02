@@ -30,7 +30,7 @@ app.use((req, res, next) => {
 
 // ===========================
 // NOTE : Add your routes here
-const { usersRouter } = require('./routers');
+const { usersRouter, chartRouter } = require('./routers');
 app.use('/api/users', usersRouter);
 
 
@@ -46,7 +46,7 @@ app.get("/api/greetings", (req, res, next) => {
 
 app.use(express.static('src/public'))
 
-const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter, transactionRouter } = require('./routers');
+const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter, transactionRouter, stockRouter } = require('./routers');
 const { log } = require("handlebars");
 app.use('/api/products', productsRouter)
 app.use('/api/category', categoryRouter)
@@ -54,7 +54,8 @@ app.use('/api/branch', branchRouter)
 app.use('/api/cart', cartRouter)
 app.use('/api/location', locationRouter)
 app.use('/api/transaction', transactionRouter)
-
+app.use('/api/stock', stockRouter)
+app.use('/api/chart', chartRouter)
 // ===========================
 
 // not found
