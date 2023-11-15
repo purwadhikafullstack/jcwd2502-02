@@ -1,5 +1,6 @@
 const db = require("./../models");
 const { deleteFiles } = require('./../helper/deleteFiles');
+const { logger } = require("handlebars");
 module.exports = {
     getAllProductsService: async () => {
         try {
@@ -146,9 +147,37 @@ module.exports = {
     updateProductStockService: async (body) => {
         try {
             const { inputStock, productId, branchId } = body
-            const updatedProductStock = await db.product_stock.update({ stock: inputStock }, { where: { products_id: productId, store_branch_id: branchId } })
-            await db.stock_history.create({ stock: inputStock, products_id: productId, store_branch_id: branchId, description: 'Re-Stock Product', });
-            return updatedProductStock
+            const currentProductStock = await db.product_stock.findOne({ where: { products_id: productId, store_branch_id: branchId } })
+            if (!Number.isInteger(Number(inputStock))) {
+                return ('Please enter a valid integer for stock');
+            } else if (inputStock <= 0) {
+                return ("Add stock cannot be 0 or minus")
+            } else {
+                const updatedProductStock = await db.product_stock.update({ stock: (currentProductStock.dataValues.stock + parseInt(inputStock)) }, { where: { products_id: productId, store_branch_id: branchId } })
+                await db.stock_history.create({ stock: inputStock, products_id: productId, store_branch_id: branchId, description: 'Re-Stock Product', });
+                return updatedProductStock
+            }
+        } catch (error) {
+            return error
+        }
+    },
+    reduceProductStockService: async (body) => {
+        try {
+            const { inputStock, productId, branchId } = body
+            const currentProductStock = await db.product_stock.findOne({ where: { products_id: productId, store_branch_id: branchId } })
+            if (!Number.isInteger(Number(inputStock))) {
+                return ('Please enter a valid integer for stock');
+            } else if (currentProductStock.dataValues.stock === 0) {
+                return ("Product already out of stock")
+            } else if (inputStock <= 0) {
+                return ("Reduce stock cannot be 0 or minus")
+            } else if (inputStock > currentProductStock.dataValues.stock) {
+                return ("Reduce stock cannot exceed the current stock")
+            } else {
+                const updatedProductStock = await db.product_stock.update({ stock: (currentProductStock.dataValues.stock - parseInt(inputStock)) }, { where: { products_id: productId, store_branch_id: branchId } })
+                await db.stock_history.create({ stock: inputStock, products_id: productId, store_branch_id: branchId, description: 'Product Expired', });
+                return updatedProductStock
+            }
         } catch (error) {
             return error
         }
@@ -165,12 +194,20 @@ module.exports = {
             const { id, discount_value, discountId } = body
             const products = await db.product.findOne({ where: { id } })
             if (discountId === 1) {
-                const percentValue = products.price - (products.price * discount_value / 100)
-                return await db.product.update({ discount_value, final_price: percentValue, discount_id: discountId }, { where: { id } })
+                if (discount_value < 1 || discount_value > 99) {
+                    return ("Percentage discount must be between 1 and 99")
+                } else {
+                    const percentValue = products.price - (products.price * discount_value / 100)
+                    return await db.product.update({ discount_value, final_price: percentValue, discount_id: discountId }, { where: { id } })
+                }
             }
             else if (discountId === 2) {
-                const nominalValue = products.price - discount_value
-                return await db.product.update({ discount_value, final_price: nominalValue, discount_id: discountId }, { where: { id } })
+                if (discount_value < 1 || discount_value >= products.dataValues.price) {
+                    return ("Nominal discount cannot exceed product price and cannot below 0")
+                } else {
+                    const nominalValue = products.price - discount_value
+                    return await db.product.update({ discount_value, final_price: nominalValue, discount_id: discountId }, { where: { id } })
+                }
             }
             else if (discountId === 3) {
                 return await db.product.update({ discount_value: null, final_price: products.price, discount_id: discountId }, { where: { id } })

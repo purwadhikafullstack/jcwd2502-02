@@ -11,6 +11,7 @@ import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import ModalUpdateProductStock from "../../components/modalUpdateProductStock";
+import ModalReduceProductStock from "../../components/modalReduceProductStock";
 
 
 const UpdateProductStocksPage = () => {
@@ -32,7 +33,8 @@ const UpdateProductStocksPage = () => {
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
-    const [isModalOpen, setModalOpen] = useState(false);
+    const [isModalAddOpen, setModalAddOpen] = useState(false);
+    const [isModalReduceOpen, setModalReduceOpen] = useState(false);
     const [currentStock, setCurrentStock] = useState(0);
     const debouncedSearch = debounce((value) => {
         setSearchQuery(value);
@@ -80,14 +82,22 @@ const UpdateProductStocksPage = () => {
             console.log(error);
         }
     };
-    const handleOpenModal = (productId, productStock) => {
+    const handleOpenModalAdd = (productId, productStock) => {
         setProductId(productId);
         setCurrentStock(productStock);
-        setModalOpen(true);
+        setModalAddOpen(true);
+    };
+    const handleOpenModalReduce = (productId, productStock) => {
+        setProductId(productId);
+        setCurrentStock(productStock);
+        setModalReduceOpen(true);
     };
 
-    const handleCloseModal = () => {
-        setModalOpen(false);
+    const handleCloseAddModal = () => {
+        setModalAddOpen(false);
+    };
+    const handleCloseReduceModal = () => {
+        setModalReduceOpen(false);
     };
     useEffect(() => {
         onGetCategory();
@@ -95,7 +105,6 @@ const UpdateProductStocksPage = () => {
         nearestBranch()
     }, [catId, searchQuery, sort, closestBranch]);
 
-    console.log(currentPosts);
     return (
         <div className="">
             <Toaster />
@@ -159,7 +168,10 @@ const UpdateProductStocksPage = () => {
                                         <th className="text-lg">{value.name}</th>
                                         <th className="text-lg">{(value.product_stocks[0].stock === 0) ? "Out of Stock" : value.product_stocks[0].stock}</th>
                                         <th className="text-lg">
-                                            <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModal(value.id, value.product_stocks[0].stock)}>Update Stock</button>
+                                            <button className="btn bg-red-600 border-4 border-green-800 hover:bg-red-300 hover:border-green-800" onClick={() => handleOpenModalReduce(value.id, value.product_stocks[0].stock)}>Reduce Stock</button>
+                                        </th>
+                                        <th className="text-lg">
+                                            <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModalAdd(value.id, value.product_stocks[0].stock)}>Add Stock</button>
                                         </th>
                                     </tr>
                                 );
@@ -178,9 +190,17 @@ const UpdateProductStocksPage = () => {
                     currentPage={currentPage}
                 />
             </div>
+            <ModalReduceProductStock
+                isOpen={isModalReduceOpen}
+                onClose={handleCloseReduceModal}
+                productId={productId}
+                branchId={closestBranch.id}
+                onStockUpdated={onGetFilteredProducts}
+                currentStock={currentStock}
+            />
             <ModalUpdateProductStock
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
+                isOpen={isModalAddOpen}
+                onClose={handleCloseAddModal}
                 productId={productId}
                 branchId={closestBranch.id}
                 onStockUpdated={onGetFilteredProducts}

@@ -17,6 +17,8 @@ const ManageProductDiscountPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
     const [productId, setProductId] = useState("");
+    const [productPrice, setProductPrice] = useState("");
+    const [productName, setProductName] = useState("");
     const [products, setProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [sort, setSort] = useState("ASC");
@@ -79,9 +81,11 @@ const ManageProductDiscountPage = () => {
             console.log(error);
         }
     };
-    const handleOpenModal = (productId, discountId) => {
+    const handleOpenModal = (productId, discountId, productPrice, productName) => {
         setProductId(productId);
         setDiscountId(discountId);
+        setProductPrice(productPrice)
+        setProductName(productName)
         setModalOpen(true);
     };
 
@@ -164,9 +168,15 @@ const ManageProductDiscountPage = () => {
                                             ) : (
                                                 "Normal Price"
                                             )}</th>
-                                            <th className="text-lg">{value.discount_id ? (value.discount_percent || value.discount_nominal || "Buy 1 Get 1") : " - "}</th>
                                             <th className="text-lg">
-                                                <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModal(value.id, value.discount_id)}>Update Discount</button>
+                                                {value.discount_id === 1 && (<>{value.discount_value} %</>)}
+                                                {value.discount_id === 2 && (<>Rp. {value.discount_value}</>)}
+                                                {value.discount_id === 3 && (<>Buy 1 Get 1</>)}
+                                                {value.discount_id !== 1 && value.discount_id !== 2 && value.discount_id !== 3 && (" - ")}
+                                            </th>
+
+                                            <th className="text-lg">
+                                                <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModal(value.id, value.discount_id, value.price, value.name)}>Update Discount</button>
                                             </th>
                                         </tr>
                                     );
@@ -194,6 +204,8 @@ const ManageProductDiscountPage = () => {
                 productId={productId}
                 discountType={discountType}
                 discountId={discountId}
+                productPrice={productPrice}
+                productName={productName}
             />
             <Footer />
         </div>

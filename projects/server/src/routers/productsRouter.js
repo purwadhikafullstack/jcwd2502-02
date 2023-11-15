@@ -22,6 +22,7 @@ Router.patch("/deleteproduct/:id", productsController.deleteProduct);
 Router.patch("/editimage/:idImage", upload, productsController.updateProductImage);
 Router.patch("/saveproduct", productsController.saveEditProduct);
 Router.patch("/updatestock", productsController.updateProductStock);
+Router.patch("/reducestock", productsController.reduceProductStock);
 Router.patch("/updatediscount", productsController.updateProductDiscount);
 
 
