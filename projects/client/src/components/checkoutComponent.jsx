@@ -48,7 +48,7 @@ const CheckoutComponent = (props) => {
                                 (props.discount_id === 3)
                                     ?
                                     <div className="">
-                                        <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white  font-bold rounded-b-xl">Buy 1 Get 1 Free</div>
+                                        <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white font-bold rounded-l-xl rounded-b-xl">Buy 1 Get 1 Free</div>
                                     </div>
                                     :
                                     null

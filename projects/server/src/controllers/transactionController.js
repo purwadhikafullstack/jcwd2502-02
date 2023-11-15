@@ -35,39 +35,16 @@ module.exports = {
                 include: [
                     {
                         model: db.transaction_detail,
-                        required: true
+                        required: true,
+                        include: [{
+                            model: db.product
+                        }]
                     },
                 ],
                 where: { user_id: id, id: transactionId }
             });
 
-            // Extract product IDs from transaction details
-            const productIds = getOrder.transaction_details.map(detail => detail.id_product);
-
-            // Fetch product details based on the extracted IDs
-            const productDetails = await db.product.findAll({
-                where: { id: productIds }
-            });
-
-            // Map product details to transaction details
-            const updatedTransactionDetails = getOrder.transaction_details.map(detail => {
-                const productDetail = productDetails.find(product => product.id === detail.id_product);
-                return {
-                    ...detail,
-                    product_detail: productDetail // Add product details to each transaction detail
-                };
-            });
-
-
-            // Update the getOrder object with the enhanced transaction details
-            getOrder.transaction_details = updatedTransactionDetails;
-
-            const result = res.json({
-                getOrder
-            });
-
-
-            // responseHandler(res, "Get Order Success", getOrder);
+            responseHandler(res, "Get Order Success", getOrder);
         } catch (error) {
             next(error);
         }

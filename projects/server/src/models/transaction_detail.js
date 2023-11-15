@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
     quantity: DataTypes.INTEGER,
     subtotal: DataTypes.INTEGER,
     discount_value: DataTypes.INTEGER,
+    weight: DataTypes.INTEGER,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

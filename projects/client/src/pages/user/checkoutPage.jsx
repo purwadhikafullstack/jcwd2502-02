@@ -27,6 +27,8 @@ const CheckoutPage = () => {
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
 
+    console.log(totalWeight);
+
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
 
     const handleShippingService = async (event) => {
@@ -59,7 +61,7 @@ const CheckoutPage = () => {
             if (cost == null) {
                 toast.error("Please complete the shipping data")
             } else {
-                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id })
+                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight })
                 console.log(createOrder.data);
 
                 toast.success("Order created!");
@@ -99,7 +101,7 @@ const CheckoutPage = () => {
                     <div className="pt-1 pr-3"><FaLocationDot /> </div>
                     <div>{closestBranch?.name}</div>
                 </div>
-                <div className="lg:flex lg:gap-12 md:mb-10">
+                <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between">
                     <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto">
                         {cart.cart.map((value, index) => {
                             return (
@@ -193,9 +195,7 @@ const CheckoutPage = () => {
                             </div>
                         </div>
                         <div className="my-3">
-                            <Link >
-                                <Button onClick={() => submitOrder()} style={"w-full"} text={"Confirm Order"} />
-                            </Link>
+                            <Button onClick={() => submitOrder()} style={"w-full"} text={"Confirm Order"} />
                         </div>
                     </div>
 
