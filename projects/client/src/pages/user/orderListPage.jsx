@@ -64,6 +64,8 @@ const UserOrderList = () => {
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
         } else {
             toast.error("Invalid page number!");
         }
@@ -71,10 +73,12 @@ const UserOrderList = () => {
 
     const handleNextPage = () => {
         handlePageChange(page + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handlePrevPage = () => {
         handlePageChange(page - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     useEffect(() => {
@@ -99,16 +103,16 @@ const UserOrderList = () => {
                 <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">My Order List
                 </div>
                 <div className="mb-10 lg:flex border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 p-3 shadow-xl rounded-2xl lg:justify-center">
-                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[350px]">
+                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[500px]">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full lg:w-[500px] text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
-                    <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3">
-
+                    <div className="flex gap-3 justify-between lg:overflow-none overflow-x-auto my-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
                                 <option value={""} disabled selected>Status</option>
                                 <option value={"canceled"} >CANCEL</option>
+                                <option value={"waiting for payment approval"} >WAITING FOR APPROVAL</option>
                                 <option value={"pending"} >PENDING</option>
                                 <option value={"appproved"}>APPROVED</option>
                                 <option value={"delivery"}>DELIVERY</option>
@@ -134,7 +138,6 @@ const UserOrderList = () => {
                                     date={moment(value.createdAt).format('Do MMMM YYYY')}
                                     details={<Link to={`/order/${value.id}`}>
                                         <div className="lg:flex-1 p-2 my-2 lg:grid lg:place-content-center text-green-600 hover:underline">See Transaction Detail</div></Link>}
-                                // address={value.address}
                                 />
                             </div>
                         )

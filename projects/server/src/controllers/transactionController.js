@@ -129,4 +129,35 @@ module.exports = {
         }
     },
 
+    uploadPayment: async (req, res, next) => {
+        try {
+            const { transactionId } = req.params;
+            const upload = await db.transactions.update({
+                payment_proof: req.files.image[0].filename,
+                status: "waiting for payment approval"
+            }, { where: { id: transactionId } })
+            const transaction = await db.transactions.findOne({
+                where: { id: transactionId }
+            })
+            responseHandler(res, "Upload Payment Proof Success", transaction);
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    cancelOrder: async (req, res, next) => {
+        try {
+            const { transactionId } = req.params;
+            const upload = await db.transactions.update({
+                status: "canceled"
+            }, { where: { id: transactionId } })
+            const transaction = await db.transactions.findOne({
+                where: { id: transactionId }
+            })
+            responseHandler(res, "Upload Payment Proof Success", transaction);
+        } catch (error) {
+            next(error)
+        }
+    }
+
 }

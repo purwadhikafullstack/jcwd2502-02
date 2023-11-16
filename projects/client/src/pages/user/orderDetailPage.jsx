@@ -2,23 +2,25 @@ import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer"
 import Button from "../../components/button";
 import CheckoutComponent from "../../components/checkoutComponent";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
 import { api } from "../../api/api";
 import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import moment from 'moment';
-
-
+import toast, { Toaster } from "react-hot-toast";
+import OrderDetailsSection from "../../components/orderDetails";
 
 const UserOrderDetail = () => {
     const [timeRemaining, setTimeRemaining] = useState(0); // Set the initial time in seconds
     const [transaction, setTransaction] = useState("")
     const [detail, setDetail] = useState("")
     const { id } = useParams()
+    const payment = useRef(null);
+
     const getDetailOrder = async () => {
         try {
-            const order = await api().get(`http://localhost:8905/api/transaction/${id}`)
+            const order = await api().get(`/transaction/${id}`)
             console.log(order.data.data);
             console.log(order.data.data.createdAt);
             setTransaction(order.data.data)
@@ -34,6 +36,34 @@ const UserOrderDetail = () => {
         }
     }
 
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                toast.success("Copied to clipboard!");
+            })
+            .catch((err) => {
+                toast.error("Unable to copy to clipboard.");
+                console.error("Copy to clipboard failed: ", err);
+            });
+    };
+
+    const uploadPayment = async (event) => {
+        try {
+            const file = event.target.files[0]
+            if (file) {
+                if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+                    message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+                }
+                const formData = new FormData();
+                formData.append('image', file);
+                const upload = await api().post(`/transaction/upload/${id}`, formData)
+                toast.success("Payment Proof Uploaded!")
+                getDetailOrder()
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
 
     useEffect(() => {
         getDetailOrder()
@@ -51,15 +81,10 @@ const UserOrderDetail = () => {
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
 
-
-    console.log(transaction);
-    console.log(detail);
-
     return (
         <div>
-
+            <Toaster />
             {/* <Navbar /> */}
-
             <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"}
                 style={{ minHeight: "100vh" }}>
 
@@ -78,24 +103,29 @@ const UserOrderDetail = () => {
                                 <div className="w-[230px] lg:w-[170px] text-xl font-bold flex flex-col justify-center">Order Status:</div>
                                 <div className="w-full">
                                     {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>{transaction.status.toUpperCase()}</div> : null}
-                                    {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> : null}
+                                    {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
+                                    {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
+                                        null
+                                    }
                                 </div>
                             </div>
-                            {transaction.status == "pending" ? <div>
+                            {transaction.payment_proof == null && transaction.status !== "canceled" ? <div>
                                 <div className="border-4 border-green-700 h-[200px] grid place-content-center">
                                     <div className="grid place-content-center">TIME REMAINING:</div>
                                     <div className="text-6xl grid place-content-center">{formatTime(timeRemaining)}</div>
                                     <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
-                                    <div className="flex place-content-center text-xs lg:text-base"><img src="./bca_logo.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./bca_logo.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
                                     <div className="grid place-content-center"></div>
                                 </div>
-
-                                <div className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div></div> : null}
-
+                                <input
+                                    type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={payment} onChange={uploadPayment}
+                                />
+                                <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div></div>
+                                : null
+                            }
                             <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>
-
                             <div className="">
-                                <div className="text-xl font-bold mb-3">Item List</div>
+                                <div className="text-xl font-bold mb-3">Item List:</div>
                                 <div className="flex flex-col gap-3 h-[360px] overflow-y-auto">
                                     {detail ? detail.map((value, index) => {
                                         return (
@@ -118,70 +148,9 @@ const UserOrderDetail = () => {
 
                         </div>
                     </div>
-
-                    <div className="bg-green-800 my-10 lg:my-0 p-5 rounded-xl lg:w-[400px] h-[650px] flex flex-col justify-between">
-                        <div></div>
-                        <div className="text-3xl font-bold text-white">Order Detail: </div>
-                        <div className="text-white">
-                            <div className="my-3 flex flex-col gap-2">
-                                <div className="font-bold text-xl underline">Shipping Address</div>
-                                <div className="">{transaction ? transaction.address : null}</div>
-                            </div>
-                            <div className="grid gap-2">
-                                <div className="grid gap-2">
-                                    <div className="font-bold text-xl underline">Transaction Date</div>
-                                    <div>
-                                        {transaction ? moment(transaction.createdAt).format('dddd, Do MMMM YYYY')
-                                            : null}
-                                    </div>
-                                </div>
-                                <div className="grid gap-2">
-                                    <div className="font-bold text-xl underline">Shipping Option</div>
-                                    <div>
-                                        {transaction ? (transaction.shipping_method.toUpperCase())
-                                            : null}
-                                    </div>
-                                </div>
-                                <div className="grid gap-2">
-                                    <div className="font-bold text-xl underline">Voucher</div>
-                                    <div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="grid gap-2 mt-3">
-                                <div className="flex justify-between">
-                                    <div>Total Weight</div>
-                                    {transaction ? transaction.total_weight : null} gr
-                                </div>
-
-                                <div className="flex justify-between">
-                                    <div>Subtotal</div>
-                                    Rp {transaction ? transaction.subtotal.toLocaleString() : null}
-                                </div>
-
-                                <div className="flex justify-between">
-                                    <div>Shipping Cost</div>
-                                    Rp {transaction ? transaction.shipping_cost.toLocaleString() : null}
-                                </div>
-
-                                <div className="flex justify-between">
-                                    <div>Voucher Discount</div>
-                                    <div className="font-bold">- Rp 0</div>
-                                </div>
-                            </div>
-
-                            <div className="h-[3px] bg-white my-2"></div>
-
-                            <div className="flex justify-between text-xl font-black">
-                                <div>Grand Total</div>
-                                Rp {transaction ? transaction.final_total.toLocaleString() : null}
-                            </div>
-                        </div>
-                        <div className="my-3">
-                            {transaction.status == "pending" ? <div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">CANCEL ORDER</div> : null}
-                        </div>
-                    </div>
-
+                    <OrderDetailsSection transaction={transaction}
+                        fetchData={getDetailOrder}
+                        id={id} />
                 </div>
             </div>
 
