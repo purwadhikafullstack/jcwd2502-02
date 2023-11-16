@@ -6,12 +6,29 @@ import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
 import Searchbar from "../../components/searchBar";
 import NavbarAdmin from "../../components/navbarAdmin";
+import PaginationFixed from "../../components/paginationComponent";
 
 export default function CreateAdminPage() {
     const [branch, setBranch] = useState(false);
     const [admin, setAdmin] = useState("");
     const [queryUsername, setQueryUsername] = useState("");
     const [queryBranch, setQueryBranch] = useState("");
+    const [page, setPage] = useState(1);
+    const [maxPage, setMaxPage] = useState(1);
+    const handlePageChange = async (newPage) => {
+        if (newPage >= 1 && newPage <= maxPage) {
+            setPage(newPage);
+            await onGetAdmins()
+        } else {
+            toast.error("Invalid page number!");
+        }
+    };
+    const handleNextPage = () => {
+        handlePageChange(page + 1);
+    };
+    const handlePrevPage = () => {
+        handlePageChange(page - 1);
+    };
 
     const handleNameInput = (event) => {
         setQueryUsername(event.target.value);
@@ -23,9 +40,9 @@ export default function CreateAdminPage() {
 
     const onGetAdmins = async () => {
         try {
-            console.log(`mengambil data admin~`);
-            const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}`)
-            setAdmin(data.data);
+            const {data} = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&page=${page}`)
+            setMaxPage(data.data.maxPages)
+            setAdmin(data.data.filteredAdmins);
         } catch (error) {
             console.log(error);
         }
@@ -40,16 +57,7 @@ export default function CreateAdminPage() {
         }
     }
 
-    const onGetFilteredAdmins = async () => {
-        try {
-            console.log(`akan fetch data admin baru`);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
     const handleDeactivateAdmin = async (email) => {
-        console.log(`ini bakal matiin admin ${email}`);
         const response = await api().patch('/users/deactivate-admin', { email: email })
         toast.success(response.data.message);
         onGetAdmins()
@@ -58,76 +66,43 @@ export default function CreateAdminPage() {
     useEffect(() => {
         onGetAdmins()
         onGetBranch()
-    }, [queryUsername, queryBranch])
+    }, [queryUsername, queryBranch, page])
 
     console.log(`name: ${queryUsername}, branch: ${queryBranch}`);
 
     return (
-        <div className="flex flex-col flex-grow min-h-screen bg-gradient-to-b from-green-700 to-yellow-300">
+        <div className="flex flex-col flex-grow min-h-screen bg-gradient-to-b from-green-700 to-yellow-300 gap-2">
             <Toaster />
-            <NavbarAdmin />
-            <div className="">
-                <div className="pt-12 font-bold text-2xl h-[120px] flex justify-center">
-                    <h1>Admin Management Page</h1>
-                </div>
-                {/* <div className="shadow-xl mx-7 md:mx-12">
-                <div className="flex object-fill rounded-t h-[150px] w-full border gap-1 rounded-2xl shadow-xl">
-                    <div className="my-5 mx-3 border rounded-full h-[100px] w-[100px]">
-                        <h1 className="flex justify-center items-center">
-                            {admin?.profile_picture}
-                        </h1>
-                    </div>
-                    <div className="my-4 font-semibold rounded-md w-1/2 md:w-1/3">
-                        <h1 className="">
-                            Name: {admin[0]?.username}
-                        </h1>
-                        <div>
-                            <h1>
-                                Email: {admin[0]?.email}
-                            </h1>
-                        </div>
-                        <div>
-                            <h1>Assignment: {admin[0]?.store_branch?.name}</h1>
-                        </div>
-                        <div>
-                            <h1>
-                                Admin status: <span className="text-red-600"> {admin[0]?.isVerified} </span>
-                            </h1>
-                        </div>
-                    </div>
-                    <div className="m-5 flex items-center font-semibold md:w-1/4">
-                        <div className="">
-                            <Button style={"lg:w-[130px] w-[110px] text-md font-semibold rounded-full"} text={"Deactivate"}/>
-                        </div>
-                    </div>
-                </div>
-            </div> */}
+            <div className="my-7">
+                <NavbarAdmin />
             </div>
-            <div className="flex justify-end mx-10 gap-3">
+            <div>
+                <div className="flex justify-center bg-gradient-to-b from-green-500 to-yellow-300">
+                    <h1 className="m-3 text-lg font-bold">User Management Page</h1>
+                </div>
+            </div>
+            <div className="flex mx-7 gap-3 lg:mx-12 rounded-md">
                 <input type="text" className="w-1/4 px-4" placeholder="Look up names here" value={queryUsername} onChange={handleNameInput} />
-                {/* <input type="text" className="w-1/6 px-4" placeholder="look up branch here" value={queryBranch} onChange={handleBranchInput} /> */}
                 <select id="store_branch_id" name="store_branch_id" onChange={handleBranchInput} value={queryBranch} className="rounded-md w-1/6 p-2">
-                                    <option value=""> All Branches </option>
-                                    {
-                                        branch && branch.map((value, index) => {    
-                                            return(
-                                                <option key={index} value={value.id}> 
-                                                    {value.name}
-                                                </option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                {/* <Button onClick={() => setModal(!modal)} style={"w-[150px] bg-gray-300 hover:bg-gray-400 my-1 text-md font-semibold rounded-full"} text={"Create Admin"}/> */}
+                    <option value=""> All Branches </option>
+                    {
+                        branch && branch.map((value, index) => {    
+                            return(
+                                <option key={index} value={value.id}> 
+                                    {value.name}
+                                </option>
+                            )
+                        })
+                    }
+                </select>
                 <ModalNewAdmin getAdmins={() => onGetAdmins()} />
             </div>
             {
                 admin && admin.map((value, index) => {
                     return (
 
-
-                        <div className="border bg-slate-200 rounded-lg shadow-xl mx-6 my-4 lg:mx-12 lg:flex">
-                            <div className="flex object-fill rounded-t h-[150px] w-full gap-1 rounded-2xl shadow-xl">
+                        <div className="border bg-slate-200 rounded-lg shadow-xl mx-6 my-2 py-2 lg:mx-12 lg:flex">
+                            <div className="flex object-fill rounded-t h-[190px] lg:h-[150px] w-full gap-1 rounded-2xl shadow-xl">
                                 <div className="my-5 mx-3 border border-black rounded-full h-[100px] w-[100px]">
                                     <img className="object-cover rounded-full h-full w-full" src={process.env.REACT_APP_URL + `${value?.profile_picture}`} alt="user profile" />
                                 </div>
@@ -156,20 +131,25 @@ export default function CreateAdminPage() {
                                 </div>
                                 <div className="m-5 flex items-center font-semibold md:w-1/4">
                                     <div className="md:flex md:gap-4">
-                                        <ModalEditAdmin getAdmins={onGetAdmins} adminData={value} key={index} />
-                                  {/* *  </Button onClick={() => handleDeactivateAdmin(value.email)} style={value.isVerified == "verified" ? "lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full bg-red-400 hover:bg-red-500" : "lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full bg-green-400 hover:bg-green-500"} text={value.isVerified == "verified" ? "Deactivate" : "Activate"} /> */}
-                                    
-                                        {/* <Button onClick={() => handleDeactivateAdmin(value.email)} style={value.isVerified == "verified" ? " bg-red-400" : " bg-green-400 hover:bg-green-500"} text={value.isVerified == "verified" ? "Deactivate" : "Activate"} /> */}
-                                        <button onClick={() => handleDeactivateAdmin(value.email)} className={value.isVerified == "verified" ? " bg-red-500 hover:bg-red-600 w-[100px] h-[50px] rounded-2xl" : " bg-green-500 hover:bg-green-600 w-[100px] h-[50px] rounded-2xl"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>
+                                        <ModalEditAdmin getAdmins={() => onGetAdmins()} adminData={value} key={index} />
+                                        <button onClick={() => handleDeactivateAdmin(value.email)} className={value.isVerified == "verified" ? " bg-red-500 hover:bg-red-600 w-[90px] h-[45px] rounded-2xl mt-1" : " bg-green-500 hover:bg-green-600 w-[100px] h-[50px] rounded-2xl mt-1"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-
                     )
                 })
             }
+            <div className="flex justify-center my-10">
+                <PaginationFixed
+                    page={page}
+                    maxPage={maxPage}
+                    handlePageChange={handlePageChange}
+                    handlePrevPage={handlePrevPage}
+                    handleNextPage={handleNextPage}
+                />
+            </div>
         </div>
     )
 }

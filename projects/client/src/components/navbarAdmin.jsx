@@ -1,12 +1,13 @@
 import { HiShoppingCart } from "react-icons/hi";
 import { HiMenu } from "react-icons/hi";
 import { LuSearch } from "react-icons/lu";
+import { Link } from "react-router-dom";
 const NavbarAdmin = () => {
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-emerald-100 to-green-700 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen">
                 <div>
-                    <img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" />
+                    <Link to={"/admin-dashboard"}><img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" /></Link>
                 </div>
                 <div className="flex gap-5">
                     <div className="grid items-center">

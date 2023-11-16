@@ -2,93 +2,51 @@ import { useEffect, useState } from "react";
 import NavbarAdmin from "../../components/navbarAdmin";
 import { useAppSelector } from '../../redux/App/Store';
 import { FiUsers } from 'react-icons/fi';
+import { api } from "../../api/api";
+import { Link } from "react-router-dom";
+// component chart
+import DashboardOrderChart from "../../components/dashboardOrderChart";
+import DashboardUserChart from "../../components/dashboardUserChart";
 
 // data visualization
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { ComposedChart, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import UserChart from "../../components/userChart";
 
+
 const AdminDashboardPage = () => {
-    const [userData, setUserData] = useState("");
     const [transactionData, setTransactionData] = useState("");
     const userSelector = useAppSelector((state) => state.users)
+    const [adminBranch, setAdminBranch] = useState("");
+    const [orderByBranch, setOrderByBranch] = useState("")
+    const [userData, setUserData] = useState("");
+    const [orderData, setOrderData] = useState("");
+    const [branch, setBranch] = useState("");
 
-    const onFetchData = () => {
+    const [popularProduct, setPopularProduct] = useState("");
 
+    const handleBranchInput = (event) => {
+        setOrderByBranch(event.target.value);
+    };
+
+    const onFetchData = async () => {   
+        const orderCount = await api().get(`/chart/order-count?branch=${orderByBranch}`)
+        setOrderData(orderCount.data.data);
+        // setOrderData(orderCount.data.data);
+        const branchData = await api().get('/branch/all');
+        setBranch(branchData.data.data)
+        // get user data
+        const users = await api().get('/chart/new-users');
+        setUserData(users.data.data);
+        // get product mvp
+        const bestProduct = await api().get('/chart/top-product');
+        setPopularProduct(bestProduct.data.data)
     }
 
-    const data = [
-        {
-            name: '6 Nov',
-            uv: 4000,
-            pv: 2400,
-            amt: 2400,
-        },
-        {
-            name: '7 Nov',
-            uv: 3000,
-            pv: 1398,
-            amt: 2210,
-        },
-        {
-            name: '8 Nov',
-            uv: 2000,
-            pv: 9800,
-            amt: 2290,
-        },
-        {
-            name: '9 Nov',
-            uv: 2780,
-            pv: 3908,
-            amt: 2000,
-        },
-        {
-            name: '10 Nov',
-            uv: 1890,
-            pv: 4800,
-            amt: 2181,
-        },
-        {
-            name: '11 Nov',
-            uv: 2390,
-            pv: 3800,
-            amt: 2500,
-        },
-        {
-            name: '12 Nov',
-            uv: 3490,
-            pv: 4300,
-            amt: 2100,
-        },
-    ];
+    useEffect(() => {
+        onFetchData()
+    }, [orderByBranch])
 
-    const orderData = [
-        {
-            date: "10 Nov",
-            number: 6
-        },
-        {
-            date: "11 Nov",
-            number: 7
-        },
-        {
-            date: "12 Nov",
-            number: 2
-        },
-        {
-            date: "13 Nov",
-            number: 5
-        },
-        {
-            date: "14 Nov",
-            number: 12
-        },
-        {
-            date: "15 Nov",
-            number: 20
-        }
-    ],
-
-    revenueData = [
+    const revenueData = [
         {
             month: "October",
             profit: 13000000
@@ -102,53 +60,56 @@ const AdminDashboardPage = () => {
             profit: 0
         }
     ]
+
     return(
-        <div className="h-full bg-gray-300">
+        <div className="h-full bg-white">
             <div>
                 <div className="">
-                    <div className="flex flex-col mx-60">
-                        <div className="rounded-xl lg:shadow-2xl bg-white lg:p-3 flex flex-col justify-center items-center m-4 p-3">
+                    <div className="flex flex-col mx-3">
+                        <div className="rounded-xl shadow-2xl bg-gray-200 lg:p-3 flex flex-col justify-center items-center m-4 p-3">
                             <div>
-                                Hello {userSelector?.role} <span className="font-bold">{userSelector?.username}</span>!  Welcome to Buyfresh's admin dashboard!
+                                <Link to={"/user-management"}>Hello</Link> {userSelector?.role} of branch {userSelector?.store_branch_id} <span className="font-bold">{userSelector?.username}</span>!  Welcome to Buyfresh's admin dashboard!
                             </div>  
                         </div>
                         <div className="flex justify-around">
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
-                                <h1>total sales</h1>
-                            </div>
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
-                                <div className="flex flex-col items-center mt-7">
+                            <div className="rounded-xl shadow-2xl bg-gray-200 p-4 w-1/5 h-[150px]">
+                                <div className="flex flex-col">
                                     <h1 className="fontbold">total users:</h1>
-                                    <span className="flex text-6xl justify-center align-middle items-center">18<FiUsers /></span>
+                                    <span className="flex text-4xl justify-center align-middle items-center">18 <FiUsers /></span>
                                 </div>
                             </div>
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
-                                <div className="flex flex-col items-center mt-7">
-                                    <h1 className="fontbold">total users:</h1>
-                                    <span className="flex text-6xl justify-center align-middle items-center">18<FiUsers /></span>
+                            <div className="rounded-xl shadow-2xl bg-gray-200 p-4 w-1/5 h-[150px]">
+                                <div className="flex flex-col">
+                                    <h1 className="fontbold">total orders:</h1>
+                                    <span className="flex text-4xl justify-center align-middle items-center">18<FiUsers /></span>
                                 </div>
                             </div>
-                            <div className="rounded-xl shadow-2xl bg-white p-4 w-[200px] h-[200px]">
-                                <div className="flex flex-col items-center mt-7">
-                                    <h1 className="fontbold">total users:</h1>
-                                    <span className="flex text-6xl justify-center align-middle items-center">18<FiUsers /></span>
+                            <div className="rounded-xl shadow-2xl bg-gray-200 p-4 w-1/5 h-[150px]">
+                                <div className="flex flex-col">
+                                    <h1 className="fontbold">total products:</h1>
+                                    <span className="flex text-4xl justify-center align-middle items-center">18<FiUsers /></span>
                                 </div>
                             </div>
-                        </div>  
-                    {/* User Data Card, user registration */}
-                        <div className="rounded-xl shadow-2xl border bg-white m-4 p-4">
+                            <div className="rounded-xl shadow-2xl bg-gray-200 p-4 w-1/5 h-[150px]">
+                                <div className="flex flex-col">
+                                    <h1 className="fontbold">Best Seller:</h1>
+                                    <span className="flex text-md justify-center align-middle items-center font-bold"> {popularProduct} </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="h-[10px] bg-gradient-to-r from-yellow-300 to-green-600 mx-4 mt-4 rounded-full"></div>
+                        <div className="rounded-xl shadow-2xl border bg-gray-200 m-4 p-4">
                             <div className="flex gap-4">
                                 <h1 className="font-bold">User Report</h1>
-                                <select name="" id="">
-                                    <option value=""> Registration </option>
-                                </select>
+                                <h1> Displaying user registration count in the past week</h1>
                             </div>
-                            <div className="m-3">
-                                < UserChart/>
-                            </div>  
+                            <div className="">
+                                <div>
+                                    < DashboardUserChart data={userData}/>
+                                </div>
+                            </div>
                         </div>
-                    {/* Transaction Report */}
-                        <div className="rounded-xl shadow-2xl border bg-white mx-4 p-4">
+                        <div className="rounded-xl shadow-2xl border bg-gray-200 m-4 p-4">
                             <div className="font-bold">
                                 Revenue Report
                             </div>
@@ -161,73 +122,34 @@ const AdminDashboardPage = () => {
                                 </BarChart>
                             </div>
                         </div>
-                        <div className="rounded-xl shadow-2xl border bg-white m-4 p-4">
-                            <div className="font-bold">
-                                Order Count
+                        <div className="rounded-xl shadow-2xl border bg-gray-200 m-4 p-4">
+                            <div className="font-bold flex gap-3">
+                                <h1>Order Count {userSelector?.store_branch_id} </h1>
+                                { !userSelector?.store_branch_id ?
+                                    <select id="store_branch_id" name="store_branch_id" onChange={handleBranchInput} value={orderByBranch} className="rounded-md w-1/4 border border-black text-xs">
+                                        <option value=""> Filters </option>
+                                        {
+                                            branch && branch.map((value, index) => {
+                                                if(userSelector?.store_branch_id) {
+                                                    const optionValue = userSelector?.store_branch_id;  
+                                                }  
+                                                return(
+                                                    <option key={index} value={value.id} disabled={userSelector?.store_branch_id}> 
+                                                        {value.name}
+                                                    </option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                    :
+                                    <h1> Displaying data for branch </h1>
+                                }
                             </div>  
-                            <div className="mt-2">
-                                <LineChart
-                                    width={600}
-                                    height={350}
-                                    data={orderData} 
-                                    margin={{
-                                        top: 5,
-                                        right: 30,
-                                        left: 20,
-                                        bottom: 5,
-                                    }}
-                                    >
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="date" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="number" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                    {/* <Line type="monotone" dataKey="uv" stroke="#82ca9d" /> */}
-                                </LineChart>
+                            <div>
+                                < DashboardOrderChart data={orderData}/>
                             </div>
                         </div>
                     </div>
-
-                    {/* <div className="grid col-start-4 col-span-2 gap-3 h-[500px] w-[300px] m-2">
-
-                        <div className="rounded-xl shadow-2xl bg-white p-4">
-                            <div className="font-bold">
-                                Profit
-                            </div>
-                            <div className="m-4">
-                                <ResponsiveContainer>
-                                    <LineChart
-                                    width={600}
-                                    height={300}
-                                    data={data}
-                                    margin={{
-                                        top: 5,
-                                        right: 30,
-                                        left: 20,
-                                        bottom: 5,
-                                    }}
-                                    >
-                                    <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" />
-                                    <YAxis />
-                                    <Tooltip />
-                                    <Legend />
-                                    <Line type="monotone" dataKey="pv" stroke="#8884d8" activeDot={{ r: 8 }} />
-                                    <Line type="monotone" dataKey="amt" stroke="#82ca9d" />
-                                    </LineChart>
-                                </ResponsiveContainer>
-                            </div>
-                        </div>
-
-                        <div className="rounded-xl shadow-2xl bg-white p-4">
-                            <h1 className="font-bold">
-                                Sales
-                            </h1>
-                        </div>
-                    </div> */}
-
-                    
                 </div>
             </div>
         </div>

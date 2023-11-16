@@ -13,23 +13,14 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
         initialValues: {
             username: adminData.username,
             email: adminData.email,
-            // password: "",
-            // phone_number: adminData.phone_number,
-            // birthdate: adminData.birthdate,
             store_branch_id: adminData.store_branch_id,
-            // gender: adminData.gender
-            // profile_picture: ""
         },
         onSubmit: async(values) => {
             try {
-                console.log(`akan mengirimkan data dibawah untuk edit data admin`);
-                // console.log(getAdmins);
                 const response = await api().patch(`/users/edit-admin`, {...values, username: adminData.username, email: adminData.email,})
                 await getAdmins()
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
-                
-                console.log(`habis fetch data`);
             } catch (error) {
                 toast.error(error.response.data.message);
             }
@@ -37,14 +28,7 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
         validationSchema: yup.object().shape({
             username: yup.string().required(),
             email: yup.string().email().required(),
-            // password: yup.string().required(),
-            // phone_number: yup.string().required(),
             store_branch_id: yup.string().required().notOneOf([adminData.store_branch_id], "Admin must be reassigned to a different branch"),
-            // birthdate: yup.date().required().test(`date-not-in-the-future`, 'Date cannot be in the future', function(value){
-            //     const today = new Date();
-            //     return value <= today
-            // }),
-            // gender: yup.string().required(),
         })
     })
 
@@ -83,7 +67,7 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
     }, []);
 
     return(
-        <div>
+        <div className="h-fit">
             < Toaster/>
             <Button text={"Edit"} style={"lg:w-[130px] w-[100px] my-1 text-md font-semibold rounded-full"} onClick={() => document.getElementById(`my_modal_${adminData.username}`).showModal()}></Button>
             <dialog id={`my_modal_${adminData.username}`} className="modal backdrop-blur-md">
@@ -91,31 +75,6 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
                     <h3 className="font-bold text-4xl text-white">Reassign Branch Admin {adminData.username}</h3>
                     <div className="flex flex-col gap-5 mt-5">
                         <div className="grid gap-5">
-                            {/* <div>
-                                <div className="text-white pb-2"> Username </div>
-                                <input type="text" id='username' name='username' onChange={formik.handleChange} value={formik.values.username} className='rounded-md w-3/4 p-2' placeholder={adminData.username} />
-                                <div className='text-red-500 font-bold'> {formik.errors.username} </div>
-                            </div>
-                            <div>
-                                <div className="text-white pb-2"> Email </div>
-                                <input type="email" id='email' name='email' onChange={formik.handleChange} value={formik.values.email} className='rounded-md w-3/4 p-2' placeholder={adminData.email} />
-                                <div className='text-red-500 font-bold'> {formik.errors.email} </div>
-                            </div>
-                            <div>
-                                <div className="text-white pb-2"> Password </div>
-                                <input type="password" id='password' name='password' onChange={formik.handleChange} value={formik.values.password} className='rounded-md w-3/4 p-2' placeholder='password'/>
-                                <div className='text-red-500 font-bold'> {formik.errors.password} </div>
-                            </div>
-                            <div>
-                                <div className="text-white pb-2"> Phone Number </div>
-                                <input type="text" id='phone_number' name='phone_number' onChange={formik.handleChange} value={formik.values.phone_number} className='rounded-md w-3/4 p-2' placeholder={adminData.phone_number} />
-                                <div className='text-red-500 font-bold'> {formik.errors.phone_number} </div>
-                            </div> */}
-                            {/* <div>
-                                <div className="text-white pb-2"> Date of Birth </div>
-                                <input type="date" id='birthdate' name='birthdate' onChange={formik.handleChange} value={formik.values.birthdate} className='rounded-md w-3/4 p-2'/>
-                                <div className='text-red-500 font-bold'> {formik.errors.birthdate} </div>
-                            </div> */}
                             <div>
                                 <div className="text-white pb-2"> Branch </div>
                                 <select id="store_branch_id" name="store_branch_id" onChange={formik.handleChange} value={formik.values.store_branch_id} className="rounded-md w-3/4 p-2">
@@ -123,7 +82,7 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
                                     {
                                         branch && branch.map((value, index) => {    
                                             return(
-                                                <option key={index} value={value.id}> 
+                                                <option key={index} value={value.id} disabled={value.id === adminData.store_branch_id}> 
                                                     {value.name}
                                                 </option>
                                             )
@@ -132,27 +91,6 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
                                 </select>
                                 <div className='text-red-500 font-bold'> {formik.errors.store_branch_id} </div>
                             </div>
-                            {/* <div>
-                                <div className="text-white pb-2"> Gender </div>
-                                    <select name="gender" id="gender" onChange={formik.handleChange} value={formik.values.gender} className="rounded-md w-3/4 p-2">
-                                        <option value="" disabled>
-                                            Select a gender
-                                        </option>
-                                        <option value="male">
-                                            Male
-                                        </option>
-                                        <option value="female">
-                                            Female
-                                        </option>
-                                    </select>
-                                <div className='text-red-500 font-bold'> {formik.errors.gender} </div>
-                            </div> */}
-                            {/* <div>
-                                <div className="text-white pb-2"> Profile Picture </div>
-                                <div>
-                                    <input className="file-input file-input-warning w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
-                                </div>
-                            </div> */}
                         </div>
                     </div>
                     <div className="modal-action">                        
