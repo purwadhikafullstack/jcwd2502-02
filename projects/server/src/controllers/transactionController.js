@@ -50,6 +50,46 @@ module.exports = {
         }
     },
 
+    getAllUserOrders: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+            console.log(id);
+            const { invoice, status, createdAt, page, branchId } = req.query;
+            const limit = 6;  // Number of records per page
+
+            // Build the where clause based on the provided filters
+            const whereClause = {};
+            if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
+            if (status) whereClause.status = status;
+            if (branchId) whereClause.store_branch_id = branchId;
+            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
+
+            // Calculate the total number of records
+            const totalRecords = await db.transactions.count({ where: { ...whereClause, user_id: id } });
+
+            // Calculate the maximum number of pages
+            const maxPages = Math.ceil(totalRecords / limit);
+
+            // Use limit and offset to paginate the actual data
+            const offset = (page - 1) * limit;
+            const orders = await db.transactions.findAll({
+                where: { ...whereClause, user_id: id },
+                limit,
+                offset,
+                order: [['createdAt', 'DESC']]
+            });
+
+            const result = res.json({
+                orders,
+                maxPages,
+            });
+
+            // responseHandler(res, "Get Orders Success", result);
+        } catch (error) {
+            next(error);
+        }
+    },
+
 
     getOrders: async (req, res, next) => {
         try {

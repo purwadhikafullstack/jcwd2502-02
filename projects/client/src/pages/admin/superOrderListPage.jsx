@@ -83,7 +83,7 @@ const SuperOrderList = () => {
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
-            await handleSearch();
+            // await handleSearch();
         } else {
             toast.error("Invalid page number!");
         }
@@ -102,7 +102,6 @@ const SuperOrderList = () => {
         getBranches()
     }, [createdAt, status, invoice, page, branch])
 
-
     const testing = (value) => {
         try {
             console.log(value);
@@ -110,6 +109,8 @@ const SuperOrderList = () => {
             console.log(error);
         }
     }
+
+    console.log(page);
 
     return (
         <div >

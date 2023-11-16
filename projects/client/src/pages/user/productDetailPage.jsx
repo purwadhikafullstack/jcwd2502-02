@@ -12,6 +12,7 @@ import { deleteItemInCartAsync } from "../../redux/Features/cart";
 import { Navigate, useNavigate } from "react-router-dom";
 import { nearestBranch } from "../../redux/Features/branch";
 import toast, { Toaster } from "react-hot-toast";
+import { IoIosArrowBack } from "react-icons/io";
 
 const ProductDetailPage = () => {
     const dispatch = useDispatch()
@@ -64,35 +65,68 @@ const ProductDetailPage = () => {
         <div className="">
             <Toaster />
             <Navbar />
-            <div className="mt-[70px] pt-3">
-                <div className='w-auto px-3 py-3'>
-                    <img className="px-3 py-3 rounded-xl shadow-xl md:h-[500px] lg:h-[300px]" src={product && product.product ? process.env.REACT_APP_URL + product.product.image : null} alt={"image of" + (product && product.product ? product.product.name : "")} />
+            <div className="mt-[70px] pt-3 md:mx-20 lg:mx-32 mx-5 h-full">
 
-                </div>
-                <div className="font-semibold truncate text-2xl px-5 pt-2 h-[50px] overflow-auto">
-                    {product && product.product ? product.product.name : null}                </div>
-                <div className="font-semibold truncate text-xl px-5 pt-2 text-green-500">
-                    Rp {product && product.product ? product?.product.price?.toLocaleString() : null}
-                </div>
-                <div className="font-semibold truncate text-lg px-5 pt-2 pb-5">
-                    {product && product.product ? product.product.description : null}
-                </div>
-                <div className="flex justify-center mt-5 mb-5">
-                    <Link to={`/products?category=`}>
-                        <Button style={"lg:w-[200px] rounded-full"} text={"Back to Product List"} />
+                <div className="flex text-xl lg:text-2xl font-bold pb-5">
+                    <div className="grid place-content-center "><IoIosArrowBack />
+                    </div>
+                    <Link to={'/products?category='}>
+                        <div className="hover:underline"> Product List</div>
                     </Link>
                 </div>
-                <div className="flex justify-center pt-2 w-full">
-                    {isInCart ? (
-                        <div className="flex items-center gap-2 lg:gap-5">
-                            <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(id))} />
-                            <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
-                            <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
+
+
+                <div className="flex flex-col lg:flex-row mb-10 gap-5 lg:gap-10">
+                    <div className='w-auto'>
+                        <img className="
+                lg:h-[600px]
+                    " src={product && product.product ? process.env.REACT_APP_URL + product.product.image : null} alt={"image of" + (product && product.product ? product.product.name : "")} />
+                    </div>
+
+                    <div className="flex flex-col justify-start gap-3">
+
+                        <div className="">
+                            <div className="font-semibold text-4xl lg:text-5xl w-full mb-2">
+                                {product && product.product ? product.product.name : <span className="loading loading-spinner loading-lg"></span>
+                                }
+                            </div>
+
+                            <div className="font-normal text-gray-400 w-full pb-2">
+                                {product && product.product ? product.product.weight : null} gr
+                            </div>
                         </div>
-                    ) : (
-                        <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
-                    )}
+
+                        {product && product?.product?.discount_id === 3 ?
+                            <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white font-bold rounded-xl w-[150px] grid place-content-center">Buy 1 Get 1 Free</div>
+                            : null
+                        }
+                        <div className="font-semibold text-3xl pt-2 text-green-500 flex">
+                            Rp {product && product.product ? product?.product.final_price?.toLocaleString() : null}
+                            {product && product?.product?.discount_id === 1 || product && product?.product?.discount_id === 2 ? <div className="text-red-600 line-through font-semibold text-3xl pl-3">Rp {product?.product?.price.toLocaleString()} </div> :
+                                null}
+                        </div>
+
+                        <div>
+                            <div className="text-lg pt-2 pb-3">
+                                {product && product.product ? product.product.description : null}
+                            </div>
+                            <div className="mb-10">Stock(s): {product ? product?.stock : null}</div>
+                        </div>
+
+                        <div className="flex justify-center lg:justify-start pt-2 w-full">
+                            {isInCart ? (
+                                <div className="flex items-center gap-2 lg:gap-5">
+                                    <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(id))} />
+                                    <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
+                                    <Button style={"lg:w-[50px] text-lg rounded-full"} text="+" onClick={() => handleAddToCart()} />
+                                </div>
+                            ) : (
+                                <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
+                            )}
+                        </div>
+                    </div>
                 </div>
+
             </div>
             <Footer />
         </div>

@@ -48,7 +48,7 @@ const Navbar = () => {
                     </div>
                 </div>
                 <div className="flex gap-5">
-                    <div className="grid items-center relative mt-2 px-5">
+                    <div className="grid items-center relative mt-2 px-3">
                         <Link to={'/cart'}>
                             <div><HiShoppingCart className="text-white text-4xl" /></div>
                         </Link>
@@ -89,16 +89,16 @@ const Navbar = () => {
                                                     <div className="flex justify-center text-md pb-5">{user?.email}</div>
                                                 </div>
                                             </div>
-
-
                                             <Link to={'/profile'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200">
                                                     <div className="flex gap-5 hover:text-white rounded-full "><FaUserLarge /> My Profile</div>
                                                 </li>
                                             </Link>
-                                            <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
-                                                <RiFileList3Fill />
-                                                My Order</div></li>
+                                            <Link to={'/order-list'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <RiFileList3Fill />
+                                                    My Order</div></li>
+                                            </Link>
                                             <li className="hover:bg-red-600 rounded-full ease-in duration-200" onClick={handleLogout}><div className="flex gap-5 hover:text-white rounded-full ">
                                                 <RiLogoutBoxFill />Sign Out</div></li>
                                         </ul>

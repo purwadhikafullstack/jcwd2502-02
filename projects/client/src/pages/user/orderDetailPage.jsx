@@ -40,8 +40,6 @@ const UserOrderDetail = () => {
         const intervalId = setInterval(() => {
             setTimeRemaining(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
         }, 1000);
-
-        // Cleanup the interval when the component unmounts
         return () => clearInterval(intervalId);
     }, [])
 
@@ -60,16 +58,17 @@ const UserOrderDetail = () => {
     return (
         <div>
 
-            <Navbar />
+            {/* <Navbar /> */}
 
             <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"}
                 style={{ minHeight: "100vh" }}>
 
                 <div className="flex text-md lg:text-2xl font-bold pt-10 pb-5">
-                    <div className="hover:underline"> Order List</div>
+                    <Link to={'/order-list'}>
+                        <div className="hover:underline"> Order List</div>
+                    </Link>
                     <div className="grid place-content-center px-3"><IoIosArrowForward />
                     </div>INV {transaction ? transaction.invoice : null}
-
                 </div>
 
                 <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between ">
@@ -191,6 +190,4 @@ const UserOrderDetail = () => {
         </div>
     )
 }
-
-
 export default UserOrderDetail
