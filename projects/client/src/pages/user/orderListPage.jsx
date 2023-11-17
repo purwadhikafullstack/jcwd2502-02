@@ -45,10 +45,20 @@ const UserOrderList = () => {
         }
     };
 
-    const handleInvoice = debounce((event) => {
-        console.log(event);
-        setInvoice(event);
-    }, 1000);
+    const handleSearchInvoice = (event) => {
+        try {
+            // console.log(event.target.value);
+            setPage(1);
+            setInvoice(event)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    // const handleInvoice = debounce((event) => {
+    //     console.log(event);
+    //     setInvoice(event);
+    // }, 1000);
 
     const handleSearch = async () => {
         try {
@@ -83,17 +93,14 @@ const UserOrderList = () => {
 
     useEffect(() => {
         handleSearch()
+    }, [createdAt, status, page])
 
-    }, [createdAt, status, invoice, page])
-
-
-    const testing = (value) => {
-        try {
-            console.log(value);
-        } catch (error) {
-            console.log(error);
-        }
-    }
+    useEffect(() => {
+        const debouncedSearch = debounce(() => {
+            handleSearch();
+        }, 1000);
+        debouncedSearch();
+    }, [invoice])
 
     return (
         <div >
@@ -105,7 +112,7 @@ const UserOrderList = () => {
                 <div className="mb-10 lg:flex border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 p-3 shadow-xl rounded-2xl lg:justify-center">
                     <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[500px]">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full lg:w-[500px] text-lg pl-2" placeholder=" Search your order invoice number" />
+                        <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full lg:w-[500px] text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
                     <div className="flex gap-3 justify-between lg:overflow-none overflow-x-auto my-3">
                         <div className="grid place-content-center">
@@ -130,7 +137,7 @@ const UserOrderList = () => {
                 <div className="grid gap-3 mb-10">
                     {orderData ? orderData.map((value, index) => {
                         return (
-                            <div key={index} onClick={() => testing(value.id)}>
+                            <div key={index}>
                                 <OrderComponent
                                     status={value.status}
                                     invoice={value.invoice}
