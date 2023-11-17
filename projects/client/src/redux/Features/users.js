@@ -10,6 +10,7 @@ const initialState = {
     profile_picture: "",
     role: "",
     email: "",
+    store_branch_id: ""
 }
 
 export const userSlice = createSlice({
@@ -37,6 +38,9 @@ export const userSlice = createSlice({
         },
         setEmail: (state, { payload }) => {
             state.email = payload;
+        },
+        setStore_Branch_Id: (state, { payload }) => {
+            state.store_branch_id = payload;
         }
 
     }, extraReducers: (builder) => {

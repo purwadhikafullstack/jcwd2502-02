@@ -24,6 +24,7 @@ module.exports = {
                     role: account.data.role,
                     jwt: account.data.jwt,
                     profile_picture: account.data.profile_picture,
+                    store_branch_id: account.data.store_branch_id
                 }
             })
         } catch (error) {

@@ -83,7 +83,6 @@ module.exports = {
         const account = await db.user.findOne({
             where: { email }
         })
-        console.log(account);
         if (!account) throw { status: 401, message: "Account was not found!" };
         const hashMatch = await match(password, account.dataValues.password)
         if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
@@ -91,6 +90,7 @@ module.exports = {
             {
                 id: account.dataValues.id,
                 role: account.dataValues.role,
+                store_branch_id: account.dataValues.store_branch_id
             },
             "1d"
         )
@@ -103,7 +103,8 @@ module.exports = {
                 email: account.dataValues.email,
                 role: account.dataValues.role,
                 jwt: token,
-                profile_picture: account.dataValues.profile_picture
+                profile_picture: account.dataValues.profile_picture,
+                store_branch_id: account.dataValues.store_branch_id
             }
         }
     },
@@ -203,6 +204,8 @@ module.exports = {
             if(!account) throw {status: 401, message: "Error, account was not found!"};
             if(store_branch_id == account.dataValues.store_branch_id) throw {error: 401, message: "Admin was already assigned to the designated branch"};
             await db.user.update({store_branch_id}, {where: {email}})
+
+            await db.user.findAll().then((res)=>{console.log(res);})
             return {
                 isError: false,
                 message: "Admin assigned to new branch"
@@ -214,26 +217,37 @@ module.exports = {
     },
     
     getFilteredAdmin: async (req) => {
-        const {username, branch} = req.query;
-        let whereCondition = {};
-        whereCondition.role = "admin"
-        if(username) {
-            whereCondition.username = {
-                [Op.like]: `%${username}%`,
-            }
-        }
-        if(branch) {
-            whereCondition.store_branch_id = branch
-        }
-        const filteredAdmins = await db.user.findAll({ 
-            where: whereCondition,
-            order: [["updatedAt", "DESC"]],
-            include: [
-                {
-                    model: db.store_branch
+        try {
+            console.log(req.query);
+            const {username, branch, page} = req.query;
+            const limit = 6;
+            const offset = (page - 1) * limit;
+            let whereCondition = {};
+            whereCondition.role = "admin"
+            if(username) {
+                whereCondition.username = {
+                    [Op.like]: `%${username}%`,
                 }
-            ]
-        });
-        return filteredAdmins;
+            }
+            if(branch) {
+                whereCondition.store_branch_id = branch
+            }
+            const filteredAdmins = await db.user.findAll({ 
+                where: whereCondition,
+                order: [["updatedAt", "DESC"]],
+                limit,
+                offset,
+                include: [{model: db.store_branch}]
+            });
+            console.log(filteredAdmins);
+            const totalRecords = await db.user.count({ where: whereCondition });
+            const maxPages = Math.ceil(totalRecords / limit);
+            return {
+                filteredAdmins,
+                maxPages
+            };
+        } catch (error) {
+            return error;
+        }
     }
 }
