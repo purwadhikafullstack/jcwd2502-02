@@ -31,6 +31,41 @@ module.exports = {
             next(error);
         }
     },
+    getAllProductRevised: async (req, res, next) => {
+        try {
+            const { catId, searchQuery, sort, branchId, page } = req.query;
+            const limit = 8;
+            const like = Op.like;
+            const whereClause = { isDeleted: 0 };
+            if (catId) whereClause.product_categories_id = catId;
+            if (searchQuery) whereClause.name = { [like]: `%${searchQuery}%` };
+            const totalRecords = await db.product.count({ where: { ...whereClause } });
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            const order = sort === "ASC" ? [['name', 'ASC']] : [['name', 'DESC']];
+            const includeProductStock = branchId
+                ? [
+                    {
+                        model: db.product_stock,
+                        where: { store_branch_id: branchId },
+                    },
+                ]
+                : [];
+            const products = await db.product.findAll({
+                where: { ...whereClause },
+                include: includeProductStock,
+                order,
+                limit,
+                offset,
+            });
+            const result = res.json({
+                products,
+                maxPages,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
     getAllProductsAndCategoryName: async (req, res, next) => {
         try {
             const allProduct = await getAllProductsAndCategoryNameService(req.params);

@@ -7,9 +7,12 @@ import Navbar from "../../components/navbarUser";
 import Footer from "../../components/footer";
 import React, { useEffect, useState } from "react";
 import { api1 } from "../../api/api";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
+import PaginationFixed from "../../components/paginationComponent";
+import toast, { Toaster } from "react-hot-toast";
+
 
 const ProductListPage = () => {
     const [category, setCategory] = useState([]);
@@ -17,24 +20,24 @@ const ProductListPage = () => {
     const [products, setProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
     const [sort, setSort] = useState("ASC");
-    const [currentPage, setCurrentPage] = useState(1);
-    const [postPerPage, setPostsPerPage] = useState(8);
-    const [stock, setStock] = useState()
-    const lastPostIndex = currentPage * postPerPage;
-    const firstPostIndex = lastPostIndex - postPerPage;
-    const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
+    const searchProduct = new URLSearchParams(search).get("search")
+    const [page, setPage] = useState(1);
+    const navigate = useNavigate();
+    const [maxPage, setMaxPage] = useState(1);
     const debouncedSearch = debounce((value) => {
-        // console.log(value);
+        setPage(1)
         setSearchQuery(value);
     }, 1000);
-    const nearestBranch = async () => {
+    const handleReset = () => {
         try {
-            const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
-            setStock(branch.data.data)
+            setPage(1)
+            setSearchQuery("")
+            setSort("ASC")
+            navigate(`/products?category=`, { replace: true });
         } catch (error) {
             console.log(error);
         }
@@ -49,19 +52,29 @@ const ProductListPage = () => {
     };
     const onGetFilteredProducts = async () => {
         try {
-            nearestBranch()
-            const response = await api.get(
-                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}`
+            if (closestBranch.id === undefined) {
+                const response = await api.get(
+                    `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=&page=${page}`
 
-            );
-            setProducts(response.data.data);
+                )
+                console.log(response);
+                setMaxPage(response.data.maxPages)
+                setProducts(response.data.products);
+            } else {
+                const response = await api.get(
+                    `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}&page=${page}`
+                )
+                console.log(response);
+                setMaxPage(response.data.maxPages)
+                setProducts(response.data.products);
+            }
         } catch (error) {
             console.error("Error fetching filtered products:", error);
         }
     };
     const onFilterCat = async (id) => {
         try {
-            setCurrentPage(1);
+            setPage(1);
             setCatId(id);
         } catch (error) {
             console.log(error);
@@ -69,25 +82,42 @@ const ProductListPage = () => {
     };
     const handleChange = (event) => {
         try {
+            setPage(1);
             setSort(event.target.value);
         } catch (error) {
             console.log(error);
         }
     };
+    const handlePageChange = async (newPage) => {
+        if (newPage >= 1 && newPage <= maxPage) {
+            setPage(newPage);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            toast.error("Invalid page number!");
+        }
+    };
+    const handleNextPage = () => {
+        handlePageChange(page + 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    const handlePrevPage = () => {
+        handlePageChange(page - 1);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
     useEffect(() => {
+        if (searchProduct && searchProduct !== searchQuery) {
+            setSearchQuery(searchProduct);
+        }
         onGetCategory();
         onGetFilteredProducts();
-        nearestBranch()
-    }, [catId, searchQuery, sort, closestBranch]);
+    }, [catId, searchQuery, sort, closestBranch, page, id, searchProduct]);
 
     return (
         <div className="">
+            <Toaster />
             <Navbar />
             <div className="mt-[70px] pt-3">
                 <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
-                    {/* <Link to={`/products?category=`}>
-                        <CategoryCard name={"Show All"} image={`public/showall.jpg`} onClick={() => onFilterCat("")} />
-                    </Link> */}
                     {category.map((value, index) => {
                         return (
                             <div key={index}>
@@ -113,13 +143,11 @@ const ProductListPage = () => {
                         />
                     </div>
                     <div>
-                        <Link to={`/products?category= `}>
-                            <button className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900" onClick={() => setCatId("")}>Show All Products</button>
-                        </Link>
+                        <button onClick={handleReset} className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900">Show All Products</button>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
-                    {currentPosts.map((value, index) => (
+                    {products ? products.map((value, index) => (
                         <a key={index}>
                             <div>
                                 <ProductCard
@@ -129,22 +157,21 @@ const ProductListPage = () => {
                                     price={value.price}
                                     final_price={value.final_price}
                                     discount_id={value.discount_id}
-                                    stock={value.product_stocks}
+                                    stock={value.product_stocks ? value.product_stocks : "empty"}
                                     data={value.id}
                                 />
                             </div>
                         </a>
-                    ))}
+                    )) : null}
                 </div>
             </div>
-            <div className="pt-4 mb-10">
-                <div className="text-xl flex justify-center items-center ">
-                </div>
-                <Pagination
-                    totalPost={products.length}
-                    postsPerPage={postPerPage}
-                    setCurrentPage={setCurrentPage}
-                    currentPage={currentPage}
+            <div className="flex justify-center mt-4 mb-10">
+                <PaginationFixed
+                    page={page}
+                    maxPage={maxPage}
+                    handlePageChange={handlePageChange}
+                    handlePrevPage={handlePrevPage}
+                    handleNextPage={handleNextPage}
                 />
             </div>
             <Footer />

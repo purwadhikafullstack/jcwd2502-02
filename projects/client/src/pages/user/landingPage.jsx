@@ -20,12 +20,11 @@ const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
     const [products, setProducts] = useState("")
     const [branchName, setBranchName] = useState()
-    const [currentLocation, setCurrentLocation] = useState(null);
-    const [nearestLocation, setNearestLocation] = useState(null);
     const [category, setCategory] = useState([]);
     const dispatch = useDispatch();
     const api = api1();
     const closestBranch = useSelector((state) => state.branch.closestBranch);
+    console.log(closestBranch.id);
 
     const onGetCategory = async () => {
         try {
@@ -46,9 +45,14 @@ const LandingPage = () => {
 
     const nearestBranch = async () => {
         try {
-            const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
-            // console.log(branch.data.data, "ini data branch");
-            setProducts(branch.data.data)
+            if (closestBranch.id === undefined) {
+                const branch = await api.get(`/branch/recommend?branchId=`)
+                console.log(branch);
+                setProducts(branch.data.products)
+            } else {
+                const branch = await api.get(`/branch/recommend?branchId=${closestBranch.id}`)
+                setProducts(branch.data.products)
+            }
         } catch (error) {
             console.log(error);
         }
@@ -57,7 +61,7 @@ const LandingPage = () => {
         onGetCategory();
         getBranch()
         nearestBranch()
-    }, []);
+    }, [closestBranch]);
 
     return (
         <div className="">
@@ -85,7 +89,7 @@ const LandingPage = () => {
                 <div className="mt-12 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 m-5 md:mx-24 lg:mx-48 rounded-full"></div>
 
                 <div className="pb-10 mt-5 md:mt-10">
-                    <RecommendProducts data={products} branchName={closestBranch.name} />
+                    <RecommendProducts data={products} branchName={closestBranch.name ? closestBranch.name : ""} />
                 </div>
             </div>
             <Footer />

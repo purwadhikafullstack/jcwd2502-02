@@ -52,7 +52,8 @@ const ProductCard = (props) => {
                     </div>
                     <div className="h-[110px] lg:h-[110px] flex flex-col justify-between p-2 pl-4">
                         <div className="font-semibold truncate">{props.name}</div>
-                        <div className="text-gray-400"> Stock(s): {productStock ? productStock : "0"}</div>
+                        {/* <div className="text-gray-400"> Stock(s): {productStock ? productStock : "0"}</div> */}
+                        {props.stock === "empty" ? null : <div className="text-gray-400">Stock(s): {productStock ? productStock : null}</div>}
                         {
                             (props.discount_id === 1 || props.discount_id === 2 || props.discount_id === null)
                                 ? (

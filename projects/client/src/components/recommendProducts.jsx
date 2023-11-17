@@ -12,7 +12,7 @@ import { Link } from "react-router-dom";
 const RecommendProducts = (props) => {
     const dispatch = useDispatch()
     const products = props.data
-    // console.log(products);
+    console.log(products);
     const settings = {
         dots: false,
         infinite: true,
@@ -64,15 +64,14 @@ const RecommendProducts = (props) => {
                                 ? products.map((value, index) => (
                                     <div key={index} className="w-auto mx-1 md:mx-3">
                                         <ProductCard
-                                            name={value.product.name}
-                                            image={value.product.image}
-                                            description={value.product.description}
-                                            price={value.product.price}
-                                            final_price={value.product.final_price}
-                                            discount_id={value.product.discount_id}
-                                            stock={value.stock}
-                                            data={value.products_id}
-
+                                            name={value.name}
+                                            image={value.image}
+                                            description={value.description}
+                                            price={value.price}
+                                            final_price={value.final_price}
+                                            discount_id={value.discount_id}
+                                            stock={props.branchName ? (value?.product_stocks && value.product_stocks.length > 0 ? value.product_stocks[0].stock : "empty") : "empty"}
+                                            data={value.id}
                                         />
                                     </div>
                                 ))

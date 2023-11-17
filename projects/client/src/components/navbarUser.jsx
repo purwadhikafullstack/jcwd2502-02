@@ -5,27 +5,36 @@ import { FaUserLarge } from "react-icons/fa6";
 import { RiFileList3Fill } from "react-icons/ri";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { RiLogoutBoxRFill } from "react-icons/ri";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
 import { getCartAsync } from "../redux/Features/cart";
 import { clearCart } from "../redux/Features/cart";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 const Navbar = () => {
     const navigate = useNavigate()
+    const location = useLocation();
     const dispatch = useDispatch()
     const { cart } = useSelector((state) => state.cart)
     const user = useSelector((state) => state.users)
+    const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
+
     const handleLogout = async (e) => {
         e.preventDefault()
         dispatch(logout());
         dispatch(clearCart());
         navigate('/')
         window.location.reload();
+
     }
+
+    const handleSearch = () => {
+        // Navigate to the product list page with the search query
+        navigate(`/products?category=&search=${searchQuery}`);
+    };
 
     useEffect(() => {
         dispatch(getCartAsync());
@@ -38,15 +47,23 @@ const Navbar = () => {
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
                 <Link to={'/'}>
                     <div>
-                        <img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" />
+                        <img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[70px]" />
                     </div>
                 </Link>
-                <div className="grid items-center">
-                    <div className=" flex rounded-full bg-white">
-                        <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input type="text" className=" outline-none rounded-full h-[30px] w-[140px] md:w-[250px] lg:w-[300px] text-xs pl-2" placeholder=" Search on BuyFresh" />
+
+                {location.pathname !== '/products' && (
+                    <div className="grid items-center">
+                        <div className="flex rounded-full bg-white">
+                            <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
+                            <input
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                type="text" className=" outline-none rounded-full h-[30px] w-[140px] md:w-[250px] lg:w-[300px] text-xs pl-2" placeholder=" Search on BuyFresh" />
+                        </div>
                     </div>
-                </div>
+                )}
+
                 <div className="flex gap-5">
                     <div className="grid items-center relative mt-2 px-3">
                         <Link to={'/cart'}>

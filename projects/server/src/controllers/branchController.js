@@ -19,5 +19,35 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+
+    getRecommendProduct: async (req, res, next) => {
+        try {
+            const { branchId } = req.query;
+            const whereClause = { isDeleted: 0 };
+
+            const includeProductStock = branchId
+                ? [
+                    {
+                        model: db.product_stock,
+                        where: { store_branch_id: branchId },
+                    },
+                ]
+                : [];
+
+            const products = await db.product.findAll({
+                where: { ...whereClause },
+                include: includeProductStock,
+                order: [['product_categories_id', 'ASC']],
+                group: ['product_categories_id'],  // Group by product_categories_id
+            });
+
+            const result = res.json({
+                products,
+            });
+        } catch (error) {
+            next(error);
+        }
     }
+
 }

@@ -14,6 +14,7 @@ Router.get("/product-stock", productsController.getProductStock);
 Router.get("/all-product-stock/:branchId", productsController.getAllProductStock);
 Router.get("/discount", productsController.getDiscount);
 Router.get("/price", productsController.clonePriceToFinalPrice);
+Router.get("/allproductsfix", productsController.getAllProductRevised);
 
 
 Router.post("/addproduct", upload, productsController.createProduct);

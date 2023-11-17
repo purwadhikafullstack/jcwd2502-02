@@ -131,11 +131,12 @@ module.exports = {
 
     uploadPayment: async (req, res, next) => {
         try {
+            const { id } = req.dataToken;
             const { transactionId } = req.params;
             const upload = await db.transactions.update({
                 payment_proof: req.files.image[0].filename,
                 status: "waiting for payment approval"
-            }, { where: { id: transactionId } })
+            }, { where: { id: transactionId, user_id: id } })
             const transaction = await db.transactions.findOne({
                 where: { id: transactionId }
             })
@@ -147,10 +148,11 @@ module.exports = {
 
     cancelOrder: async (req, res, next) => {
         try {
+            const { id } = req.dataToken;
             const { transactionId } = req.params;
             const upload = await db.transactions.update({
                 status: "canceled"
-            }, { where: { id: transactionId } })
+            }, { where: { id: transactionId, user_id: id } })
             const transaction = await db.transactions.findOne({
                 where: { id: transactionId }
             })

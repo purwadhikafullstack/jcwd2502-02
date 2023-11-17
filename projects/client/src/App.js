@@ -19,12 +19,13 @@ import { nearestBranch } from "./redux/Features/branch";
 import routes from "./routes/Routes";
 
 function App() {
+  const user = useSelector((state) => state.users)
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(onCheckIsLogin());
     dispatch(onGetBranchAsync())
     dispatch(nearestBranch())
-  }, [])
+  }, [user.id])
 
   return (
     <div data-theme="light">
