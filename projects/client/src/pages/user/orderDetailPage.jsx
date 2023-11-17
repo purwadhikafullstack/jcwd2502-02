@@ -1,18 +1,157 @@
 import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer"
-import { useState } from "react";
+import Button from "../../components/button";
+import CheckoutComponent from "../../components/checkoutComponent";
+import { useEffect, useRef, useState } from "react";
+import { useParams } from "react-router-dom";
+import { api } from "../../api/api";
+import { Link } from "react-router-dom";
+import { IoIosArrowForward } from "react-icons/io";
+import moment from 'moment';
+import toast, { Toaster } from "react-hot-toast";
+import OrderDetailsSection from "../../components/orderDetails";
 
 const UserOrderDetail = () => {
+    const [timeRemaining, setTimeRemaining] = useState(0); // Set the initial time in seconds
+    const [transaction, setTransaction] = useState("")
+    const [detail, setDetail] = useState("")
+    const { id } = useParams()
+    const payment = useRef(null);
+
+    const getDetailOrder = async () => {
+        try {
+            const order = await api().get(`/transaction/${id}`)
+            console.log(order.data.data);
+            console.log(order.data.data.createdAt);
+            setTransaction(order.data.data)
+            setDetail(order.data.data.transaction_details)
+            const createdAt = order.data.data.createdAt;
+            const countdownDuration = 24 * 60 * 60;
+            const startTime = new Date(createdAt).getTime() / 1000; // convert milliseconds to seconds
+            const currentTime = Math.floor(new Date().getTime() / 1000); // convert milliseconds to seconds
+            const remainingTime = countdownDuration - (currentTime - startTime);
+            setTimeRemaining(remainingTime > 0 ? remainingTime : 0);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const copyToClipboard = (text) => {
+        navigator.clipboard.writeText(text)
+            .then(() => {
+                toast.success("Copied to clipboard!");
+            })
+            .catch((err) => {
+                toast.error("Unable to copy to clipboard.");
+                console.error("Copy to clipboard failed: ", err);
+            });
+    };
+
+    const uploadPayment = async (event) => {
+        try {
+            const file = event.target.files[0]
+            if (file) {
+                if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
+                    message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
+                }
+                const formData = new FormData();
+                formData.append('image', file);
+                const upload = await api().post(`/transaction/upload/${id}`, formData)
+                toast.success("Payment Proof Uploaded!")
+                getDetailOrder()
+            }
+        } catch (error) {
+            toast.error(error.message)
+        }
+    }
+
+    useEffect(() => {
+        getDetailOrder()
+        const intervalId = setInterval(() => {
+            setTimeRemaining(prevTime => (prevTime > 0 ? prevTime - 1 : 0));
+        }, 1000);
+        return () => clearInterval(intervalId);
+    }, [])
+
+
+    const formatTime = (time) => {
+        const hours = Math.floor(time / 3600);
+        const minutes = Math.floor((time % 3600) / 60);
+        const seconds = time % 60;
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    };
 
     return (
         <div>
+            <Toaster />
+            {/* <Navbar /> */}
+            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"}
+                style={{ minHeight: "100vh" }}>
 
-            <Navbar />
+                <div className="flex text-md lg:text-2xl font-bold pt-10 pb-5">
+                    <Link to={'/order-list'}>
+                        <div className="hover:underline"> Order List</div>
+                    </Link>
+                    <div className="grid place-content-center px-3"><IoIosArrowForward />
+                    </div>INV {transaction ? transaction.invoice : null}
+                </div>
 
-            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"} style={{ minHeight: "100vh" }}>
+                <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between ">
+                    <div className="flex flex-col gap-3 lg:flex-1 ">
+                        <div className="flex flex-col gap-3">
+                            <div className="flex justify-between gap-3">
+                                <div className="w-[230px] lg:w-[170px] text-xl font-bold flex flex-col justify-center">Order Status:</div>
+                                <div className="w-full">
+                                    {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>{transaction.status.toUpperCase()}</div> : null}
+                                    {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
+                                    {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
+                                        null
+                                    }
+                                </div>
+                            </div>
+                            {transaction.payment_proof == null && transaction.status !== "canceled" ? <div>
+                                <div className="border-4 border-green-700 h-[200px] grid place-content-center">
+                                    <div className="grid place-content-center">TIME REMAINING:</div>
+                                    <div className="text-6xl grid place-content-center">{formatTime(timeRemaining)}</div>
+                                    <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
+                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./bca_logo.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                    <div className="grid place-content-center"></div>
+                                </div>
+                                <input
+                                    type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={payment} onChange={uploadPayment}
+                                />
+                                <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div></div>
+                                : null
+                            }
+                            <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>
+                            <div className="">
+                                <div className="text-xl font-bold mb-3">Item List:</div>
+                                <div className="flex flex-col gap-3 h-[360px] overflow-y-auto">
+                                    {detail ? detail.map((value, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <CheckoutComponent
+                                                    name={value.name}
+                                                    weight={value.weight}
+                                                    price={value.price}
+                                                    final_price={value.price}
+                                                    discount_id={value.discount_id}
+                                                    quantity={value.quantity}
+                                                    subtotal={value.subtotal}
+                                                    image={value.product.image}
+                                                />
+                                            </div>
+                                        )
+                                    }) : null}
+                                </div>
+                            </div>
 
-                <div></div>
-
+                        </div>
+                    </div>
+                    <OrderDetailsSection transaction={transaction}
+                        fetchData={getDetailOrder}
+                        id={id} />
+                </div>
             </div>
 
             <Footer />
@@ -20,6 +159,4 @@ const UserOrderDetail = () => {
         </div>
     )
 }
-
-
 export default UserOrderDetail

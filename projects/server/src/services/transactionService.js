@@ -18,7 +18,7 @@ module.exports = {
         }
     },
 
-    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId }) => {
+    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId, total_weight }) => {
         try {
             const invoice = Date.now() + Math.round(Math.random() * 1E9);
             const transaction = await db.transactions.create({
@@ -31,7 +31,8 @@ module.exports = {
                 address,
                 user_id: userId,
                 store_branch_id: branchId,
-                status: "pending"
+                status: "pending",
+                total_weight: total_weight
             });
 
             const inMyCart = await db.cart.findAll({
@@ -52,7 +53,8 @@ module.exports = {
                     subtotal: product.subtotal,
                     transaction_id: transaction.id,
                     discount_id: product.product.discount_id,
-                    discount_value: product.product.discount_value
+                    discount_value: product.product.discount_value,
+                    weight: product.product.weight
                 });
             }
 

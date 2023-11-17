@@ -27,6 +27,8 @@ import AdminDashboardPage from "../pages/admin/adminDashboard";
 import ProductStockHistoryPage from "../pages/admin/productStockHistory";
 import ManageProductDiscountPage from "../pages/admin/manageDiscountPage";
 import UserOrderDetail from "../pages/user/orderDetailPage";
+import UserOrderList from "../pages/user/orderListPage";
+import Navbar from "../components/navbarUser";
 
 import Protected from "./protected";
 
@@ -111,8 +113,14 @@ const routes = [
     <Route path='/checkout' element={
         <CheckoutPage />
     } />,
+    <Route path='/order-list' element={
+        <UserOrderList />
+    } />,
     <Route path='/order/:id' element={
-        <UserOrderDetail />
+        <Protected userPage={false}>
+            <Navbar />
+            <UserOrderDetail />
+        </Protected>
     } />,
     <Route path='/admin/order-list' element={
         <SuperOrderList />

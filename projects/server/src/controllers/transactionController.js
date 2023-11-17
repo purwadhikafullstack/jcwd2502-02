@@ -35,39 +35,56 @@ module.exports = {
                 include: [
                     {
                         model: db.transaction_detail,
-                        required: true
+                        required: true,
+                        include: [{
+                            model: db.product
+                        }]
                     },
                 ],
                 where: { user_id: id, id: transactionId }
             });
 
-            // Extract product IDs from transaction details
-            const productIds = getOrder.transaction_details.map(detail => detail.id_product);
+            responseHandler(res, "Get Order Success", getOrder);
+        } catch (error) {
+            next(error);
+        }
+    },
 
-            // Fetch product details based on the extracted IDs
-            const productDetails = await db.product.findAll({
-                where: { id: productIds }
+    getAllUserOrders: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+            console.log(id);
+            const { invoice, status, createdAt, page, branchId } = req.query;
+            const limit = 6;  // Number of records per page
+
+            // Build the where clause based on the provided filters
+            const whereClause = {};
+            if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
+            if (status) whereClause.status = status;
+            if (branchId) whereClause.store_branch_id = branchId;
+            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
+
+            // Calculate the total number of records
+            const totalRecords = await db.transactions.count({ where: { ...whereClause, user_id: id } });
+
+            // Calculate the maximum number of pages
+            const maxPages = Math.ceil(totalRecords / limit);
+
+            // Use limit and offset to paginate the actual data
+            const offset = (page - 1) * limit;
+            const orders = await db.transactions.findAll({
+                where: { ...whereClause, user_id: id },
+                limit,
+                offset,
+                order: [['createdAt', 'DESC']]
             });
-
-            // Map product details to transaction details
-            const updatedTransactionDetails = getOrder.transaction_details.map(detail => {
-                const productDetail = productDetails.find(product => product.id === detail.id_product);
-                return {
-                    ...detail,
-                    product_detail: productDetail // Add product details to each transaction detail
-                };
-            });
-
-
-            // Update the getOrder object with the enhanced transaction details
-            getOrder.transaction_details = updatedTransactionDetails;
 
             const result = res.json({
-                getOrder
+                orders,
+                maxPages,
             });
 
-
-            // responseHandler(res, "Get Order Success", getOrder);
+            // responseHandler(res, "Get Orders Success", result);
         } catch (error) {
             next(error);
         }
@@ -111,5 +128,36 @@ module.exports = {
             next(error);
         }
     },
+
+    uploadPayment: async (req, res, next) => {
+        try {
+            const { transactionId } = req.params;
+            const upload = await db.transactions.update({
+                payment_proof: req.files.image[0].filename,
+                status: "waiting for payment approval"
+            }, { where: { id: transactionId } })
+            const transaction = await db.transactions.findOne({
+                where: { id: transactionId }
+            })
+            responseHandler(res, "Upload Payment Proof Success", transaction);
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    cancelOrder: async (req, res, next) => {
+        try {
+            const { transactionId } = req.params;
+            const upload = await db.transactions.update({
+                status: "canceled"
+            }, { where: { id: transactionId } })
+            const transaction = await db.transactions.findOne({
+                where: { id: transactionId }
+            })
+            responseHandler(res, "Upload Payment Proof Success", transaction);
+        } catch (error) {
+            next(error)
+        }
+    }
 
 }
