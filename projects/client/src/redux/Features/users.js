@@ -10,6 +10,7 @@ const initialState = {
     profile_picture: "",
     role: "",
     email: "",
+    store_branch_id: ""
 }
 
 export const userSlice = createSlice({
@@ -23,7 +24,6 @@ export const userSlice = createSlice({
             localStorage.removeItem("accessToken")
             return state = initialState;
         },
-
         setId: (state, { payload }) => {
             state.id = payload;
         },
@@ -38,6 +38,9 @@ export const userSlice = createSlice({
         },
         setEmail: (state, { payload }) => {
             state.email = payload;
+        },
+        setStore_Branch_Id: (state, { payload }) => {
+            state.store_branch_id = payload;
         }
 
     }, extraReducers: (builder) => {
@@ -58,7 +61,7 @@ export const login2 = createAsyncThunk("auth", async (account, thunkApi) => {
         localStorage.setItem("accessToken", data.data.jwt)
         return data.data;
     }).catch((err) => {
-        console.log(err);
+        // console.log(err);
         toast.error(err.response.data.message);
     })
 })
@@ -89,24 +92,10 @@ export const login2 = createAsyncThunk("auth", async (account, thunkApi) => {
 export const onCheckIsLogin = () => async (dispatch) => {
     try {
         const accessToken = localStorage.getItem("accessToken");
-        console.log("oncheck", accessToken);
+        // console.log("oncheck", accessToken);
         const { data } = await api().get(`/users/fetch-user`)
-        console.log("check", data.data);
-
+        // console.log("check", data.data);
         dispatch(login(data.data))
-
-        // try {
-        //     // dispatch(setId(data.data.id));
-        //     // dispatch(setUsername(data.data.username));
-        //     // dispatch(setProfile_Picture(data.data.profile_picture));
-        //     // dispatch(setRole(data.data.role));
-        //     // dispatch(setEmail(data.data.email));
-
-        //     console.log(data.data);
-        // } catch (error) {
-
-        //     console.log(error);
-        // }
     } catch (error) {
         console.log("ini error", error.response.data.message);
     }

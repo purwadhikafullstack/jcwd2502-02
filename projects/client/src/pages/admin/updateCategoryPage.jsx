@@ -7,6 +7,7 @@ import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import toast, { Toaster } from "react-hot-toast";
 import { AiFillEdit } from "react-icons/ai";
+import ModalEditCategory from "../../components/modalEditCategory"
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef()
     const [category, setCategory] = useState([]);
@@ -14,18 +15,24 @@ const UpdateProductsCategoryPage = () => {
     const [inputCat, setInputCat] = useState("");
     const [modal, setModal] = useState(false);
     const api = api1();
+    const pageTopRef = useRef(null);
+    const [searchQuery, setSearchQuery] = useState("");
+    const [filteredCategory, setFilteredCategory] = useState([]);
     const onGetCategory = async () => {
         try {
-            const category = await api.get(`/products/category`);
+            const category = await api.get(`category/all`);
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);
         }
     };
+    const handleSearchInputChange = (event) => {
+        setSearchQuery(event.target.value);
+    };
     const handleEditCategory = async (catId) => {
         try {
             setCatId(catId);
-            const res = await api.get(`products/onecategory/${catId}`);
+            const res = await api.get(`category/onecategory/${catId}`);
             setInputCat(res.data.data);
         } catch (error) {
             console.log(error);
@@ -33,11 +40,15 @@ const UpdateProductsCategoryPage = () => {
     };
     const handleSaveCat = async () => {
         try {
-            const res = await api.patch(`products/savecategory`, {
+            const res = await api.patch(`category/savecategory`, {
                 inputCat,
                 id: catId,
             });
             setModal(!modal);
+            if (pageTopRef.current) {
+                pageTopRef.current.scrollIntoView({ behavior: "smooth" });
+            }
+            setSearchQuery("");
             onGetCategory();
         } catch (error) {
             console.log(error);
@@ -61,7 +72,7 @@ const UpdateProductsCategoryPage = () => {
                 console.log(file);
                 const formData = new FormData();
                 formData.append('image', file);
-                const response = await api.patch(`/products/editimage/${catId}`, formData)
+                const response = await api.patch(`category/editimage/${catId}`, formData)
                 console.log(response.data.data);
                 toast.success("Category Image Updated")
                 onGetCategory();
@@ -72,7 +83,7 @@ const UpdateProductsCategoryPage = () => {
     };
     const onDeleteCategory = async (catId) => {
         try {
-            const deleteCategory = await api.patch(`/products/deletecategory/${catId}`)
+            const deleteCategory = await api.patch(`category/deletecategory/${catId}`)
             console.log(deleteCategory);
             toast.success("Delete Category Success")
             onGetCategory();
@@ -80,13 +91,20 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
-    const debouncedSubmit = debounce((value) => {
+    const debouncedSetFilteredCategory = debounce((filtered) => {
+        setFilteredCategory(filtered);
     }, 1000);
     useEffect(() => {
         onGetCategory();
     }, []);
+    useEffect(() => {
+        const filtered = category.filter((cat) =>
+            cat.name.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+        debouncedSetFilteredCategory(filtered);
+    }, [searchQuery, category]);
     return (
-        <div className="">
+        <div ref={pageTopRef} className="">
             <Toaster />
             <Navbar />
             <div className="">
@@ -98,6 +116,15 @@ const UpdateProductsCategoryPage = () => {
                 <div className="grid place-content-center md:place-content-start md:ml-20 lg:ml-32">
                     <ModalNewCategory />
                 </div>
+                <div className="ml-32 mt-5 ">
+                    <input
+                        type="text"
+                        placeholder="Search categories"
+                        className="input w-1/4 bg-gradient-to-r from-yellow-300 to-green-600"
+                        value={searchQuery}
+                        onChange={handleSearchInputChange}
+                    />
+                </div>
                 <div className="overflow-x-auto px-5 my-8 md:px-20 lg:px-32">
                     <table className="table">
                         <thead>
@@ -107,7 +134,7 @@ const UpdateProductsCategoryPage = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {category.map((value, index) => {
+                            {filteredCategory.map((value, index) => {
                                 return (
                                     <tr key={index} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
                                         <td>
@@ -142,24 +169,8 @@ const UpdateProductsCategoryPage = () => {
                         </tbody>
                     </table>
                 </div>
-
             </div>
-            {modal ? (<div className="fixed backdrop-blur-md bg-black/30 h-screen w-full z-50 top-0 right-0 duration-600 ease-in"></div>) : ("")}
-            <div className={modal ? `fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] md:w-[50%] lg:w-[30%] p-10 rounded-xl bg-gradient-to-l from-yellow-300 to-green-600` : `hidden`}>
-                <h3 className="font-bold text-4xl text-white">Edit Category</h3>
-                <div className="flex flex-col gap-5 mt-5">
-                    <div>
-                        <div className="text-white pb-2"> Category Name</div>
-                        <input className="input w-full" type="text" value={inputCat} onChange={(e) => setInputCat(e.target.value)} />
-                    </div>
-                </div>
-                <div className="modal-action">
-                    <button className="btn bg-red-600 text-white border-4 border-black hover:bg-red-600 hover:border-black" onClick={() => setModal(!modal)}>Cancel</button>
-                    <form method="dialog" onSubmit={handleSaveCat}>
-                        <button className="btn bg-yellow-300 text-black border-4 border-green-600 hover:bg-yellow-300 hover:border-green-600">Submit</button>
-                    </form>
-                </div>
-            </div>
+            <ModalEditCategory modal={modal} setModal={setModal} inputCat={inputCat} setInputCat={setInputCat} handleSaveCat={handleSaveCat} />
             <Footer />
         </div>
     )

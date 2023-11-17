@@ -60,3 +60,17 @@
 
 
 @media only screen and (min-width: 980px) {}
+
+
+.slick-dots li button {
+    width: 60px;
+    height: 60px;
+}
+
+/* Media query for larger screens */
+@media only screen and (min-width: 768px) {
+    .slick-dots li button {
+        width: 30px;
+        height: 30px;
+    }
+}

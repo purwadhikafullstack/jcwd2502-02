@@ -8,11 +8,11 @@ import { api } from "../../api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
 import toast, { Toaster } from "react-hot-toast";
-
+import { getMainAddress } from "../../redux/Features/branch";
 const ProfilePage = () => {
     const apiInstance = api()
     const [data, setData] = useState('')
-
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
     const inputFileRef = useRef(null);
 
     const user = useSelector(state => (state.users))
@@ -68,17 +68,19 @@ const ProfilePage = () => {
         console.log(user);
     }, [user])
 
+    useEffect(() => {
+        dispatch(getMainAddress());
+    }, []);
+
     return (
         <div>
             <Toaster />
             <Navbar />
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
-                <div className="flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile <div className="grid place-content-center">
-                </div>
-
+                <div className="flex text-5xl font-bold gap-2 py-5 pl-5 text-green-800">My Profile
                 </div>
                 <div className="grid md:grid-cols-3 md:mb-20 ">
-                    <div className="bg-gradient-to-r from-green-700 from-90% via-emerald-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
+                    <div className="bg-gradient-to-r from-green-700 from-90% via-green-500 via-5% to-yellow-300 to-5% md:rounded-l-3xl md:shadow-xl">
                         <div className="grid place-content-center py-10 ">
                             {/* <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full drawer-button" src={process.env.REACT_APP_URL + `${data?.profile_picture
                                 }`} alt="" /> */}
@@ -96,12 +98,11 @@ const ProfilePage = () => {
 
                         </div>
                         <div className=" mb-5 p-5 md:p-5 text-white md:flex md:flex-col md:justify-center">
-                            <div>
+                            <div className="w-[90%] flex flex-col gap-3 mb-3">
                                 <div className="font-bold text-xl">Main Shipping Address</div>
-                                <div>Rumah Bayu Krisna</div>
-                                <div>Melia Grove Graha Raya Blok GMB/22</div>
-                                <div>Tangerang Selatan</div>
-                                <div>Banten</div>
+                                <div>{mainAddress?.name}</div>
+                                <div>{mainAddress?.address}</div>
+                                <div>{mainAddress?.city?.name} - {mainAddress?.city?.province?.name}</div>
                             </div>
                             <div className="my-3">
                                 <div className="font-bold text-xl">Phone Number</div>
@@ -109,10 +110,12 @@ const ProfilePage = () => {
                             </div>
                             <div className="my-3">
                                 <div className="font-bold text-xl">Referral Code</div>
-                                <div>082112436747</div>
+                                <div>xxx</div>
                             </div>
                             <div className=" mt-5 md:mt-10 grid gap-2 text-lg">
-                                <div className="hover:underline ease-in duration-200">Manage Address</div>
+                                <Link to={'/manage-address'}>
+                                    <div className="hover:underline ease-in duration-200">Manage Address</div>
+                                </Link>
                                 <Link to={'/profile-password'}>
                                     <div className="hover:underline ease-in duration-200">Change Password</div>
                                 </Link>

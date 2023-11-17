@@ -4,20 +4,21 @@ const {
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class user_address extends Model {
-    static associate({ user, province }) {
+    static associate({ user, city }) {
       this.belongsTo(user, { foreignKey: 'user_id' })
-      this.belongsTo(province, { foreignKey: 'province_id' })
+      this.belongsTo(city, { foreignKey: 'city_id' })
     }
   }
   user_address.init({
     address: DataTypes.STRING,
     name: DataTypes.STRING,
     isPrimary: DataTypes.ENUM('true', 'false'),
-    coordinate: DataTypes.STRING,
-    longitude: DataTypes.FLOAT,
-    latitude: DataTypes.FLOAT,
-    city_name: DataTypes.STRING,
-    province_name: DataTypes.STRING,
+    longitude: DataTypes.DECIMAL(11, 8),
+    latitude: DataTypes.DECIMAL(10, 8),
+    isDeleted: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
@@ -28,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   }, {
     sequelize,
-    modelName: 'user_address',
+    modelName: 'user_address', paranoid: true
   });
   return user_address;
 };

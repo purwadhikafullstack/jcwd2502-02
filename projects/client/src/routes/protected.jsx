@@ -18,17 +18,16 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
         if (user.role && guestPage) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/')
-
+        // nendang customer dari page admin
         if (user && user.role == "customer" && adminPage) return setTimeout(() => {
             setLoading(false)
             console.log(`protected.jsx: user access denied`);
         }, 1500), navigate('/')
-
+        // nendang tuyul dari page customer
         if (user && user.role !== "customer" && userPage) return setTimeout(() => {
             setLoading(false)
             console.log(`protected.jsx: user access denied`);
         }, 1500), navigate('/')
-
         setTimeout(() => {
             setLoading(false)
         }, 3000)
@@ -47,7 +46,7 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
 
                         <div className="">
                             <div className="grid place-content-center">
-                                <img src="./buyfresh_logo.png" alt="app_logo" className="h-[250px] w-[250px] md:h-[350px] md:w-[350px]" />
+                                <img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[250px] w-[250px] md:h-[350px] md:w-[350px]" />
                             </div>
                             <div className="grid place-content-center">
                                 <span className="loading loading-dots w-[50px] text-green-800"></span>

@@ -1,6 +1,6 @@
 const db = require("./../models")
 const responseHandler = require('../utils/responseHandler');
-const { cartUserId, addToCart, itemDelete } = require('../services/cartService')
+const { cartUserId, addToCart, itemDelete, deleteCartItem } = require('../services/cartService')
 
 module.exports = {
     getCart: async (req, res, next) => {
@@ -13,8 +13,8 @@ module.exports = {
     },
     addCart: async (req, res, next) => {
         try {
-            const updatedCart = await addToCart(req.dataToken, req.params);
-            responseHandler(res, "Get Cart Success", updatedCart)
+            const updatedCart = await addToCart(req.dataToken, req.query);
+            responseHandler(res, "Item added to Cart", updatedCart.message, null, updatedCart.isError)
         } catch (error) {
             next(error)
         }
@@ -22,7 +22,17 @@ module.exports = {
     deleteItem: async (req, res, next) => {
         try {
             const updatedCart = await itemDelete(req.dataToken, req.params);
-            responseHandler(res, "Get Cart Success", updatedCart)
+            responseHandler(res, "Delete Item Success", updatedCart)
+        } catch (error) {
+            next(error)
+        }
+    },
+    deleteCartbyItem: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken
+            const { productId } = req.params
+            const result = await deleteCartItem(id, productId);
+            responseHandler(res, "Delete Item(s) Success", result)
         } catch (error) {
             next(error)
         }

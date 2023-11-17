@@ -11,7 +11,7 @@ const ModalNewCategory = () => {
     const api = api1()
     const onGetCategory = async () => {
         try {
-            const category = await api.get(`/products/category`);
+            const category = await api.get(`/category/all`);
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);
@@ -42,7 +42,7 @@ const ModalNewCategory = () => {
                 toast.error("Please Fill All Data")
             } else {
                 console.log(inputs);
-                const data = await api.post(`products/addcategory`, fd)
+                const data = await api.post(`category/addcategory`, fd)
                 toast.success('Create Category Success')
                 console.log(data);
                 setTimeout(() => {
@@ -59,9 +59,6 @@ const ModalNewCategory = () => {
     return (
         <div>
             <Button text={"Add Category"} style={"w-[300px]"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
-
-            {/* <Button style={"rounded-full w-[50px] h-[50px] text-2xl "} text={"+"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button> */}
-
 
             <dialog id="my_modal_3" className="modal backdrop-blur-md">
                 <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[350px] ">

@@ -14,7 +14,7 @@ import { AiFillEdit } from "react-icons/ai";
 
 const UpdatePasswordPage = () => {
     const navigate = useNavigate()
-    const apiInstance = api()   
+    const apiInstance = api()
 
     const formik = useFormik({
         initialValues: {
@@ -24,18 +24,17 @@ const UpdatePasswordPage = () => {
         },
         onSubmit: async (values) => {
             try {
-                // const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
-                // toast.success(updateUserData.data.message);
-                alert('Jalan nih')
+                const updatePassword = await api().patch('/users/update-password', null, { headers: { "oldpassword": formik.values.oldPassword, "newpassword": formik.values.newPassword, "confirmpassword": formik.values.confirmPassword } })
+                toast.success('Password has been updated')
             } catch (error) {
-                console.log(error);
+                toast.error(error.response.data.message);
             }
-            
+
         },
         validationSchema: yup.object().shape({
-            oldPassword: yup.string().required(),
-            newPassword: yup.string().required(),
-            confirmPassword: yup.string().required().oneOf([yup.ref('newPassword')], `Password must match`)
+            oldPassword: yup.string().required().min(6, 'Must be 6 characters atleast'),
+            newPassword: yup.string().required().min(6, 'Must be 6 characters atleast'),
+            confirmPassword: yup.string().required().min(6, 'Must be 6 characters atleast').oneOf([yup.ref('newPassword')], `Password must match`)
         })
     });
     const handleForm = (event) => {
@@ -52,37 +51,44 @@ const UpdatePasswordPage = () => {
     return (
         <div>
             <Toaster />
-            <Navbar />
-            <div className="mt-[70px]">
-                <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">   
-                    <div className="grid place-content-center"><AiFillEdit /></div>
-                        Update Password 
+            <div className="grid place-content-center h-screen bg-gradient-to-b from-green-700 to-yellow-300">
+                {/* <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-2xl font-bold gap-2 py-5 text-green-800">
+
+                    Update Password
+                </div> */}
+                <div className="">
+                    <form onSubmit={(formik.handleSubmit)}>
+                        <div className="mx-10 md:mx-36 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700">
+
+                            <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Password
+                            </div>
+
+                            <div className="flex flex-col gap-2">
+                                <div className="text-white font-bold text-sm">Old Password</div>
+                                <input type="password" onChange={formik.handleChange} name="oldPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.oldPassword} />
+                                <div className=" pl-3 text-red-600">{formik.errors.oldPassword}</div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="text-white font-bold text-sm">New Password</div>
+                                <input type="password" onChange={formik.handleChange} name="newPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.newPassword} />
+                                <div className="pl-3 text-red-600">{formik.errors.newPassword}</div>
+                            </div>
+                            <div className="flex flex-col gap-2">
+                                <div className="text-white font-bold text-sm">Confirm Password</div>
+                                <input type="password" onChange={formik.handleChange} name="confirmPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.confirmPassword} />
+                                <div className="pl-3 text-red-600">{formik.errors.confirmPassword}</div>
+                            </div>
+
+                            <div className="grid place-content-center mt-5">
+                                <Button type="submit" text={"Submit Changes"} />
+                            </div>
+
+                        </div>
+
+                    </form>
                 </div>
-                <form onSubmit={(formik.handleSubmit)}>
-                    <div className=" mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
-                    <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">Old Password</div>
-                        <input type="password" onChange={formik.handleChange} name="oldPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.oldPassword} />
-                        <div className=" pl-3 text-red-600">{formik.errors.oldPassword}</div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">New Password</div>
-                        <input type="password" onChange={formik.handleChange} name="newPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.newPassword} />
-                        <div className="pl-3 text-red-600">{formik.errors.newPassword}</div>
-                    </div>
-                    <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">Confirm Password</div>
-                        <input type="password" onChange={formik.handleChange} name="confirmPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.confirmPassword} />
-                        <div className="pl-3 text-red-600">{formik.errors.confirmPassword}</div>
-                    </div>
-                </div>
-                <div className="grid place-content-center m-10">
-                    <Button type="submit" text={"Submit Changes"} />
-                </div>
-            </form>
             </div>
-            <Footer />
-        </div>
+        </div >
     )
-}   
+}
 export default UpdatePasswordPage

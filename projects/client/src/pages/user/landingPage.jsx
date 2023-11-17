@@ -14,20 +14,21 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 import { api1 } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
+import { nearestBranch } from "../../redux/Features/branch"
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
     const [products, setProducts] = useState("")
     const [branchName, setBranchName] = useState()
-    const [currentLocation, setCurrentLocation] = useState(null);
-    const [nearestLocation, setNearestLocation] = useState(null);
     const [category, setCategory] = useState([]);
     const dispatch = useDispatch();
     const api = api1();
+    const closestBranch = useSelector((state) => state.branch.closestBranch);
+    console.log(closestBranch.id);
+
     const onGetCategory = async () => {
         try {
-            const category = await api.get(`/products/category`);
-            // console.log(category.data.data);
+            const category = await api.get(`/category/all`);
             setCategory(category.data.data);
         } catch (error) {
             console.log(error);
@@ -41,43 +42,17 @@ const LandingPage = () => {
             console.log(error);
         }
     }
-    const calculation = () => {
-        let nearest = null;
-        navigator.geolocation.getCurrentPosition((position) => {
-            const userLatitude = position.coords.latitude;
-            const userLongitude = position.coords.longitude;
-            setCurrentLocation({ latitude: userLatitude, longitude: userLongitude });
-            // Rumus untuk mencari nearest location
-            let minDistance = Infinity;
-            branchLoc.forEach((location, idx) => {
-                const lat1 = userLatitude;
-                const lon1 = userLongitude;
-                const lat2 = location.latitude;
-                const lon2 = location.longitude;
-                const R = 6371; // Earth's radius in km
-                const dLat = (lat2 - lat1) * (Math.PI / 180);
-                const dLon = (lon2 - lon1) * (Math.PI / 180);
-                const a =
-                    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-                const distance = R * c;
-                // console.log(distance, minDistance, idx);
-                if (distance < minDistance) {
-                    minDistance = distance;
-                    nearest = location;
-                }
-            });
-            console.log(nearest.name);
-            setBranchName(nearest.name)
-            nearestBranch(nearest.id)
-        });
-    }
-    const nearestBranch = async (storeId) => {
+
+    const nearestBranch = async () => {
         try {
-            const branch = await api.get(`/branch/nearest/${storeId}`)
-            console.log(branch.data.data, "ini data branch");
-            setProducts(branch.data.data)
+            if (closestBranch.id === undefined) {
+                const branch = await api.get(`/branch/recommend?branchId=`)
+                console.log(branch);
+                setProducts(branch.data.products)
+            } else {
+                const branch = await api.get(`/branch/recommend?branchId=${closestBranch.id}`)
+                setProducts(branch.data.products)
+            }
         } catch (error) {
             console.log(error);
         }
@@ -85,31 +60,20 @@ const LandingPage = () => {
     useEffect(() => {
         onGetCategory();
         getBranch()
-        // Check if user is logged in
-        // console.log('checking if logged in');
-        // dispatch(onCheckIsLogin())
-    }, []);
-    useEffect(() => {
-        if (branchLoc.length) calculation()
-        console.log(branchLoc);
-    }, [branchLoc])
-
-    // useEffect(() => {
-    //     console.log("current", currentLocation);
-    //     console.log("nearest", nearestLocation);
-    // }, [nearestLocation])
+        nearestBranch()
+    }, [closestBranch]);
 
     return (
         <div className="">
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">
-                <div className="flex justify-center px-3 md:justify-start md:ml-20 lg:ml-48 py-5">
+                <div className="flex justify-center mx-5 md:justify-end md:mr-20 lg:mr-48 py-5">
                     <ModalAddress />
                 </div>
                 <Jumbotron />
                 <div className="">
-                    <div className="h-[190px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
+                    <div className="h-[180px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600  border-yellow-300">
                         {category.map((value, index) => {
                             return (
                                 <div key={index} className="">
@@ -117,14 +81,15 @@ const LandingPage = () => {
                                         <CategoryCard name={value.name} image={value.image} />
                                     </Link>
                                 </div>
-
                             )
                         })}
                     </div>
                 </div>
 
-                <div className="mb-10">
-                    <RecommendProducts data={products} branchName={branchName} />
+                <div className="mt-12 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 m-5 md:mx-24 lg:mx-48 rounded-full"></div>
+
+                <div className="pb-10 mt-5 md:mt-10">
+                    <RecommendProducts data={products} branchName={closestBranch.name ? closestBranch.name : ""} />
                 </div>
             </div>
             <Footer />

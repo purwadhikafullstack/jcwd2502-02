@@ -1,0 +1,55 @@
+.swal2-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.4);
+}
+
+/* Style the SweetAlert modal */
+.swal2-popup {
+    width: 400px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Style the SweetAlert title */
+.swal2-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+/* Style the SweetAlert text message */
+.swal2-content {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+
+/* Style the SweetAlert buttons */
+.swal2-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* Style the Confirm button */
+.swal2-confirm {
+    padding: 10px 20px;
+    background-color: #31b50a;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+/* Style the Cancel button */
+.swal2-cancel {
+    padding: 10px 20px;
+    background-color: #FF5722;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+}

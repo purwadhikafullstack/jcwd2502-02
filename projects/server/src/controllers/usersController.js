@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -24,6 +24,7 @@ module.exports = {
                     role: account.data.role,
                     jwt: account.data.jwt,
                     profile_picture: account.data.profile_picture,
+                    store_branch_id: account.data.store_branch_id
                 }
             })
         } catch (error) {
@@ -108,8 +109,8 @@ module.exports = {
             }, { where: { id } }
             )
             await db.used_token.update(
-                {isValid: "false"},
-                {where: {token}}
+                { isValid: "false" },
+                { where: { token } }
             )
             res.status(201).send({
                 isError: false,
@@ -121,25 +122,24 @@ module.exports = {
     },
 
     updatePassword: async (req, res, next) => {
-        // Di execute dari profile page
         try {
-            const id = (req.dataToken.id);
+            const { id } = req.dataToken;
             const data = req.headers;
             const account = await db.user.findOne({
                 where: { id }
             });
             const hashMatch = await match(data.oldpassword, account.dataValues.password)
-            if (!hashMatch) throw { message: "The old password given is incorrect" }
+            const hashMatchNew = await match(data.newpassword, account.dataValues.password)
+            if (!hashMatch) throw { message: "The old password is incorrect" }
+            if(hashMatchNew) throw { message: "Cannot use the same password"}
             const hashedPassword = await hash(data.newpassword)
             const updatedUser = await db.user.update(
                 { password: hashedPassword },
                 { where: { id } }
             );
-            if (updatedUser) {
-                respondHandler(res, {
-                    message: "Password changed successfully"
-                })
-            }
+            respondHandler(res, {
+                message: "Password changed successfully"
+            })
         } catch (error) {
             next(error)
         }
@@ -159,7 +159,6 @@ module.exports = {
 
     getUser: async (req, res, next) => {
         try {
-            console.log(`>>>>>>>`);
             const { id } = req.dataToken;
             const account = await findId(id)
             respondHandler(res, {
@@ -197,9 +196,8 @@ module.exports = {
             // 2. Ambil path image lama
             const userId = await findId(id)
             // 3. Update new path on table
-            console.log(userId.profile_picture);
-            console.log(req.files.image[0]);
             const oldImage = userId.profile_picture
+            const image = await db.user.findOne({ where: { id } })
             const findImage = await db.user.update({
                 profile_picture: req.files.image[0].filename
             }, {
@@ -207,11 +205,14 @@ module.exports = {
                     id: id
                 }
             })
-            // // 4. Delete image lama
-            deleteFiles({
-                image: [oldImage
-                ]
-            })
+            if (oldImage !== "user.jpg") {
+                // // 4. Delete image lama
+                deleteFiles({
+                    image: [oldImage
+                    ]
+                })
+            }
+
             // 5. Kirim response
             const newUser = await findId(id)
 
@@ -231,13 +232,13 @@ module.exports = {
         try {
             console.log(`sampe endpoint cek token`);
             console.log(req.headers);
-            const {authorization} = req.headers;
+            const { authorization } = req.headers;
             const token = authorization.split(" ")[1]
             const validToken = await db.used_token.findOne({
-                where: {token: token}
+                where: { token: token }
             })
-            if (validToken.dataValues.isValid== "false")  
-            throw new Error('invalid token')
+            if (validToken.dataValues.isValid == "false")
+                throw new Error('invalid token')
             respondHandler(res, {
                 message: "token is still valid",
                 data: validToken
@@ -246,6 +247,87 @@ module.exports = {
             console.log('>>>>');
             console.log(error);
             next(error)
+        }
+    },
+
+    registerBranchAdmin: async (req, res, next) => {
+        try {
+            const newUser = await createBranchManager(req)
+            respondHandler(res, {
+                message: newUser.message
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    getAllBranchAdmin: async (req, res, next) => {
+        try {
+            const branchAdmins = await db.user.findAll({
+                attributes: ["username", "email", "phone_number", "profile_picture", "isVerified", "store_branch_id", "birthdate"],
+                where: { role: "admin" },
+                include: [
+                    {
+                        model: db.store_branch,
+                        attributes: ["name"],
+                        required: true
+                    }
+                ],
+                order: [["updatedAt", "DESC"]]
+            })
+            respondHandler(res, {
+                message: "get admins",
+                data: branchAdmins
+            })
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    filterBranchAdmin: async (req, res, next) => {
+        try {
+            const admins = await getFilteredAdmin(req);
+            respondHandler(res, {
+                isError: false,
+                message: "filtered admins fetched",
+                data: admins
+            })
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    deactivateAdmin: async (req, res, next) => {
+        try {
+            console.log(req.body);
+            const { email } = req.body;
+            const response = await db.user.findOne({
+                where: { email },
+            })
+            if (!response) throw { message: "User account was not found" };
+            const adminStatus = response.dataValues.isVerified;
+            console.log(`adminStatus: ${adminStatus}`);
+            if (adminStatus == 'verified') {
+                const deactivate = await db.user.update({ isVerified: 'unverified' }, { where: { email } })
+            } else if (adminStatus == 'unverified') {
+                const activate = await db.user.update({ isVerified: 'verified' }, { where: { email } })
+            }
+            respondHandler(res, {
+                message: "Admin status has been updated"
+            })
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    editAdmin: async (req, res, next) => {
+        try {
+            editBranchManager(req)
+            respondHandler(res, {
+                message: "Admin data has been updated"
+            })
+        } catch (error) {
+            next(error);
         }
     }
 }

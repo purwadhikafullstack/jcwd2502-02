@@ -7,11 +7,12 @@ import { FaLocationDot } from "react-icons/fa6";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addToCartAsync } from "../redux/Features/cart";
+import { Link } from "react-router-dom";
 
 const RecommendProducts = (props) => {
     const dispatch = useDispatch()
     const products = props.data
-    // console.log(products);
+    console.log(products);
     const settings = {
         dots: false,
         infinite: true,
@@ -44,13 +45,16 @@ const RecommendProducts = (props) => {
     };
 
     return (
-        <div className="w-[auto] px-5 md:px-20 lg:px-48 mt-16 ">
-            <div>
+        <div className="w-[auto] px-5 md:px-20 lg:px-48 ">
+            <div className="">
                 <div className="pb-5">
-                    <div className="text-4xl font-bold my-5">Only Made For You!</div>
+                    <div className="text-4xl font-bold my-5 ">Products Nearby!</div>
                     <div className="flex justify-between">
-                        <div className="flex gap-2"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
-                        <div className="text-green-600 hover:underline"> See More!</div>
+                        <div className="flex gap-2 text-lg"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
+                        <Link to={`/products?category=`}>
+                            <div className="text-green-600 hover:underline"> See More!</div>
+                        </Link>
+
                     </div>
                 </div>
                 <div className="">
@@ -58,14 +62,16 @@ const RecommendProducts = (props) => {
                         <Slider {...settings}>
                             {products
                                 ? products.map((value, index) => (
-                                    <div key={index} className="w-64 mx-4">
+                                    <div key={index} className="w-auto mx-1 md:mx-3">
                                         <ProductCard
-                                            name={value.product.name}
-                                            image={value.product.image}
-                                            description={value.product.description}
-                                            price={value.product.price}
-                                            stock={value.stock}
-                                            data={value.products_id}
+                                            name={value.name}
+                                            image={value.image}
+                                            description={value.description}
+                                            price={value.price}
+                                            final_price={value.final_price}
+                                            discount_id={value.discount_id}
+                                            stock={props.branchName ? (value?.product_stocks && value.product_stocks.length > 0 ? value.product_stocks[0].stock : "empty") : "empty"}
+                                            data={value.id}
                                         />
                                     </div>
                                 ))

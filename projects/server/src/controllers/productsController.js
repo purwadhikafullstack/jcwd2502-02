@@ -1,23 +1,27 @@
 const db = require("./../models")
 const { deleteFiles } = require('./../helper/deleteFiles');
 const responseHandler = require("./../utils/responseHandler")
-const { getAllProductsService, deleteCategoryService } = require("./../services/productsService");
+const { getAllProductsService } = require("./../services/productsService");
+const { getAllProductsAndCategoryNameService } = require("./../services/productsService");
 const { getAllProductsService2 } = require("./../services/productsService");
-const { getCategoryService } = require("./../services/productsService");
 const { getAllProductsByCatService } = require("./../services/productsService");
 const { getProductsByCategoryService } = require("./../services/productsService");
 const { getAllProductsBySearchService } = require("./../services/productsService");
 const { getAllProductsFilteredService } = require("./../services/productsService");
-const { editCategoryService1 } = require("./../services/productsService");
-const { editCategoryService2 } = require("./../services/productsService");
-const { createCategoryService } = require("./../services/productsService");
-const { getOneCategoryService } = require("./../services/productsService");
-const { saveEditCategoryService } = require("./../services/productsService");
-const { updateCategoryImageService } = require("./../services/productsService");
+const { getOneProductService } = require("./../services/productsService");
+const { createProductService } = require("./../services/productsService");
+const { deleteProductService } = require("./../services/productsService");
+const { updateProductImageService } = require("./../services/productsService");
+const { saveEditProductService } = require("./../services/productsService");
+const { getProductStockService } = require("./../services/productsService");
+const { getAllProductStockService } = require("./../services/productsService");
+const { getAllProductBranchStockService } = require("./../services/productsService");
+const { updateProductStockService } = require("./../services/productsService");
+const { reduceProductStockService } = require("./../services/productsService");
+const { getDiscountService } = require("./../services/productsService");
+const { updateProductDiscountService } = require("./../services/productsService");
 const { Sequelize } = require("sequelize");
-
 const Op = Sequelize.Op;
-
 module.exports = {
     getAllProducts: async (req, res, next) => {
         try {
@@ -27,19 +31,45 @@ module.exports = {
             next(error);
         }
     },
-    getCategory: async (req, res, next) => {
+    getAllProductRevised: async (req, res, next) => {
         try {
-            const category = await getCategoryService();
-            responseHandler(res, "Get All Category Success", category)
+            const { catId, searchQuery, sort, branchId, page } = req.query;
+            const limit = 8;
+            const like = Op.like;
+            const whereClause = { isDeleted: 0 };
+            if (catId) whereClause.product_categories_id = catId;
+            if (searchQuery) whereClause.name = { [like]: `%${searchQuery}%` };
+            const totalRecords = await db.product.count({ where: { ...whereClause } });
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            const order = sort === "ASC" ? [['name', 'ASC']] : [['name', 'DESC']];
+            const includeProductStock = branchId
+                ? [
+                    {
+                        model: db.product_stock,
+                        where: { store_branch_id: branchId },
+                    },
+                ]
+                : [];
+            const products = await db.product.findAll({
+                where: { ...whereClause },
+                include: includeProductStock,
+                order,
+                limit,
+                offset,
+            });
+            const result = res.json({
+                products,
+                maxPages,
+            });
         } catch (error) {
             next(error);
         }
     },
-    editCategory: async (req, res, next) => {
+    getAllProductsAndCategoryName: async (req, res, next) => {
         try {
-            const category = await editCategoryService1(req.body);
-            const categoryUpdate = await editCategoryService2(req.body);
-            responseHandler(res, "Edit Category Success", categoryUpdate)
+            const allProduct = await getAllProductsAndCategoryNameService(req.params);
+            responseHandler(res, "Get All Product Success", allProduct)
         } catch (error) {
             next(error);
         }
@@ -54,65 +84,140 @@ module.exports = {
     },
     getAllProductsByCat: async (req, res, next) => {
         try {
-            const { catId, searchQuery, sort } = req.query;
+            const { catId, searchQuery, sort, branchId } = req.query;
             const like = Op.like
             if (!catId && !searchQuery) {
-                const allProduct = await getAllProductsService2(sort);
+                const allProduct = await getAllProductsService2(sort, branchId);
                 responseHandler(res, "Get All Products Success 0", allProduct)
             } else if (!searchQuery) {
-                const allProductByCat = await getAllProductsByCatService(catId, sort);
+                const allProductByCat = await getAllProductsByCatService(catId, sort, branchId);
                 responseHandler(res, "Get All Product By Category Success 1", allProductByCat)
             } else if (!catId) {
-                const allProductBySearch = await getAllProductsBySearchService(like, searchQuery, sort)
+                const allProductBySearch = await getAllProductsBySearchService(like, searchQuery, sort, branchId)
                 responseHandler(res, "Get All Product By Category Success 2", allProductBySearch)
             } else {
-                const allProductFiltered = await getAllProductsFilteredService(like, catId, searchQuery, sort)
+                const allProductFiltered = await getAllProductsFilteredService(like, catId, searchQuery, sort, branchId)
                 responseHandler(res, "Get All Product By Category Success 3", allProductFiltered)
             }
         } catch (error) {
             next(error);
         }
     },
-    createCategory: async (req, res, next) => {
+    createProduct: async (req, res, next) => {
         try {
-            const addCategory = await createCategoryService(req.body.data, req.files.image[0].filename)
-            responseHandler(res, "Product Added", addCategory)
+            console.log("ini isi req.body.data= " + req.body.data);
+            console.log("ini isi req.files.image[0].filename= " + req.files.image[0].filename);
+            const newProduct = await createProductService(req.body.data, req.files.image[0].filename)
+            responseHandler(res, "Create Product Success", newProduct)
+        } catch (error) {
+            next(error)
+        }
+    },
+    deleteProduct: async (req, res, next) => {
+        try {
+            const newProduct = await deleteProductService(req.params)
+            responseHandler(res, "Delete Product Success", newProduct)
         } catch (error) {
             next(error);
         }
     },
-    getOneCategory: async (req, res, next) => {
+    updateProductImage: async (req, res, next) => {
         try {
-            const category = await getOneCategoryService(req.params)
-            if (!category) return responseHandler(res, "Category not found")
-            responseHandler(res, "Get Category success", category.dataValues.name)
-        } catch (error) {
-            next(error);
-        }
-    },
-    saveEditCat: async (req, res, next) => {
-        try {
-            const newCategory = await saveEditCategoryService(req.body)
-            responseHandler(res, "Save Edited Category Success", newCategory)
-        } catch (error) {
-            next(error);
-        }
-    },
-    updateCategoryImage: async (req, res, next) => {
-        try {
-            const newCategoryImage = await updateCategoryImageService(req.params, req.files.image[0].filename)
-            responseHandler(res, 'Update Image Success!', newCategoryImage)
+            const newProductImage = await updateProductImageService(req.params, req.files.image[0].filename)
+            responseHandler(res, 'Update Image Success!', newProductImage)
         } catch (error) {
             deleteFiles(req.files)
             next(error)
         }
     },
-    deleteCategory: async (req, res, next) => {
+    getOneProduct: async (req, res, next) => {
         try {
-            const newCategory = await deleteCategoryService(req.params)
-            responseHandler(res, "Delete Category Success", newCategory)
+            const product = await getOneProductService(req.params)
+            if (!product) return responseHandler(res, "Product not found")
+            responseHandler(res, "Get Product success", product)
         } catch (error) {
             next(error);
         }
     },
+    saveEditProduct: async (req, res, next) => {
+        try {
+            const newProduct = await saveEditProductService(req.body)
+            responseHandler(res, "Save Edited Product Success", newProduct)
+        } catch (error) {
+            next(error);
+        }
+    },
+    getProductStock: async (req, res, next) => {
+        try {
+            const productStock = await getProductStockService(req.query)
+            responseHandler(res, "Get Product Stock Success", productStock)
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllProductStock: async (req, res, next) => {
+        try {
+            const allProductStock = await getAllProductStockService(req.params)
+            responseHandler(res, "Get Product Stock Success", allProductStock)
+        } catch (error) {
+            next(error)
+        }
+    },
+    getAllProductBranchStock: async (req, res, next) => {
+        try {
+            const allProductStock = await getAllProductBranchStockService(req.params)
+            responseHandler(res, "Get Product Stock Success", allProductStock)
+        } catch (error) {
+            next(error)
+        }
+    },
+    updateProductStock: async (req, res, next) => {
+        try {
+            const updatedProductStock = await updateProductStockService(req.body)
+            console.log(updatedProductStock);
+            responseHandler(res, "Update Product Stock Success", updatedProductStock)
+        } catch (error) {
+            next(error)
+        }
+    },
+    reduceProductStock: async (req, res, next) => {
+        try {
+            const reducedProductStock = await reduceProductStockService(req.body)
+            responseHandler(res, "Reduce Product Stock Success", reducedProductStock)
+        } catch (error) {
+            next(error)
+        }
+    },
+    getDiscount: async (req, res, next) => {
+        try {
+            const discount = await getDiscountService()
+            responseHandler(res, "Get Discount Type Success", discount)
+        } catch (error) {
+            next(error)
+        }
+    },
+    updateProductDiscount: async (req, res, next) => {
+        try {
+            const productDiscount = await updateProductDiscountService(req.body)
+            responseHandler(res, "Update Product Discount Success", productDiscount)
+        } catch (error) {
+            next(error)
+        }
+    },
+    clonePriceToFinalPrice: async (req, res, next) => {
+        try {
+            const products = await db.product.findAll({ attributes: ["id", "price", "final_price"] });
+            const updatedProducts = await Promise.all(
+                products.map(async (product) => {
+                    if (!product.final_price) {
+                        await db.product.update({ final_price: product.price }, { where: { id: product.id } });
+                        return product;
+                    } else { return product; }
+                })
+            );
+            responseHandler(res, "Clone Price to Final Price Success", updatedProducts);
+        } catch (error) {
+            next(error);
+        }
+    }
 }
