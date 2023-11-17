@@ -141,5 +141,38 @@ module.exports = {
         } catch (error) {
             return error
         }
+    },
+
+    getRevenueReport: async (req) => {
+        try {
+            let whereBranchCondition = {};
+            const adminData = req.dataToken;
+            const selectBranch = req.query.branch;
+            if(adminData.role == 'superadmin') {
+                whereBranchCondition.store_branch_id = selectBranch
+            } else if (adminData.role == 'admin') {
+                whereBranchCondition.store_branch_id = adminData.store_branch_id
+            }
+            console.log(adminData.role);
+            const data = await db.transaction_detail.findAll({
+                attributes: [
+                    'name',
+                    [db.sequelize.fn('SUM', db.sequelize.literal('price * quantity')), 'total_price'],
+                ],
+                include: [
+                    {
+                        model: db.transactions,
+                        attributes: ["id", "store_branch_id"],
+                        where: whereBranchCondition
+                    }
+                ],
+                group: ['name', 'transaction.store_branch_id'],
+                raw: true
+            });
+            console.log(whereBranchCondition);
+            return data
+        } catch (error) {
+            return error;
+        }
     }
 }

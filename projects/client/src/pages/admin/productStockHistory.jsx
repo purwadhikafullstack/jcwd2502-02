@@ -43,7 +43,6 @@ const ProductStockHistoryPage = () => {
     };
     useEffect(() => {
         fetchData()
-        // console.log(`name query: ${nameQuery}, desc query: ${descQuery}, branch query: ${branchQuery} page number = ${page}`);
     }, [nameQuery, descQuery, branchQuery, page])
     return(
         <div className="h-screen bg-white">
@@ -69,31 +68,9 @@ const ProductStockHistoryPage = () => {
                                 <option value="2"> Denpasar </option>
                             </select>
                             :
-                            // <h1 className="w-1/5 p-2 rounded-md"> Data of branch {userSelector.store_branch_id} </h1>
                             null
                         }
                     </div>
-                    {/* {stockData && stockData.map((value, index) => {
-                        return(
-                            <div className="m-6 p-1 h-[100px] bg-gradient-to-r to-yellow-300 from-green-600 shadow-xl rounded-lg md:mx-24 lg:mx-48">
-                                <div className="bg-white h-full mx-2 rounded-md">
-                                    <div className="text-md mx-2">
-                                        <h1>Product name: {value?.product?.name}</h1>
-                                        <div className="flex gap-2">
-                                            <h1>Quantity: {value?.stock}</h1>
-                                            <h1> || </h1>
-                                            <h1 className="bg-green-400 rounded-xl w-fit px-2">Date: {value?.createdAt.split("T")[0]} </h1>
-                                        </div>
-                                    </div>
-                                    <div className="border bg-gradient-to-b from-green-500 to-yellow-300 h-1 my-1"></div>
-                                    <div className="flex gap-3 m-2">
-                                        <h1>Note: {value?.description}</h1>
-                                        <h1> Store Branch: {value?.store_branch_id} </h1>
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    })} */}
                     {stockData && stockData.length > 0 ? (
                         stockData.map((value, index) => (
                             <div key={index} className="m-6 p-1 h-[100px] bg-gradient-to-r to-yellow-300 from-green-600 shadow-xl rounded-lg md:mx-24 lg:mx-48">

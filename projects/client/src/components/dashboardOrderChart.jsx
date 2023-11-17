@@ -16,8 +16,8 @@ const DashboardOrderChart = ({data}) => {
                     left: 20,
                 }}
                 >
-                <CartesianGrid stroke="#f5f5f5" />
-                <XAxis dataKey="date" scale="band" />
+                <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3"/>
+                <XAxis dataKey="date" tick={{ textAnchor: 'end', dy: 10 }} scale="band" />
                 <YAxis />
                 <Tooltip />
                 <Legend />

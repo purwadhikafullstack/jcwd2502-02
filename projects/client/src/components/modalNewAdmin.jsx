@@ -4,9 +4,9 @@ import { api } from "../api/api";
 import Button from "./button";
 import Input from "./input";
 import { useRef, useState, useEffect } from "react";
-import toast, { Toaster } from "react-hot-toast";
+import toast,  { Toaster } from "react-hot-toast";
 
-const ModalNewAdmin = ({getAdmin}) => {
+const ModalNewAdmin = ({getAdmins}) => {
     const [image, setImage] = useState([])
     const [branch, setBranch] = useState("")
     const formik = useFormik({
@@ -25,11 +25,12 @@ const ModalNewAdmin = ({getAdmin}) => {
                 const response = await api().post(`/users/branch-manager`, formik.values);
                 document.getElementById('my_modal_3').close();
                 toast.success(response.data.message);
-                getAdmin()
+                await getAdmins()
                 // setTimeout(() => {
                 //     window.location.reload();
                 // }, 3000);
             } catch (error) {
+                document.getElementById('my_modal_3').close();
                 toast.error(error.response.data.message);
             }
             },
@@ -86,7 +87,7 @@ const ModalNewAdmin = ({getAdmin}) => {
 
     return(
         <div>
-            < Toaster/>
+            < Toaster className="z-50"/>
             <Button text={"Add Admin"} style={"w-[200px] mx-3"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
             <dialog id="my_modal_3" className="modal backdrop-blur-md">
                 <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[650px] ">

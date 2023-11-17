@@ -204,6 +204,8 @@ module.exports = {
             if(!account) throw {status: 401, message: "Error, account was not found!"};
             if(store_branch_id == account.dataValues.store_branch_id) throw {error: 401, message: "Admin was already assigned to the designated branch"};
             await db.user.update({store_branch_id}, {where: {email}})
+
+            await db.user.findAll().then((res)=>{console.log(res);})
             return {
                 isError: false,
                 message: "Admin assigned to new branch"
@@ -235,11 +237,7 @@ module.exports = {
                 order: [["updatedAt", "DESC"]],
                 limit,
                 offset,
-                include: [
-                    {
-                        model: db.store_branch
-                    }
-                ]
+                include: [{model: db.store_branch}]
             });
             console.log(filteredAdmins);
             const totalRecords = await db.user.count({ where: whereCondition });

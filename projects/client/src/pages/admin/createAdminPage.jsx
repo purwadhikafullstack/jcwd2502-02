@@ -40,7 +40,9 @@ export default function CreateAdminPage() {
 
     const onGetAdmins = async () => {
         try {
+            
             const {data} = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&page=${page}`)
+            console.log(data);
             setMaxPage(data.data.maxPages)
             setAdmin(data.data.filteredAdmins);
         } catch (error) {
@@ -95,7 +97,7 @@ export default function CreateAdminPage() {
                         })
                     }
                 </select>
-                <ModalNewAdmin getAdmins={() => onGetAdmins()} />
+                <ModalNewAdmin getAdmins={onGetAdmins} />
             </div>
             {
                 admin && admin.map((value, index) => {
@@ -131,7 +133,7 @@ export default function CreateAdminPage() {
                                 </div>
                                 <div className="m-5 flex items-center font-semibold md:w-1/4">
                                     <div className="md:flex md:gap-4">
-                                        <ModalEditAdmin getAdmins={() => onGetAdmins()} adminData={value} key={index} />
+                                        <ModalEditAdmin getAdmins={onGetAdmins} adminData={value} key={index} />
                                         <button onClick={() => handleDeactivateAdmin(value.email)} className={value.isVerified == "verified" ? " bg-red-500 hover:bg-red-600 w-[90px] h-[45px] rounded-2xl mt-1" : " bg-green-500 hover:bg-green-600 w-[100px] h-[50px] rounded-2xl mt-1"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>
                                     </div>
                                 </div>

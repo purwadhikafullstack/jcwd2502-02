@@ -17,10 +17,10 @@ const ModalEditAdmin = ({adminData, getAdmins}) => {
         },
         onSubmit: async(values) => {
             try {
-                const response = await api().patch(`/users/edit-admin`, {...values, username: adminData.username, email: adminData.email,})
-                await getAdmins()
+            const response = await api().patch(`/users/edit-admin`, {...values, username: adminData.username, email: adminData.email,})
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
+                getAdmins()
             } catch (error) {
                 toast.error(error.response.data.message);
             }

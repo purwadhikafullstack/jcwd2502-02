@@ -6,8 +6,8 @@ const DashboardUserChart = ({data}) => {
     return(
         <ResponsiveContainer width="70%" height={350}>
             <ComposedChart
-                width={500}
-                height={350}
+                width={400}
+                height={400}
                 data={data} 
                 margin={{
                     top: 20,

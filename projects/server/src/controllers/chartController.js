@@ -1,4 +1,4 @@
-const { getOrderCountByBranch, getNewUserCount, getTopProduct } = require("../services/chartService");
+const { getOrderCountByBranch, getNewUserCount, getTopProduct, getRevenueReport } = require("../services/chartService");
 const db = require("./../models")
 const responseHandler = require("./../utils/responseHandler");
 
@@ -46,6 +46,15 @@ module.exports = {
         try {
             const product = await getTopProduct(req);
             responseHandler(res, 'top product fetched', product);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    revenueReport: async (req, res, next) => {
+        try {
+            const data = await getRevenueReport(req);
+            responseHandler(res, 'revenue report fetched', data)
         } catch (error) {
             next(error);
         }
