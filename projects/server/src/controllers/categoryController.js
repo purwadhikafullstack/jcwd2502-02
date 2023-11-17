@@ -10,7 +10,6 @@ const { createCategoryService } = require("./../services/categoryService");
 const { getOneCategoryService } = require("./../services/categoryService");
 const { saveEditCategoryService } = require("./../services/categoryService");
 const { updateCategoryImageService } = require("./../services/categoryService");
-
 const Op = Sequelize.Op;
 module.exports = {
     getCategory: async (req, res, next) => {

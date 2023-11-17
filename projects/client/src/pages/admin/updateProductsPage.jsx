@@ -122,7 +122,7 @@ const UpdateProductsPage = () => {
                 <div className="ml-32 mt-5 ">
                     <input
                         type="text"
-                        placeholder="Search categories"
+                        placeholder="Search Products"
                         className="input w-1/4 bg-gradient-to-r from-yellow-300 to-green-600"
                         value={searchQuery}
                         onChange={handleSearchInputChange}
@@ -169,10 +169,6 @@ const UpdateProductsPage = () => {
                                             </button>
                                         </td>
                                         <td>
-                                            {/* <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black"
-                                                onClick={() => {
-                                                    onDeleteProducts(value.id);
-                                                }}>DELETE</button> */}
                                             <DeleteConfirmation
                                                 button={<button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">DELETE</button>}
                                                 itemId={value.id}
