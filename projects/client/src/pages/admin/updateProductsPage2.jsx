@@ -4,6 +4,7 @@ import SortButton from "../../components/sortButton";
 import ProductCard from "../../components/productCard";
 import Pagination from "../../components/pagination";
 import Navbar from "../../components/navbarUser";
+import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useState } from "react";
 import { api1 } from "../../api/api";
@@ -67,7 +68,7 @@ const ProductListPage = () => {
     }, [catId, searchQuery, sort]);
     return (
         <div className="">
-            <Navbar />
+            <NavbarAdmin />
             <div className="mt-[70px] pt-3">
                 <div className="h-[190px] pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex bg-gradient-to-b from-yellow-200 to-green-200 rounded-3xl">
                     {/* <Link to={`/products?category=`}>

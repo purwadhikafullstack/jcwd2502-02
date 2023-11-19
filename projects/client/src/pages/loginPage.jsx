@@ -39,7 +39,7 @@ export default function LoginPage() {
     }
 
     return (
-        <div className=" h-[900px] md:h-screen bg-gradient-to-b from-green-700 to-yellow-300">
+        <div className=" h-screen md:h-screen bg-gradient-to-b from-green-700 to-yellow-300 grid place-content-center">
             <h1>{userSelector?.profile_picture}</h1>
             <Toaster />
             <div className='grid place-content-center'>

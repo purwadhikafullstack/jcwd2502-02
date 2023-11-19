@@ -1,5 +1,6 @@
 import CategoryCard from "../../components/categoryCard";
-import Navbar from "../../components/navbarUser";
+import Navbar from "../../components/navbarUser"
+import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useRef, useState } from "react";
 import { api1 } from "../../api/api";
@@ -106,7 +107,7 @@ const UpdateProductsCategoryPage = () => {
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
-            <Navbar />
+            <NavbarAdmin />
             <div className="">
                 <div className="flex flex-row mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
                     <div className="text-4xl font-bold gap-2 py-5 text-green-800">

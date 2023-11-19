@@ -1,4 +1,5 @@
 import Navbar from "../../components/navbarUser"
+import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer"
 import OrderComponent from "../../components/orderComponent"
 import { BiSearchAlt } from "react-icons/bi";
@@ -115,7 +116,7 @@ const SuperOrderList = () => {
     return (
         <div >
             <Toaster />
-            <Navbar />
+            <NavbarAdmin />
             <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"} style={{ minHeight: "100vh" }}>
                 <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Order List
                 </div>
