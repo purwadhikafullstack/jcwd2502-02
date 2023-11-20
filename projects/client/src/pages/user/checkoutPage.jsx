@@ -21,19 +21,18 @@ const CheckoutPage = () => {
     const [courier, setCourier] = useState()
     const [cost, setCost] = useState()
     const [ownedCoupon, setOwnedCoupon] = useState()
+    const [discount, setDiscount] = useState()
+    const [discountId, setDiscountId] = useState()
+    const [ownedCouponId, setOwnedCouponId] = useState()
+    const [couponName, setCouponName] = useState()
     const cart = useSelector((state) => state.cart);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const [totalFinal, setTotalFinal] = useState()
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
-
     console.log(totalWeight);
-
-    const array = [{ id: 1 }, { id: 2 }]
-
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
-
     const handleShippingService = async (event) => {
         try {
             const selectedService = event.target.value;
@@ -47,13 +46,16 @@ const CheckoutPage = () => {
             console.log(error);
         }
     }
-
     const handleShippingOption = async (event) => {
         try {
             const selectedOption = event.target.value;
             const selectedOptionDescription = event.target.options[event.target.selectedIndex].text;
             setCourier(selectedOptionDescription)
-            setCost(Number(selectedOption))
+            if (discountId === 3) {
+                setCost(0)
+            } else {
+                setCost(Number(selectedOption))
+            }
         } catch (error) {
             console.log(error);
         }
@@ -64,7 +66,7 @@ const CheckoutPage = () => {
             if (cost == null) {
                 toast.error("Please complete the shipping data")
             } else {
-                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight })
+                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName })
                 console.log(createOrder.data);
 
                 toast.success("Order created!");
@@ -88,8 +90,14 @@ const CheckoutPage = () => {
 
     const handleCoupon = async (event) => {
         try {
-
-            console.log(array[event.target.value].id);
+            setDiscount(totalSubtotal * (ownedCoupon[event.target.value].coupon_value / 100))
+            if (ownedCoupon[event.target.value].coupon_id === 3) {
+                setCost(0)
+            }
+            setDiscountId(ownedCoupon[event.target.value].coupon_id)
+            setOwnedCouponId(ownedCoupon[event.target.value].id)
+            setCouponName(ownedCoupon[event.target.value].coupon_name)
+            // console.log(ownedCoupon[event.target.value].id);
         } catch (error) {
             console.log(error);
         }
@@ -106,11 +114,17 @@ const CheckoutPage = () => {
     // console.log(closestBranch.id);
 
     useEffect(() => {
-        if (cost) {
+        if (!discount && !cost) {
+            setTotalFinal(totalSubtotal)
+        }
+        else if (cost && !discount) {
             setTotalFinal(((totalSubtotal) + (cost)))
-        } else { setTotalFinal(totalSubtotal) }
-    }, [cost, totalSubtotal]);
-
+        }
+        else if (discount && !cost) {
+            setTotalFinal(((totalSubtotal) - (discount)))
+        }
+        else { setTotalFinal(((totalSubtotal) + (cost) - (discount))) }
+    }, [cost, totalSubtotal, discount]);
     return (
         <div>
             <Toaster />
@@ -178,11 +192,17 @@ const CheckoutPage = () => {
                                     <div className="font-bold">Voucher</div>
                                     <div>
                                         <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full  text-black">
-                                            {array.map((value, index) => {
+                                            {/* {array.map((value, index) => {
                                                 return (
                                                     <option value={index}>{value.id}</option>
                                                 )
-                                            })}
+                                            })} */}
+                                            <option value="" >Select Voucher</option>
+                                            {ownedCoupon ? ownedCoupon.map((value, index) => {
+                                                return (
+                                                    <option value={index}>{value.coupon_name}</option>
+                                                )
+                                            }) : null}
 
                                         </select>
                                     </div>
@@ -206,7 +226,7 @@ const CheckoutPage = () => {
 
                                 <div className="flex justify-between">
                                     <div>Voucher Discount</div>
-                                    <div className="font-bold">- Rp 0</div>
+                                    <div className="font-bold">- Rp {discount ? discount.toLocaleString() : 0}</div>
                                 </div>
                             </div>
 

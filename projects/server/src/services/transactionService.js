@@ -18,7 +18,7 @@ module.exports = {
         }
     },
 
-    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId, total_weight }) => {
+    create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId, total_weight, discount_coupon, coupon_id, ownedCouponId, coupon_name }) => {
         try {
             const invoice = Date.now() + Math.round(Math.random() * 1E9);
             const transaction = await db.transactions.create({
@@ -32,7 +32,10 @@ module.exports = {
                 user_id: userId,
                 store_branch_id: branchId,
                 status: "pending",
-                total_weight: total_weight
+                total_weight: total_weight,
+                discount_coupon,
+                coupon_id,
+                coupon_name
             });
 
             const inMyCart = await db.cart.findAll({
@@ -59,7 +62,9 @@ module.exports = {
             }
 
             await db.cart.destroy({ where: { user_id: userId } });
-
+            if (ownedCouponId) {
+                await db.owned_coupon.update({ isValid: "false" }, { where: { id: ownedCouponId } })
+            }
             const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id } });
 
             return transaction;
@@ -108,7 +113,7 @@ module.exports = {
     getUserCouponService: async (dataToken) => {
         try {
             const { id } = dataToken;
-            return await db.owned_coupon.findAll({ where: { user_id: id } })
+            return await db.owned_coupon.findAll({ where: { user_id: id, isValid: "true" } })
         } catch (error) {
             return error
         }

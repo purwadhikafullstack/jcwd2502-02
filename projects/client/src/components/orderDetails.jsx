@@ -30,10 +30,13 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                                 : null}
                         </div>
                     </div>
-                    <div className="grid gap-2">
+                    {transaction.discount_coupon === null ? null : <div className="grid gap-2">
                         <div className="font-bold text-xl underline">Voucher</div>
-                        <div>XXXX</div>
-                    </div>
+                        <div>{transaction
+                            ? transaction.coupon_name
+                            : null}</div>
+                    </div>}
+
                 </div>
             </div>
             <div className="text-white">
@@ -52,11 +55,14 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                         <div>Shipping Cost</div>
                         Rp {transaction ? transaction.shipping_cost.toLocaleString() : null}
                     </div>
-
-                    <div className="flex justify-between">
+                    {transaction.discount_coupon === null ? null : <div className="flex justify-between">
                         <div>Voucher Discount</div>
-                        <div className="font-bold">- Rp 0</div>
-                    </div>
+                        <div>- Rp {transaction ? transaction?.discount_coupon?.toLocaleString() : null}</div>
+                    </div>}
+                    {/* <div className="flex justify-between">
+                        <div>Voucher Discount</div>
+                        <div>- Rp {transaction ? transaction?.discount_coupon?.toLocaleString() : null}</div>
+                    </div> */}
                 </div>
 
                 <div className="h-[3px] bg-white my-2"></div>

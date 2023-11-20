@@ -73,7 +73,6 @@ const UserOrderDetail = () => {
         return () => clearInterval(intervalId);
     }, [])
 
-
     const formatTime = (time) => {
         const hours = Math.floor(time / 3600);
         const minutes = Math.floor((time % 3600) / 60);
