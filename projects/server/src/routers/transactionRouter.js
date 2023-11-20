@@ -12,6 +12,7 @@ Router.post('/upload/:transactionId', verify, upload, transactionController.uplo
 Router.get(`/all`, transactionController.getOrders)
 Router.get(`/:transactionId`, verify, transactionController.getUserOrder)
 Router.get(`/user/all`, verify, transactionController.getAllUserOrders)
+Router.get('/data/transactions', verify, transactionController.transactionReportSalesData);
 
 Router.patch('/cancel/:transactionId', verify, transactionController.cancelOrder)
 

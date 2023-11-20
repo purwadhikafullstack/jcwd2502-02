@@ -160,6 +160,13 @@ module.exports = {
         } catch (error) {
             next(error)
         }
+    },
+    transactionReportSalesData: async (req, res, next) => {
+        try {
+
+        } catch (error) {
+            next(error);
+        }
     }
 
 }

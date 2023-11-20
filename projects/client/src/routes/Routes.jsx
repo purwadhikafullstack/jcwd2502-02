@@ -29,6 +29,7 @@ import ManageProductDiscountPage from "../pages/admin/manageDiscountPage";
 import UserOrderDetail from "../pages/user/orderDetailPage";
 import UserOrderList from "../pages/user/orderListPage";
 import Navbar from "../components/navbarUser";
+import SalesReportPage from "../pages/admin/salesReport";
 
 import Protected from "./protected";
 
@@ -132,6 +133,10 @@ const routes = [
 
     <Route path='/admin-dashboard' element={
         < AdminDashboardPage />
+    } />,
+
+    <Route path='/sales-report' element={
+        < SalesReportPage />
     } />,
 
     <Route path='/stock-history' element={
