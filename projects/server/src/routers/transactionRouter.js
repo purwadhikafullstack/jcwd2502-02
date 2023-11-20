@@ -9,10 +9,12 @@ Router.post('/option', transactionController.getShippingOption)
 Router.post('/add', verify, transactionController.createOrder)
 Router.post('/upload/:transactionId', verify, upload, transactionController.uploadPayment)
 
+Router.get('/coupon/user', verify, transactionController.getUserCoupon);
 Router.get(`/all`, transactionController.getOrders)
-Router.get(`/:transactionId`, verify, transactionController.getUserOrder)
+Router.get(`/:transactionId`, verify, transactionController.getUserOrder) //tambahin slash lagi guys
 Router.get(`/user/all`, verify, transactionController.getAllUserOrders)
 Router.get('/data/transactions', verify, transactionController.transactionReportSalesData);
+
 
 Router.patch('/cancel/:transactionId', verify, transactionController.cancelOrder)
 

@@ -99,10 +99,18 @@ module.exports = {
 
     filteredTransactionsData: async (req) => {
         try {
-            
-            
+
+
         } catch (error) {
             return error;
+        }
+    },
+    getUserCouponService: async (dataToken) => {
+        try {
+            const { id } = dataToken;
+            return await db.owned_coupon.findAll({ where: { user_id: id } })
+        } catch (error) {
+            return error
         }
     }
 };

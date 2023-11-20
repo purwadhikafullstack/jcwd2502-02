@@ -142,9 +142,10 @@ module.exports = {
                 const newUser = await db.user.create(userData)
             } else if (referralValid) {
                 const newUser = await db.user.create(userData)
-                const newUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: newUser.id, coupon_id: 1 })
+                const getCoupon = await db.coupon.findOne({ where: { id: 1 } })
+                const newUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: newUser.id, coupon_id: 1, coupon_value: getCoupon.amount })
                 const validReferralUser = await db.user.findOne({ where: { referral_code: referral } })
-                const oldUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: validReferralUser.id, coupon_id: 1 })
+                const oldUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: validReferralUser.id, coupon_id: 1, coupon_value: getCoupon.amount })
             }
             const token = createJWT(
                 {

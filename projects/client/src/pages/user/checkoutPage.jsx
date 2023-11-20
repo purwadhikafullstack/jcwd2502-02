@@ -20,6 +20,7 @@ const CheckoutPage = () => {
     const [shippingOption, setShippingOption] = useState()
     const [courier, setCourier] = useState()
     const [cost, setCost] = useState()
+    const [ownedCoupon, setOwnedCoupon] = useState()
     const cart = useSelector((state) => state.cart);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const closestBranch = useSelector((state) => state.branch.closestBranch);
@@ -76,13 +77,21 @@ const CheckoutPage = () => {
             console.log(error);
         }
     }
+    const onGetCoupon = async () => {
+        try {
+            const coupon = await api().get(`/transaction/coupon/user`)
+            setOwnedCoupon(coupon.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     const handleCoupon = async (event) => {
         try {
 
             console.log(array[event.target.value].id);
         } catch (error) {
-
+            console.log(error);
         }
     }
 
@@ -90,6 +99,7 @@ const CheckoutPage = () => {
         dispatch(getCartAsync());
         dispatch(nearestBranch());
         dispatch(getMainAddress());
+        onGetCoupon()
     }, []);
 
     // console.log(address);
@@ -173,10 +183,7 @@ const CheckoutPage = () => {
                                                     <option value={index}>{value.id}</option>
                                                 )
                                             })}
-                                            {/* <option disabled selected>Select Voucher</option>
-                                            <option>Voucher 1</option>
-                                            <option>Voucher 2</option>
-                                            <option>Voucher 3</option> */}
+
                                         </select>
                                     </div>
                                 </div>
