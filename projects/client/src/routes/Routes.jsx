@@ -27,6 +27,7 @@ import AdminDashboardPage from "../pages/admin/adminDashboard";
 import ProductStockHistoryPage from "../pages/admin/productStockHistory";
 import ManageProductDiscountPage from "../pages/admin/manageDiscountPage";
 import UserOrderDetail from "../pages/user/orderDetailPage";
+import SalesReportPage from "../pages/admin/salesReport";
 
 import Protected from "./protected";
 
@@ -124,6 +125,10 @@ const routes = [
 
     <Route path='/admin-dashboard' element={
         < AdminDashboardPage />
+    } />,
+
+    <Route path='/sales-report' element={
+        < SalesReportPage />
     } />,
 
     <Route path='/stock-history' element={

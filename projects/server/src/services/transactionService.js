@@ -94,5 +94,14 @@ module.exports = {
             throw error;
         }
     },
+
+    filteredTransactionsData: async (req) => {
+        try {
+            
+            
+        } catch (error) {
+            return error;
+        }
+    }
 };
 
