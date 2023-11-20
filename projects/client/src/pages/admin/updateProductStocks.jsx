@@ -31,7 +31,7 @@ const UpdateProductStocksPage = () => {
     const firstPostIndex = lastPostIndex - postPerPage;
     const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
-    const closestBranch = useSelector((state) => state.branch.closestBranch);
+    const closestBranch = useSelector((state) => state.users.store_branch_id);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
     const [isModalAddOpen, setModalAddOpen] = useState(false);
@@ -42,7 +42,7 @@ const UpdateProductStocksPage = () => {
     }, 1000);
     const nearestBranch = async () => {
         try {
-            const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
+            const branch = await api.get(`/branch/nearest/${closestBranch}`)
             setStock(branch.data.data)
         } catch (error) {
             console.log(error);
@@ -60,7 +60,7 @@ const UpdateProductStocksPage = () => {
         try {
             nearestBranch()
             const response = await api.get(
-                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}`
+                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch}`
 
             );
             setProducts(response.data.data);
@@ -195,7 +195,7 @@ const UpdateProductStocksPage = () => {
                 isOpen={isModalReduceOpen}
                 onClose={handleCloseReduceModal}
                 productId={productId}
-                branchId={closestBranch.id}
+                branchId={closestBranch}
                 onStockUpdated={onGetFilteredProducts}
                 currentStock={currentStock}
             />
@@ -203,7 +203,7 @@ const UpdateProductStocksPage = () => {
                 isOpen={isModalAddOpen}
                 onClose={handleCloseAddModal}
                 productId={productId}
-                branchId={closestBranch.id}
+                branchId={closestBranch}
                 onStockUpdated={onGetFilteredProducts}
                 currentStock={currentStock}
             />

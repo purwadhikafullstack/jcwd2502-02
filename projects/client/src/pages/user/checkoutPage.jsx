@@ -29,6 +29,8 @@ const CheckoutPage = () => {
 
     console.log(totalWeight);
 
+    const array = [{ id: 1 }, { id: 2 }]
+
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
 
     const handleShippingService = async (event) => {
@@ -72,6 +74,15 @@ const CheckoutPage = () => {
             }
         } catch (error) {
             console.log(error);
+        }
+    }
+
+    const handleCoupon = async (event) => {
+        try {
+
+            console.log(array[event.target.value].id);
+        } catch (error) {
+
         }
     }
 
@@ -156,11 +167,16 @@ const CheckoutPage = () => {
                                 <div className="grid gap-2">
                                     <div className="font-bold">Voucher</div>
                                     <div>
-                                        <select className="select select-bordered w-full  text-black">
-                                            <option disabled selected>Select Voucher</option>
+                                        <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full  text-black">
+                                            {array.map((value, index) => {
+                                                return (
+                                                    <option value={index}>{value.id}</option>
+                                                )
+                                            })}
+                                            {/* <option disabled selected>Select Voucher</option>
                                             <option>Voucher 1</option>
                                             <option>Voucher 2</option>
-                                            <option>Voucher 3</option>
+                                            <option>Voucher 3</option> */}
                                         </select>
                                     </div>
                                 </div>

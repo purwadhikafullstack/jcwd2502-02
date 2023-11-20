@@ -111,7 +111,7 @@ module.exports = {
 
     registerUser: async (user) => {
         try {
-            const { username, email, password, phone_number, referral} = user
+            const { username, email, password, phone_number, referral, referralValid } = user
             const existingAccount = await db.user.findOne({
                 where: { username }
             })
@@ -131,10 +131,6 @@ module.exports = {
             }
             const hashedPassword = await hash(password);
             const newReferral = Math.round(Math.random() * 1e9);
-            const validReferral = await db.user.findOne({ where: { referral_code: referral } })
-            if (validReferral) {
-                // beri kupon
-            }
             const userData = {
                 username: username,
                 email: email,
@@ -142,7 +138,14 @@ module.exports = {
                 phone_number,
                 referral_code: newReferral
             }
-            const newUser = await db.user.create(userData)
+            if (referralValid === false) {
+                const newUser = await db.user.create(userData)
+            } else if (referralValid) {
+                const newUser = await db.user.create(userData)
+                const newUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: newUser.id, coupon_id: 1 })
+                const validReferralUser = await db.user.findOne({ where: { referral_code: referral } })
+                const oldUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: validReferralUser.id, coupon_id: 1 })
+            }
             const token = createJWT(
                 {
                     id: newUser.dataValues.id,
@@ -165,15 +168,31 @@ module.exports = {
         }
     },
 
+    checkReferralService: async (params) => {
+        try {
+            const { getRef } = params
+            const checkRef = await db.user.findOne({ where: { referral_code: getRef } })
+            if (checkRef === "") {
+                return { isError: true, message: "Please Input The Referral Code" }
+            }
+            else if (checkRef === null) {
+                return { isError: true, message: "Oops, Referral Code Not Found, Please Try Again!" }
+            }
+            return await db.user.findOne({ where: { referral_code: getRef } })
+        } catch (error) {
+            return error
+        }
+    },
+
     createBranchManager: async (req) => {
-        const {email, username, phone_number, password, store_branch_id, birthdate, gender } = req.body;
+        const { email, username, phone_number, password, store_branch_id, birthdate, gender } = req.body;
         const usedEmail = await db.user.findOne({
-            where: {email}
+            where: { email }
         });
         const usedUsername = await db.user.findOne({
-            where: {username}
+            where: { username }
         });
-        if(usedEmail || usedUsername) throw {status: 401, message: "Username or Email has already been taken"}
+        if (usedEmail || usedUsername) throw { status: 401, message: "Username or Email has already been taken" }
         const hashedPassword = await hash(password);
         const userData = {
             username,
@@ -195,17 +214,17 @@ module.exports = {
 
     editBranchManager: async (req) => {
         try {
-            const {email, store_branch_id} = req.body;
+            const { email, store_branch_id } = req.body;
             const account = await db.user.findOne({
-                where: {email}
+                where: { email }
             });
             console.log(store_branch_id, email);
             console.log(account.dataValues.store_branch_id);
-            if(!account) throw {status: 401, message: "Error, account was not found!"};
-            if(store_branch_id == account.dataValues.store_branch_id) throw {error: 401, message: "Admin was already assigned to the designated branch"};
-            await db.user.update({store_branch_id}, {where: {email}})
+            if (!account) throw { status: 401, message: "Error, account was not found!" };
+            if (store_branch_id == account.dataValues.store_branch_id) throw { error: 401, message: "Admin was already assigned to the designated branch" };
+            await db.user.update({ store_branch_id }, { where: { email } })
 
-            await db.user.findAll().then((res)=>{console.log(res);})
+            await db.user.findAll().then((res) => { console.log(res); })
             return {
                 isError: false,
                 message: "Admin assigned to new branch"
@@ -215,29 +234,29 @@ module.exports = {
             return error
         }
     },
-    
+
     getFilteredAdmin: async (req) => {
         try {
             console.log(req.query);
-            const {username, branch, page} = req.query;
+            const { username, branch, page } = req.query;
             const limit = 6;
             const offset = (page - 1) * limit;
             let whereCondition = {};
             whereCondition.role = "admin"
-            if(username) {
+            if (username) {
                 whereCondition.username = {
                     [Op.like]: `%${username}%`,
                 }
             }
-            if(branch) {
+            if (branch) {
                 whereCondition.store_branch_id = branch
             }
-            const filteredAdmins = await db.user.findAll({ 
+            const filteredAdmins = await db.user.findAll({
                 where: whereCondition,
                 order: [["updatedAt", "DESC"]],
                 limit,
                 offset,
-                include: [{model: db.store_branch}]
+                include: [{ model: db.store_branch }]
             });
             console.log(filteredAdmins);
             const totalRecords = await db.user.count({ where: whereCondition });

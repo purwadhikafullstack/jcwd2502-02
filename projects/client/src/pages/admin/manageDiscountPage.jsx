@@ -30,7 +30,7 @@ const ManageProductDiscountPage = () => {
     const firstPostIndex = lastPostIndex - postPerPage;
     const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
-    const closestBranch = useSelector((state) => state.branch.closestBranch);
+    const closestBranch = useSelector((state) => state.users.store_branch_id);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
     const [isModalOpen, setModalOpen] = useState(false);
@@ -47,10 +47,12 @@ const ManageProductDiscountPage = () => {
             console.log(error);
         }
     };
+
+    console.log(closestBranch);
     const onGetFilteredProducts = async () => {
         try {
             const response = await api.get(
-                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}`
+                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch}`
 
             );
             setProducts(response.data.data);
