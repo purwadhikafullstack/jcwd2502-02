@@ -57,7 +57,8 @@ module.exports = {
                     transaction_id: transaction.id,
                     discount_id: product.product.discount_id,
                     discount_value: product.product.discount_value,
-                    weight: product.product.weight
+                    weight: product.product.weight,
+                    real_price: product.product.price
                 });
             }
 

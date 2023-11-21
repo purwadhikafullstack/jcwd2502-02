@@ -18,5 +18,9 @@ Router.get('/data/transactions', verify, transactionController.transactionReport
 
 
 Router.patch('/cancel/:transactionId', verify, transactionController.cancelOrder)
+Router.patch('/admin/cancel/:transactionId', verify, transactionController.adminCancelOrder)
+Router.patch('/admin/approve/:transactionId', verify, transactionController.adminApproveOrder)
+Router.patch('/admin/send/:transactionId', verify, transactionController.adminSendOrder)
+Router.patch('/user/complete/:transactionId', verify, transactionController.userCompleteOrder)
 
 module.exports = Router;
