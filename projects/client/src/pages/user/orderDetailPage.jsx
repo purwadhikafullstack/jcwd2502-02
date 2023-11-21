@@ -20,7 +20,7 @@ const UserOrderDetail = () => {
 
     const getDetailOrder = async () => {
         try {
-            const order = await api().get(`/transaction/${id}`)
+            const order = await api().get(`/transaction/user/order/${id}`)
             console.log(order.data.data);
             console.log(order.data.data.createdAt);
             setTransaction(order.data.data)

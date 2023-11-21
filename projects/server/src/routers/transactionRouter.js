@@ -11,7 +11,8 @@ Router.post('/upload/:transactionId', verify, upload, transactionController.uplo
 
 Router.get('/coupon/user', verify, transactionController.getUserCoupon);
 Router.get(`/all`, transactionController.getOrders)
-Router.get(`/:transactionId`, verify, transactionController.getUserOrder) //tambahin slash lagi guys
+Router.get(`/user/order/:transactionId`, verify, transactionController.getUserOrder)
+Router.get(`/admin/order/:transactionId`, verify, transactionController.getUserOrderForAdmin)
 Router.get(`/user/all`, verify, transactionController.getAllUserOrders)
 Router.get('/data/transactions', verify, transactionController.transactionReportSalesData);
 

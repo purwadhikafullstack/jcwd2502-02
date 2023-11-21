@@ -22,7 +22,6 @@ import ManageAddress from "../pages/user/manageAddressPage";
 import Cart from "../pages/user/cartPage";
 import CheckoutPage from "../pages/user/checkoutPage";
 import CreateAdminPage from "../pages/admin/createAdminPage";
-import SuperOrderList from "../pages/admin/superOrderListPage";
 import AdminDashboardPage from "../pages/admin/adminDashboard";
 import ProductStockHistoryPage from "../pages/admin/productStockHistory";
 import ManageProductDiscountPage from "../pages/admin/manageDiscountPage";
@@ -30,6 +29,8 @@ import UserOrderDetail from "../pages/user/orderDetailPage";
 import UserOrderList from "../pages/user/orderListPage";
 import Navbar from "../components/navbarUser";
 import SalesReportPage from "../pages/admin/salesReport";
+import AdminOrderList from "../pages/admin/adminOrderListPage";
+import AdminOrderDetail from "../pages/admin/manageOrderDetailPage";
 
 import Protected from "./protected";
 
@@ -124,7 +125,10 @@ const routes = [
         </Protected>
     } />,
     <Route path='/admin/order-list' element={
-        <SuperOrderList />
+        <AdminOrderList />
+    } />,
+    <Route path='/admin/order/:id' element={
+        <AdminOrderDetail />
     } />,
 
     <Route path='/user-management' element={

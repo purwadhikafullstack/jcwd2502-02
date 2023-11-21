@@ -50,6 +50,31 @@ module.exports = {
         }
     },
 
+    getUserOrderForAdmin: async (req, res, next) => {
+        try {
+            const { role, store_branch_id } = req.dataToken;
+            const { transactionId } = req.params;
+
+            if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail,
+                            required: true,
+                            include: [{
+                                model: db.product
+                            }]
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                responseHandler(res, "Get Order Success", getOrder);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+
     getAllUserOrders: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
@@ -90,26 +115,17 @@ module.exports = {
         }
     },
 
-
     getOrders: async (req, res, next) => {
         try {
             const { invoice, status, createdAt, page, branchId } = req.query;
-            const limit = 6;  // Number of records per page
-
-            // Build the where clause based on the provided filters
+            const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
             if (branchId) whereClause.store_branch_id = branchId;
             if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
-
-            // Calculate the total number of records
             const totalRecords = await db.transactions.count({ where: whereClause });
-
-            // Calculate the maximum number of pages
             const maxPages = Math.ceil(totalRecords / limit);
-
-            // Use limit and offset to paginate the actual data
             const offset = (page - 1) * limit;
             const orders = await db.transactions.findAll({
                 where: whereClause,
@@ -122,8 +138,6 @@ module.exports = {
                 orders,
                 maxPages,
             });
-
-            // responseHandler(res, "Get Orders Success", result);
         } catch (error) {
             next(error);
         }
