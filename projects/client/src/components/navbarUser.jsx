@@ -94,7 +94,7 @@ const Navbar = () => {
                                 <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay"></label>
                                 {
                                     user.username ?
-                                        <ul className="menu p-4 w-64 md:w-80 min-h-full bg-white text-xl text-black ">
+                                        <ul className="menu p-4 w-64 md:w-80 min-h-full bg-white text-xl ">
 
                                             <div>
                                                 <div className="grid place-content-center">
