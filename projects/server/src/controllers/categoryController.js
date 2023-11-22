@@ -4,6 +4,7 @@ const responseHandler = require("./../utils/responseHandler")
 const { Sequelize } = require("sequelize");
 const { deleteCategoryService } = require("./../services/categoryService");
 const { getCategoryService } = require("./../services/categoryService");
+const { getAllCategoryService } = require("./../services/categoryService");
 const { editCategoryService1 } = require("./../services/categoryService");
 const { editCategoryService2 } = require("./../services/categoryService");
 const { createCategoryService } = require("./../services/categoryService");
@@ -15,7 +16,15 @@ module.exports = {
     getCategory: async (req, res, next) => {
         try {
             const category = await getCategoryService();
-            responseHandler(res, "Get All Category Success", category)
+            responseHandler(res, "Get Category Success", category)
+        } catch (error) {
+            next(error);
+        }
+    },
+    getAllCategory: async (req, res, next) => {
+        try {
+            const allCategory = await getAllCategoryService(req.query);
+            responseHandler(res, "Get All Category Success", allCategory)
         } catch (error) {
             next(error);
         }
