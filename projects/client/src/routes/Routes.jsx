@@ -32,6 +32,7 @@ import SalesReportPage from "../pages/admin/salesReport";
 import AdminOrderList from "../pages/admin/adminOrderListPage";
 import AdminOrderDetail from "../pages/admin/manageOrderDetailPage";
 
+import SalesReportProduct from "../pages/admin/salesReportProduct";
 import Protected from "./protected";
 
 const routes = [
@@ -139,8 +140,12 @@ const routes = [
         < AdminDashboardPage />
     } />,
 
-    <Route path='/sales-report' element={
+    <Route path='/sales-report/user' element={
         < SalesReportPage />
+    } />,
+
+    <Route path='/sales-report/product' element={
+        < SalesReportProduct />
     } />,
 
     <Route path='/stock-history' element={

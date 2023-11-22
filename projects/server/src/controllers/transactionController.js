@@ -3,7 +3,7 @@ const responseHandler = require("./../utils/responseHandler")
 const { Sequelize } = require("sequelize");
 const axios = require('axios');
 const { Op, literal } = require("sequelize");
-const { shippingOption, create, filteredAllOrder, getUserCouponService } = require('../services/transactionService')
+const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService } = require('../services/transactionService')
 module.exports = {
     getShippingOption: async (req, res, next) => {
         try {
@@ -268,9 +268,20 @@ module.exports = {
             next(error)
         }
     },
+
     transactionReportSalesData: async (req, res, next) => {
         try {
+            const data = await filteredTransactionsData(req);
+            responseHandler(res, "Get data success", data)
+        } catch (error) {
+            next(error);
+        }
+    },
 
+    transactionReportProductData: async (req, res, next) => {
+        try {
+            const data = await filteredProductTransaction(req);
+            responseHandler(res, "product sales data fetched", data)
         } catch (error) {
             next(error);
         }
