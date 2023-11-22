@@ -11,6 +11,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   product_stock.init({
     stock: DataTypes.INTEGER,
+    booked_stock: DataTypes.INTEGER,
     isDeleted: {
       type: DataTypes.INTEGER,
       defaultValue: 0

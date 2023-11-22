@@ -43,7 +43,8 @@ const ModalNewAddress = () => {
         },
         onSubmit: async (values) => {
             try {
-                if (!values.name || !values.address || !values.province_id || !values.city_id) {
+                if (values.name === "" || values.address === "" || values.province_id === "" || values.city_id === "") {
+                    document.getElementById('my_modal_1').close();
                     toast.error("Please fill in all required fields.");
                 } else {
                     const newAddress = await apiInstance.post('/location/add-address', values);
@@ -55,14 +56,15 @@ const ModalNewAddress = () => {
                     }, 1000);
                 }
             } catch (error) {
+                document.getElementById('my_modal_1').close();
                 toast.error("Please fill all the data")
             }
         },
         validationSchema: yup.object().shape({
-            name: yup.string().required(),
-            address: yup.string().required(),
-            province_id: yup.string().required(),
-            city_id: yup.string().required(),
+            name: yup.string().required("Name Required"),
+            address: yup.string().required("Address Required"),
+            province_id: yup.string().required("Please Select Province"),
+            city_id: yup.string().required("Please Select City"),
         })
     });
     const handleForm = (event) => {
@@ -91,18 +93,29 @@ const ModalNewAddress = () => {
                     <div className="flex flex-col gap-3 mt-5">
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Address Name:</div>
-                            <input type="text" onChange={inputAddress.handleChange} name="name" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.name} />
-                            <div className=" pl-3 text-red-600">{inputAddress.errors.name}</div>
+                            <input type="text" onBlur={inputAddress.handleBlur} onChange={inputAddress.handleChange} name="name" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.name} />
+                            {
+                                inputAddress.touched.name && inputAddress.errors.name ?
+                                    <div className=" pl-3 text-red-600">{inputAddress.errors.name} </div>
+                                    :
+                                    null
+                            }
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Complete Address:</div>
-                            <input type="text" onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.address} />
-                            <div className=" pl-3 text-red-600">{inputAddress.errors.address}</div>
+                            <input type="text" onBlur={inputAddress.handleBlur} onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.address} />
+                            {
+                                inputAddress.touched.address && inputAddress.errors.address ?
+                                    <div className=" pl-3 text-red-600">{inputAddress.errors.address} </div>
+                                    :
+                                    null
+                            }
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">Province:</div>
                             <select
                                 name="province_id"
+                                onBlur={inputAddress.handleBlur}
                                 onChange={(e) => {
                                     inputAddress.handleChange(e); setSelectedProvince(e.target.value);
                                 }}
@@ -116,12 +129,20 @@ const ModalNewAddress = () => {
                                     ))
                                     : null}
                             </select>
+                            {
+                                inputAddress.touched.province_id && inputAddress.errors.province_id ?
+                                    <div className=" pl-3 text-red-600">{inputAddress.errors.province_id} </div>
+                                    :
+                                    null
+                            }
+
                         </div>
 
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">City:</div>
                             <select
                                 name="city_id"
+                                onBlur={inputAddress.handleBlur}
                                 onChange={inputAddress.handleChange}
                                 className="rounded-2xl border border-green-800 select"
                                 value={inputAddress.values.city_id}
@@ -137,6 +158,13 @@ const ModalNewAddress = () => {
                                         ))
                                     : null}
                             </select>
+                            {
+                                inputAddress.touched.city_id && inputAddress.errors.city_id ?
+                                    <div className=" pl-3 text-red-600">{inputAddress.errors.city_id} </div>
+                                    :
+                                    null
+                            }
+
                         </div>
 
                         <div className="flex flex-col gap-2 my-5">

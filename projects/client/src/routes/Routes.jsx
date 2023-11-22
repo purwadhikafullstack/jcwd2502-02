@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
 import LandingPage from "../pages/user/landingPage";
-import LandingPage2 from "../pages/user/landingPage2";
 import RegistrationPage from "../pages/registerPage";
 import LoginPage from "../pages/loginPage";
 import ProductListPage from "../pages/user/productList";
@@ -39,11 +38,6 @@ const routes = [
     <Route path='/' element={
         <Protected userPage={false}>
             <LandingPage />
-        </Protected>
-    } />,
-    <Route path='/v2' element={
-        <Protected userPage={false}>
-            <LandingPage2 />
         </Protected>
     } />,
     <Route path='/profile' element={

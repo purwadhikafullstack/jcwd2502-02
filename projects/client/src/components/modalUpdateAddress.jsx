@@ -4,6 +4,7 @@ import debounce from 'lodash/debounce';
 import { api } from "../api/api";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
+import toast from 'react-hot-toast';
 
 
 const ModalUpdateAddress = ({ id, onClick, name }) => {
@@ -43,16 +44,17 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
             city_id: "",
             province_id: ""
         },
-        onSubmit: async (values) => {
+        onSubmit: async (values, { resetForm }) => {
             try {
                 const UpdateAddres = await apiInstance.patch(`/location/address/${id}`, dataUpdate.values)
                 document.getElementById('my_modal_' + id).close();
                 Swal.fire("Success!", "Address Successfully Updated", "success");
+                resetForm();
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);
             } catch (error) {
-
+                console.log(error);
             }
         },
         validationSchema: yup.object().shape({

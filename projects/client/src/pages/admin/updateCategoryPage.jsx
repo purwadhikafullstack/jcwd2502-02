@@ -2,7 +2,7 @@ import CategoryCard from "../../components/categoryCard";
 import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useRef, useState } from "react";
-import { api1 } from "../../api/api";
+import { api } from "../../api/api";
 import debounce from 'lodash/debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import ModalEditCategory from "../../components/modalEditCategory";
@@ -24,13 +24,12 @@ const UpdateProductsCategoryPage = () => {
     const [sortOrder, setSortOrder] = useState("DESC");
     const [page, setPage] = useState(1);
     const [maxPages, setMaxPages] = useState(1);
-    const api = api1();
     const pageTopRef = useRef(null);
     const navigate = useNavigate();
 
     const onGetCategory = async () => {
         try {
-            const response = await api.get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
+            const response = await api().get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
             console.log(response);
             setCategory(response.data.data.categories);
             setMaxPages(response.data.data.maxPages);
@@ -42,7 +41,7 @@ const UpdateProductsCategoryPage = () => {
     const handleEditCategory = async (categoryId) => {
         try {
             setCatId(categoryId);
-            const res = await api.get(`category/onecategory/${categoryId}`);
+            const res = await api().get(`category/onecategory/${categoryId}`);
             setInputCat(res.data.data);
         } catch (error) {
             console.log(error);
@@ -51,7 +50,7 @@ const UpdateProductsCategoryPage = () => {
 
     const handleSaveCat = async () => {
         try {
-            const res = await api.patch(`category/savecategory`, {
+            const res = await api().patch(`category/savecategory`, {
                 inputCat,
                 id: catId,
             });
@@ -81,7 +80,7 @@ const UpdateProductsCategoryPage = () => {
                 }
                 const formData = new FormData();
                 formData.append('image', file);
-                const response = await api.patch(`category/editimage/${catId}`, formData);
+                const response = await api().patch(`category/editimage/${catId}`, formData);
                 toast.success("Category Image Updated");
                 onGetCategory();
             }
@@ -91,7 +90,7 @@ const UpdateProductsCategoryPage = () => {
     };
     const onDeleteCategory = async (catId) => {
         try {
-            const deleteCategory = await api.patch(`category/deletecategory/${catId}`);
+            const deleteCategory = await api().patch(`category/deletecategory/${catId}`);
             toast.success("Delete Category Success");
             onGetCategory();
         } catch (error) {

@@ -151,16 +151,32 @@ const AdminOrderDetail = () => {
 
                             {transaction.status == "Payment Approved" ?
                                 <div className="w-full">
-                                    <DeleteConfirmation
-                                        itemId={id}
-                                        onDelete={getDetailOrder}
-                                        apiEndpoint="transaction/admin/send"
-                                        text={""}
-                                        message={"Order Sent"}
-                                        textOnButton={"Yes"}
-                                        button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
-                                            SEND ORDER
-                                        </div>} />
+                                    <div className="flex mt-3 justify- gap-3">
+                                        <div className="w-full">
+                                            <DeleteConfirmation
+                                                itemId={id}
+                                                onDelete={getDetailOrder}
+                                                apiEndpoint="transaction/admin/cancel-send"
+                                                text={""}
+                                                message={"Order Canceled"}
+                                                textOnButton={"Yes"}
+                                                button={<div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">
+                                                    CANCEL ORDER
+                                                </div>} />
+                                        </div>
+                                        <div className="w-full">
+                                            <DeleteConfirmation
+                                                itemId={id}
+                                                onDelete={getDetailOrder}
+                                                apiEndpoint="transaction/admin/send"
+                                                text={""}
+                                                message={"Order Sent"}
+                                                textOnButton={"Yes"}
+                                                button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
+                                                    SEND ORDER
+                                                </div>} />
+                                        </div>
+                                    </div>
                                 </div>
 
                                 : null}

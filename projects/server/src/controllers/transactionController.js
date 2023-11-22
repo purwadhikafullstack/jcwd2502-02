@@ -4,6 +4,8 @@ const { Sequelize } = require("sequelize");
 const axios = require('axios');
 const { Op, literal } = require("sequelize");
 const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
+// const cron = require('./../helper/couponCronJob');
+
 module.exports = {
     getShippingOption: async (req, res, next) => {
         try {
@@ -192,12 +194,14 @@ module.exports = {
                     })
                     if (stocks.stock >= product.quantity) {
                         await db.product_stock.update({
-                            stock: stocks.stock - product.quantity
+                            stock: stocks.stock - product.quantity,
+                            booked_stock: stocks.booked_stock + product.quantity
                         }, { where: { products_id: product.products_id, store_branch_id: branchId } })
-                        await db.stock_history.create({
-                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales"
-                            //jangan lupa tambahin transaction_id
-                        })
+                        // await db.stock_history.create({
+                        //     stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales"
+                        //     //jangan lupa tambahin transaction_id
+                        // })
+
                     } else if (stocks.stock < product.quantity) {
                         throw { message: "Stock is Not Enough / Unavailable" }
                     }
@@ -232,11 +236,11 @@ module.exports = {
             const numberOfCompleteTransactions = transaction.length;
             const coupon2 = await db.coupon.findOne({ where: { id: 2 } })
             const coupon3 = await db.coupon.findOne({ where: { id: 3 } })
-            if (numberOfCompleteTransactions % 3 === 0) {
+            if (numberOfCompleteTransactions % 1 === 0) {
                 await db.owned_coupon.create({
                     user_id: id, coupon_id: coupon3.dataValues.id, coupon_value: 0, isValid: "true", coupon_name: coupon3.dataValues.name
                 });
-            } if (numberOfCompleteTransactions % 7 === 0) {
+            } if (numberOfCompleteTransactions % 2 === 0) {
                 await db.owned_coupon.create({
                     user_id: id, coupon_id: coupon2.dataValues.id, coupon_value: coupon2.dataValues.amount, isValid: "true", coupon_name: coupon2.dataValues.name
                 });
@@ -251,6 +255,32 @@ module.exports = {
             const { role } = req.dataToken;
             const { transactionId } = req.params;
             if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                const branchId = getOrder.store_branch_id
+                const details = getOrder.transaction_details
+                for (const product of details) {
+                    const stocks = await db.product_stock.findOne({
+                        where: { products_id: product.products_id, store_branch_id: branchId }
+                    })
+                    if (stocks.booked_stock >= product.quantity) {
+                        await db.product_stock.update({
+                            booked_stock: stocks.booked_stock - product.quantity
+                        }, { where: { products_id: product.products_id, store_branch_id: branchId } })
+                        await db.stock_history.create({
+                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales", transaction_id: transactionId
+                        })
+                    } else if (stocks.booked_stock < product.quantity) {
+                        throw { message: "Stock is Not Enough / Unavailable" }
+                    }
+                }
+
                 await db.transactions.update({
                     status: "Delivered"
                 }, { where: { id: transactionId } })
@@ -263,6 +293,57 @@ module.exports = {
                     where: { id: transactionId }
                 });
                 responseHandler(res, "Send Order Success", result);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    adminCancelSendOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                const branchId = getOrder.store_branch_id
+                const details = getOrder.transaction_details
+                for (const product of details) {
+                    const stocks = await db.product_stock.findOne({
+                        where: { products_id: product.products_id, store_branch_id: branchId }
+                    })
+                    if (stocks.booked_stock >= product.quantity) {
+                        await db.product_stock.update({
+                            booked_stock: stocks.booked_stock - product.quantity, stock: stocks.stock + product.quantity
+                        }, { where: { products_id: product.products_id, store_branch_id: branchId } })
+                        await db.stock_history.create({
+                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales", transaction_id: transactionId
+                        })
+                        await db.stock_history.create({
+                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Cancel Delivery", transaction_id: transactionId
+                        })
+                    } else if (stocks.booked_stock < product.quantity) {
+                        throw { message: "Stock is Not Enough / Unavailable" }
+                    }
+                }
+
+                await db.transactions.update({
+                    status: "canceled"
+                }, { where: { id: transactionId } })
+                const result = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                responseHandler(res, "Cancel Order Success", result);
             }
         } catch (error) {
             next(error)
