@@ -105,15 +105,15 @@ const SalesReportPage = () => {
                     <h1 className='xl:text-xl text-sm font-bold '>Total Revenue:</h1>
                     <h1 className='flex xl:text-3xl justify-center text-sm'>{formatRupiah(cardData?.completedOrderRevenue)}</h1>
                 </div>
-    5         <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+         <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
                     <h1 className='xl:text-xl text-sm font-bold'>Potential Revenue:</h1>
                     <h1 className='flex xl:text-3xl text-sm justify-center'>{formatRupiah(cardData?.onGoingOrderRevenue)}</h1>
                 </div>
-    5         <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+             <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
                     <h1 className='xl:text-xl text-sm font-bold'>:</h1>
                     <h1 className='flex xl:text-3xl text-sm justify-center'>{"Rp.100,000,00"}</h1>
                 </div>
-    5         <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+             <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
                     <h1 className='xl:text-xl text-sm font-bold'>Completed orders:</h1>
                     <h1 className='flex xl:text-3xl text-sm justify-center'>{cardData?.completedOrderCount}</h1>
                 </div>
