@@ -6,15 +6,13 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import debounce from 'lodash/debounce';
 
-
 // components
-import Button from './../../components/button';
 import SortButton from "../../components/sortButton";
-import Searchbar from "../../components/searchBar";
 import ModalTransactionDetail from '../../components/modalTransactionDetail';
 
 const SalesReportPage = () => {
     const [data, setData] = useState([]);
+    const [cardData, setCardData] = useState([]);
     const [branchList, setBranchList] = useState("")
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
@@ -66,37 +64,32 @@ const SalesReportPage = () => {
         handlePageChange(page - 1);
     };
 
+    function formatRupiah(amount) {
+        const formatter = new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+        });
+        return formatter.format(amount);
+    }
+
     const fetchData = async (page) => {
         // const response = await api().get(`/transaction/data/transactions?username=${username}&sort=${sort}&days=${days}&page=${page}`)
         const response = await api().get(`/transaction/data/product-transaction?username=${username}&sort=${sort}&startdate=${startDate}&enddate=${endDate}&page=${page}&branch=${branch}`);
+        const response2 = await api().get(`/transaction/data/overall-transaction?startdate=${startDate}&enddate=${endDate}&branch=${branch}`)
         const branchData = await api().get('/branch/all')
+        setCardData(response2.data.data);
         setBranchList(branchData.data.data);
         setMaxPage(response.data.data.maxPages)
         setData(response.data.data.data);
     }
-
-    // const column = [
-    //     { Header: 'transaction id', accessor: "id" },
-    //     { Header: 'subtotal', accessor: "subtotal" },
-    //     { Header: 'shipping_cost', accessor: "shipping_cost" },
-    //     { Header: 'status', accessor: "status" },
-    //     { Header: 'createdAt', accessor: "createdAt" },
-    //     { Header: 'store_branch_id', accessor: "store_branch_id" },
-    //     { Header: 'user', accessor: "user.username" },
-    // ]
-
-    // const finalColumns = useMemo(() => column, [username, sort, days, page]);
-    // const finalData = useMemo(() => data, [username, sort, days, page]);
-
-    // const tableInstance = useTable({columns: finalColumns, data: finalData})
-    // const {getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } = tableInstance;
-    // console.log(days, username, sort, page);
 
     useEffect(() => {
         fetchData(page)
     }, [username, sort, startDate, endDate, page, branch])
 
     console.log(startDate, endDate);
+    console.log(`****`);
+    console.log(cardData);
 
     return(
         <div className="h-[1000px] w-screen">
@@ -107,6 +100,24 @@ const SalesReportPage = () => {
                 </div>
             </div>
             {/* Page body */}
+            <div className='bg-gray-300 h-[150px] justify-center flex items-center gap-12'>
+                <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+                    <h1 className='xl:text-xl text-sm font-bold '>Total Revenue:</h1>
+                    <h1 className='flex xl:text-3xl justify-center text-sm'>{formatRupiah(cardData?.completedOrderRevenue)}</h1>
+                </div>
+         <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+                    <h1 className='xl:text-xl text-sm font-bold'>Potential Revenue:</h1>
+                    <h1 className='flex xl:text-3xl text-sm justify-center'>{formatRupiah(cardData?.onGoingOrderRevenue)}</h1>
+                </div>
+             <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+                    <h1 className='xl:text-xl text-sm font-bold'>:</h1>
+                    <h1 className='flex xl:text-3xl text-sm justify-center'>{"Rp.100,000,00"}</h1>
+                </div>
+             <div className='h-[120px] w-1/6 border bg-gradient-to-br from-green-300 to-yellow-300 rounded-xl p-5'>
+                    <h1 className='xl:text-xl text-sm font-bold'>Completed orders:</h1>
+                    <h1 className='flex xl:text-3xl text-sm justify-center'>{cardData?.completedOrderCount}</h1>
+                </div>
+            </div>
             <div className="flex">
                 <div className='w-full mx-3'>
                     <div className='flex justify-around items-center'>
@@ -148,42 +159,7 @@ const SalesReportPage = () => {
                     </div>
                     <div className="rounded-md m-3 shadow-2xl py-4 bg-gradient-to-b from-green-300 to-yellow-300">
                         <h1 className='shadow-2xl bg-gradient-to-l from-yellow-500 to-green-500 w-fit p-1 rounded-lg mx-4 text-black'>Sales Data</h1>
-                        <div className='p-2 rounded-lg overflow-x-auto'>
-                        
-                            {/* <table {...getTableProps()} className='border border-black min-w-full h-[350px]'>
-                                <thead>
-                                    {
-                                        headerGroups && headerGroups.map(headerGroup => (
-                                            <tr {...headerGroup.getHeaderGroupProps()}>
-                                                {
-                                                    headerGroup.headers.map((column) => (
-                                                        <th {...column.getHeaderProps()}>{column.render('Header')}</th>
-                                                    ))
-                                                }
-                                            </tr>
-                                        ))
-                                    }
-                                </thead>
-                                <tbody {...getTableBodyProps()} className='border border-black text-center'>
-                                    {
-                                        rows.map(row => {
-                                            prepareRow(row)
-                                            return (
-                                                <tr {...row.getRowProps()} className='border border-black h-[30px]'>
-                                                    {
-                                                        row.cells.map((cell) => {
-                                                            return(
-                                                                <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                                            )
-                                                        })
-                                                    }
-                                                </tr>
-                                            )
-                                        })
-                                    }
-                                </tbody>
-                            </table> */}
-                            
+                        <div className='p-2 rounded-lg overflow-x-auto'>                            
                         </div>
                         {/* table baru Daisy UI */}
                         <div className='bg-gray-300 mx-6'>
@@ -207,7 +183,7 @@ const SalesReportPage = () => {
                                             <td className="px-4 py-2 text-center">{value.user.username}</td>
                                             <td className="px-4 py-2 text-center">{value.status}</td>
                                             <td className="px-4 py-2 text-center">{value.createdAt.split("T")[0]}</td>
-                                            <td className="px-4 py-2 text-center">{value.subtotal}</td>
+                                            <td className="px-4 py-2 text-center">{value.final_total}</td>
                                             <td className='px-4 py-2 text-center'> {value.store_branch.name}</td>
                                             <td className="px-4 py-2 text-center">
                                                 <ModalTransactionDetail transactionData={value}/>
