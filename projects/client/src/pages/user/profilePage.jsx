@@ -9,9 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
 import toast, { Toaster } from "react-hot-toast";
 import { getMainAddress } from "../../redux/Features/branch";
+import { PiPercentFill } from "react-icons/pi";
+import moment from 'moment';
+
 const ProfilePage = () => {
     const apiInstance = api()
     const [data, setData] = useState('')
+    const [coupon, setCoupon] = useState()
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const inputFileRef = useRef(null);
 
@@ -30,6 +34,16 @@ const ProfilePage = () => {
             // console.log(data.data.data);
             setData(data.data.data)
         } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const getUserCoupon = async () => {
+        try {
+            const data = await apiInstance.get(`transaction/coupon/user`)
+            setCoupon(data.data.data)
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -61,6 +75,7 @@ const ProfilePage = () => {
 
     useEffect(() => {
         getUserData()
+        getUserCoupon()
     }, [])
 
     useEffect(() => {
@@ -86,7 +101,7 @@ const ProfilePage = () => {
                                 }`} alt="" /> */}
 
                             <div className="relative">
-                                <img className="w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full" src={process.env.REACT_APP_URL + `${data?.profile_picture
+                                <img className={data.profile_picture ? "w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full" : " skeleton w-[200px] h-[200px] md:w-[180px] lg:w-[220px] lg:h-[220px] md:h-[180px] bg-base-200 rounded-full"} src={process.env.REACT_APP_URL + `${data?.profile_picture
                                     }`} alt="" />
                                 <input
                                     type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={inputFileRef} onChange={onSelectImages}
@@ -110,17 +125,52 @@ const ProfilePage = () => {
                             </div>
                             <div className="my-3">
                                 <div className="font-bold text-xl">Referral Code</div>
-                                <div>xxx</div>
+                                <div>{data.referral_code}</div>
                             </div>
                             <div className=" mt-5 md:mt-10 grid gap-2 text-lg">
                                 <Link to={'/manage-address'}>
                                     <div className="hover:underline ease-in duration-200">Manage Address</div>
                                 </Link>
+
+                                <div onClick={() => document.getElementById('my_modal_1').showModal()} className="hover:underline ease-in duration-200">My Coupon</div>
+                                <dialog id="my_modal_1" className="modal modal-bottom sm:modal-middle">
+                                    <div className="modal-box text-black">
+                                        <div className="text-2xl font-black ">Coupon(s) You Owned!</div>
+
+                                        <div className="grid gap-3 mt-2">
+                                            {coupon ? coupon.map((value, index) => {
+                                                return (
+                                                    <div>
+                                                        <div className="flex border-l-8 border p-3 border-green-700 rounded-xl">
+                                                            <div className="grid place-content-center"><PiPercentFill /></div>
+                                                            <div className="lg:flex lg:justify-between w-full ml-2">
+                                                                <div className="">{value.coupon_name}</div>
+                                                                <div>EXP {moment(value.createdAt).format('DD/MMM/YYYY')}</div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            })
+                                                : null}
+                                        </div>
+                                        <div></div>
+
+                                        <div className="modal-action">
+                                            <form method="dialog">
+                                                <button className="btn">Close</button>
+                                            </form>
+                                            <Link to={'/products?category='}>
+                                                <button className="btn">SHOP NOW</button>
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </dialog>
+
                                 <Link to={'/profile-password'}>
                                     <div className="hover:underline ease-in duration-200">Change Password</div>
                                 </Link>
                                 <Link to={'/updateprofile'}>
-                                    <div className="hover:underline ease-in duration-200 flex gap-1">Update Profile <div className="grid place-content-center pt-1"> <AiFillEdit /></div></div>
+                                    <div className="hover:underline ease-in duration-200 flex gap-1">Update Profile </div>
                                 </Link>
                             </div>
                         </div>
@@ -129,13 +179,13 @@ const ProfilePage = () => {
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800 text-2xl">Username</div>
                             <div className="h-[5px] bg-green-800"></div>
-                            <div className="p-2 text-xl">{data.username}</div>
-                            {/* <div className="h-[5px] bg-green-800"></div> */}
+                            <div className="p-2 text-xl">{data.username ? data.username : <span className="loading loading-dots loading-sm"></span>
+                            }</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800 text-2xl">Email</div>
                             <div className="h-[5px] bg-green-800"></div>
-                            <div className="p-2 text-xl">{data.email}</div>
+                            <div className="p-2 text-xl">{data.email ? data.email : <span className="loading loading-dots loading-sm"></span>}</div>
                         </div>
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800 text-2xl">Gender</div>

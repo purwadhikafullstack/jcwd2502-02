@@ -16,6 +16,7 @@ import { getCartAsync } from "../../redux/Features/cart";
 const CheckoutPage = () => {
     const dispatch = useDispatch()
     const nav = useNavigate()
+    const [disabled, setDisabled] = useState(false)
     const [shippingService, setShippingService] = useState();
     const [shippingOption, setShippingOption] = useState()
     const [courier, setCourier] = useState()
@@ -38,10 +39,10 @@ const CheckoutPage = () => {
             const selectedService = event.target.value;
             setShippingService(selectedService)
             setShippingOption(null);
-            setCost(0);
+            // setCost(0);
             const getOption = await api().post('/transaction/option', { origin: closestBranch.city_id, destination: mainAddress.city_id, weight: totalWeight, courier: selectedService })
             setShippingOption(getOption.data.data[0].costs)
-            setCost(null)
+            // setCost(null)
         } catch (error) {
             console.log(error);
         }
@@ -66,17 +67,22 @@ const CheckoutPage = () => {
             if (cost == null) {
                 toast.error("Please complete the shipping data")
             } else {
+                setDisabled(true)
+                console.log("ini disable", disabled);
                 const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName })
                 console.log(createOrder.data);
-
                 toast.success("Order created!");
-
                 setTimeout(() => {
                     nav(`/order/${createOrder.data.data.id}`);
-                }, 2500); // Adjust the delay time as needed
+                }, 1500); // Adjust the delay time as needed
             }
         } catch (error) {
             console.log(error);
+            toast.error("An Error Has Occured, Please Try Again Later")
+            setDisabled(false)
+        }
+        finally {
+            // setDisabled(false); // Move this line outside the try block
         }
     }
     const onGetCoupon = async () => {
@@ -109,6 +115,7 @@ const CheckoutPage = () => {
         dispatch(getMainAddress());
         onGetCoupon()
     }, []);
+    console.log("ini disable", disabled);
 
     // console.log(address);
     // console.log(closestBranch.id);
@@ -238,7 +245,10 @@ const CheckoutPage = () => {
                             </div>
                         </div>
                         <div className="my-3">
-                            <Button onClick={() => submitOrder()} style={"w-full"} text={"Confirm Order"} />
+                            {disabled ?
+                                <Button style={"w-full"} text={"Processing Order"} />
+                                : <Button disabled={disabled} onClick={() => submitOrder()} style={"w-full"} text={disabled ? "Creating Order" : "Confirm Order"} />}
+
                         </div>
                     </div>
 

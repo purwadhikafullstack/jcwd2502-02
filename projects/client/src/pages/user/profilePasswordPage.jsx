@@ -52,13 +52,9 @@ const UpdatePasswordPage = () => {
         <div>
             <Toaster />
             <div className="grid place-content-center h-screen bg-gradient-to-b from-green-700 to-yellow-300">
-                {/* <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-2xl font-bold gap-2 py-5 text-green-800">
-
-                    Update Password
-                </div> */}
                 <div className="">
                     <form onSubmit={(formik.handleSubmit)}>
-                        <div className="mx-10 md:mx-36 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700">
+                        <div className="px-5 md:px-8 lg:px-10 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700">
 
                             <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Password
                             </div>

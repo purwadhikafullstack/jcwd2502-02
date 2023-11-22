@@ -120,7 +120,7 @@ const UserOrderDetail = () => {
                                     <div className="grid place-content-center">TIME REMAINING:</div>
                                     <div className="text-6xl grid place-content-center">{formatTime(timeRemaining)}</div>
                                     <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
-                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./bca_logo.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./download.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
                                     <div className="grid place-content-center"></div>
                                 </div>
                                 <input
