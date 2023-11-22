@@ -13,6 +13,7 @@ Router.get(`/all`, transactionController.getOrders)
 Router.get(`/:transactionId`, verify, transactionController.getUserOrder)
 Router.get(`/user/all`, verify, transactionController.getAllUserOrders)
 Router.get('/data/transactions', verify, transactionController.transactionReportSalesData);
+Router.get('/data/product-transaction', verify, transactionController.transactionReportProductData);
 
 Router.patch('/cancel/:transactionId', verify, transactionController.cancelOrder)
 

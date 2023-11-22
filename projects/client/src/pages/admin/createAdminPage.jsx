@@ -41,9 +41,7 @@ export default function CreateAdminPage() {
 
     const onGetAdmins = async () => {
         try {
-
             const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&page=${page}`)
-            console.log(data);
             setMaxPage(data.data.maxPages)
             setAdmin(data.data.filteredAdmins);
         } catch (error) {
