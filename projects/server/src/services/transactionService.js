@@ -106,8 +106,6 @@ module.exports = {
 
     filteredTransactionsData: async (req) => {
         try {
-
-
             console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken
             console.log(role);
@@ -160,9 +158,6 @@ module.exports = {
             let nameClause = {};
             const { role, store_branch_id } = req.dataToken;
             const { username, sort, page, branch, startdate, enddate } = req.query;
-            console.log(startdate, enddate);
-            console.log(req.dataToken);
-            console.log(req.query);
             if (role === "admin") {
                 whereClause.store_branch_id = store_branch_id
             } else if (role === "superadmin") {
@@ -175,7 +170,7 @@ module.exports = {
                     [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
                 }
             }
-            whereClause.status = { [Op.ne]: 'canceled' };
+            whereClause.status = 'Complete';
             console.log(nameClause);
             console.log(whereClause);
             const limit = 6;
@@ -210,6 +205,48 @@ module.exports = {
             return {
                 maxPages,
                 data
+            }
+        } catch (error) {
+            return error;
+        }
+    },
+    getOverallData: async (req) => {
+        try {
+            let whereCondition = {};
+            const {branch, startdate, enddate} = req.query;
+            if (startdate && enddate) {
+                whereCondition.createdAt = {
+                    [Op.gte]: new Date(startdate),
+                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
+                }
+            }
+            if(branch) {
+                whereCondition.store_branch_id = branch
+            }
+            whereCondition.status = {[db.Sequelize.Op.not]: 'Canceled'}
+            console.log(whereCondition);
+            const data = await db.transactions.findAll({
+                where: whereCondition,
+                attributes: ["status", "subtotal", "final_total", "store_branch_id", "createdAt"],
+                include: [{
+                    model: db.store_branch,
+                    attributes: ["name"]
+                }]
+            })
+            const completedOrders = data.filter(item => item.status === 'Complete');
+            const onGoingOrders = data.filter(item => item.status !== 'Complete');
+            const completedOrderCount = completedOrders.length
+            const completedOrderRevenue = completedOrders.reduce((total, transaction) => {
+                return total + transaction.final_total
+            }, 0)
+            const onGoingOrderRevenue = onGoingOrders.reduce((total, transaction) => {
+                return total + transaction.final_total
+            }, 0)
+            console.log(completedOrderRevenue, completedOrderCount, onGoingOrderRevenue);
+            return {
+                completedOrderRevenue,
+                completedOrderCount,
+                onGoingOrderRevenue
             }
         } catch (error) {
             return error;
