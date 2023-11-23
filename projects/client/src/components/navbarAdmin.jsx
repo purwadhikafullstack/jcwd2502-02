@@ -86,10 +86,25 @@ const NavbarAdmin = () => {
                                                     <div className="flex gap-5 hover:text-white rounded-full "><HiShoppingCart />Manage Order</div>
                                                 </li>
                                             </Link>
-                                            <Link to={'/all-product-list'}>
+                                            <Link to={'/updatecategory'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <RiFileList3Fill />
+                                                    Manage Category</div></li>
+                                            </Link>
+                                            <Link to={'/updateproducts'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <RiFileList3Fill />
                                                     Manage Product</div></li>
+                                            </Link>
+                                            <Link to={'/update-product-stocks?category='}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <RiFileList3Fill />
+                                                    Manage Stock</div></li>
+                                            </Link>
+                                            <Link to={'/manage-product-discount?category='}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <RiFileList3Fill />
+                                                    Manage Discount</div></li>
                                             </Link>
                                             {/* <Link to={'/update-product-stocks'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">

@@ -37,7 +37,7 @@ const CheckoutComponent = (props) => {
             toast.error("Oops, stock limit reached. No more items can be added");
         }
     };
-
+    console.log(props);
     return (
         <div>
             <div className={`w-full ${props.style}`}>
@@ -70,7 +70,7 @@ const CheckoutComponent = (props) => {
                                         <div className="lg:flex gap-2">
                                             <div className="grid place-content-center text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
                                             {(props.discount_id === 1 || props.discount_id === 2) && (
-                                                <div className="grid place-content-center text-red-600 line-through font-bold">Rp {props.price.toLocaleString()}</div>
+                                                <div className="grid place-content-center text-red-600 line-through font-bold">Rp {props.price?.toLocaleString()}</div>
                                             )}
                                         </div>
                                     )

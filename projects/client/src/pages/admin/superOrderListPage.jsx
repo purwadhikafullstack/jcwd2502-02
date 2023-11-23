@@ -9,17 +9,22 @@ import toast, { Toaster } from "react-hot-toast";
 import moment from 'moment';
 import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
+import { Link } from "react-router-dom";
 
 const SuperOrderList = () => {
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0];
+    const [sortBy, setSortBy] = useState("id");
     const [invoice, setInvoice] = useState("");
     const [status, setStatus] = useState("");
-    const [createdAt, setCreatedAt] = useState("");
+    const [startdate, setStartdate] = useState("");
+    const [enddate, setEnddate] = useState(formattedToday);
     const [orderData, setOrderData] = useState([]);
-    const [branch, setBranch] = useState("")
-    const [branches, setBranches] = useState()
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
-
+    const [sort, setSort] = useState('ASC');
+    const [branch, setBranch] = useState("")
+    const [branches, setBranches] = useState()
     const getBranches = async () => {
         try {
             const branches = await api().get(`/branch/all`)
@@ -32,12 +37,11 @@ const SuperOrderList = () => {
 
     const handleReset = () => {
         try {
-            setInvoice(""); setStatus(""); setCreatedAt(""); setPage(1); setMaxPage(1); handleSearch(); setBranch("")
+            setInvoice(""); setStatus(""); setStartdate(""); setPage(1); setMaxPage(1); handleSearch(); setEnddate(""); setSort("ASC"); setSortBy("id"); setBranch("")
         } catch (error) {
             console.log(error);
         }
     }
-
     const handleBranch = (event) => {
         try {
             setPage(1);
@@ -56,10 +60,35 @@ const SuperOrderList = () => {
         }
     }
 
+
     const handleDate = (event) => {
         try {
             setPage(1);
-            setCreatedAt(event.target.value);
+            setStartdate(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleSort = (event) => {
+        try {
+            setPage(1);
+            setSort(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleSortBy = (event) => {
+        try {
+            setPage(1);
+            setSortBy(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleEndDate = (event) => {
+        try {
+            setPage(1);
+            setEnddate(event.target.value);
         } catch (error) {
             console.log(error);
         }
@@ -72,7 +101,7 @@ const SuperOrderList = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&createdAt=${createdAt}&branchId=${branch}`)
+            const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branch}`)
             console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
@@ -101,7 +130,7 @@ const SuperOrderList = () => {
     useEffect(() => {
         handleSearch()
         getBranches()
-    }, [createdAt, status, invoice, page, branch])
+    }, [startdate, status, invoice, page, enddate, sortBy, sort, branch])
 
     const testing = (value) => {
         try {
@@ -141,13 +170,29 @@ const SuperOrderList = () => {
                                 <option value={""} disabled selected>Status</option>
                                 <option value={"canceled"} >CANCEL</option>
                                 <option value={"pending"} >PENDING</option>
-                                <option value={"appproved"}>APPROVED</option>
-                                <option value={"delivery"}>DELIVERY</option>
-                                <option value={"arrived"}>ARRIVED</option>
-                                <option value={"complete"}>COMPLETE</option>
+                                <option value={"waiting for payment approval"} >WAITING APPROVAL</option>
+                                <option value={"Payment Approved"}>APPROVED</option>
+                                <option value={"Delivered"}>DELIVERY</option>
+                                <option value={"Complete"}>COMPLETE</option>
                             </select>
                         </div>
-                        <div className="grid place-content-center"><input value={createdAt} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" /></div>
+                        <div className="grid place-content-center"><input value={startdate} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" /></div>
+                        <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                                <option value={"id"} disabled selected>Sort By</option>
+                                <option value="createdAt"> Date </option>
+                                <option value="final_total"> Subtotal </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sort} onChange={(e) => handleSort(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                                <option value={""} disabled selected>Sort</option>
+                                <option value="ASC"> Asc </option>
+                                <option value="DESC"> Desc </option>
+                            </select>
+                        </div>
                         <div className="grid place-content-center">
                             <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
                         </div>
@@ -163,7 +208,9 @@ const SuperOrderList = () => {
                                     invoice={value.invoice}
                                     total={value.final_total.toLocaleString()}
                                     date={moment(value.createdAt).format('Do MMMM YYYY')}
-                                // address={value.address}
+                                    details={<Link to={`/admin/order/${value.id}`}>
+                                        <div className="lg:flex-1 p-2 my-2 lg:grid lg:place-content-center text-green-600 hover:underline">See Transaction Detail</div></Link>}
+
                                 />
                             </div>
                         )

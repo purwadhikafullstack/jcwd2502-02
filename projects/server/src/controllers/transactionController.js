@@ -74,12 +74,20 @@ module.exports = {
         try {
             const { id } = req.dataToken;
             console.log(id);
-            const { invoice, status, createdAt, page } = req.query;
+            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby } = req.query;
             const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
-            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
+            if (startdate && !enddate) {
+                whereClause.createdAt = { [Op.gte]: new Date(startdate), [Op.lte]: new Date(startdate + 'T23:59:59.999Z') }
+            }
+            if (startdate && enddate) {
+                whereClause.createdAt = {
+                    [Op.gte]: new Date(startdate),
+                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
+                }
+            }
             const totalRecords = await db.transactions.count({ where: { ...whereClause, user_id: id } });
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;
@@ -87,7 +95,7 @@ module.exports = {
                 where: { ...whereClause, user_id: id },
                 limit,
                 offset,
-                order: [['createdAt', 'DESC']]
+                order: [[`${sortby}`, sort]],
             });
             const result = res.json({
                 orders,
@@ -101,21 +109,29 @@ module.exports = {
 
     getOrders: async (req, res, next) => {
         try {
-            const { invoice, status, createdAt, page, branchId } = req.query;
+            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby, branchId } = req.query;
             const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
             if (branchId) whereClause.store_branch_id = branchId;
-            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
-            const totalRecords = await db.transactions.count({ where: whereClause });
+            if (startdate && !enddate) {
+                whereClause.createdAt = { [Op.gte]: new Date(startdate), [Op.lte]: new Date(startdate + 'T23:59:59.999Z') }
+            }
+            if (startdate && enddate) {
+                whereClause.createdAt = {
+                    [Op.gte]: new Date(startdate),
+                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
+                }
+            }
+            const totalRecords = await db.transactions.count({ where: { ...whereClause } });
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;
             const orders = await db.transactions.findAll({
-                where: whereClause,
+                where: { ...whereClause },
                 limit,
                 offset,
-                order: [['createdAt', 'DESC']]
+                order: [[`${sortby}`, sort]],
             });
             const result = res.json({
                 orders,

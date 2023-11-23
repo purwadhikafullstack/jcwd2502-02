@@ -13,17 +13,21 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 
 const BranchOrderList = () => {
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0];
+    const [sortBy, setSortBy] = useState("id");
     const [invoice, setInvoice] = useState("");
     const [status, setStatus] = useState("");
-    const [createdAt, setCreatedAt] = useState("");
+    const [startdate, setStartdate] = useState("");
+    const [enddate, setEnddate] = useState(formattedToday);
     const [orderData, setOrderData] = useState([]);
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const branchLocation = useSelector((state) => state.users.store_branch_id);
-
+    const [sort, setSort] = useState('ASC');
     const handleReset = () => {
         try {
-            setInvoice(""); setStatus(""); setCreatedAt(""); setPage(1); setMaxPage(1); handleSearch();
+            setInvoice(""); setStatus(""); setStartdate(""); setPage(1); setMaxPage(1); handleSearch(); setEnddate(""); setSort("ASC"); setSortBy("id");
         } catch (error) {
             console.log(error);
         }
@@ -41,12 +45,35 @@ const BranchOrderList = () => {
     const handleDate = (event) => {
         try {
             setPage(1);
-            setCreatedAt(event.target.value);
+            setStartdate(event.target.value);
         } catch (error) {
             console.log(error);
         }
     };
-
+    const handleSort = (event) => {
+        try {
+            setPage(1);
+            setSort(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleSortBy = (event) => {
+        try {
+            setPage(1);
+            setSortBy(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleEndDate = (event) => {
+        try {
+            setPage(1);
+            setEnddate(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const handleInvoice = debounce((event) => {
         console.log(event);
         setInvoice(event);
@@ -54,7 +81,7 @@ const BranchOrderList = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&createdAt=${createdAt}&branchId=${branchLocation}`)
+            const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branchLocation}`)
             console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
@@ -82,7 +109,7 @@ const BranchOrderList = () => {
     useEffect(() => {
         handleSearch()
 
-    }, [createdAt, status, invoice, page])
+    }, [startdate, status, invoice, page, enddate, sortBy, sort])
 
     return (
         <div >
@@ -102,13 +129,29 @@ const BranchOrderList = () => {
                                 <option value={""} disabled selected>Status</option>
                                 <option value={"canceled"} >CANCEL</option>
                                 <option value={"pending"} >PENDING</option>
-                                <option value={"appproved"}>APPROVED</option>
-                                <option value={"delivery"}>DELIVERY</option>
-                                <option value={"arrived"}>ARRIVED</option>
-                                <option value={"complete"}>COMPLETE</option>
+                                <option value={"waiting for payment approval"} >WAITING APPROVAL</option>
+                                <option value={"Payment Approved"}>APPROVED</option>
+                                <option value={"Delivered"}>DELIVERY</option>
+                                <option value={"Complete"}>COMPLETE</option>
                             </select>
                         </div>
-                        <div className="grid place-content-center"><input value={createdAt} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" /></div>
+                        <div className="grid place-content-center"><input value={startdate} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" /></div>
+                        <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                                <option value={"id"} disabled selected>Sort By</option>
+                                <option value="createdAt"> Date </option>
+                                <option value="final_total"> Subtotal </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sort} onChange={(e) => handleSort(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                                <option value={""} disabled selected>Sort</option>
+                                <option value="ASC"> Asc </option>
+                                <option value="DESC"> Desc </option>
+                            </select>
+                        </div>
                         <div className="grid place-content-center">
                             <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
                         </div>
