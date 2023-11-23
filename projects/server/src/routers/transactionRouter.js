@@ -16,7 +16,7 @@ Router.get(`/admin/order/:transactionId`, verify, transactionController.getUserO
 Router.get(`/user/all`, verify, transactionController.getAllUserOrders)
 Router.get('/data/transactions', verify, transactionController.transactionReportSalesData);
 Router.get('/data/product-transaction', verify, transactionController.transactionReportProductData);
-Router.get('/data/overall-transaction', transactionController.getOverallTransactionData);
+Router.get('/data/overall-transaction', verify, transactionController.getOverallTransactionData);
 
 Router.patch('/cancel/:transactionId', verify, transactionController.cancelOrder)
 Router.patch('/admin/cancel/:transactionId', verify, transactionController.adminCancelOrder)

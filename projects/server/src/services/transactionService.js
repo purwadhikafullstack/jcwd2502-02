@@ -156,8 +156,16 @@ module.exports = {
         try {
             let whereClause = {};
             let nameClause = {};
+            console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken;
-            const { username, sort, page, branch, startdate, enddate } = req.query;
+            const { username, sort, page, branch, startdate, enddate, sortby, transactionstatus } = req.query;
+            if(transactionstatus == 2) {
+                whereClause.status = 'Complete'
+            } else if (transactionstatus == 3) {
+                whereClause.status = {[Op.notIn]: ['Complete', 'Canceled']}
+            } else {
+                whereClause.status = {[Op.notIn]: ['Canceled']}
+            }
             if (role === "admin") {
                 whereClause.store_branch_id = store_branch_id
             } else if (role === "superadmin") {
@@ -170,9 +178,6 @@ module.exports = {
                     [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
                 }
             }
-            whereClause.status = 'Complete';
-            console.log(nameClause);
-            console.log(whereClause);
             const limit = 6;
             const totalRecords = await db.transactions.count({ where: whereClause });
             const maxPages = Math.ceil(totalRecords / limit);
@@ -198,7 +203,7 @@ module.exports = {
                     where: nameClause
                 }
                 ],
-                order: [['createdAt', sort]],
+                order: [[`${sortby}`, sort]],
                 limit,
                 offset
             })
@@ -213,15 +218,19 @@ module.exports = {
     getOverallData: async (req) => {
         try {
             let whereCondition = {};
+            console.log(req.dataToken);
             const {branch, startdate, enddate} = req.query;
+            const { role, store_branch_id } = req.dataToken;
             if (startdate && enddate) {
                 whereCondition.createdAt = {
                     [Op.gte]: new Date(startdate),
-                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
+                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'),
                 }
             }
-            if(branch) {
-                whereCondition.store_branch_id = branch
+            if (role === "admin") {
+                whereCondition.store_branch_id = store_branch_id
+            } else if (role === "superadmin") {
+                if (branch) whereCondition.store_branch_id = branch
             }
             whereCondition.status = {[db.Sequelize.Op.not]: 'Canceled'}
             console.log(whereCondition);
@@ -242,11 +251,12 @@ module.exports = {
             const onGoingOrderRevenue = onGoingOrders.reduce((total, transaction) => {
                 return total + transaction.final_total
             }, 0)
-            console.log(completedOrderRevenue, completedOrderCount, onGoingOrderRevenue);
+            const totalOrders = data.length
             return {
                 completedOrderRevenue,
                 completedOrderCount,
-                onGoingOrderRevenue
+                onGoingOrderRevenue,
+                totalOrders
             }
         } catch (error) {
             return error;
@@ -261,4 +271,3 @@ module.exports = {
         }
     }
 };
-

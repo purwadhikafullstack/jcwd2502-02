@@ -46,7 +46,7 @@ app.get("/api/greetings", (req, res, next) => {
 
 app.use(express.static('src/public'))
 
-const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter, transactionRouter, stockRouter } = require('./routers');
+const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter, transactionRouter, stockRouter, reportRouter } = require('./routers');
 const { log } = require("handlebars");
 app.use('/api/products', productsRouter)
 app.use('/api/category', categoryRouter)
@@ -56,6 +56,7 @@ app.use('/api/location', locationRouter)
 app.use('/api/transaction', transactionRouter)
 app.use('/api/stock', stockRouter)
 app.use('/api/chart', chartRouter)
+app.use('/api/report', reportRouter)
 // ===========================
 
 // not found
