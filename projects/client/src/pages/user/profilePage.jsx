@@ -87,6 +87,8 @@ const ProfilePage = () => {
         dispatch(getMainAddress());
     }, []);
 
+
+    console.log(coupon);
     return (
         <div>
             <Toaster />
@@ -153,6 +155,9 @@ const ProfilePage = () => {
                                             })
                                                 : null}
                                         </div>
+
+
+                                        {coupon?.length === 0 ? <div>Oops, Looks like you dont have any coupon at the momment. You can get coupon by shopping at BuyFresh!</div> : null}
                                         <div></div>
 
                                         <div className="modal-action">

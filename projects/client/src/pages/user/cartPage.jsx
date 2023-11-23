@@ -35,33 +35,48 @@ const Cart = () => {
 
                 <div className="flex text-5xl font-bold gap-2 text-green-800">My Cart
                 </div>
-                <div className="flex my-5 text-lg">
+
+                {cart.cart.length ? <div className="flex my-5 text-lg">
                     <div className="pt-1 pr-3"><FaLocationDot /> </div>
                     <div> {closestBranch.name}</div>
-                </div>
+                </div> : null}
+
                 <div className="lg:flex lg:gap-12 md:mb-10">
 
                     <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto ">
-                        {cart.cart.map((value, index) => {
-                            return (
-                                <div>
-                                    <CartComponent
-                                        name={value.product.name}
-                                        price={value.product.price}
-                                        final_price={value.product.final_price}
-                                        discount_id={value.product.discount_id}
-                                        image={value.product.image}
-                                        weight={value.product.weight}
-                                        data={value.products_id}
-                                        id={value.products_id}
-                                    />
 
-                                </div>
-                            )
-                        })}
+                        {cart.cart.length ?
+                            <div>{
+                                cart.cart.map((value, index) => {
+                                    return (
+                                        <div>
+                                            <CartComponent
+                                                name={value.product.name}
+                                                price={value.product.price}
+                                                final_price={value.product.final_price}
+                                                discount_id={value.product.discount_id}
+                                                image={value.product.image}
+                                                weight={value.product.weight}
+                                                data={value.products_id}
+                                                id={value.products_id}
+                                            />
+                                        </div>
+                                    )
+                                })
+
+                            }</div>
+                            : <div className="grid gap-3 place-content-center mt-32">
+                                <div className="text-center text-3xl font-black grid place-content-center">Oops, Your cart is empty!</div>
+                                <div className=" grid place-content-center">But it doesn't have to be</div>
+                                <Link to={'/products?category='}>
+                                    <Button style={"w-full"} text={"Continue Shopping"} />
+                                </Link>
+                            </div>
+                        }
+
                     </div>
 
-                    <div className="bg-green-800 my-10 lg:my-0 p-3 rounded-xl md:h-[120px] lg:w-[400px]">
+                    {cart.cart.length ? <div className="bg-green-800 my-10 lg:my-0 p-3 rounded-xl md:h-[120px] lg:w-[400px]">
                         <div className="text-2xl lg:text-xl font-bold text-white flex justify-between">
                             <div>Total Order :</div>
                             <div>Rp {totalSubtotal.toLocaleString()}</div>
@@ -71,7 +86,7 @@ const Cart = () => {
                                 <Button style={"w-full"} text={"Proceed to Checkout"} />
                             </Link>
                         </div>
-                    </div>
+                    </div> : null}
 
                 </div>
             </div>

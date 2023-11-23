@@ -3,11 +3,11 @@ const db = require('./../models'); // Adjust the path as needed
 const { Sequelize } = require('sequelize');
 
 // Schedule the job to run every minute
-cron.schedule('* * * * *', async () => { // Run every minute
+cron.schedule('*/1 * * * *', async () => { // Run every 2 minutes
     try {
         // Define a timestamp for 1 minute ago
         const oneMinuteAgo = new Date();
-        oneMinuteAgo.setMinutes(oneMinuteAgo.getMinutes() - 1);
+        oneMinuteAgo.setMinutes(oneMinuteAgo.getMinutes() - 2);
 
         // Update owned coupons with isValid "true" that are older than 1 minute to "false"
         await db.owned_coupon.update(

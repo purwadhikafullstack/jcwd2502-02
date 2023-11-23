@@ -4,7 +4,7 @@ const { Sequelize } = require("sequelize");
 const axios = require('axios');
 const { Op, literal } = require("sequelize");
 const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
-// const cron = require('./../helper/couponCronJob');
+const couponValidityCron = require('./../helper/couponCronJob');
 
 module.exports = {
     getShippingOption: async (req, res, next) => {
@@ -236,15 +236,17 @@ module.exports = {
             const numberOfCompleteTransactions = transaction.length;
             const coupon2 = await db.coupon.findOne({ where: { id: 2 } })
             const coupon3 = await db.coupon.findOne({ where: { id: 3 } })
-            if (numberOfCompleteTransactions % 1 === 0) {
+            if (numberOfCompleteTransactions % 3 === 0) {
                 await db.owned_coupon.create({
                     user_id: id, coupon_id: coupon3.dataValues.id, coupon_value: 0, isValid: "true", coupon_name: coupon3.dataValues.name
                 });
-            } if (numberOfCompleteTransactions % 2 === 0) {
+            } if (numberOfCompleteTransactions % 7 === 0) {
                 await db.owned_coupon.create({
                     user_id: id, coupon_id: coupon2.dataValues.id, coupon_value: coupon2.dataValues.amount, isValid: "true", coupon_name: coupon2.dataValues.name
                 });
             }
+
+            // await couponValidityCron ()
             responseHandler(res, "Upload Payment Proof Success", transaction);
         } catch (error) {
             next(error)
