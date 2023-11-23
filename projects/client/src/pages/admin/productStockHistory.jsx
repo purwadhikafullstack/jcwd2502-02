@@ -45,7 +45,7 @@ const ProductStockHistoryPage = () => {
         fetchData()
     }, [nameQuery, descQuery, branchQuery, page])
     return(
-        <div className="h-screen bg-white">
+        <div className="min-h-screen h-full bg-white">
             <Toaster />
             <div className="">
                 <div className="flex justify-center bg-gradient-to-b from-green-500 to-yellow-300">

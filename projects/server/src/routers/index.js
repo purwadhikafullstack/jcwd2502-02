@@ -7,6 +7,7 @@ const locationRouter = require('./locationRouter')
 const transactionRouter = require('./transactionRouter')
 const stockRouter = require('./stockRouter')
 const chartRouter = require('./chartRouter')
+const reportRouter = require('./reportRouter')
 
 module.exports = {
     usersRouter,
@@ -17,5 +18,6 @@ module.exports = {
     locationRouter,
     transactionRouter,
     stockRouter,
-    chartRouter
+    chartRouter,
+    reportRouter
 }
