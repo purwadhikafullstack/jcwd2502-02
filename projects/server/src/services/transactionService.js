@@ -59,7 +59,8 @@ module.exports = {
                     discount_id: product.product.discount_id,
                     discount_value: product.product.discount_value,
                     weight: product.product.weight,
-                    real_price: product.product.price
+                    real_price: product.product.price,
+                    store_branch_id: branchId
                 });
             }
 
@@ -159,12 +160,12 @@ module.exports = {
             console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken;
             const { username, sort, page, branch, startdate, enddate, sortby, transactionstatus } = req.query;
-            if(transactionstatus == 2) {
+            if (transactionstatus == 2) {
                 whereClause.status = 'Complete'
             } else if (transactionstatus == 3) {
-                whereClause.status = {[Op.notIn]: ['Complete', 'Canceled']}
+                whereClause.status = { [Op.notIn]: ['Complete', 'Canceled'] }
             } else {
-                whereClause.status = {[Op.notIn]: ['Canceled']}
+                whereClause.status = { [Op.notIn]: ['Canceled'] }
             }
             if (role === "admin") {
                 whereClause.store_branch_id = store_branch_id
@@ -219,7 +220,7 @@ module.exports = {
         try {
             let whereCondition = {};
             console.log(req.dataToken);
-            const {branch, startdate, enddate} = req.query;
+            const { branch, startdate, enddate } = req.query;
             const { role, store_branch_id } = req.dataToken;
             if (startdate && enddate) {
                 whereCondition.createdAt = {
@@ -232,7 +233,7 @@ module.exports = {
             } else if (role === "superadmin") {
                 if (branch) whereCondition.store_branch_id = branch
             }
-            whereCondition.status = {[db.Sequelize.Op.not]: 'Canceled'}
+            whereCondition.status = { [db.Sequelize.Op.not]: 'Canceled' }
             console.log(whereCondition);
             const data = await db.transactions.findAll({
                 where: whereCondition,

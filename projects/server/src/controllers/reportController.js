@@ -6,7 +6,7 @@ const { fetchProductSalesReport } = require('./../services/reportService');
 module.exports = {
     salesReportProduct: async (req, res, next) => {
         try {
-            const data = await fetchProductSalesReport(req);
+            const data = await fetchProductSalesReport(req.dataToken, req.query);
             responseHandler(res, 'product sales report 1', data)
         } catch (error) {
             next(error);

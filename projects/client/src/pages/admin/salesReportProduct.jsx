@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/api";
-
+import NavbarAdmin from "./../../components/navbarAdmin"
 import React from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -10,7 +10,7 @@ const SalesReportProduct = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
     const [sortHow, setSortHow] = useState("ASC");
-    const [sortBy, setSortBy] = useState("");
+    const [sortBy, setSortBy] = useState("id");
     // const [transactionFilter, setTransactionFilter] = useState("");
     const [data, setData] = useState([]);
     // const [cardData, setCardData] = useState([]);
@@ -60,8 +60,8 @@ const SalesReportProduct = () => {
 
     const fetchData = async () => {
         const data = await api().get(`/report/data?sortHow=${sort}&sortBy=${sortBy}&productName=${name}&branch=${branch}&startDate=${startDate}&endDate=${endDate}`);
-        console.log(`ngambil data`);
-        setData(data.data.data.quantityResult);
+        console.log(data.data);
+        setData(data.data.data);
     }
 
     const chartData = Object.entries(data).map(([item, quantity]) => ({
@@ -71,7 +71,7 @@ const SalesReportProduct = () => {
 
     useEffect(() => {
         fetchData()
-    }, [sortHow, sortBy, startDate, endDate, sort, name, ])
+    }, [sortHow, sortBy, startDate, endDate, sort, name,])
 
     const dummyData = [
         {
@@ -91,9 +91,12 @@ const SalesReportProduct = () => {
             quantitySold: "3"
         },
     ]
-    return(
+
+    console.log(data);
+    return (
         <div className="bg-white w-screen h-full min-h-screen">
             {/* Header */}
+            <NavbarAdmin />
             <div className="border bg-gradient-to-l to-yellow-300 from-green-300 flex justify-center p-2 shadow-2xl">
                 <h1 className="text-lg">Product Sales Report</h1>
             </div>
@@ -134,7 +137,7 @@ const SalesReportProduct = () => {
                             <option value="">All branch</option>
                             {
                                 branchList && branchList.map((value) => {
-                                    return(
+                                    return (
                                         <option value={value.id}> {value.name} </option>
                                     )
                                 })
@@ -144,25 +147,25 @@ const SalesReportProduct = () => {
                     <div className='flex gap-2'>
                         <h1> Date range: </h1>
                         <div className='flex gap-2'>
-                        <input type="date" onChange={handleStartDate} value={startDate} max={formattedToday} />    
-                        <h1>and</h1>
-                        <input type="date" onChange={handleEndDate} value={endDate} max={formattedToday} min={startDate}  />
+                            <input type="date" onChange={handleStartDate} value={startDate} max={formattedToday} />
+                            <h1>and</h1>
+                            <input type="date" onChange={handleEndDate} value={endDate} max={formattedToday} min={startDate} />
+                        </div>
                     </div>
-                </div>
                 </div>
             </div>
             <div>
                 <div>
-                        <h1>Filtering by {sort} {name} {startDate} {endDate} {sortHow} {sortBy}</h1>
+                    <h1>Filtering by {sort} {name} {startDate} {endDate} {sortHow} {sortBy}</h1>
                 </div>
             </div>
-            <div className="h-[300px] w-[1000px] m-4 border border-black rounded-xl">
+            <div className="h-[500px] w-[1000px] m-4 border border-black rounded-xl">
                 <h1> Quantity of products sold by type </h1>
                 <ResponsiveContainer width="90%" height="100%">
-                    <LineChart width={300} height={400} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                        <Line type="monotone" dataKey="quantitySold" stroke="#8884d8" strokeWidth={2} />
-                        <XAxis dataKey="name" interval="preserveStartEnd" tick={{textAnchor: 'center'}}/>
-                        <YAxis dataKey="quantitySold" domain={[0, 60]}/>
+                    <LineChart width={300} height={800} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
+                        <Line type="monotone" dataKey="total_sales" stroke="#8884d8" strokeWidth={2} />
+                        <XAxis dataKey="name" interval="preserveStartEnd" tick={{ textAnchor: 'center' }} />
+                        <YAxis dataKey="total_sales" domain={[0, 1500000]} />
                         <Tooltip />
                         <Legend />
                     </LineChart>
