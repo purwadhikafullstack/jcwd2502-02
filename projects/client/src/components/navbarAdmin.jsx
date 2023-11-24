@@ -83,7 +83,12 @@ const NavbarAdmin = () => {
                                                     <div className="flex gap-5 hover:text-white rounded-full "><HiShoppingCart />Manage Order</div>
                                                 </li>
                                             </Link>
-                                            <Link to={'/updatecategory'}>
+                                            <Link to={'/updateproducts'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <RiFileList3Fill />
+                                                    Manage Inventory</div></li>
+                                            </Link>
+                                            {/* <Link to={'/updatecategory'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <RiFileList3Fill />
                                                     Manage Category</div></li>
@@ -102,7 +107,7 @@ const NavbarAdmin = () => {
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <RiFileList3Fill />
                                                     Manage Discount</div></li>
-                                            </Link>
+                                            </Link> */}
                                             {/* <Link to={'/update-product-stocks'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <FaBoxOpen />
