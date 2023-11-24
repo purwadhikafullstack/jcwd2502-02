@@ -2,15 +2,14 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import NavbarAdmin from "./../../components/navbarAdmin"
 import React from 'react';
+import PaginationFixed from "../../components/paginationComponent";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-
 
 const SalesReportProduct = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
     const [sortHow, setSortHow] = useState("ASC");
-    const [sortBy, setSortBy] = useState("id");
+    const [sortBy, setSortBy] = useState("name");
     // const [transactionFilter, setTransactionFilter] = useState("");
     const [data, setData] = useState([]);
     // const [cardData, setCardData] = useState([]);
@@ -59,9 +58,14 @@ const SalesReportProduct = () => {
     };
 
     const fetchData = async () => {
-        const data = await api().get(`/report/data?sortHow=${sort}&sortBy=${sortBy}&productName=${name}&branch=${branch}&startDate=${startDate}&endDate=${endDate}`);
-        console.log(data.data);
-        setData(data.data.data);
+        try {
+            const data = await api().get(`report/data?sortHow=${sort}&sortBy=${sortBy}&productName=${name}&branch=${branch}&startDate&endDate&page=${page}`);
+            console.log(data);
+            setData(data.data.data.dataFinal);
+            setMaxPage(data.data.data.maxPages)
+        } catch (error) {
+            console.log(error);   
+        }
     }
 
     const chartData = Object.entries(data).map(([item, quantity]) => ({
@@ -69,49 +73,30 @@ const SalesReportProduct = () => {
         quantity,
     }));
 
+    function formatRupiah(amount) {
+        const formatter = new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+        });
+        return formatter.format(amount);
+    }
+
     useEffect(() => {
         fetchData()
-    }, [sortHow, sortBy, startDate, endDate, sort, name,])
+    }, [sortHow, sortBy, startDate, endDate, sort, name,page])
 
-    const dummyData = [
-        {
-            name: "Anggur Merah Seedless",
-            quantitySold: "10"
-        },
-        {
-            name: "Alpukat Mentega",
-            quantitySold: "44"
-        },
-        {
-            name: "Greenfields Susu UHT Skimmed",
-            quantitySold: "1"
-        },
-        {
-            name: "Ultramilk Full Cream",
-            quantitySold: "3"
-        },
-    ]
-
-    console.log(data);
     return (
         <div className="bg-white w-screen h-full min-h-screen">
             {/* Header */}
             <NavbarAdmin />
-            <div className="border bg-gradient-to-l to-yellow-300 from-green-300 flex justify-center p-2 shadow-2xl">
+            <div className="border bg-gradient-to-l to-yellow-300 from-green-300 flex justify-center p-2 shadow-2xl mt-6">
                 <h1 className="text-lg">Product Sales Report</h1>
             </div>
             {/* Body */}
             <div className="bg-gray-400 p-2 flex justify-center">
-                {/* Table Controls */}
-                {/* <input type="text" className="mx-2"/>
-                <select name="" id="">
-                    <option value=""> Filter by Dates </option>
-                    <option value=""> Newest </option>
-                    <option value=""> Oldest </option>
-                </select> */}
                 <div className='flex gap-3 my-4'>
                     <div>
-                        <input type="text" className='border border-black h-[30px] w-[200px] p-2 rounded-lg' onChange={handleNameQuery} placeholder='look for username' />
+                        <input type="text" className='border border-black h-[30px] w-[200px] p-2 rounded-lg' onChange={handleNameQuery} placeholder='look up product names' />
                     </div>
                     <div className='flex gap-2'>
                         <h1> Sort:</h1>
@@ -123,12 +108,10 @@ const SalesReportProduct = () => {
                     <div className='flex gap-2'>
                         <h1> Sort by: </h1>
                         <select name="" id="" className='text-center border border-black rounded-md mb-1' onChange={handleSortBy}>
-                            <option value="id">Id</option>
-                            <option value="user_id"> Username </option>
-                            <option value="status"> Status </option>
-                            <option value="createdAt"> Date </option>
-                            <option value="final_total"> Subtotal </option>
-                            <option value="store_branch_id"> Branch </option>
+                            <option value="name"> Product </option>
+                            <option value="price"> Price </option>
+                            <option value="quantity"> Quantity </option>
+                            <option value="total_sales"> Profit </option>
                         </select>
                     </div>
                     <div className='flex gap-2'>
@@ -159,7 +142,57 @@ const SalesReportProduct = () => {
                     <h1>Filtering by {sort} {name} {startDate} {endDate} {sortHow} {sortBy}</h1>
                 </div>
             </div>
-            <div className="h-[500px] w-[1000px] m-4 border border-black rounded-xl">
+            <div>
+                <div className="m-6 border">
+                    <table className="w-full table-auto">
+                        <thead>
+                            <tr>
+                                <th> Product </th>
+                                <th className=""> Category </th>
+                                <th className=""> Price </th>
+                                <th className=""> Amount Sold </th>
+                                <th className=""> Profit </th>
+                                <th className=""> Store Branch </th>
+                                <th className=""> Date </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {
+                                data && data.map((value) => {
+                                    return(
+                                        <tr key={value.id}>
+                                            <td className="text-center">{value.name}</td>
+                                            <td className="text-center">{value.product.product_category.name}</td>
+                                            <td className="text-center"> {formatRupiah(value.price)} </td>
+                                            <td className="text-center"> {value.quantity_total} </td>
+                                            <td className="text-center"> {formatRupiah(value.total_sales)} </td>
+                                            <td className="text-center"> {value.store_branch_id} </td> 
+                                            <td className="text-center"> {value.date.split("T")[0]} </td>
+                                        </tr>
+                                    )
+                                })
+                                // :
+                                // <h1> There are no data to display </h1>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div className="flex justify-center">
+                        {
+                            data && data.length > 0 ? 
+                            <PaginationFixed
+                                page={page}
+                                maxPage={maxPage}
+                                handlePageChange={handlePageChange}
+                                handlePrevPage={handlePrevPage}
+                                handleNextPage={handleNextPage}
+                            />
+                            :
+                            null
+                        }
+                    </div>
+            </div>
+            {/* <div className="h-[500px] w-[1000px] m-4 border border-black rounded-xl">
                 <h1> Quantity of products sold by type </h1>
                 <ResponsiveContainer width="90%" height="100%">
                     <LineChart width={300} height={800} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
@@ -170,7 +203,7 @@ const SalesReportProduct = () => {
                         <Legend />
                     </LineChart>
                 </ResponsiveContainer>
-            </div>
+            </div> */}
         </div>
     )
 }
