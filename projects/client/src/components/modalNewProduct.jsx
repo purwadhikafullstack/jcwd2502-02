@@ -81,46 +81,39 @@ const ModalNewProduct = () => {
     }, [searchQuery, category]);
     return (
         <div>
-            <Button text={"Add Product"} style={"w-[300px]"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
-            <dialog id="my_modal_3" className="modal backdrop-blur-md">
-                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[350px] ">
-                    <h3 className="font-bold text-4xl text-white">New Product</h3>
+            <Button text={"Add Product"} style={"w-[350px] lg:w-[300px]"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
+            <dialog id="my_modal_3" className="modal modal-bottom sm:modal-middle backdrop-blur-md">
+                <div className="modal-box">
+                    <h3 className="font-bold text-4xl text-green-800">New Product</h3>
                     <div className="flex flex-col gap-5 mt-5">
                         <div className="grid gap-5">
                             <div>
-                                <div className="text-white pb-2"> Product Name
+                                <div className="text-green-800 pb-2"> Product Name
                                 </div>
                                 <Input
                                     ref={inputProductName}
                                     type={"text"}
-                                    style={"input w-full"} />
+                                    style={"input input-bordered w-full border-green-800"} />
                             </div>
                             <div>
-                                <div className="text-white pb-2"> Product Image</div>
+                                <div className="text-green-800 pb-2"> Product Image</div>
                                 <div>
-                                    <input className="file-input file-input-warning w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
+                                    <input className="file-input file-input-success w-full" type="file" onChange={(e) => onSelectImages(e)} />
                                 </div>
                             </div>
                             <div>
-                                <div className="text-white pb-2">Product Price</div>
+                                <div className="text-green-800 pb-2">Product Price</div>
                                 <Input
                                     ref={inputProductPrice}
                                     type={"number"}
-                                    style={"input w-full"} />
+                                    style={"input w-full input-bordered border-green-800"} />
                             </div>
                             <div>
-                                <div className="text-white pb-2">Product Category</div>
+                                <div className="text-green-800 pb-2">Product Category</div>
                                 <select
                                     ref={inputProductCategory}
-                                    className="select select-bordered w-full">
+                                    className="select w-full input input-bordered border-green-800">
                                     <option disabled selected></option>
-                                    {/* <option><input
-                                        type="text"
-                                        placeholder="Search categories"
-                                        className="input w-1/4 bg-gradient-to-r from-yellow-300 to-green-600"
-                                        value={searchQuery}
-                                        onChange={handleSearchInputChange}
-                                    /></option> */}
                                     {
                                         filteredCategory.map((value) => {
                                             return (
@@ -131,15 +124,15 @@ const ModalNewProduct = () => {
                                 </select>
                             </div>
                             <div>
-                                <div className="text-white pb-2">Product Weigth</div>
+                                <div className="text-green-800 pb-2">Product Weigth</div>
                                 <Input
                                     ref={inputProductWeigth}
                                     type={"number"}
-                                    style={"input w-full"} />
+                                    style={"input w-full input-bordered border-green-800"} />
                             </div>
                             <div>
-                                <div className="text-white pb-2">Description</div>
-                                <div><textarea ref={inputProductDescription} className="w-full pl-4 pt-2" cols="30" rows="5"></textarea></div>
+                                <div className="text-green-800 pb-2">Description</div>
+                                <div><textarea ref={inputProductDescription} className="w-full pl-4 pt-2 border border-green-800" cols="30" rows="5"></textarea></div>
                             </div>
                         </div>
                     </div>

@@ -86,6 +86,7 @@ module.exports = {
                 order: [[`${sortby}`, sort]],
                 limit,
                 offset,
+                include: [{ model: db.product_category, attributes: ["name"] }]
             });
             const result = res.json({
                 products,

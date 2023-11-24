@@ -21,7 +21,7 @@ const UpdateProductsCategoryPage = () => {
     const [inputCat, setInputCat] = useState("");
     const [modal, setModal] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
-    const [sortOrder, setSortOrder] = useState("DESC");
+    const [sortOrder, setSortOrder] = useState("");
     const [page, setPage] = useState(1);
     const [maxPages, setMaxPages] = useState(1);
     const pageTopRef = useRef(null);
@@ -150,20 +150,43 @@ const UpdateProductsCategoryPage = () => {
         <div ref={pageTopRef} className="">
             <Toaster />
             <NavbarAdmin />
-            <div className="">
-                <div className="flex flex-row mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
-                    <div className="text-4xl font-bold gap-2 py-5 text-green-800">
-                        Edit Category
+            <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32">
+
+                <div className="md:flex md:justify-between mt-5 md:mt-10">
+                    <div className="flex flex-row ">
+                        <div className="text-4xl font-bold text-green-800 mb-3">
+                            Manage Category
+                        </div>
+                    </div>
+                    <div className="">
+                        <ModalNewCategory />
                     </div>
                 </div>
-                <div className="grid place-content-center md:place-content-start md:ml-20 lg:ml-32">
-                    <ModalNewCategory />
-                </div>
-                <div className="flex  justify-center gap-2 my-5 py-3 ">
-                    <div className=" grid place-content-center">
-                        <Searchbar placeholder={"Search Category"} value={searchQuery} onChange={(e) => handleSearch(e.target.value)} />
+
+
+                <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
+                    <div role="tablist" className="tabs tabs-lifted tabs-lg">
+                        <Link to={`/updateproducts`}>
+                            <div role="tab" className="tab lg:text-xl ">Products</div>
+                        </Link>
+                        <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Category</div>
+                        <div role="tab" className="tab lg:text-xl">Stocks</div>
+                        <div role="tab" className="tab lg:text-xl">Discount</div>
                     </div>
-                    <div>
+                </div>
+
+
+                <div className="border shadow-lg rounded-2xl flex overflow-x-auto lg:justify-center gap-3 mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5">
+                    <div className=" ">
+                        <input
+                            type="text"
+                            placeholder="Search Category"
+                            className="w-[200px] h-[48px] px-2 border-2 rounded-xl lg:w-[300px]"
+                            value={searchQuery}
+                            onChange={(e) => handleSearch(e.target.value)}
+                        />
+                    </div>
+                    {/* <div>
                         <SortButton
                             onChange={handleChangeSort}
                             value1={"DESC"}
@@ -172,12 +195,21 @@ const UpdateProductsCategoryPage = () => {
                             value4={"ZA"}
                             className="border"
                         />
+                    </div> */}
+                    <div className="">
+                        <select value={sortOrder} onChange={(e) => handleChangeSort(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                            <option value={""} disabled selected>Sort</option>
+                            <option value="AZ"> A-Z </option>
+                            <option value="ZA"> Z-A </option>
+                        </select>
                     </div>
-                    <div>
-                        <button onClick={handleReset} className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900">Show All</button>
+                    <div className="">
+                        <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
                     </div>
                 </div>
-                <div className="overflow-x-auto px-5 my-8 md:px-20 lg:px-32">
+
+
+                <div className="overflow-x-auto ">
                     <table className="table">
                         <thead>
                             <tr>
@@ -190,12 +222,12 @@ const UpdateProductsCategoryPage = () => {
                                 return (
                                     <tr key={index} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
                                         <td>
-                                            <div className="relative pt-5">
-                                                <CategoryCard image={value.image} style="w-[100px] h-[80px] hover:shadow-none hover:scale-100" />
+                                            <div className="relative pt-5 pb-3">
+                                                <img className="object-fit rounded-full h-[70px] w-[70px]" src={process.env.REACT_APP_URL + `${value.image}`} />
                                                 <div className="absolute left-0 right-0 top-0">
                                                     <input type="file" accept=".jpg, .jpeg, .png" ref={inputImage} hidden onChange={(event) => onSelectImages(event)} />
                                                     <div onClick={() => { inputImage.current.click(); onSelectId(value.id) }}>
-                                                        <AiFillEdit className="text-3xl rounded-full p-2 w-[40px] h-[40px] absolute top-0 left-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200" />
+                                                        <AiFillEdit className="rounded-full p-2 w-[30px] h-[30px] absolute top-3 left-0 z-1 bg-green-800 text-white hover:scale-105 ease-in duration-200" />
                                                     </div>
                                                 </div>
                                             </div>

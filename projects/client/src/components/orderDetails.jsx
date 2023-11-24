@@ -10,9 +10,10 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
     return (
 
 
-        <div className="bg-green-800 my-10 lg:my-0 p-5 rounded-xl lg:w-[400px] flex flex-col justify-between">
-            <div></div>
+        <div className="bg-green-800 my-10 lg:my-0 p-5 rounded-xl h-[650px] lg:w-[400px] flex flex-col justify-between">
             <div className="text-4xl font-bold text-white">Order Details: </div>
+
+            <div className="font-bold text-lg p-2 mt-3 text-center bg-yellow-300 text-green-800 rounded-xl">Customer Name: {transaction ? transaction.user.username : null}</div>
 
             <div className="text-white">
                 <div className="my-3 flex flex-col gap-2">
@@ -79,7 +80,7 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                 </div>
             </div>
             <div className="my-3">
-                {role === "customer" ?
+                {/* {role === "customer" ?
                     <div>
                         {
 
@@ -98,7 +99,7 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                             ) : null
                         }
                     </div>
-                    : null}
+                    : null} */}
 
             </div>
         </div>

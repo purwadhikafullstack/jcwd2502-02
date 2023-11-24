@@ -13,6 +13,8 @@ import Swal from "sweetalert2";
 import DeleteConfirmation from "../../components/deleteModal"
 import MyForm from "../../components/modal"
 import PaginationFixed from "../../components/paginationComponent"
+import { FaLocationArrow } from "react-icons/fa6";
+
 
 const ManageAddress = () => {
     const apiInstance = api()
@@ -103,11 +105,11 @@ const ManageAddress = () => {
 
 
     return (
-        <div ref={pageTopRef}>
+        <div ref={pageTopRef} >
             <Toaster />
             <Navbar />
 
-            <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 mb-10 h-full">
+            <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 mb-10 h-full" style={{ minHeight: "100vh" }}>
 
                 <div className="md:flex md:justify-between mt-5 md:mt-10">
                     <div className="text-4xl md:text-5xl font-bold gap-2 text-green-800">Manage Address
@@ -120,9 +122,7 @@ const ManageAddress = () => {
                 </div>
 
                 <div className="mt-10 flex flex-col gap-5">
-
                     {address ?
-
                         address.map((value, index) => {
                             return (
                                 <div key={index}>
@@ -135,7 +135,6 @@ const ManageAddress = () => {
                                             <div>{value.address}</div>
                                             <div className="font-semibold">{value.city.name} - {value.city.province.name}</div>
                                         </div>
-
                                         <div className="md:grid md:place-content-center">
                                             {value.isPrimary == "false" ? <DeleteConfirmation
                                                 itemId={value.id}
@@ -148,8 +147,6 @@ const ManageAddress = () => {
                                             />
                                                 : null}
                                         </div>
-
-                                        {/* {value.isPrimary == "false" ? <div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} onClick={() => updateMain(value.id)} /></div> : null} */}
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">
                                             <ModalUpdateAddress
                                                 id={value.id}
@@ -172,20 +169,27 @@ const ManageAddress = () => {
                                 </div>
                             )
                         })
-                        : null
+                        :
+                        null
                     }
+                    {!address || address.length === 0 ? (
+                        <div>
+                            <div className="grid gap-3 place-content-center mt-32">
+                                <div className="text-center text-3xl font-black grid place-content-center">Looks Like You Haven't Created Any Address</div>
+                                <div className="grid place-content-center text-center text-sm px-5 lg:text-base">Click the Add New Address Button to add an Address</div>
+                            </div>
+                        </div>
+                    ) : null}
                 </div>
-
-                <div className="flex justify-center my-10">
-                    <PaginationFixed
-                        page={page}
-                        maxPage={maxPage}
-                        handlePageChange={handlePageChange}
-                        handlePrevPage={handlePrevPage}
-                        handleNextPage={handleNextPage}
-                    />
-                </div>
-
+            </div>
+            <div className="flex justify-center my-10">
+                <PaginationFixed
+                    page={page}
+                    maxPage={maxPage}
+                    handlePageChange={handlePageChange}
+                    handlePrevPage={handlePrevPage}
+                    handleNextPage={handleNextPage}
+                />
             </div>
             <Footer />
         </div >

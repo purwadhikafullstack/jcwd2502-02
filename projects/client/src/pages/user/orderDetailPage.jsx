@@ -126,7 +126,21 @@ const UserOrderDetail = () => {
                                 <input
                                     type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={payment} onChange={uploadPayment}
                                 />
-                                <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div></div>
+                                <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div>
+
+                                <DeleteConfirmation
+                                    itemId={id}
+                                    onDelete={getDetailOrder}
+                                    apiEndpoint="/transaction/cancel"
+                                    text={""}
+                                    message={"Order Canceled"}
+                                    textOnButton={"Yes"}
+                                    button={<div className=" btn hover:bg-red-600 bg-red-600 text-white rounded-xl mt-3 w-full border-none ">
+                                        CANCEL ORDER
+                                    </div>}
+                                />
+
+                            </div>
                                 : null
                             }
 

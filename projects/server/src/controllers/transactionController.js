@@ -39,6 +39,9 @@ module.exports = {
                             model: db.product
                         }]
                     },
+                    {
+                        model: db.user, attributes: ["username"]
+                    }
                 ],
                 where: { user_id: id, id: transactionId }
             });
@@ -61,6 +64,9 @@ module.exports = {
                                 model: db.product
                             }]
                         },
+                        {
+                            model: db.user, attributes: ["username"]
+                        },
                     ],
                     where: { id: transactionId }
                 });
@@ -74,10 +80,11 @@ module.exports = {
         try {
             const { id } = req.dataToken;
             console.log(id);
-            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby } = req.query;
+            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby, branchId } = req.query;
             const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
+            if (branchId) whereClause.store_branch_id = branchId;
             if (status) whereClause.status = status;
             if (startdate && !enddate) {
                 whereClause.createdAt = { [Op.gte]: new Date(startdate), [Op.lte]: new Date(startdate + 'T23:59:59.999Z') }
@@ -96,6 +103,7 @@ module.exports = {
                 limit,
                 offset,
                 order: [[`${sortby}`, sort]],
+                include: [{ model: db.store_branch, attributes: ["name"] }]
             });
             const result = res.json({
                 orders,
@@ -132,6 +140,7 @@ module.exports = {
                 limit,
                 offset,
                 order: [[`${sortby}`, sort]],
+                include: [{ model: db.store_branch, attributes: ["name"] }]
             });
             const result = res.json({
                 orders,

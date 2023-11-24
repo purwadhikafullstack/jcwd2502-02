@@ -26,7 +26,7 @@ const Navbar = () => {
         e.preventDefault()
         dispatch(logout());
         dispatch(clearCart());
-        navigate('/')
+        navigate('/login')
         window.location.reload();
 
     }
