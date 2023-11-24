@@ -50,9 +50,17 @@ const RecommendProducts = (props) => {
                 <div className="pb-5">
                     <div className="text-4xl font-bold my-5 ">Products Nearby!</div>
                     <div className="flex justify-between">
-                        <div className="flex gap-2 text-lg"> <FaLocationDot className="mt-1" /> {props.branchName}</div>
+
+                        {props.branchName ? <div className="flex gap-2 text-lg"> <FaLocationDot className="mt-1" /> {props.branchName}</div> : <div className="flex">Please Create Your Main Address First!
+                            <Link to={`manage-address`}>
+                                <div className="ml-2 hover:text-green-600 hover:underline">Click here to manage your address</div>
+                            </Link>
+                        </div>}
+
+
                         <Link to={`/products?category=`}>
-                            <div className="text-green-600 hover:underline"> See More!</div>
+                            <div className="text-green-600 hover:underline"> See More!
+                            </div>
                         </Link>
 
                     </div>

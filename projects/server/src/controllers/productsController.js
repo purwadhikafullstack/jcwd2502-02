@@ -66,6 +66,36 @@ module.exports = {
             next(error);
         }
     },
+
+    getProductsForAdmin: async (req, res, next) => {
+        try {
+            const { catId, searchquery, sort, page, sortby } = req.query;
+            const limit = 10;
+            const like = Op.like;
+            const whereClause = { isDeleted: 0 };
+            if (catId) whereClause.product_categories_id = catId;
+            if (searchquery) whereClause.name = { [like]: `%${searchquery}%` };
+
+            const totalRecords = await db.product.count({ where: { ...whereClause } });
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            // const order = sort === "ASC" ? [['name', 'ASC']] : [['name', 'DESC']];
+
+            const products = await db.product.findAll({
+                where: { ...whereClause },
+                order: [[`${sortby}`, sort]],
+                limit,
+                offset,
+            });
+            const result = res.json({
+                products,
+                maxPages,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
     getAllProductsAndCategoryName: async (req, res, next) => {
         try {
             const allProduct = await getAllProductsAndCategoryNameService(req.params);

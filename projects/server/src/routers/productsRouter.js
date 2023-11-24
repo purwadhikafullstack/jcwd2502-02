@@ -15,6 +15,7 @@ Router.get("/all-product-stock/:branchId", productsController.getAllProductStock
 Router.get("/discount", productsController.getDiscount);
 Router.get("/price", productsController.clonePriceToFinalPrice);
 Router.get("/allproductsfix", productsController.getAllProductRevised);
+Router.get("/get-for-edit-product", productsController.getProductsForAdmin);
 
 
 Router.post("/addproduct", upload, productsController.createProduct);

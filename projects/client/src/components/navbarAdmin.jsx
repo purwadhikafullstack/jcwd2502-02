@@ -24,9 +24,6 @@ const NavbarAdmin = () => {
 
     }
 
-    console.log(user);
-
-
     // belum tau dia branch mana dan rolenya super atau admin biasa
     return (
         <div className="relative">
