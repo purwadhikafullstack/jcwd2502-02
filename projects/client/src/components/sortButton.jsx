@@ -7,8 +7,18 @@ const SortButton = (props) => {
                 onChange={props.onChange}
                 id=""
             >
-                <option value={props.value1}>A-Z</option>
-                <option value={props.value2}>Z-A</option>
+                <option value={props.value1}>Newest</option>
+                <option value={props.value2}>Oldest</option>
+                {props.value3 ?
+                    <option value={props.value3}>A-Z</option>
+
+                    :
+                    null}
+                {props.value4 ?
+                    <option value={props.value4}>Z-A</option>
+
+                    :
+                    null}
             </select>
         </div>
     );

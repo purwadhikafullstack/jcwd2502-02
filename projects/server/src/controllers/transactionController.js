@@ -3,7 +3,9 @@ const responseHandler = require("./../utils/responseHandler")
 const { Sequelize } = require("sequelize");
 const axios = require('axios');
 const { Op, literal } = require("sequelize");
-const { shippingOption, create, filteredAllOrder } = require('../services/transactionService')
+const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
+const couponValidityCron = require('./../helper/couponCronJob');
+
 module.exports = {
     getShippingOption: async (req, res, next) => {
         try {
@@ -14,7 +16,6 @@ module.exports = {
             next(error);
         }
     },
-
     createOrder: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
@@ -25,12 +26,10 @@ module.exports = {
             next(error);
         }
     },
-
     getUserOrder: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
             const { transactionId } = req.params;
-
             const getOrder = await db.transactions.findOne({
                 include: [
                     {
@@ -43,92 +42,105 @@ module.exports = {
                 ],
                 where: { user_id: id, id: transactionId }
             });
-
             responseHandler(res, "Get Order Success", getOrder);
         } catch (error) {
             next(error);
         }
     },
-
+    getUserOrderForAdmin: async (req, res, next) => {
+        try {
+            const { role, store_branch_id } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail,
+                            required: true,
+                            include: [{
+                                model: db.product
+                            }]
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                responseHandler(res, "Get Order Success", getOrder);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
     getAllUserOrders: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
             console.log(id);
-            const { invoice, status, createdAt, page, branchId } = req.query;
-            const limit = 6;  // Number of records per page
-
-            // Build the where clause based on the provided filters
+            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby } = req.query;
+            const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
-            if (branchId) whereClause.store_branch_id = branchId;
-            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
-
-            // Calculate the total number of records
+            if (startdate && !enddate) {
+                whereClause.createdAt = { [Op.gte]: new Date(startdate), [Op.lte]: new Date(startdate + 'T23:59:59.999Z') }
+            }
+            if (startdate && enddate) {
+                whereClause.createdAt = {
+                    [Op.gte]: new Date(startdate),
+                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
+                }
+            }
             const totalRecords = await db.transactions.count({ where: { ...whereClause, user_id: id } });
-
-            // Calculate the maximum number of pages
             const maxPages = Math.ceil(totalRecords / limit);
-
-            // Use limit and offset to paginate the actual data
             const offset = (page - 1) * limit;
             const orders = await db.transactions.findAll({
                 where: { ...whereClause, user_id: id },
                 limit,
                 offset,
-                order: [['createdAt', 'DESC']]
+                order: [[`${sortby}`, sort]],
             });
-
             const result = res.json({
                 orders,
                 maxPages,
             });
-
             // responseHandler(res, "Get Orders Success", result);
         } catch (error) {
             next(error);
         }
     },
 
-
     getOrders: async (req, res, next) => {
         try {
-            const { invoice, status, createdAt, page, branchId } = req.query;
-            const limit = 6;  // Number of records per page
-
-            // Build the where clause based on the provided filters
+            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby, branchId } = req.query;
+            const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
             if (status) whereClause.status = status;
             if (branchId) whereClause.store_branch_id = branchId;
-            if (createdAt) whereClause.createdAt = literal(`DATE(createdAt) = '${createdAt}'`);
-
-            // Calculate the total number of records
-            const totalRecords = await db.transactions.count({ where: whereClause });
-
-            // Calculate the maximum number of pages
+            if (startdate && !enddate) {
+                whereClause.createdAt = { [Op.gte]: new Date(startdate), [Op.lte]: new Date(startdate + 'T23:59:59.999Z') }
+            }
+            if (startdate && enddate) {
+                whereClause.createdAt = {
+                    [Op.gte]: new Date(startdate),
+                    [Op.lte]: new Date(enddate + 'T23:59:59.999Z'), // Set the end of the day for date2
+                }
+            }
+            const totalRecords = await db.transactions.count({ where: { ...whereClause } });
             const maxPages = Math.ceil(totalRecords / limit);
-
-            // Use limit and offset to paginate the actual data
             const offset = (page - 1) * limit;
             const orders = await db.transactions.findAll({
-                where: whereClause,
+                where: { ...whereClause },
                 limit,
                 offset,
-                order: [['createdAt', 'DESC']]
+                order: [[`${sortby}`, sort]],
             });
-
             const result = res.json({
                 orders,
                 maxPages,
             });
-
-            // responseHandler(res, "Get Orders Success", result);
         } catch (error) {
             next(error);
         }
     },
-
     uploadPayment: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
@@ -145,7 +157,6 @@ module.exports = {
             next(error)
         }
     },
-
     cancelOrder: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
@@ -160,6 +171,236 @@ module.exports = {
         } catch (error) {
             next(error)
         }
-    }
+    },
+    adminCancelOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const upload = await db.transactions.update({
+                    status: "canceled"
+                }, { where: { id: transactionId } })
+                const transaction = await db.transactions.findOne({
+                    where: { id: transactionId }
+                })
+                responseHandler(res, "Cancel Order Success", transaction);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    adminApproveOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                const branchId = getOrder.store_branch_id
+                const details = getOrder.transaction_details
+                for (const product of details) {
+                    const stocks = await db.product_stock.findOne({
+                        where: { products_id: product.products_id, store_branch_id: branchId }
+                    })
+                    if (stocks.stock >= product.quantity) {
+                        await db.product_stock.update({
+                            stock: stocks.stock - product.quantity,
+                            booked_stock: stocks.booked_stock + product.quantity
+                        }, { where: { products_id: product.products_id, store_branch_id: branchId } })
+                        // await db.stock_history.create({
+                        //     stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales"
+                        //     //jangan lupa tambahin transaction_id
+                        // })
 
+                    } else if (stocks.stock < product.quantity) {
+                        throw { message: "Stock is Not Enough / Unavailable" }
+                    }
+                }
+                await db.transactions.update({
+                    status: "Payment Approved"
+                }, { where: { id: transactionId } })
+                const result = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                responseHandler(res, "Approve Order Success", result);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    userCompleteOrder: async (req, res, next) => {
+        try {
+            const { id } = req.dataToken;
+            const { transactionId } = req.params;
+            const upload = await db.transactions.update({
+                status: "Complete"
+            }, { where: { id: transactionId, user_id: id } })
+            const transaction = await db.transactions.findAll({
+                where: { user_id: id, status: "Complete" }
+            })
+            const numberOfCompleteTransactions = transaction.length;
+            const coupon2 = await db.coupon.findOne({ where: { id: 2 } })
+            const coupon3 = await db.coupon.findOne({ where: { id: 3 } })
+            if (numberOfCompleteTransactions % 3 === 0) {
+                await db.owned_coupon.create({
+                    user_id: id, coupon_id: coupon3.dataValues.id, coupon_value: 0, isValid: "true", coupon_name: coupon3.dataValues.name
+                });
+            } if (numberOfCompleteTransactions % 7 === 0) {
+                await db.owned_coupon.create({
+                    user_id: id, coupon_id: coupon2.dataValues.id, coupon_value: coupon2.dataValues.amount, isValid: "true", coupon_name: coupon2.dataValues.name
+                });
+            }
+
+            // await couponValidityCron ()
+            responseHandler(res, "Upload Payment Proof Success", transaction);
+        } catch (error) {
+            next(error)
+        }
+    },
+    adminSendOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                const branchId = getOrder.store_branch_id
+                const details = getOrder.transaction_details
+                for (const product of details) {
+                    const stocks = await db.product_stock.findOne({
+                        where: { products_id: product.products_id, store_branch_id: branchId }
+                    })
+                    if (stocks.booked_stock >= product.quantity) {
+                        await db.product_stock.update({
+                            booked_stock: stocks.booked_stock - product.quantity
+                        }, { where: { products_id: product.products_id, store_branch_id: branchId } })
+                        await db.stock_history.create({
+                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales", transaction_id: transactionId
+                        })
+                    } else if (stocks.booked_stock < product.quantity) {
+                        throw { message: "Stock is Not Enough / Unavailable" }
+                    }
+                }
+
+                await db.transactions.update({
+                    status: "Delivered"
+                }, { where: { id: transactionId } })
+                const result = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                responseHandler(res, "Send Order Success", result);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    adminCancelSendOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const getOrder = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                const branchId = getOrder.store_branch_id
+                const details = getOrder.transaction_details
+                for (const product of details) {
+                    const stocks = await db.product_stock.findOne({
+                        where: { products_id: product.products_id, store_branch_id: branchId }
+                    })
+                    if (stocks.booked_stock >= product.quantity) {
+                        await db.product_stock.update({
+                            booked_stock: stocks.booked_stock - product.quantity, stock: stocks.stock + product.quantity
+                        }, { where: { products_id: product.products_id, store_branch_id: branchId } })
+                        await db.stock_history.create({
+                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Sales", transaction_id: transactionId
+                        })
+                        await db.stock_history.create({
+                            stock: product.quantity, products_id: product.products_id, store_branch_id: branchId, description: "Cancel Delivery", transaction_id: transactionId
+                        })
+                    } else if (stocks.booked_stock < product.quantity) {
+                        throw { message: "Stock is Not Enough / Unavailable" }
+                    }
+                }
+
+                await db.transactions.update({
+                    status: "canceled"
+                }, { where: { id: transactionId } })
+                const result = await db.transactions.findOne({
+                    include: [
+                        {
+                            model: db.transaction_detail
+                        },
+                    ],
+                    where: { id: transactionId }
+                });
+                responseHandler(res, "Cancel Order Success", result);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    transactionReportSalesData: async (req, res, next) => {
+        try {
+            const data = await filteredTransactionsData(req);
+            responseHandler(res, "Get transaction datas", data)
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    transactionReportProductData: async (req, res, next) => {
+        try {
+            const data = await filteredProductTransaction(req);
+            responseHandler(res, "product sales data fetched", data)
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    getOverallTransactionData: async (req, res, next) => {
+        try {
+            const data = await getOverallData(req);
+            responseHandler(res, "fetching overall transactions data", data);
+        } catch (error) {
+            next(error);
+        }
+    },
+
+    getUserCoupon: async (req, res, next) => {
+        try {
+            const coupon = await getUserCouponService(req.dataToken)
+            responseHandler(res, "Get Owned User Coupon Success", coupon)
+        } catch (error) {
+            next(error)
+        }
+    }
 }

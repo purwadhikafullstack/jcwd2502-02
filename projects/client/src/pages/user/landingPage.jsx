@@ -14,7 +14,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 import { api1 } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
-import { nearestBranch } from "../../redux/Features/branch"
+import { getMainAddress, nearestBranch } from "../../redux/Features/branch"
+import { FaLocationDot } from "react-icons/fa6";
+import { BiSolidDownArrow } from "react-icons/bi";
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
@@ -25,6 +27,8 @@ const LandingPage = () => {
     const api = api1();
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     console.log(closestBranch.id);
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
+    console.log(mainAddress);
 
     const onGetCategory = async () => {
         try {
@@ -62,6 +66,10 @@ const LandingPage = () => {
         getBranch()
         nearestBranch()
     }, [closestBranch]);
+    useEffect(() => {
+        dispatch(getMainAddress());
+    }, []);
+
 
     return (
         <div className="">
@@ -69,7 +77,16 @@ const LandingPage = () => {
             <Navbar />
             <div className="mt-[70px]">
                 <div className="flex justify-center mx-5 md:justify-end md:mr-20 lg:mr-48 py-5">
-                    <ModalAddress />
+                    <Link to={'/manage-address'}>
+                        <div className="flex p-1 px-3 w-[350px] rounded-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 bg-yellow-300">
+                            <div className="grid place-content-center ">
+                                <FaLocationDot />
+                            </div>
+                            <div className="font-bold truncate">Delivered to {mainAddress?.name}</div>
+                            <div className="grid place-content-center "><BiSolidDownArrow /></div>
+                        </div>
+                    </Link>
+
                 </div>
                 <Jumbotron />
                 <div className="">

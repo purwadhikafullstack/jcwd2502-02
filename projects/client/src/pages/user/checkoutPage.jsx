@@ -16,41 +16,47 @@ import { getCartAsync } from "../../redux/Features/cart";
 const CheckoutPage = () => {
     const dispatch = useDispatch()
     const nav = useNavigate()
+    const [disabled, setDisabled] = useState(false)
     const [shippingService, setShippingService] = useState();
     const [shippingOption, setShippingOption] = useState()
     const [courier, setCourier] = useState()
     const [cost, setCost] = useState()
+    const [ownedCoupon, setOwnedCoupon] = useState()
+    const [discount, setDiscount] = useState()
+    const [discountId, setDiscountId] = useState()
+    const [ownedCouponId, setOwnedCouponId] = useState()
+    const [couponName, setCouponName] = useState()
     const cart = useSelector((state) => state.cart);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const [totalFinal, setTotalFinal] = useState()
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
-
     console.log(totalWeight);
-
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
-
     const handleShippingService = async (event) => {
         try {
             const selectedService = event.target.value;
             setShippingService(selectedService)
             setShippingOption(null);
-            setCost(0);
+            // setCost(0);
             const getOption = await api().post('/transaction/option', { origin: closestBranch.city_id, destination: mainAddress.city_id, weight: totalWeight, courier: selectedService })
             setShippingOption(getOption.data.data[0].costs)
-            setCost(null)
+            // setCost(null)
         } catch (error) {
             console.log(error);
         }
     }
-
     const handleShippingOption = async (event) => {
         try {
             const selectedOption = event.target.value;
             const selectedOptionDescription = event.target.options[event.target.selectedIndex].text;
             setCourier(selectedOptionDescription)
-            setCost(Number(selectedOption))
+            if (discountId === 3) {
+                setCost(0)
+            } else {
+                setCost(Number(selectedOption))
+            }
         } catch (error) {
             console.log(error);
         }
@@ -61,15 +67,43 @@ const CheckoutPage = () => {
             if (cost == null) {
                 toast.error("Please complete the shipping data")
             } else {
-                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight })
+                setDisabled(true)
+                console.log("ini disable", disabled);
+                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName })
                 console.log(createOrder.data);
-
                 toast.success("Order created!");
-
                 setTimeout(() => {
                     nav(`/order/${createOrder.data.data.id}`);
-                }, 2500); // Adjust the delay time as needed
+                }, 1500); // Adjust the delay time as needed
             }
+        } catch (error) {
+            console.log(error);
+            toast.error("An Error Has Occured, Please Try Again Later")
+            setDisabled(false)
+        }
+        finally {
+            // setDisabled(false); // Move this line outside the try block
+        }
+    }
+    const onGetCoupon = async () => {
+        try {
+            const coupon = await api().get(`/transaction/coupon/user`)
+            setOwnedCoupon(coupon.data.data)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleCoupon = async (event) => {
+        try {
+            setDiscount(totalSubtotal * (ownedCoupon[event.target.value].coupon_value / 100))
+            if (ownedCoupon[event.target.value].coupon_id === 3) {
+                setCost(0)
+            }
+            setDiscountId(ownedCoupon[event.target.value].coupon_id)
+            setOwnedCouponId(ownedCoupon[event.target.value].id)
+            setCouponName(ownedCoupon[event.target.value].coupon_name)
+            // console.log(ownedCoupon[event.target.value].id);
         } catch (error) {
             console.log(error);
         }
@@ -79,17 +113,25 @@ const CheckoutPage = () => {
         dispatch(getCartAsync());
         dispatch(nearestBranch());
         dispatch(getMainAddress());
+        onGetCoupon()
     }, []);
+    console.log("ini disable", disabled);
 
     // console.log(address);
     // console.log(closestBranch.id);
 
     useEffect(() => {
-        if (cost) {
+        if (!discount && !cost) {
+            setTotalFinal(totalSubtotal)
+        }
+        else if (cost && !discount) {
             setTotalFinal(((totalSubtotal) + (cost)))
-        } else { setTotalFinal(totalSubtotal) }
-    }, [cost, totalSubtotal]);
-
+        }
+        else if (discount && !cost) {
+            setTotalFinal(((totalSubtotal) - (discount)))
+        }
+        else { setTotalFinal(((totalSubtotal) + (cost) - (discount))) }
+    }, [cost, totalSubtotal, discount]);
     return (
         <div>
             <Toaster />
@@ -156,11 +198,19 @@ const CheckoutPage = () => {
                                 <div className="grid gap-2">
                                     <div className="font-bold">Voucher</div>
                                     <div>
-                                        <select className="select select-bordered w-full  text-black">
-                                            <option disabled selected>Select Voucher</option>
-                                            <option>Voucher 1</option>
-                                            <option>Voucher 2</option>
-                                            <option>Voucher 3</option>
+                                        <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full  text-black">
+                                            {/* {array.map((value, index) => {
+                                                return (
+                                                    <option value={index}>{value.id}</option>
+                                                )
+                                            })} */}
+                                            <option value="" >Select Voucher</option>
+                                            {ownedCoupon ? ownedCoupon.map((value, index) => {
+                                                return (
+                                                    <option value={index}>{value.coupon_name}</option>
+                                                )
+                                            }) : null}
+
                                         </select>
                                     </div>
                                 </div>
@@ -183,7 +233,7 @@ const CheckoutPage = () => {
 
                                 <div className="flex justify-between">
                                     <div>Voucher Discount</div>
-                                    <div className="font-bold">- Rp 0</div>
+                                    <div className="font-bold">- Rp {discount ? discount.toLocaleString() : 0}</div>
                                 </div>
                             </div>
 
@@ -195,7 +245,10 @@ const CheckoutPage = () => {
                             </div>
                         </div>
                         <div className="my-3">
-                            <Button onClick={() => submitOrder()} style={"w-full"} text={"Confirm Order"} />
+                            {disabled ?
+                                <Button style={"w-full"} text={"Processing Order"} />
+                                : <Button disabled={disabled} onClick={() => submitOrder()} style={"w-full"} text={disabled ? "Creating Order" : "Confirm Order"} />}
+
                         </div>
                     </div>
 

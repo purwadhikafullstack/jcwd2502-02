@@ -11,6 +11,7 @@ import { Link } from 'react-router-dom';
 export default function RegistrationPage() {
     const [getCoupon, setGetCoupon] = useState(false);
     const [disabled, setDisabled] = useState(false);
+    const [referralValid, setReferralValid] = useState(false)
     const navigate = useNavigate()
     const formik = useFormik({
         initialValues: {
@@ -18,7 +19,8 @@ export default function RegistrationPage() {
             email: "",
             password: "",
             phone_number: "",
-            referral: ""
+            referral: "",
+            referralValid: false
         },
         onSubmit: async (values) => {
             try {
@@ -45,13 +47,26 @@ export default function RegistrationPage() {
         formik.setFieldValue(target.name, target.value);
     }
 
-    const handleReferral = (e) => {
-        e.preventDefault();
-        // console.log('check referral');
-        // setGetCoupon("true");
-        // alert("Referral code succesfully applied")
-        // console.log(getCoupon);
+    const handleReferral = async (e) => {
+        try {
+            e.preventDefault();
+            const response = formik.values.referral
+            if (response === "") {
+                return toast.error("Please Input The Referral Code")
+            }
+            const getRef = await api().get(`/users/reff/${response}`)
+            if (getRef.data.data === null) {
+                toast.error(getRef.data.message)
+            } else if (getRef.data.data !== null) {
+                toast.success(getRef.data.message)
+                formik.setFieldValue('referralValid', true);
+            }
+        } catch (error) {
+            console.log(error);
+        }
     }
+
+    console.log(formik.values);
 
     return (
         <div className=" h-full md:h-screen bg-gradient-to-b from-green-700 to-yellow-300 pb-20 grid place-content-center">
@@ -80,14 +95,18 @@ export default function RegistrationPage() {
                     <input type="text" id='text' name='phone_number' onChange={formik.handleChange} value={formik.values.phone_number} className='rounded-full p-2 pl-3' />
                     <div className='text-orange-400 font-medium'> {formik.errors.phone_number} </div>
 
-
-                    <label className='text-white font-bold text-sm' htmlFor="" >Reff. Code</label>
-                    <div className='flex justify-between'>
-                        <div className='grid place-content-center'>
-                            <input type="text" id='referral' name='referral' onChange={formik.handleChange} value={formik.values.referral} className='rounded-full p-2 pl-3 w-[90%]' />
+                    {formik.values.referralValid ? <div className='text-white'>Referral Code Applied!</div> :
+                        <div>
+                            <label className='text-white font-bold text-sm' htmlFor="" >Reff. Code</label>
+                            <div className='flex justify-between'>
+                                <div className='grid place-content-center'>
+                                    <input type="text" id='referral' name='referral' onChange={formik.handleChange} value={formik.values.referral} className='rounded-full p-2 pl-3 w-[90%]' />
+                                </div>
+                                <Button text={'Confirm'} onClick={handleReferral} style={"w-[90px] md:w-[170px]"} />
+                            </div>
                         </div>
-                        <Button text={'Confirm'} onClick={handleReferral} style={"w-[90px] md:w-[170px]"} />
-                    </div>
+                    }
+
                     <div className='flex justify-center m-4'>
                         <Button text='Register' type='submit' style={"w-[290px] md:w-[350px]"} />
                     </div>

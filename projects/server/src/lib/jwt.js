@@ -23,7 +23,7 @@ module.exports = {
             if (!authorization) throw { message: `token was not found` };
             const decodeData = jwt.verify(authorization, 'abc123');
             req.dataToken = decodeData;
-            console.log(`lewat verify jwt`);
+            console.log(`${req.dataToken}`);
             next()
         } catch (error) {
             console.log(error);

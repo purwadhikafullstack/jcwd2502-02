@@ -1,9 +1,15 @@
 import React from "react";
 import moment from 'moment';
 import DeleteConfirmation from "./deleteModal";
+import { useSelector } from "react-redux";
 
 const OrderDetailsSection = ({ transaction, fetchData, id }) => {
+
+    const role = useSelector((state) => state.users.role);
+
     return (
+
+
         <div className="bg-green-800 my-10 lg:my-0 p-5 rounded-xl lg:w-[400px] flex flex-col justify-between">
             <div></div>
             <div className="text-4xl font-bold text-white">Order Details: </div>
@@ -30,10 +36,13 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                                 : null}
                         </div>
                     </div>
-                    <div className="grid gap-2">
+                    {transaction.discount_coupon === null ? null : <div className="grid gap-2">
                         <div className="font-bold text-xl underline">Voucher</div>
-                        <div>XXXX</div>
-                    </div>
+                        <div>{transaction
+                            ? transaction.coupon_name
+                            : null}</div>
+                    </div>}
+
                 </div>
             </div>
             <div className="text-white">
@@ -52,11 +61,14 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                         <div>Shipping Cost</div>
                         Rp {transaction ? transaction.shipping_cost.toLocaleString() : null}
                     </div>
-
-                    <div className="flex justify-between">
+                    {transaction.discount_coupon === null ? null : <div className="flex justify-between">
                         <div>Voucher Discount</div>
-                        <div className="font-bold">- Rp 0</div>
-                    </div>
+                        <div>- Rp {transaction ? transaction?.discount_coupon?.toLocaleString() : null}</div>
+                    </div>}
+                    {/* <div className="flex justify-between">
+                        <div>Voucher Discount</div>
+                        <div>- Rp {transaction ? transaction?.discount_coupon?.toLocaleString() : null}</div>
+                    </div> */}
                 </div>
 
                 <div className="h-[3px] bg-white my-2"></div>
@@ -67,19 +79,27 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                 </div>
             </div>
             <div className="my-3">
-                {transaction.status === "pending" ? (
-                    <DeleteConfirmation
-                        itemId={id}
-                        onDelete={fetchData}
-                        apiEndpoint="/transaction/cancel"
-                        text={""}
-                        message={"Order Canceled"}
-                        textOnButton={"Yes"}
-                        button={<div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">
-                            CANCEL ORDER
-                        </div>}
-                    />
-                ) : null}
+                {role === "customer" ?
+                    <div>
+                        {
+
+                            transaction.status === "pending" ? (
+                                <DeleteConfirmation
+                                    itemId={id}
+                                    onDelete={fetchData}
+                                    apiEndpoint="/transaction/cancel"
+                                    text={""}
+                                    message={"Order Canceled"}
+                                    textOnButton={"Yes"}
+                                    button={<div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">
+                                        CANCEL ORDER
+                                    </div>}
+                                />
+                            ) : null
+                        }
+                    </div>
+                    : null}
+
             </div>
         </div>
     );

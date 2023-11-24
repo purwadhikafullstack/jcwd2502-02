@@ -5,6 +5,7 @@ const { categoryController } = require("../controllers");
 const upload = require("./../middlewares/upload");
 
 Router.get('/all', categoryController.getCategory)
+Router.get('/list', categoryController.getAllCategory)
 Router.get("/onecategory/:id", categoryController.getOneCategory);
 Router.patch("/editcategory", categoryController.editCategory);
 Router.patch("/editimage/:idImage", upload, categoryController.updateCategoryImage);

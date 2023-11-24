@@ -89,28 +89,27 @@ const UpdateProfile = () => {
     return (
         <div>
             <Toaster />
-            <Navbar />
-            <div className="mt-[70px]">
+            {/* <Navbar /> */}
+            <div className="grid place-content-center h-screen bg-gradient-to-b from-green-700 to-yellow-300">
 
 
 
-                <div className="mx-5 mt-5 md:mx-36 lg:mx-64 flex text-4xl font-bold gap-2 py-5 pl-5 text-green-800">   <div className="grid place-content-center"><AiFillEdit /></div>
-                    Update Profile </div>
 
-                <div className=" mx-5 md:p-10 md:mx-36 lg:mx-64 flex flex-col gap-3 border p-3 py-5 rounded-xl shadow-lg">
+                <div className="px-5 md:px-8 lg:px-10 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700">
                     {/* <div className="mt-10"></div> */}
+                    <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Profile </div>
                     <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">Username</div>
+                        <div className="text-white font-bold text-sm">Username</div>
                         <input type="text" onChange={formik.handleChange} name="username" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.username} />
                         <div className=" pl-3 text-red-600">{formik.errors.username}</div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">Email</div>
+                        <div className="text-white font-bold text-sm">Email</div>
                         <input type="text" onChange={formik.handleChange} name="email" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.email} />
                         <div className="pl-3 text-red-600">{formik.errors.email}</div>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">Gender</div>
+                        <div className="text-white font-bold text-sm">Gender</div>
                         <select onChange={formik.handleChange} name="gender" defaultValue={formik.values.gender} className="rounded-2xl border border-green-800 p-3">
                             {formik.values.gender != "male" ? (<option value="male">Male</option>
                             ) : (<option value="male" selected>Male</option>
@@ -121,15 +120,15 @@ const UpdateProfile = () => {
                         </select>
                     </div>
                     <div className="flex flex-col gap-2">
-                        <div className="font-bold text-green-800">Birthdate</div>
+                        <div className="text-white font-bold text-sm">Birthdate</div>
                         <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
                     </div>
-                </div>
-                <div className="grid place-content-center m-10">
-                    <Button onClick={() => debouncedHandleSubmit()} text={"Submit Changes"} />
+                    <div className="grid place-content-center mt-5">
+                        <Button onClick={() => debouncedHandleSubmit()} text={"Submit Changes"} />
+                    </div>
                 </div>
             </div>
-            <Footer />
+            {/* <Footer /> */}
         </div>
     )
 }

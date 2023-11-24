@@ -1,12 +1,13 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager, checkReferralService } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
 const respondHandler = require('../utils/resnpondHandler');
+const responseHandler = require('../utils/responseHandler');
 const { log, error } = require('console');
 const { deleteFiles } = require('../helper/deleteFiles')
 
@@ -43,6 +44,15 @@ module.exports = {
             } else {
                 throw { message: newUser.message }
             }
+        } catch (error) {
+            next(error)
+        }
+    },
+
+    checkReferral: async (req, res, next) => {
+        try {
+            const getRef = await checkReferralService(req.params)
+            responseHandler(res, getRef.message ? getRef.message : "Referral Code Applied", getRef.message ? null : getRef)
         } catch (error) {
             next(error)
         }
@@ -131,7 +141,7 @@ module.exports = {
             const hashMatch = await match(data.oldpassword, account.dataValues.password)
             const hashMatchNew = await match(data.newpassword, account.dataValues.password)
             if (!hashMatch) throw { message: "The old password is incorrect" }
-            if(hashMatchNew) throw { message: "Cannot use the same password"}
+            if (hashMatchNew) throw { message: "Cannot use the same password" }
             const hashedPassword = await hash(data.newpassword)
             const updatedUser = await db.user.update(
                 { password: hashedPassword },

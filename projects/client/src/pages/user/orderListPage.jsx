@@ -12,16 +12,21 @@ import { Link } from "react-router-dom";
 
 
 const UserOrderList = () => {
+    const today = new Date();
+    const formattedToday = today.toISOString().split('T')[0];
+    const [sortBy, setSortBy] = useState("id");
     const [invoice, setInvoice] = useState("");
     const [status, setStatus] = useState("");
-    const [createdAt, setCreatedAt] = useState("");
+    const [startdate, setStartdate] = useState("");
+    const [enddate, setEnddate] = useState(formattedToday);
     const [orderData, setOrderData] = useState([]);
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [sort, setSort] = useState('ASC');
 
     const handleReset = () => {
         try {
-            setInvoice(""); setStatus(""); setCreatedAt(""); setPage(1); setMaxPage(1); handleSearch();
+            setInvoice(""); setStatus(""); setStartdate(""); setPage(1); setMaxPage(1); handleSearch(); setEnddate(""); setSort("ASC"); setSortBy("id");
         } catch (error) {
             console.log(error);
         }
@@ -39,12 +44,35 @@ const UserOrderList = () => {
     const handleDate = (event) => {
         try {
             setPage(1);
-            setCreatedAt(event.target.value);
+            setStartdate(event.target.value);
         } catch (error) {
             console.log(error);
         }
     };
-
+    const handleSort = (event) => {
+        try {
+            setPage(1);
+            setSort(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleSortBy = (event) => {
+        try {
+            setPage(1);
+            setSortBy(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+    const handleEndDate = (event) => {
+        try {
+            setPage(1);
+            setEnddate(event.target.value);
+        } catch (error) {
+            console.log(error);
+        }
+    };
     const handleSearchInvoice = (event) => {
         try {
             // console.log(event.target.value);
@@ -62,7 +90,7 @@ const UserOrderList = () => {
 
     const handleSearch = async () => {
         try {
-            const response = await api().get(`/transaction/user/all?invoice=${invoice}&page=${page}&status=${status}&createdAt=${createdAt}`)
+            const response = await api().get(`/transaction/user/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}`)
             console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
@@ -93,7 +121,7 @@ const UserOrderList = () => {
 
     useEffect(() => {
         handleSearch()
-    }, [createdAt, status, page])
+    }, [startdate, status, page, enddate, sortBy, sort])
 
     useEffect(() => {
         const debouncedSearch = debounce(() => {
@@ -110,7 +138,7 @@ const UserOrderList = () => {
                 <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">My Order List
                 </div>
                 <div className="mb-10 lg:flex border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 p-3 shadow-xl rounded-2xl lg:justify-center">
-                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[500px]">
+                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[300px]">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full lg:w-[500px] text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
@@ -119,15 +147,32 @@ const UserOrderList = () => {
                             <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
                                 <option value={""} disabled selected>Status</option>
                                 <option value={"canceled"} >CANCEL</option>
-                                <option value={"waiting for payment approval"} >WAITING FOR APPROVAL</option>
                                 <option value={"pending"} >PENDING</option>
-                                <option value={"appproved"}>APPROVED</option>
-                                <option value={"delivery"}>DELIVERY</option>
-                                <option value={"arrived"}>ARRIVED</option>
-                                <option value={"complete"}>COMPLETE</option>
+                                <option value={"waiting for payment approval"} >WAITING APPROVAL</option>
+                                <option value={"Payment Approved"}>APPROVED</option>
+                                <option value={"Delivered"}>DELIVERY</option>
+                                <option value={"Complete"}>COMPLETE</option>
                             </select>
                         </div>
-                        <div className="grid place-content-center"><input value={createdAt} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" /></div>
+
+                        <div className="grid place-content-center"><input value={startdate} max={formattedToday} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                        </div>
+                        <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                                <option value={"id"} disabled selected>Sort By</option>
+                                <option value="createdAt"> Date </option>
+                                <option value="final_total"> Subtotal </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sort} onChange={(e) => handleSort(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                                <option value={""} disabled selected>Sort</option>
+                                <option value="ASC"> Asc </option>
+                                <option value="DESC"> Desc </option>
+                            </select>
+                        </div>
                         <div className="grid place-content-center">
                             <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
                         </div>

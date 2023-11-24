@@ -3,6 +3,7 @@ import Searchbar from "../../components/searchBar";
 import SortButton from "../../components/sortButton";
 import Pagination from "../../components/pagination";
 import Navbar from "../../components/navbarUser";
+import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useState, useRef } from "react";
 import { api1 } from "../../api/api";
@@ -30,7 +31,7 @@ const UpdateProductStocksPage = () => {
     const firstPostIndex = lastPostIndex - postPerPage;
     const currentPosts = products?.slice(firstPostIndex, lastPostIndex);
     const api = api1();
-    const closestBranch = useSelector((state) => state.branch.closestBranch);
+    const closestBranch = useSelector((state) => state.users.store_branch_id);
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
     const [isModalAddOpen, setModalAddOpen] = useState(false);
@@ -41,7 +42,7 @@ const UpdateProductStocksPage = () => {
     }, 1000);
     const nearestBranch = async () => {
         try {
-            const branch = await api.get(`/branch/nearest/${closestBranch.id}`)
+            const branch = await api.get(`/branch/nearest/${closestBranch}`)
             setStock(branch.data.data)
         } catch (error) {
             console.log(error);
@@ -59,7 +60,7 @@ const UpdateProductStocksPage = () => {
         try {
             nearestBranch()
             const response = await api.get(
-                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}`
+                `/products/filtered?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch}`
 
             );
             setProducts(response.data.data);
@@ -108,7 +109,7 @@ const UpdateProductStocksPage = () => {
     return (
         <div className="">
             <Toaster />
-            <Navbar />
+            <NavbarAdmin />
             <div className="mt-[50px] pt-3">
                 <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
                     {category.map((value, index) => {
@@ -194,7 +195,7 @@ const UpdateProductStocksPage = () => {
                 isOpen={isModalReduceOpen}
                 onClose={handleCloseReduceModal}
                 productId={productId}
-                branchId={closestBranch.id}
+                branchId={closestBranch}
                 onStockUpdated={onGetFilteredProducts}
                 currentStock={currentStock}
             />
@@ -202,7 +203,7 @@ const UpdateProductStocksPage = () => {
                 isOpen={isModalAddOpen}
                 onClose={handleCloseAddModal}
                 productId={productId}
-                branchId={closestBranch.id}
+                branchId={closestBranch}
                 onStockUpdated={onGetFilteredProducts}
                 currentStock={currentStock}
             />

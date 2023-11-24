@@ -30,7 +30,7 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
         }, 1500), navigate('/')
         setTimeout(() => {
             setLoading(false)
-        }, 3000)
+        }, 2000)
     }, [children, user]);
 
     // useEffect(() => {

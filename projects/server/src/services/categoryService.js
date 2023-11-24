@@ -1,5 +1,7 @@
 const db = require("./../models");
 const { deleteFiles } = require('./../helper/deleteFiles');
+const { Sequelize } = require("sequelize");
+const Op = Sequelize.Op;
 module.exports = {
     getCategoryService: async () => {
         try {
@@ -8,6 +10,53 @@ module.exports = {
             return error;
         }
     },
+    getAllCategoryService: async (query) => {
+        try {
+            const { search, sort, page } = query;
+            const limit = 6;
+            const like = Op.like;
+            const whereClause = {
+                isDeleted: 0,
+            };
+            if (search) {
+                whereClause.name = { [like]: `%${search}%` };
+            }
+            const totalRecords = await db.product_category.count({ where: { ...whereClause } });
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            let order;
+            switch (sort) {
+                case 'ASC':
+                    order = [['updatedAt', 'ASC']];
+                    break;
+                case 'DESC':
+                    order = [['updatedAt', 'DESC']];
+                    break;
+                case 'AZ':
+                    order = [['name', 'ASC']];
+                    break;
+                case 'ZA':
+                    order = [['name', 'DESC']];
+                    break;
+                default:
+                    order = [['updatedAt', 'DESC']];
+            }
+
+            const categories = await db.product_category.findAll({
+                where: { ...whereClause },
+                order,
+                limit,
+                offset,
+            });
+            return {
+                categories,
+                maxPages,
+            };
+        } catch (error) {
+            return error;
+        }
+    },
+
     editCategoryService1: async (body) => {
         try {
             const { id } = body;

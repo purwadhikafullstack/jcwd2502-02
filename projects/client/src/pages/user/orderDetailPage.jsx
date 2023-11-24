@@ -10,6 +10,8 @@ import { IoIosArrowForward } from "react-icons/io";
 import moment from 'moment';
 import toast, { Toaster } from "react-hot-toast";
 import OrderDetailsSection from "../../components/orderDetails";
+import DeleteConfirmation from "../../components/deleteModal";
+
 
 const UserOrderDetail = () => {
     const [timeRemaining, setTimeRemaining] = useState(0); // Set the initial time in seconds
@@ -20,7 +22,7 @@ const UserOrderDetail = () => {
 
     const getDetailOrder = async () => {
         try {
-            const order = await api().get(`/transaction/${id}`)
+            const order = await api().get(`/transaction/user/order/${id}`)
             console.log(order.data.data);
             console.log(order.data.data.createdAt);
             setTransaction(order.data.data)
@@ -73,7 +75,6 @@ const UserOrderDetail = () => {
         return () => clearInterval(intervalId);
     }, [])
 
-
     const formatTime = (time) => {
         const hours = Math.floor(time / 3600);
         const minutes = Math.floor((time % 3600) / 60);
@@ -102,9 +103,14 @@ const UserOrderDetail = () => {
                             <div className="flex justify-between gap-3">
                                 <div className="w-[230px] lg:w-[170px] text-xl font-bold flex flex-col justify-center">Order Status:</div>
                                 <div className="w-full">
-                                    {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>{transaction.status.toUpperCase()}</div> : null}
+                                    {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>WAITING FOR PAYMENT</div> : null}
                                     {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
+                                    {transaction.status == "Payment Approved" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2 text-white`}>PAYMENT APPROVED</div> : null}
+                                    {transaction.status == "Delivered" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2 text-white`}>ORDER SENT</div> : null}
                                     {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
+                                        null
+                                    }
+                                    {transaction.status == "Complete" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-green-600 p-2 text-white`}>{transaction.status.toUpperCase()}</div> :
                                         null
                                     }
                                 </div>
@@ -114,7 +120,7 @@ const UserOrderDetail = () => {
                                     <div className="grid place-content-center">TIME REMAINING:</div>
                                     <div className="text-6xl grid place-content-center">{formatTime(timeRemaining)}</div>
                                     <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
-                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./bca_logo.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./download.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
                                     <div className="grid place-content-center"></div>
                                 </div>
                                 <input
@@ -123,6 +129,24 @@ const UserOrderDetail = () => {
                                 <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div></div>
                                 : null
                             }
+
+                            {transaction.status === "Delivered" ?
+
+                                <div className="w-full">
+                                    <DeleteConfirmation
+                                        itemId={id}
+                                        onDelete={getDetailOrder}
+                                        apiEndpoint="transaction/user/complete"
+                                        text={""}
+                                        message={"Order Completed"}
+                                        textOnButton={"Yes"}
+                                        button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
+                                            COMPLETE ORDER
+                                        </div>} />
+                                </div>
+
+                                : null}
+
                             <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>
                             <div className="">
                                 <div className="text-xl font-bold mb-3">Item List:</div>
@@ -133,7 +157,7 @@ const UserOrderDetail = () => {
                                                 <CheckoutComponent
                                                     name={value.name}
                                                     weight={value.weight}
-                                                    price={value.price}
+                                                    price={value.real_price}
                                                     final_price={value.price}
                                                     discount_id={value.discount_id}
                                                     quantity={value.quantity}
@@ -143,6 +167,8 @@ const UserOrderDetail = () => {
                                             </div>
                                         )
                                     }) : null}
+
+
                                 </div>
                             </div>
 

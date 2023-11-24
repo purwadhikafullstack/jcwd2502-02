@@ -1,6 +1,5 @@
 import { Route } from "react-router-dom";
 import LandingPage from "../pages/user/landingPage";
-import LandingPage2 from "../pages/user/landingPage2";
 import RegistrationPage from "../pages/registerPage";
 import LoginPage from "../pages/loginPage";
 import ProductListPage from "../pages/user/productList";
@@ -22,25 +21,23 @@ import ManageAddress from "../pages/user/manageAddressPage";
 import Cart from "../pages/user/cartPage";
 import CheckoutPage from "../pages/user/checkoutPage";
 import CreateAdminPage from "../pages/admin/createAdminPage";
-import SuperOrderList from "../pages/admin/superOrderListPage";
 import AdminDashboardPage from "../pages/admin/adminDashboard";
 import ProductStockHistoryPage from "../pages/admin/productStockHistory";
 import ManageProductDiscountPage from "../pages/admin/manageDiscountPage";
 import UserOrderDetail from "../pages/user/orderDetailPage";
 import UserOrderList from "../pages/user/orderListPage";
 import Navbar from "../components/navbarUser";
+import SalesReportPage from "../pages/admin/salesReport";
+import AdminOrderList from "../pages/admin/adminOrderListPage";
+import AdminOrderDetail from "../pages/admin/manageOrderDetailPage";
 
+import SalesReportProduct from "../pages/admin/salesReportProduct";
 import Protected from "./protected";
 
 const routes = [
     <Route path='/' element={
         <Protected userPage={false}>
             <LandingPage />
-        </Protected>
-    } />,
-    <Route path='/v2' element={
-        <Protected userPage={false}>
-            <LandingPage2 />
         </Protected>
     } />,
     <Route path='/profile' element={
@@ -123,7 +120,10 @@ const routes = [
         </Protected>
     } />,
     <Route path='/admin/order-list' element={
-        <SuperOrderList />
+        <AdminOrderList />
+    } />,
+    <Route path='/admin/order/:id' element={
+        <AdminOrderDetail />
     } />,
 
     <Route path='/user-management' element={
@@ -132,6 +132,14 @@ const routes = [
 
     <Route path='/admin-dashboard' element={
         < AdminDashboardPage />
+    } />,
+
+    <Route path='/sales-report/user' element={
+        < SalesReportPage />
+    } />,
+
+    <Route path='/sales-report/product' element={
+        < SalesReportProduct />
     } />,
 
     <Route path='/stock-history' element={
