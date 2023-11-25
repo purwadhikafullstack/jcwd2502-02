@@ -1,8 +1,8 @@
 import { useEffect } from "react"
-import toast, {Toaster} from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import Button from "./button";
 
-const ModalTransactionDetail = ({transactionData}) => {
+const ModalTransactionDetail = ({ transactionData }) => {
 
     const products = transactionData.transaction_details;
     const cumulativePrice = products.reduce((total, product) => {
@@ -26,57 +26,61 @@ const ModalTransactionDetail = ({transactionData}) => {
     useEffect(() => {
         console.log(products);
     }, [])
-    return(
+    return (
         <div className="h-fit">
             < Toaster />
             <Button text={"Detail"} style={"w-full"} onClick={() => document.getElementById(`my_modal_${transactionData.id}`).showModal()}></Button>
-            <dialog id={`my_modal_${transactionData.id}`} className="modal backdrop-blur-md">
-                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600">
-                    <h3 className="font-bold text-3xl text-white"> Transaction Detail #{transactionData.id}</h3>
-                    <div className="bg-white rounded-lg h-fit p-2 my-2 ">
-                        <div className="border text-left justify-start m-2 rounded-md border-black shadow-xl flex">
-                            <div className="m-2">
-                                <h1> Customer: {transactionData.user.username} </h1>
-                                <h1> Invoice number: {transactionData.invoice}</h1>
-                                <h1> Bought from: {transactionData.store_branch.name}</h1>
+            <dialog id={`my_modal_${transactionData.id}`} className="modal modal-bottom sm:modal-middle backdrop-blur-md">
+                <div className="modal-box ">
+                    <div className="font-bold text-3xl text-green-800"> Transaction ID: #{transactionData.id}</div>
+                    <div className="">
+                        <div className="rounded-xl border-4 my-3 rounded-mdflex bg-yellow-300 border-green-800 w-full">
+                            <div className="text-left p-3 text-green-800">
+                                <div className="font-semibold  flex justify-between"> Customer username: <div>{transactionData.user.username}</div> </div>
+                                <div className="font-semibold flex justify-between"> INV Number: <div>{transactionData.invoice}</div></div>
+                                <div className="font-semibold flex justify-between"> Bought from: <div>{transactionData.store_branch.name}</div></div>
+                                <div className="font-semibold flex justify-between"> Status: <div>{transactionData.status.toUpperCase()}</div></div>
                             </div>
                         </div>
-                        {
-                            products && products.map((value) => {
-                                return(
-                                    <div className="flex gap-3 border h-[110px] w-[430px] rounded-lg m-2 border-black shadow-lg">
-                                        <div className="m-2 flex">
-                                            <div className="flex">
-                                                <img src={process.env.REACT_APP_URL + value.product.image} alt="" className="h-[70px] w-[70px] rounded-md mt-2 shadow-lg" />
-                                                <div className="flex flex-col m-2 text-left">
-                                                    <h1>{value.name}</h1>
-                                                    <h1>{value.quantity} x {formatRupiah(value.price)}</h1>
-                                                </div>
+
+                        <div className="grid gap-3">
+                            {
+                                products && products.map((value) => {
+                                    return (
+                                        <div className="flex gap-3 border rounded-xl  w-full">
+
+                                            <div className="">
+                                                <img src={process.env.REACT_APP_URL + value.product.image} alt="" className="h-[100px] w-[120px] rounded-l-xl" />
                                             </div>
-                                            <div className="flex m-2 text-right">
-                                                <div className="flex flex-col ml-auto">
-                                                    <h1> Total Harga </h1>
-                                                    <h1> {formatRupiah(value.quantity * value.price)} </h1>
+                                            <div className=" w-full flex flex-col justify-between pr-3">
+                                                <div className=" text-left pt-2">
+                                                    <div>{value.name}</div>
+                                                    <div className="flex gap-3"><div className="text-green-800">{formatRupiah(value.price)}</div> x {value.quantity}  </div>
                                                 </div>
+                                                <div className="h-[3px] bg-green-800"></div>
+                                                <div className="text-left pb-2">Subtotal: {formatRupiah(value.quantity * value.price)} </div>
                                             </div>
+
                                         </div>
-                                    </div>
-                                )
-                            })
-                        }
-                        <div className="">
-                            <h1>Transaction status: {transactionData.status}</h1>
+                                    )
+                                })
+                            }
                         </div>
-                        <div className="flex flex-col my-2 rounded-md mx-3">
-                            <h1 className="flex justify-end">Total Price: {formatRupiah(transactionData.subtotal)}</h1>
-                            <h1 className="flex justify-end">Shipping fee: {formatRupiah(transactionData.shipping_cost)}</h1>
-                            <h1 className="flex justify-end">Amount paid: {formatRupiah(transactionData.final_total)}</h1>
+
+
+                        <div className="my-3 p-3 text-white rounded-md bg-green-800">
+                            <div className="flex justify-between">Total Subtotal: <div>{formatRupiah(transactionData.subtotal)}</div></div>
+                            <div className="flex justify-between">Shipping Cost: <div>{formatRupiah(transactionData.shipping_cost)}</div></div>
+                            <div className="h-[3px] my-1 bg-white"></div>
+                            <div className="flex font-bold text-lg justify-between">Final Total: <div>{formatRupiah(transactionData.final_total)}</div></div>
                         </div>
                     </div>
                     <div className="flex justify-center">
-                        <button onClick={() => document.getElementById(`my_modal_${transactionData.id}`).close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Close</button>
-                        {/* <button onClick={() => console.log(products)}> check item </button> */}
+                        <button onClick={() => document.getElementById(`my_modal_${transactionData.id}`).close()} className="btn bg-red-600 text-white border-4 border-black hover:bg-red-600 hover:border-black w-full">Close</button>
                     </div>
+                    <form method="dialog" className="modal-backdrop">
+                        <button hidden>close</button>
+                    </form>
                 </div>
             </dialog>
         </div>
