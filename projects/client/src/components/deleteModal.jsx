@@ -2,7 +2,7 @@ import React from "react";
 import Swal from "sweetalert2";
 import { api } from "../api/api";
 
-const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, textOnButton, message }) => {
+const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, textOnButton, message, reloadPage = true }) => {
     const apiInstance = api()
 
     const handleDelete = async () => {
@@ -30,9 +30,11 @@ const DeleteConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, textO
                     confirmButtonColor: "#039E57",
                 });
                 onDelete();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                if (reloadPage) {
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
+                }
             } catch (error) {
                 console.log(error);
             }

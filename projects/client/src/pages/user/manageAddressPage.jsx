@@ -90,7 +90,7 @@ const ManageAddress = () => {
         getCityId()
         getProvinceId()
         getAddress()
-
+        window.scrollTo(0, 0);
     }, [page])
 
 

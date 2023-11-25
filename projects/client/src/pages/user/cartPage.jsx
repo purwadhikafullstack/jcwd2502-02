@@ -21,6 +21,7 @@ const Cart = () => {
     console.log(cart.cart);
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         dispatch(nearestBranch())
     }, [dispatch])
 
@@ -41,40 +42,38 @@ const Cart = () => {
                     <div> {closestBranch.name}</div>
                 </div> : null}
 
-                <div className="lg:flex lg:gap-12 md:mb-10">
+                <div className="lg:flex lg:gap-12 md:mb-10 ">
 
-                    <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto ">
-
-                        {cart.cart.length ?
-                            <div>{
-                                cart.cart.map((value, index) => {
-                                    return (
-                                        <div>
-                                            <CartComponent
-                                                name={value.product.name}
-                                                price={value.product.price}
-                                                final_price={value.product.final_price}
-                                                discount_id={value.product.discount_id}
-                                                image={value.product.image}
-                                                weight={value.product.weight}
-                                                data={value.products_id}
-                                                id={value.products_id}
-                                            />
-                                        </div>
-                                    )
-                                })
-
-                            }</div>
-                            : <div className="grid gap-3 place-content-center mt-32">
-                                <div className="text-center text-3xl font-black grid place-content-center">Oops, Your cart is empty!</div>
-                                <div className=" grid place-content-center">But it doesn't have to be</div>
+                    <div className="flex flex-col lg:flex-1 h-[500px] overflow-y-auto gap-3">
+                        {cart.cart.length ? (
+                            cart.cart.map((value, index) => (
+                                <CartComponent
+                                    key={index}
+                                    name={value.product.name}
+                                    price={value.product.price}
+                                    final_price={value.product.final_price}
+                                    discount_id={value.product.discount_id}
+                                    image={value.product.image}
+                                    weight={value.product.weight}
+                                    data={value.products_id}
+                                    id={value.products_id}
+                                />
+                            ))
+                        ) : (
+                            <div className="grid gap-3 place-content-center mt-32">
+                                <div className="text-center text-3xl font-black grid place-content-center">
+                                    Oops, Your cart is empty!
+                                </div>
+                                <div className="grid place-content-center">
+                                    But it doesn't have to be
+                                </div>
                                 <Link to={'/products?category='}>
                                     <Button style={"w-full"} text={"Continue Shopping"} />
                                 </Link>
                             </div>
-                        }
-
+                        )}
                     </div>
+
 
                     {cart.cart.length ? <div className="bg-green-800 my-10 lg:my-0 p-3 rounded-xl md:h-[120px] lg:w-[400px]">
                         <div className="text-2xl lg:text-xl font-bold text-white flex justify-between">
