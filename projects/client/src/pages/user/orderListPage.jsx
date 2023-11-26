@@ -217,7 +217,7 @@ const UserOrderList = () => {
                     </div>
                 </div>
                 <div className="mt-12 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 my-10 rounded-full"></div>
-                <div className="grid gap-3 mb-10">
+                <div className="grid  gap-3">
                     {orderData ? orderData.map((value, index) => {
                         return (
                             <div key={index}>

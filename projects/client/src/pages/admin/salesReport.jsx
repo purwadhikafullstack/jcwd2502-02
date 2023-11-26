@@ -115,7 +115,9 @@ const SalesReportPage = () => {
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
                     <div role="tablist" className="tabs tabs-lifted tabs-lg">
                         <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Transactions</div>
-                        <div role="tab" className="tab lg:text-xl">Products</div>
+                        <Link to={`/sales-report/product`}>
+                            <div role="tab" className="tab lg:text-xl">Products</div>
+                        </Link>
                     </div>
                 </div>
 

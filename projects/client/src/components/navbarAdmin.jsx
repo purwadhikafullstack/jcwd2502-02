@@ -11,6 +11,7 @@ import { logout } from "../redux/Features/users";
 import { FaBoxOpen } from "react-icons/fa";
 import { PiPercentFill } from "react-icons/pi";
 import { BsFillPieChartFill } from "react-icons/bs";
+import { FaHistory } from "react-icons/fa";
 
 
 
@@ -88,6 +89,11 @@ const NavbarAdmin = () => {
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <RiFileList3Fill />
                                                     Manage Inventory</div></li>
+                                            </Link>
+                                            <Link to={'/stock-history'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <FaHistory />
+                                                    Stock History</div></li>
                                             </Link>
                                             <Link to={'/sales-report/user'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">

@@ -6,7 +6,7 @@ import toast, { Toaster } from "react-hot-toast";
 import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import { BiSearchAlt } from "react-icons/bi";
-
+import { Link } from "react-router-dom";
 
 const ProductStockHistoryPage = () => {
     const [stockData, setStockData] = useState("");
@@ -16,6 +16,15 @@ const ProductStockHistoryPage = () => {
     const userSelector = useAppSelector((state) => state.users);
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+
+    const handleReset = () => {
+        try {
+            setNameQuery(""); setBranchQuery(""); setDescQuery(""); setPage(1)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     const handleNameQuery = (event) => {
         setNameQuery(event.target.value);
     };
@@ -48,6 +57,7 @@ const ProductStockHistoryPage = () => {
     useEffect(() => {
         fetchData()
     }, [nameQuery, descQuery, branchQuery, page])
+
     return (
         <div className="">
             <NavbarAdmin />
@@ -62,33 +72,38 @@ const ProductStockHistoryPage = () => {
                             Stock History                        </div>
                     </div>
 
-                    <div className="border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5 flex">
+                    <div className="border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5 flex gap-3">
                         <div className="border-2 flex rounded-xl bg-white h-[48px]">
                             <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                             <input value={nameQuery} onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-[300px] text-lg pl-2" placeholder="Search Product Name" />
                         </div>
-                        <div className=''>
-                            <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]' onChange={handleDescQuery} value={descQuery}>
-                                <option value=""> show all </option>
-                                <option value="sale"> Sale </option>
-                                <option value="stock"> Restock </option>
-                                <option value="expire"> Expire Product </option>
-                            </select>
-                        </div>
+                        <div className="flex gap-3">
+                            <div className=''>
+                                <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]' onChange={handleDescQuery} value={descQuery}>
+                                    <option value=""> Show all </option>
+                                    <option value="sale"> Sale </option>
+                                    <option value="stock"> Restock </option>
+                                    <option value="expire"> Expire Product </option>
+                                </select>
+                            </div>
+                            <div>
+                                {/* data belum di map */}
+                                {
+                                    userSelector.role == "superadmin" ?
+                                        <select name="" id="" className="w-[200px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]" onChange={handleBranchQuery} value={branchQuery}>
+                                            <option value="" disabled selected> Filter by store </option>
+                                            <option value="1"> Graha Raya </option>
+                                            <option value="2"> Denpasar </option>
+                                        </select>
+                                        :
+                                        null
+                                }
 
-                        <div>
-                            {/* data belum di map */}
-                            {
-                                userSelector.role == "superadmin" ?
-                                    <select name="" id="" className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]" onChange={handleBranchQuery} value={branchQuery}>
-                                        <option value=""> filter by store </option>
-                                        <option value="1"> Graha Raya </option>
-                                        <option value="2"> Denpasar </option>
-                                    </select>
-                                    :
-                                    null
-                            }
+                            </div>
 
+                            <div className="">
+                                <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
+                            </div>
                         </div>
                     </div>
 
@@ -122,7 +137,8 @@ const ProductStockHistoryPage = () => {
                                                     <td className="px-4 py-3 text-center border-r">{value?.store_branch_id}</td>
                                                     <td className="px-4 py-3 text-center border-r">{value?.description == "Sales" || value?.description == "Cancel Delivery" ? `${value?.description} - Transaction ID ${value?.transaction_id}` : `${value?.description}`} </td>
                                                     <td className="px-4 py-3 text-center">
-                                                        {value?.description == "Sales" || value?.description == "Cancel Delivery" ? `${value?.description} - Transaction ID ${value?.transaction_id}` : null}
+                                                        {value?.description == "Sales" || value?.description == "Cancel Delivery" ? <Link to={`/admin/order/${value?.transaction_id}`}>
+                                                            <div className="hover:underline hover:text-green-700">See Details</div></Link> : null}
                                                     </td>
                                                 </tr>
 
@@ -133,38 +149,6 @@ const ProductStockHistoryPage = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* {stockData && stockData.length > 0 ? (
-                        stockData.map((value, index) => (
-                            <div key={index} className=" my-3 h-[100px] bg-gradient-to-r to-yellow-300 from-green-600 rounded-lg">
-                                <div className="bg-white h-full mx-2 rounded-md">
-                                    <div className="text-md mx-2">
-                                        <h1>Product name: {value?.product?.name}</h1>
-                                        <div className="flex gap-2">
-                                            <h1>Quantity: {value?.stock}</h1>
-                                            <h1> || </h1>
-                                            <h1 className="bg-green-400 rounded-xl w-fit px-2">Date: {value?.createdAt.split("T")[0]} </h1>
-                                        </div>
-                                    </div>
-                                    <div className="border bg-gradient-to-b from-green-500 to-yellow-300 h-1 my-1"></div>
-                                    <div className="flex gap-3 m-2">
-                                        <h1>Note: {value?.description}</h1>
-                                        <h1> Store Branch: {value?.store_branch_id} </h1>
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="w-full flex justify-center my-12 ">
-                            <div className="rounded-lg p-6 flex w-1/2 justify-center bg-gradient-to-b from-green-500 to-yellow-300 shadow-2xl">
-                                <h1 className="bg-white rounded-xl w-full py-1 flex justify-center"> Unfortunately, there are no data to display at the moment.. </h1>
-                            </div>
-                        </div>
-                    )} */}
-
-
-
-
                 </div>
 
                 <div className="flex justify-center my-10">
