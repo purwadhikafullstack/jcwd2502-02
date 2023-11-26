@@ -258,7 +258,6 @@ const SalesReportPage = () => {
 
 
                     <div className="overflow-x-auto">
-
                         <div className=''>
                             <div className=''>
                                 <table className='w-full table-auto'>

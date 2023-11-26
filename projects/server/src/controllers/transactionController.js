@@ -103,7 +103,7 @@ module.exports = {
                 limit,
                 offset,
                 order: [[`${sortby}`, sort]],
-                include: [{ model: db.store_branch, attributes: ["name"] }]
+                include: [{ model: db.store_branch, attributes: ["name"] }, { model: db.transaction_detail, include: [{ model: db.product }] }]
             });
             const result = res.json({
                 orders,
@@ -140,7 +140,7 @@ module.exports = {
                 limit,
                 offset,
                 order: [[`${sortby}`, sort]],
-                include: [{ model: db.store_branch, attributes: ["name"] }]
+                include: [{ model: db.store_branch, attributes: ["name"] }, { model: db.transaction_detail, include: [{ model: db.product }] }]
             });
             const result = res.json({
                 orders,
