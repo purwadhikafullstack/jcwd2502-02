@@ -112,6 +112,7 @@ module.exports = {
     registerUser: async (user) => {
         try {
             const { username, email, password, phone_number, referral, referralValid } = user
+            let newUser;
             const existingAccount = await db.user.findOne({
                 where: { username }
             })
@@ -139,32 +140,42 @@ module.exports = {
                 referral_code: newReferral
             }
             if (referralValid === false) {
-                const newUser = await db.user.create(userData)
+                newUser = await db.user.create(userData)
             } else if (referralValid) {
-                const newUser = await db.user.create(userData)
+                newUser = await db.user.create(userData)
                 const getCoupon = await db.coupon.findOne({ where: { id: 1 } })
                 const newUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: newUser.id, coupon_id: 1, coupon_value: getCoupon.amount, coupon_name: getCoupon.name })
                 const validReferralUser = await db.user.findOne({ where: { referral_code: referral } })
                 const oldUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: validReferralUser.id, coupon_id: 1, coupon_value: getCoupon.amount, coupon_name: getCoupon.name })
             }
+            console.log("masuk 150>>>>");
+            console.log(newUser);
             const token = createJWT(
                 {
                     id: newUser.dataValues.id,
                     role: newUser.dataValues.role,
                 }, '12h')
+            console.log("jwt created 156");
             const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
+            console.log("fs read file 158");
             const compiledTemplate = await handlebars.compile(readTemplate);
+            console.log("compiled 160");
             const newTemplate = compiledTemplate({ username, token })
+            console.log(username);
+            console.log(token);
+            console.log("masuk user service>>>>>>>");
             await transporter.sendMail({
                 to: `aryosetyotama27@gmail.com`,
                 subject: "Verification",
                 html: newTemplate
             });
+            console.log("selesai>>>>>>>>>>>");
             return {
                 isError: false,
                 message: "User account succesfully verified",
             }
         } catch (error) {
+            console.log(error);
             return error
         }
     },
