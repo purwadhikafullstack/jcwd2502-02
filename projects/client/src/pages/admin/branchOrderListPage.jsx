@@ -182,8 +182,8 @@ const BranchOrderList = () => {
                                     details={<Link to={`/admin/order/${value.id}`}>
                                         <div className="lg:flex-1 p-2 my-2 lg:grid lg:place-content-center text-green-600 hover:underline">See Details</div></Link>}
                                     store={value.store_branch.name}
-                                    image={value.transaction_details[0].product.image}
-                                    productName={value.transaction_details[0].name}
+                                    image={value?.transaction_details[0]?.product?.image}
+                                    productName={value?.transaction_details[0]?.name}
                                     quantity={value.transaction_details.length > 1 ? `+ ${value.transaction_details.length - 1} Item` : "1 Item"}
                                 />
                             </div>

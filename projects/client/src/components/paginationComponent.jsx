@@ -1,21 +1,25 @@
 import React from "react";
 import { IoArrowBackOutline, IoArrowForwardOutline } from "react-icons/io5";
 
-const PaginationFixed = ({ page, maxPage, handlePageChange, handlePrevPage, handleNextPage }) => {
-
-
+const PaginationFixed = ({
+    page,
+    maxPage,
+    handlePageChange,
+    handlePrevPage,
+    handleNextPage,
+}) => {
     const generatePageNumbers = () => {
         if (maxPage <= 1) {
-            return []; // No need for pagination if there's only one page or none.
+            return [];
         }
 
-        if (window.innerWidth < 640) { // Assuming 640px as the breakpoint for small screens (you can adjust this based on your design)
+        if (window.innerWidth < 640) {
             return [page];
         }
 
         const pageNumbers = [];
-        const maxButtonsToShow = 3; // Number of buttons to show excluding ellipses
-        const totalButtonsToShow = maxButtonsToShow + 2; // Including ellipses
+        const maxButtonsToShow = 3;
+        const totalButtonsToShow = maxButtonsToShow + 2;
 
         if (maxPage <= totalButtonsToShow) {
             for (let i = 1; i <= maxPage; i++) {
@@ -51,7 +55,9 @@ const PaginationFixed = ({ page, maxPage, handlePageChange, handlePrevPage, hand
     return (
         <div className="flex justify-center mt-4 mb-10">
             <button
-                className={`text-white mr-3 ${page === 1 ? "join-item btn bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-green-700 hover:bg-green-700 join-item btn"
+                className={`text-white mr-3 ${page === 1
+                    ? "join-item btn bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-green-700 hover:bg-green-700 join-item btn"
                     }`}
                 onClick={handlePrevPage}
                 disabled={page === 1}
@@ -65,17 +71,27 @@ const PaginationFixed = ({ page, maxPage, handlePageChange, handlePrevPage, hand
                 <React.Fragment key={index}>
                     <button
                         key={pageNumber}
-                        className={`mx-1 bg-base-200 hover:bg-base-200 join-item btn hidden sm:inline lg:inline ${pageNumber === page ? "border-4 text-green-700 border-green-700 font-bold" : "text-black"
+                        className={`mx-1 ${window.innerWidth < 640
+                            ? page === pageNumber
+                                ? "bg-base-200 text-green-700 border-4 border-green-700 btn"
+                                : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                            : "bg-base-200 hover:bg-base-200 join-item btn hidden sm:inline lg:inline " +
+                            (pageNumber === page
+                                ? "border-4 text-green-700 border-green-700 font-bold"
+                                : "text-black")
                             }`}
                         onClick={() => handlePageChange(pageNumber)}
+                        disabled={window.innerWidth < 640 ? false : pageNumber === '...'}
                     >
-                        {pageNumber}
+                        {pageNumber === '...' ? '...' : pageNumber}
                     </button>
                 </React.Fragment>
             ))}
 
             <button
-                className={`text-white ml-3 ${page === maxPage ? " join-item btn bg-gray-300 text-gray-500 cursor-not-allowed" : "bg-green-700 hover:bg-green-700 join-item btn"
+                className={`text-white ml-3 ${page === maxPage
+                    ? " join-item btn bg-gray-300 text-gray-500 cursor-not-allowed"
+                    : "bg-green-700 hover:bg-green-700 join-item btn"
                     }`}
                 onClick={handleNextPage}
                 disabled={page === maxPage}
