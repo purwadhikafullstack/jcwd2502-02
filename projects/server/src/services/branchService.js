@@ -7,6 +7,14 @@ module.exports = {
             return error
         }
     },
+    getOneBranchService: async (params) => {
+        try {
+            const { id } = params
+            return await db.store_branch.findOne({ where: { id }, attributes: ['name'] })
+        } catch (error) {
+            return error
+        }
+    },
     nearestBranchService: async (params) => {
         try {
             const { id } = params;

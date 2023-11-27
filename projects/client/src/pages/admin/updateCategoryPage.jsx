@@ -170,7 +170,9 @@ const UpdateProductsCategoryPage = () => {
                             <div role="tab" className="tab lg:text-xl ">Products</div>
                         </Link>
                         <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Category</div>
-                        <div role="tab" className="tab lg:text-xl">Stocks</div>
+                        <Link to={`/update-product-stocks`}>
+                            <div role="tab" className="tab lg:text-xl">Stocks</div>
+                        </Link>
                         <div role="tab" className="tab lg:text-xl">Discount</div>
                     </div>
                 </div>
