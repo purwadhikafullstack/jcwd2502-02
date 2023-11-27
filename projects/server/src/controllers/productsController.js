@@ -66,7 +66,6 @@ module.exports = {
             next(error);
         }
     },
-
     getProductsForAdmin: async (req, res, next) => {
         try {
             const { catId, searchquery, sort, page, sortby } = req.query;
@@ -75,12 +74,9 @@ module.exports = {
             const whereClause = { isDeleted: 0 };
             if (catId) whereClause.product_categories_id = catId;
             if (searchquery) whereClause.name = { [like]: `%${searchquery}%` };
-
             const totalRecords = await db.product.count({ where: { ...whereClause } });
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;
-            // const order = sort === "ASC" ? [['name', 'ASC']] : [['name', 'DESC']];
-
             const products = await db.product.findAll({
                 where: { ...whereClause },
                 order: [[`${sortby}`, sort]],
@@ -119,16 +115,12 @@ module.exports = {
             const limit = 8;
             const like = Sequelize.Op.like;
             const whereClause = { isDeleted: 0 };
-
             if (catId) whereClause.product_categories_id = catId;
             if (searchQuery) whereClause.name = { [like]: `%${searchQuery}%` };
-
             const totalRecords = await db.product.count({ where: { ...whereClause } });
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;
-
             let products;
-
             if (sortby === "stock") {
                 products = await db.product.findAll({
                     where: { ...whereClause },
@@ -151,7 +143,6 @@ module.exports = {
                         },
                     ]
                     : [];
-
                 products = await db.product.findAll({
                     where: { ...whereClause },
                     include: includeProductStock,
@@ -160,8 +151,6 @@ module.exports = {
                     offset,
                 });
             }
-
-
             const result = res.json({
                 products,
                 maxPages,
@@ -170,10 +159,6 @@ module.exports = {
             next(error);
         }
     },
-
-
-
-
     createProduct: async (req, res, next) => {
         try {
             console.log("ini isi req.body.data= " + req.body.data);

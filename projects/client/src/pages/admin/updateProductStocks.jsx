@@ -1,4 +1,3 @@
-
 import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useState, useRef } from "react";
@@ -10,7 +9,6 @@ import toast, { Toaster } from "react-hot-toast";
 import ModalUpdateProductStock from "../../components/modalUpdateProductStock";
 import ModalReduceProductStock from "../../components/modalReduceProductStock";
 import PaginationFixed from "../../components/paginationComponent";
-
 const UpdateProductStocksPage = () => {
     const [category, setCategory] = useState([]);
     const [catId, setCatId] = useState("");
@@ -54,7 +52,6 @@ const UpdateProductStocksPage = () => {
         setCurrentStock(productStock);
         setModalReduceOpen(true);
     };
-
     const handleCloseAddModal = () => {
         setModalAddOpen(false);
     };
@@ -87,7 +84,6 @@ const UpdateProductStocksPage = () => {
     const handleNextPage = () => {
         handlePageChange(page + 1);
     };
-
     const handlePrevPage = () => {
         handlePageChange(page - 1);
     };
@@ -123,7 +119,6 @@ const UpdateProductStocksPage = () => {
         }, 1000);
         debouncedSearch();
     }, [searchQuery])
-
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
@@ -138,21 +133,18 @@ const UpdateProductStocksPage = () => {
                 </div>
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700 flex justify-between">
                     <div role="tablist" className="tabs tabs-lifted tabs-lg">
-                        <div role="tab" className="tab lg:text-xl">Products</div>
+                        <Link to={`/updateproducts`}>
+                            <div role="tab" className="tab lg:text-xl ">Products</div>
+                        </Link>
                         <Link to={`/updatecategory`}>
                             <div role="tab" className="tab lg:text-xl">Category</div>
                         </Link>
-                        <Link to={`/update-product-stocks?category=`}>
-                            <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Stocks</div>
+                        <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Stocks</div>
+                        <Link to={`/manage-product-discount`}>
+                            <div role="tab" className="tab lg:text-xl">Discount</div>
                         </Link>
-
-                        <div role="tab" className="tab lg:text-xl">Discount</div>
                     </div>
-
-                    {/* <div className="text-xl ">{branchName}</div> */}
                 </div>
-
-
                 <div className="">
                     <div className="border shadow-lg rounded-2xl flex overflow-x-auto lg:justify-center gap-3 mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5">
                         <div className=" ">
@@ -227,7 +219,6 @@ const UpdateProductStocksPage = () => {
                                                     : "Stock not available"
                                                 }
                                             </th>
-
                                             <th className="text-lg">
                                                 <button className="btn bg-red-600 border-4 border-green-800 hover:bg-red-300 hover:border-green-800" onClick={() => handleOpenModalReduce(value.id, value.product_stocks[0]?.stock)}>Reduce Stock</button>
                                             </th>
@@ -241,12 +232,7 @@ const UpdateProductStocksPage = () => {
                         </table>
                     </div>
                 </div>
-
-
-
             </div>
-
-
             <div className="pt-4 mb-10">
                 <div className="flex justify-center mt-4 mb-10">
                     <PaginationFixed
