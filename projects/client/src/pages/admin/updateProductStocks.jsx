@@ -109,7 +109,7 @@ const UpdateProductStocksPage = () => {
     }
     const handleReset = () => {
         try {
-            setPage(1); setMaxPage(1); handleSearchInputChange(""); setSort("ASC"); setSortBy("id"); setCatId("")
+            setPage(1); handleSearchInputChange(""); setSort("ASC"); setSortBy("id"); setCatId("")
         } catch (error) {
             console.log(error);
         }
