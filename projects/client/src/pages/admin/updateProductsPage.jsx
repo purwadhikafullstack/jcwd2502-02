@@ -167,9 +167,6 @@ const UpdateProductsPage = () => {
         }, 1000);
         debouncedSearch();
     }, [searchQuery])
-
-    console.log(products);
-
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
@@ -194,7 +191,10 @@ const UpdateProductsPage = () => {
                         <Link to={`/updatecategory`}>
                             <div role="tab" className="tab lg:text-xl">Category</div>
                         </Link>
-                        <div role="tab" className="tab lg:text-xl">Stocks</div>
+                        <Link to={`/update-product-stocks`}>
+                            <div role="tab" className="tab lg:text-xl">Stocks</div>
+                        </Link>
+
                         <div role="tab" className="tab lg:text-xl">Discount</div>
                     </div>
                 </div>
