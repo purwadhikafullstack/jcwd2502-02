@@ -14,6 +14,7 @@ import DeleteConfirmation from "../../components/deleteModal"
 import MyForm from "../../components/modal"
 import PaginationFixed from "../../components/paginationComponent"
 import { FaLocationArrow } from "react-icons/fa6";
+import ConfirmConfirmation from "../../components/confirmModal"
 
 
 const ManageAddress = () => {
@@ -24,6 +25,7 @@ const ManageAddress = () => {
     const pageTopRef = useRef(null);
     const [provinceId, setProvinceId] = useState()
     const [cityId, setCityId] = useState()
+    const [disabled, setDisabled] = useState(false)
 
 
     const getProvinceId = async () => {
@@ -136,7 +138,7 @@ const ManageAddress = () => {
                                             <div className="font-semibold">{value.city.name} - {value.city.province.name}</div>
                                         </div>
                                         <div className="md:grid md:place-content-center">
-                                            {value.isPrimary == "false" ? <DeleteConfirmation
+                                            {value.isPrimary == "false" ? <ConfirmConfirmation
                                                 itemId={value.id}
                                                 button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
                                                 onDelete={getAddress}

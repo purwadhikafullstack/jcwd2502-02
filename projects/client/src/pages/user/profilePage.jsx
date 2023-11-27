@@ -89,7 +89,7 @@ const ProfilePage = () => {
     }, []);
 
 
-    console.log(coupon);
+    console.log(mainAddress);
     return (
         <div>
             <Toaster />
@@ -118,9 +118,16 @@ const ProfilePage = () => {
                         <div className=" mb-5 p-5 md:p-5 text-white md:flex md:flex-col md:justify-center">
                             <div className="w-[90%] flex flex-col gap-3 mb-3">
                                 <div className="font-bold text-xl">Main Shipping Address</div>
-                                <div>{mainAddress?.name}</div>
-                                <div>{mainAddress?.address}</div>
-                                <div>{mainAddress?.city?.name} - {mainAddress?.city?.province?.name}</div>
+                                {mainAddress ?
+                                    <div>
+                                        <div>{mainAddress?.name}</div>
+                                        <div>{mainAddress?.address}</div>
+                                        <div>{mainAddress?.city?.name} - {mainAddress?.city?.province?.name}</div>
+                                    </div> :
+                                    <Link to={`/manage-address`}>
+                                        <div className="hover:text-yellow-300 hover:underline">Create Main Address!</div></Link>
+                                }
+
                             </div>
                             <div className="my-3">
                                 <div className="font-bold text-xl">Phone Number</div>

@@ -15,6 +15,7 @@ import { AiFillEdit } from "react-icons/ai";
 const UpdatePasswordPage = () => {
     const navigate = useNavigate()
     const apiInstance = api()
+    const [disabled, setDisabled] = useState(false)
 
     const formik = useFormik({
         initialValues: {
@@ -24,10 +25,19 @@ const UpdatePasswordPage = () => {
         },
         onSubmit: async (values) => {
             try {
+                setDisabled(true)
                 const updatePassword = await api().patch('/users/update-password', null, { headers: { "oldpassword": formik.values.oldPassword, "newpassword": formik.values.newPassword, "confirmpassword": formik.values.confirmPassword } })
                 toast.success('Password has been updated')
+                setTimeout(() => {
+                    navigate('/profile')
+                }, 1500);
             } catch (error) {
                 toast.error(error.response.data.message);
+                setDisabled(false)
+            }
+            finally {
+                // Any code in the finally block will be executed, regardless of whether there was an error or not.
+                // Remove the toast.error from here if you don't want it to appear twice.
             }
 
         },
@@ -62,21 +72,24 @@ const UpdatePasswordPage = () => {
                             <div className="flex flex-col gap-2">
                                 <div className="text-white font-bold text-sm">Old Password</div>
                                 <input type="password" onChange={formik.handleChange} name="oldPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.oldPassword} />
-                                <div className=" pl-3 text-red-600">{formik.errors.oldPassword}</div>
+                                <div className=" text-orange-400 font-medium">{formik.errors.oldPassword}</div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div className="text-white font-bold text-sm">New Password</div>
                                 <input type="password" onChange={formik.handleChange} name="newPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.newPassword} />
-                                <div className="pl-3 text-red-600">{formik.errors.newPassword}</div>
+                                <div className="text-orange-400 font-medium">{formik.errors.newPassword}</div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div className="text-white font-bold text-sm">Confirm Password</div>
                                 <input type="password" onChange={formik.handleChange} name="confirmPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.confirmPassword} />
-                                <div className="pl-3 text-red-600">{formik.errors.confirmPassword}</div>
+                                <div className="text-orange-400 font-medium">{formik.errors.confirmPassword}</div>
                             </div>
 
                             <div className="grid place-content-center mt-5">
-                                <Button type="submit" text={"Submit Changes"} />
+                                {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>APPLYING CHANGES</button>
+                                    :
+
+                                    <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT CHANGES"}</button>}
                             </div>
 
                         </div>
