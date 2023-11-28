@@ -4,7 +4,6 @@ const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
 const bearerToken = require("express-bearer-token");
-const cronJob = require('./helper/cronJob')
 
 const PORT = process.env.PORT || 8000;
 const app = express();

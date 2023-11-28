@@ -4,7 +4,6 @@ const { Sequelize } = require("sequelize");
 const axios = require('axios');
 const { Op, literal } = require("sequelize");
 const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
-const couponValidityCron = require('./../helper/couponCronJob');
 const { deleteFiles } = require("./../helper/deleteFiles")
 const { handleCompletedTransactions } = require('../helper/handleCompleteTransaction')
 module.exports = {
