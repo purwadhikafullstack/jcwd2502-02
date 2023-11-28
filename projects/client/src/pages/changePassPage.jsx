@@ -65,10 +65,10 @@ export default function ChangePasswordPage() {
                         <form className='flex flex-col rounded-2xl gap-2 bg-green-700 p-5 w-[350px] md:w-[450px] lg:w-[400px]' onSubmit={formik.handleSubmit}>
                             <label className='text-white' htmlFor="" >New Password</label>
                             <input type="password" id='password' name='password' onChange={formik.handleChange} value={formik.values.password} className='rounded-md p-2' placeholder='' />
-                            <div className='text-red-500 font-bold'> {formik.errors.password} </div>
+                            <div className='text-orange-400 font-medium'> {formik.errors.password} </div>
                             <label className='text-white' htmlFor="" >Confirm Password</label>
                             <input type="password" id='confirmPassword' name='confirmPassword' onChange={formik.handleChange} value={formik.values.confirmPassword} className='rounded-md p-2' />
-                            <div className='text-red-500 font-bold'> {formik.errors.confirmPassword} </div>
+                            <div className='text-orange-400 font-medium'> {formik.errors.confirmPassword} </div>
                             <div className='flex justify-center m-4'>
                                 <Button text='Submit Password' type='submit' style={"w-[300px]"} />
                             </div>

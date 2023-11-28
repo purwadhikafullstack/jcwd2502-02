@@ -17,12 +17,12 @@ const Jumbotron = () => {
         autoplaySpeed: 4000,
     };
     return (
-        <div className='w-[auto] px-5 md:px-20 lg:px-48'>
+        <div className='w-full px-5 md:px-20 lg:px-48'>
             <div >
                 <Slider {...settings}>
                     {cards.map((url, index) => (
                         <div key={index}>
-                            <img className='rounded-3xl h-[200px] md:h-[350px] lg:h-[500px]' src={url}></img>
+                            <img className='rounded-3xl w-full h-[200px] md:h-[350px] lg:h-[500px]' src={url}></img>
                         </div>
                     ))}
                 </Slider></div>

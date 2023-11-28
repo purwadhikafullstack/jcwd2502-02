@@ -26,6 +26,7 @@ const NavbarAdmin = () => {
 
     }
 
+    console.log(user.role);
     // belum tau dia branch mana dan rolenya super atau admin biasa
     return (
         <div className="relative">
@@ -80,6 +81,13 @@ const NavbarAdmin = () => {
                                                     <div className="flex justify-center text-md pb-5">{user?.email}</div>
                                                 </div>
                                             </div>
+                                            {user.role == "superadmin" ?
+                                                <Link to={'/user-management'}>
+                                                    <li className="hover:bg-green-600 rounded-full ease-in duration-200">
+                                                        <div className="flex gap-5 hover:text-white rounded-full "><FaUserLarge />Manage Admin</div>
+                                                    </li>
+                                                </Link>
+                                                : null}
                                             <Link to={'/admin/order-list'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200">
                                                     <div className="flex gap-5 hover:text-white rounded-full "><HiShoppingCart />Manage Order</div>

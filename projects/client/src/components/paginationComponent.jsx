@@ -12,45 +12,38 @@ const PaginationFixed = ({
         if (maxPage <= 1) {
             return [];
         }
-
         if (window.innerWidth < 640) {
             return [page];
         }
-
         const pageNumbers = [];
         const maxButtonsToShow = 3;
-        const totalButtonsToShow = maxButtonsToShow + 2;
 
-        if (maxPage <= totalButtonsToShow) {
+        if (maxPage <= maxButtonsToShow) {
             for (let i = 1; i <= maxPage; i++) {
                 pageNumbers.push(i);
             }
         } else {
-            if (page <= Math.ceil(maxButtonsToShow / 2) + 1) {
-                for (let i = 1; i <= maxButtonsToShow; i++) {
-                    pageNumbers.push(i);
-                }
-                pageNumbers.push('...');
-                pageNumbers.push(maxPage);
-            } else if (page > maxPage - Math.floor(maxButtonsToShow / 2)) {
+            const startPage = Math.max(1, page - Math.floor(maxButtonsToShow / 2));
+            const endPage = Math.min(maxPage, startPage + maxButtonsToShow - 1);
+            if (startPage > 1) {
                 pageNumbers.push(1);
-                pageNumbers.push('...');
-                for (let i = maxPage - maxButtonsToShow + 1; i <= maxPage; i++) {
-                    pageNumbers.push(i);
+                if (startPage > 2) {
+                    pageNumbers.push('...');
                 }
-            } else {
-                pageNumbers.push(1);
-                pageNumbers.push('...');
-                for (let i = page - Math.floor(maxButtonsToShow / 2); i <= page + Math.floor(maxButtonsToShow / 2); i++) {
-                    pageNumbers.push(i);
+            }
+            for (let i = startPage; i <= endPage; i++) {
+                pageNumbers.push(i);
+            }
+            if (endPage < maxPage) {
+                if (endPage < maxPage - 1) {
+                    pageNumbers.push('...');
                 }
-                pageNumbers.push('...');
                 pageNumbers.push(maxPage);
             }
         }
-
         return pageNumbers;
     };
+
 
     return (
         <div className="flex justify-center mt-4 mb-10">
@@ -103,5 +96,4 @@ const PaginationFixed = ({
         </div>
     );
 };
-
 export default PaginationFixed;

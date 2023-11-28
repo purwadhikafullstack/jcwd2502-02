@@ -17,6 +17,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { getMainAddress, nearestBranch } from "../../redux/Features/branch"
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
+import WAChat from "../../components/waChat"
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
@@ -74,6 +75,7 @@ const LandingPage = () => {
 
     return (
         <div className="">
+            <WAChat />
             <Toaster />
             <Navbar />
             <div className="mt-[70px]">

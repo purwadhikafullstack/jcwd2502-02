@@ -13,7 +13,7 @@ const ModalNewAddress = () => {
     const [selectedProvince, setSelectedProvince] = useState("");
     const [provinceId, setProvinceId] = useState()
     const [cityId, setCityId] = useState()
-
+    const [disabled, setDisabled] = useState(false)
     const getProvinceId = async () => {
         try {
             const province = await apiInstance.get(`/location/province`)
@@ -32,7 +32,6 @@ const ModalNewAddress = () => {
             console.log(error);
         }
     }
-
     const inputAddress = useFormik({
         initialValues: {
             name: "",
@@ -43,9 +42,12 @@ const ModalNewAddress = () => {
         },
         onSubmit: async (values) => {
             try {
+                setDisabled(true)
                 if (values.name === "" || values.address === "" || values.province_id === "" || values.city_id === "") {
                     document.getElementById('my_modal_1').close();
                     toast.error("Please fill in all required fields.");
+                    setDisabled(false)
+
                 } else {
                     const newAddress = await apiInstance.post('/location/add-address', values);
                     inputAddress.resetForm();
@@ -58,6 +60,7 @@ const ModalNewAddress = () => {
             } catch (error) {
                 document.getElementById('my_modal_1').close();
                 toast.error("Please fill all the data")
+                setDisabled(false)
             }
         },
         validationSchema: yup.object().shape({
@@ -71,9 +74,6 @@ const ModalNewAddress = () => {
         const { target } = event;
         inputAddress.setFieldValue(target.name, target.value);
     }
-    const debouncedHandleSubmit = debounce(() => {
-        inputAddress.handleSubmit();
-    }, 1000);
 
     useEffect(() => {
         getProvinceId()
@@ -135,9 +135,7 @@ const ModalNewAddress = () => {
                                     :
                                     null
                             }
-
                         </div>
-
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800">City:</div>
                             <select
@@ -164,9 +162,7 @@ const ModalNewAddress = () => {
                                     :
                                     null
                             }
-
                         </div>
-
                         <div className="flex flex-col gap-2 my-5">
                             <div className="flex gap-3">
                                 <div className="font-bold text-green-800">Create as a Main Address
@@ -183,24 +179,24 @@ const ModalNewAddress = () => {
                                     }}
                                 />
                             </div>
-
                         </div>
-
                     </div>
 
                     <div className="modal-action flex justify-center">
                         <form method="dialog">
                             <div className="flex gap-2">
-                                <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
-                                >CANCEL</button>
+                                {disabled ? null : <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
+                                >CANCEL</button>}
                             </div>
                         </form>
-                        <Button type={"button"} onClick={() => debouncedHandleSubmit()} text={"SUBMIT"} />
+                        {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>CREATING</button>
+                            :
+                            <button disabled={disabled} onClick={() => inputAddress.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>
+                        }
                     </div>
                 </div>
             </dialog>
         </div>
     )
 }
-
 export default ModalNewAddress

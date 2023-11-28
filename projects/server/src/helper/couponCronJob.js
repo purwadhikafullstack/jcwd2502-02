@@ -3,7 +3,7 @@ const db = require('./../models'); // Adjust the path as needed
 const { Sequelize } = require('sequelize');
 
 // Schedule the job to run every minute
-cron.schedule('*/1 * * * *', async () => { // Run every 2 minutes
+cron.schedule('*/9 * * * *', async () => { // Run every 2 minutes
     try {
         // Define a timestamp for 1 minute ago
         const oneMinuteAgo = new Date();
