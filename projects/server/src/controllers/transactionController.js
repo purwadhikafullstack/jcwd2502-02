@@ -5,7 +5,7 @@ const axios = require('axios');
 const { Op, literal } = require("sequelize");
 const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
 const couponValidityCron = require('./../helper/couponCronJob');
-
+const { deleteFiles } = require("./../helper/deleteFiles")
 module.exports = {
     getShippingOption: async (req, res, next) => {
         try {
@@ -189,6 +189,29 @@ module.exports = {
                 const upload = await db.transactions.update({
                     status: "canceled"
                 }, { where: { id: transactionId } })
+                const transaction = await db.transactions.findOne({
+                    where: { id: transactionId }
+                })
+                responseHandler(res, "Cancel Order Success", transaction);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    adminDeclinePaymentOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const paymentProof = await db.transactions.findOne({
+                    where: { id: transactionId }
+                })
+                const oldImage = paymentProof.payment_proof
+                deleteFiles({ image: [oldImage] })
+                const upload = await db.transactions.update({
+                    status: "pending", payment_proof: null
+                }, { where: { id: transactionId } })
+
                 const transaction = await db.transactions.findOne({
                     where: { id: transactionId }
                 })
