@@ -181,6 +181,7 @@ const ModalNewAddress = () => {
                             </div>
                         </div>
                     </div>
+
                     <div className="modal-action flex justify-center">
                         <form method="dialog">
                             <div className="flex gap-2">
@@ -190,7 +191,8 @@ const ModalNewAddress = () => {
                         </form>
                         {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>CREATING</button>
                             :
-                            <button disabled={disabled} onClick={() => inputAddress.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>}
+                            <button disabled={disabled} onClick={() => inputAddress.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>
+                        }
                     </div>
                 </div>
             </dialog>
