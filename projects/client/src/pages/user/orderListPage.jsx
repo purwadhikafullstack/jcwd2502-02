@@ -229,8 +229,8 @@ const UserOrderList = () => {
                                     details={<Link to={`/order/${value.id}`}>
                                         <div className=" text-green-600 hover:underline">See Details</div></Link>}
                                     store={value.store_branch.name}
-                                    image={value.transaction_details[0].product.image}
-                                    productName={value.transaction_details[0].name}
+                                    image={value.transaction_details[0]?.product?.image}
+                                    productName={value.transaction_details[0]?.name}
                                     quantity={value.transaction_details.length > 1 ? `+ ${value.transaction_details.length - 1} Item` : "1 Item"}
                                 />
                             </div>
