@@ -29,7 +29,7 @@ const ModalNewAdmin = ({ getAdmins }) => {
                 toast.success(response.data.message);
                 await getAdmins()
                 // setTimeout(() => {
-                window.location.reload();
+                // window.location.reload();
                 // }, 3000);
             } catch (error) {
                 document.getElementById('my_modal_3').close();

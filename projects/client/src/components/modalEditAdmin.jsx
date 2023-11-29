@@ -20,16 +20,14 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
             try {
                 setDisabled(true)
                 const response = await api().patch(`/users/edit-admin`, { ...values, username: adminData.username, email: adminData.email, })
+                await getAdmins()
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
+                setDisabled(false)
             } catch (error) {
                 toast.error(error.response.data.message);
                 setDisabled(false)
             }
-            finally {
-                setDisabled(false)
-            }
-            getAdmins()
         },
         validationSchema: yup.object().shape({
             username: yup.string().required(),
