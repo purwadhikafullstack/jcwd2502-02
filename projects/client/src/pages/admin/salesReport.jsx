@@ -10,7 +10,6 @@ import { Link } from 'react-router-dom';
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from '../../components/footer';
 
-
 const SalesReportPage = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
@@ -22,7 +21,7 @@ const SalesReportPage = () => {
     const [startDate, setStartDate] = useState(formattedToday);
     const [endDate, setEndDate] = useState("");
     const [branch, setBranch] = useState("");
-    const [sort, setSort] = useState('ASC');
+    const [sort, setSort] = useState('DESC');
     const [username, setUsername] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
@@ -216,7 +215,7 @@ const SalesReportPage = () => {
 
                             <div className='grid place-content-center'>
                                 <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
-                                    <option value={""} disabled selected>All Branch</option>
+                                    <option value={""} selected>All Branch</option>
                                     {
                                         branchList && branchList.map((value) => {
                                             return (

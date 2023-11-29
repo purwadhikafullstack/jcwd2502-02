@@ -21,16 +21,19 @@ const AdminDashboardPage = () => {
     const userSelector = useAppSelector((state) => state.users)
     const [adminBranch, setAdminBranch] = useState("");
     const [orderByBranch, setOrderByBranch] = useState("")
+    const [cardBranch, setCardBranch] = useState("");
     const [userData, setUserData] = useState("");
     const [orderData, setOrderData] = useState("");
     const [branch, setBranch] = useState("");
-
     const [popularProduct, setPopularProduct] = useState("");
-
+    const [cardData, setCardData] = useState("");
     const handleBranchInput = (event) => {
         setOrderByBranch(event.target.value);
     };
 
+    const handleCardBranchChange = (event) => {
+        setCardBranch(event.target.value)
+    };   
     const onFetchData = async () => {
         const orderCount = await api().get(`/chart/order-count?branch=${orderByBranch}`)
         setOrderData(orderCount.data.data);
@@ -43,107 +46,40 @@ const AdminDashboardPage = () => {
         // get product mvp
         const bestProduct = await api().get('/chart/top-product');
         setPopularProduct(bestProduct.data.data)
+        // get card data 
+        const cardData = await api().get(`/report/dashboard-card?branch=${cardBranch}`)
+        setCardData(cardData.data.data);
     }
 
     useEffect(() => {
         onFetchData()
-    }, [orderByBranch])
+    }, [orderByBranch, cardBranch])
 
-    const revenueData = [
-        {
-            "name": "Anggur Merah Seedless",
-            "total_price": "518000",
-            "transaction.id": 33,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Alpukat Mentega",
-            "total_price": "1040000",
-            "transaction.id": 33,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Greenfields Susu UHT Skimmed",
-            "total_price": "25000",
-            "transaction.id": 35,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Ultramilk Full Cream",
-            "total_price": "54000",
-            "transaction.id": 36,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Greenfields Susu UHT Low Fat",
-            "total_price": "50000",
-            "transaction.id": 37,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Apel Super Fuji",
-            "total_price": "128000",
-            "transaction.id": 40,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Blueberry Lokal",
-            "total_price": "50000",
-            "transaction.id": 40,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Bakso Sapi",
-            "total_price": "100000",
-            "transaction.id": 41,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Greenfields Susu UHT Vanilla",
-            "total_price": "16000",
-            "transaction.id": 46,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Otak-Otak Ikan",
-            "total_price": "25000",
-            "transaction.id": 48,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Telur Ayam",
-            "total_price": "30000",
-            "transaction.id": 49,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Tahu Putih",
-            "total_price": "15000",
-            "transaction.id": 49,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Tiram Utuh",
-            "total_price": "25000",
-            "transaction.id": 50,
-            "transaction.store_branch_id": 1
-        },
-        {
-            "name": "Ikan Salmon Potong",
-            "total_price": "80000",
-            "transaction.id": 50,
-            "transaction.store_branch_id": 1
-        }
-    ]
-    console.log(`data branch`, branch);
     return (
-        <div className="h-full bg-white">
+        <div className="h-full w-full bg-white">
             <div>
                 <NavbarAdmin />
 
                 <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
                     <div className="">
                         <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Admin Dashboard</div>
+                        <div className="rounded-md w-fit border border-black text-xs p-1 my-1">
+                            {   
+                                userSelector.role == "superadmin" ?
+                                <select name="" id="" onChange={handleCardBranchChange}>
+                                    <option value=""> All branch </option>
+                                    {
+                                        branch && branch.map((value, index) => {
+                                            return(
+                                                <option value={value.id}> {value.name} </option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                                :
+                                <h1> Displaying data of {branch[userSelector?.store_branch_id - 1]?.name}</h1>
+                            }
+                        </div>
 
                         {/* <div className="rounded-full border-8 border-green-700 bg-yellow-300 lg:p-3 flex flex-col justify-center items-center my-5 p-3 overflow-hidden">
                             <div className="truncate">
@@ -157,21 +93,21 @@ const AdminDashboardPage = () => {
                                 <div className="text-3xl lg:text-2xl">Total Product:</div>
                                 <div className="flex justify-end text-5xl gap-3">
                                     <div><FiUsers /></div>
-                                    <div>18</div>
+                                    <div>{cardData?.productCount}</div>
                                 </div>
                             </div>
                             <div className="rounded-xl border-8 border-green-700 bg-yellow-300 p-4 lg:w-1/5 h-[150px] flex flex-col justify-between overflow-hidden">
-                                <div className="text-3xl lg:text-2xl">Total User:</div>
+                                <div className="text-3xl lg:text-xl">This week's new User:</div>
                                 <div className="flex justify-end text-5xl gap-3">
                                     <div><FiUsers /></div>
-                                    <div>18</div>
+                                    <div>{cardData?.userCount}</div>
                                 </div>
                             </div>
                             <div className="rounded-xl border-8 border-green-700 bg-yellow-300 p-4 lg:w-1/5 h-[150px] flex flex-col justify-between overflow-hidden">
-                                <div className="text-3xl lg:text-2xl">Total Order:</div>
+                                <div className="text-3xl lg:text-xl">This week's ongoing Orders:</div>
                                 <div className="flex justify-end text-5xl gap-3">
                                     <div><HiShoppingCart /></div>
-                                    <div>18</div>
+                                    <div>{cardData?.orderCount}</div>
                                 </div>
                             </div>
                             <div className="rounded-xl border-8 border-green-700 bg-yellow-300 p-4 lg:w-1/5 h-[150px] flex flex-col justify-between overflow-hidden">
@@ -217,7 +153,7 @@ const AdminDashboardPage = () => {
                                 <div className="grid place-content-center pb-5">
                                     <div className="font-bold text-3xl grid place-content-center"> Order Count </div>
                                     {!userSelector?.store_branch_id ?
-                                        <select id="store_branch_id" name="store_branch_id" onChange={handleBranchInput} value={orderByBranch} className="rounded-md w-1/4 border border-black text-xs">
+                                        <select id="store_branch_id" name="store_branch_id" onChange={handleBranchInput} value={orderByBranch} className="rounded-md w-1/2 lg:w-1/2 border border-black text-xs">
                                             <option value=""> Filters </option>
                                             {
                                                 branch && branch.map((value, index) => {
@@ -237,7 +173,7 @@ const AdminDashboardPage = () => {
                                     }
                                 </div>
                                 <div>
-                                    < DashboardOrderChart data={orderData} />
+                                    <DashboardOrderChart data={orderData} />
                                 </div>
 
 

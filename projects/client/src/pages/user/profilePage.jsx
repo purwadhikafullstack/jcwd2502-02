@@ -18,9 +18,7 @@ const ProfilePage = () => {
     const [coupon, setCoupon] = useState()
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const inputFileRef = useRef(null);
-
     const user = useSelector(state => (state.users))
-
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(onCheckIsLogin())
@@ -50,46 +48,47 @@ const ProfilePage = () => {
     const onSelectImages = async (event) => {
         try {
             const file = event.target.files[0]
-
             if (file) {
                 // Check file size and type here (validation)
                 if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
                     message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
                 }
                 console.log(file);
-
                 const formData = new FormData();
                 formData.append('image', file);
-
                 const response = await apiInstance.patch(`users/update-image`, formData)
                 console.log(response.data.data);
                 dispatch(setProfile_Picture(response.data.data.profile_picture))
                 toast.success("Profile Picture Updated")
             }
-
-
         } catch (error) {
             toast.error(error.message)
         }
     };
-
+    const verifyAccount = async () => {
+        try {
+            const response = await api().post('/users/verify-user-profile');
+            toast.success(response.data.message);
+        } catch (error) {
+            console.log(error);
+        }
+    }
     useEffect(() => {
         window.scrollTo(0, 0);
         getUserData()
         getUserCoupon()
     }, [])
-
     useEffect(() => {
         getUserData();
         console.log(user);
     }, [user])
-
     useEffect(() => {
         dispatch(getMainAddress());
     }, []);
 
 
     console.log(mainAddress);
+    console.log(coupon);
     return (
         <div>
             <Toaster />
@@ -185,6 +184,12 @@ const ProfilePage = () => {
                                 <Link to={'/updateprofile'}>
                                     <div className="hover:underline ease-in duration-200 flex gap-1">Update Profile </div>
                                 </Link>
+                                {
+                                    user.isVerified == "verified" ?
+                                        null
+                                        :
+                                        <div className="hover:underline ease-in duration-200 flex gap-1" onClick={() => verifyAccount()}> Verify Account </div>
+                                }
                             </div>
                         </div>
                     </div>

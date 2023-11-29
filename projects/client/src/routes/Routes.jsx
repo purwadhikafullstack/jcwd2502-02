@@ -127,7 +127,9 @@ const routes = [
     } />,
 
     <Route path='/user-management' element={
-        < CreateAdminPage />
+        <Protected superadminPage={false}>
+            < CreateAdminPage />
+        </Protected>
     } />,
 
     <Route path='/admin-dashboard' element={
@@ -135,11 +137,15 @@ const routes = [
     } />,
 
     <Route path='/sales-report/user' element={
-        < SalesReportPage />
+        <Protected adminPage={false}>
+            < SalesReportPage />
+        </Protected>
     } />,
 
     <Route path='/sales-report/product' element={
-        < SalesReportProduct />
+        <Protected adminPage={false}>
+            < SalesReportProduct />
+        </Protected>
     } />,
 
     <Route path='/stock-history' element={

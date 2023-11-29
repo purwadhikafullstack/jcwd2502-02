@@ -84,6 +84,7 @@ module.exports = {
             where: { email }
         })
         if (!account) throw { status: 401, message: "Account was not found!" };
+        if(account.dataValues.role == "admin" && account.dataValues.isVerified == "unverified") throw {status: 401, message: "Unauthorized login attempted, account has been deactivated"}
         const hashMatch = await match(password, account.dataValues.password)
         if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
         const token = await createJWT(
@@ -98,13 +99,7 @@ module.exports = {
             isError: false,
             message: "login successful",
             data: {
-                id: account.dataValues.id,
-                username: account.dataValues.username,
-                email: account.dataValues.email,
-                role: account.dataValues.role,
-                jwt: token,
-                profile_picture: account.dataValues.profile_picture,
-                store_branch_id: account.dataValues.store_branch_id
+                id: account.dataValues.id, username: account.dataValues.username, email: account.dataValues.email, role: account.dataValues.role, isVerified: account.dataValues.isVerified, jwt: token, profile_picture: account.dataValues.profile_picture, store_branch_id: account.dataValues.store_branch_id
             }
         }
     },
@@ -132,13 +127,7 @@ module.exports = {
             }
             const hashedPassword = await hash(password);
             const newReferral = Math.round(Math.random() * 1e9);
-            const userData = {
-                username: username,
-                email: email,
-                password: hashedPassword,
-                phone_number,
-                referral_code: newReferral
-            }
+            const userData = { username: username, email: email, password: hashedPassword, phone_number, referral_code: newReferral }
             if (referralValid === false) {
                 newUser = await db.user.create(userData)
             } else if (referralValid) {
@@ -148,34 +137,21 @@ module.exports = {
                 const validReferralUser = await db.user.findOne({ where: { referral_code: referral } })
                 const oldUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: validReferralUser.id, coupon_id: 1, coupon_value: getCoupon.amount, coupon_name: getCoupon.name })
             }
-            console.log("masuk 150>>>>");
-            console.log(newUser);
             const token = createJWT(
-                {
-                    id: newUser.dataValues.id,
-                    role: newUser.dataValues.role,
-                }, '12h')
-            console.log("jwt created 156");
+                {id: newUser.dataValues.id, role: newUser.dataValues.role}, '12h')
             const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
-            console.log("fs read file 158");
             const compiledTemplate = await handlebars.compile(readTemplate);
-            console.log("compiled 160");
             const newTemplate = compiledTemplate({ username, token })
-            console.log(username);
-            console.log(token);
-            console.log("masuk user service>>>>>>>");
             await transporter.sendMail({
                 to: `aryosetyotama27@gmail.com`,
                 subject: "Verification",
                 html: newTemplate
             });
-            console.log("selesai>>>>>>>>>>>");
             return {
                 isError: false,
-                message: "User account succesfully verified",
+                message: "User account succesfully registered",
             }
         } catch (error) {
-            console.log(error);
             return error
         }
     },
@@ -230,8 +206,6 @@ module.exports = {
             const account = await db.user.findOne({
                 where: { email }
             });
-            console.log(store_branch_id, email);
-            console.log(account.dataValues.store_branch_id);
             if (!account) throw { status: 401, message: "Error, account was not found!" };
             if (store_branch_id == account.dataValues.store_branch_id) throw { error: 401, message: "Admin was already assigned to the designated branch" };
             await db.user.update({ store_branch_id }, { where: { email } })
@@ -249,7 +223,6 @@ module.exports = {
 
     getFilteredAdmin: async (req) => {
         try {
-            console.log(req.query);
             const { username, branch, page } = req.query;
             const limit = 6;
             const offset = (page - 1) * limit;
@@ -277,6 +250,32 @@ module.exports = {
                 filteredAdmins,
                 maxPages
             };
+        } catch (error) {
+            return error;
+        }
+    },
+
+    verifyUserAccount: async (req) => {
+        try {
+            const {id} = req.dataToken;
+            const user = await db.user.findOne({ where: {id}})
+            if(!user) throw {error: 401, message: "Account was not found!"}
+            if(user.dataValues.isVerified == "verified") throw {error: 401, message: "Account is already verified"}
+            const username = user.dataValues.username;
+            const token = createJWT(
+                {id: user.dataValues.id, role: user.dataValues.role}, '12h')
+            const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
+            const compiledTemplate = await handlebars.compile(readTemplate);
+            const newTemplate = compiledTemplate({ username, token })
+            await transporter.sendMail({
+                to: `aryosetyotama27@gmail.com`,
+                subject: "Verification",
+                html: newTemplate
+            });
+            return {
+                isError: false,
+                message: "User verification email sent, please check your email",
+            }
         } catch (error) {
             return error;
         }

@@ -22,7 +22,6 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
                 const response = await api().patch(`/users/edit-admin`, { ...values, username: adminData.username, email: adminData.email, })
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
-                getAdmins()
             } catch (error) {
                 toast.error(error.response.data.message);
                 setDisabled(false)
@@ -30,6 +29,7 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
             finally {
                 setDisabled(false)
             }
+            getAdmins()
         },
         validationSchema: yup.object().shape({
             username: yup.string().required(),
@@ -63,10 +63,6 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
         const { target } = event;
         formik.setFieldValue(target.name, target.value);
     }
-
-    // const debouncedHandleSubmit = debounce(() => {
-    //     inputAddress.handleSubmit();
-    // }, 1000);
 
     useEffect(() => {
         onGetBranch()

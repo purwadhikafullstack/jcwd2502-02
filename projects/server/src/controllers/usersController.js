@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager, checkReferralService } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager, checkReferralService, verifyUserAccount } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -30,7 +30,6 @@ module.exports = {
                 }
             })
         } catch (error) {
-            console.log("masuk");
             next(error)
         }
     },
@@ -241,8 +240,6 @@ module.exports = {
 
     checkPasswordToken: async (req, res, next) => {
         try {
-            console.log(`sampe endpoint cek token`);
-            console.log(req.headers);
             const { authorization } = req.headers;
             const token = authorization.split(" ")[1]
             const validToken = await db.used_token.findOne({
@@ -339,6 +336,15 @@ module.exports = {
             })
         } catch (error) {
             next(error);
+        }
+    },
+
+    verifyUserProfile: async (req, res, next) => {
+        try {
+            const data = await verifyUserAccount(req)
+            respondHandler(res, data)
+        } catch (error) {
+            next(error)
         }
     }
 }

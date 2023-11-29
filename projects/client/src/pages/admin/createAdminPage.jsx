@@ -69,8 +69,6 @@ export default function CreateAdminPage() {
         onGetBranch()
     }, [queryUsername, queryBranch, page])
 
-    console.log(`name: ${queryUsername}, branch: ${queryBranch}`);
-
     return (
         <div className="flex flex-col flex-grow min-h-screen gap-2">
             <Toaster />

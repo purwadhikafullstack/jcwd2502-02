@@ -10,7 +10,8 @@ const initialState = {
     profile_picture: "",
     role: "",
     email: "",
-    store_branch_id: ""
+    store_branch_id: "",
+    isVerified: ""
 }
 
 export const userSlice = createSlice({
@@ -38,6 +39,9 @@ export const userSlice = createSlice({
         },
         setEmail: (state, { payload }) => {
             state.email = payload;
+        },
+        setIsVerified: (state, { payload }) => {
+            state.isVerified = payload
         },
         setStore_Branch_Id: (state, { payload }) => {
             state.store_branch_id = payload;

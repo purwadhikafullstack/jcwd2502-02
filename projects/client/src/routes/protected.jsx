@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { onCheckIsLogin } from "../redux/Features/users";
 import { useDispatch, useSelector } from "react-redux";
 
-export default function Protected({ children, adminPage, userPage, guestPage }) {
+export default function Protected({ children, adminPage, userPage, guestPage, superadminPage }) {
 
     const [loading, setLoading] = useState(true);
     // const [userRole, setUserRole] = useState(null);
@@ -13,24 +13,27 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
     // => user.role
 
     useEffect(() => {
-        // setUserRole(user.role)
-        console.log(user.role, guestPage, `>>>>>`);
-        if (user.role && guestPage) return setTimeout(() => {
+        console.log(user.role);
+        if (user.role !== "" && guestPage) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/')
-        // nendang customer dari page admin
-        if (user && user.role == "customer" && adminPage) return setTimeout(() => {
+
+        if (user && user.role == "customer" && (adminPage || superadminPage)) return setTimeout(() => {
             setLoading(false)
-            console.log(`protected.jsx: user access denied`);
         }, 1500), navigate('/')
-        // nendang tuyul dari page customer
-        if (user && user.role !== "customer" && userPage) return setTimeout(() => {
+
+        if (user && user.role == "admin" && (userPage || superadminPage)) return setTimeout(() => {
             setLoading(false)
-            console.log(`protected.jsx: user access denied`);
-        }, 1500), navigate('/')
+        }, 1500), navigate('/admin-dashboard')
+
+        if(user && user.role == "superadmin" && (userPage)) return setTimeout(() => {
+            setLoading(false)
+        }, 1500), navigate('/admin-dashboard')
+
         setTimeout(() => {
             setLoading(false)
         }, 2000)
+
     }, [children, user]);
 
     // useEffect(() => {
@@ -60,6 +63,3 @@ export default function Protected({ children, adminPage, userPage, guestPage }) 
         </>
     )
 }
-
-// FORBIDDEN => PAGE 404 => /HOME /ADMIN
-//  TAMBAHKAN GUEST PAGE jika ada role maka akan block akses ke guest page
