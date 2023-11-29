@@ -7,16 +7,14 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { Link } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from "../../components/footer";
-
+import { useAppSelector } from '../../redux/App/Store';
 
 const SalesReportProduct = () => {
+    const userSelector = useAppSelector((state) => state.users)
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
-    const [sortHow, setSortHow] = useState("ASC");
     const [sortBy, setSortBy] = useState("name");
-    // const [transactionFilter, setTransactionFilter] = useState("");
     const [data, setData] = useState([]);
-    // const [cardData, setCardData] = useState([]);
     const [branchList, setBranchList] = useState("")
     const [startDate, setStartDate] = useState(formattedToday);
     const [endDate, setEndDate] = useState("");
@@ -26,12 +24,15 @@ const SalesReportProduct = () => {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const handleSortQuery = (event) => {
+        setPage(1)
         setSort(event.target.value);
     };
     const handleNameQuery = (event) => {
+        setPage(1)
         setName(event.target.value)
     }
     const handleSortBy = (event) => {
+        setPage(1)
         setSortBy(event.target.value)
     }
     const handleBranch = (event) => {
@@ -71,19 +72,16 @@ const SalesReportProduct = () => {
 
     const fetchData = async () => {
         try {
-            const data = await api().get(`report/data?sortHow=${sort}&sortBy=${sortBy}&productName=${name}&branch=${branch}&startDate&endDate&page=${page}`);
-            console.log(data);
+            const data = await api().get(`report/data?sortHow=${sort}&sortBy=${sortBy}&productName=${name}&branch=${branch}&startDate=${startDate}&endDate=${endDate}&page=${page}`);
+            const branchData = await api().get('/branch/all')
+            setBranchList(branchData.data.data);
             setData(data.data.data.dataFinal);
             setMaxPage(data.data.data.maxPages)
+            console.log(data.data.data.dataFinal);
         } catch (error) {
             console.log(error);
         }
     }
-
-    const chartData = Object.entries(data).map(([item, quantity]) => ({
-        item,
-        quantity,
-    }));
 
     function formatRupiah(amount) {
         const formatter = new Intl.NumberFormat("id-ID", {
@@ -95,8 +93,8 @@ const SalesReportProduct = () => {
 
     useEffect(() => {
         fetchData()
-    }, [sortHow, sortBy, startDate, endDate, sort, name, page])
-
+    }, [sortBy, startDate, endDate, sort, name, page, branch])
+    console.log(userSelector?.role);
     return (
         <div className="">
             <NavbarAdmin />
@@ -137,18 +135,24 @@ const SalesReportProduct = () => {
                             </div>
                         </div>
 
-                        <div className='grid place-content-center'>
-                            <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
-                                <option value={""} disabled selected>All Branch</option>
-                                {
-                                    branchList && branchList.map((value) => {
-                                        return (
-                                            <option value={value.id}> {value.name} </option>
-                                        )
-                                    })
-                                }
-                            </select>
-                        </div>
+                        {
+                            userSelector?.role === "superadmin" ?
+                            <div className='grid place-content-center'>
+                                <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
+                                    <option value={""} selected>All Branch</option>
+                                    {
+                                        branchList && branchList.map((value) => {
+                                            return (
+                                                <option value={value.id}> {value.name} </option>
+                                            )
+                                        })
+                                    }
+                                </select>
+                            </div>
+                            :
+                            <h1 className="grid place-content-center"> Displaying data of {branchList[userSelector?.store_branch_id - 1]?.name} </h1>
+                        }
+                        
 
                         <div className="flex">
                             <div className='grid place-content-center mr-2 w-[60px]'>Sort By</div>
@@ -156,8 +160,9 @@ const SalesReportProduct = () => {
                                 <select defaultValue="" value={sortBy} onChange={handleSortBy} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[150px]">
                                     <option value="name"> Product </option>
                                     <option value="price"> Price </option>
-                                    <option value="quantity"> Quantity </option>
+                                    <option value="quantity_total"> Quantity </option>
                                     <option value="total_sales"> Profit </option>
+                                    <option value="date"> Date </option>
                                 </select>
                             </div>
                         </div>
@@ -196,7 +201,7 @@ const SalesReportProduct = () => {
                                             <td className="px-4 py-3 text-center border-r">{formatRupiah(value.price)} </td>
                                             <td className="px-4 py-3 text-center border-r">{value.quantity_total}</td>
                                             <td className="px-4 py-3 text-center border-r">{formatRupiah(value.total_sales)}</td>
-                                            <td className="px-4 py-3 text-center border-r">{value.store_branch_id} </td>
+                                            <td className="px-4 py-3 text-center border-r">{value.transaction.store_branch.name} </td>
                                             <td className="px-4 py-3 text-center border-r">{value.date.split("T")[0]} </td>
                                         </tr>
                                     ))}

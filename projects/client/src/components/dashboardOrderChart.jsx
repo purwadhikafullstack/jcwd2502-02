@@ -1,8 +1,6 @@
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DashboardOrderChart = ({ data }) => {
-    console.log(`ini di component dashboard order chart`);
-    console.log(data);
     return (
         <ResponsiveContainer width="100%" height={350}>
             <ComposedChart
@@ -17,7 +15,7 @@ const DashboardOrderChart = ({ data }) => {
                 }}
             >
                 <CartesianGrid stroke="#f5f5f5" strokeDasharray="3 3" />
-                <XAxis dataKey="date" tick={{ textAnchor: 'end', dy: 10 }} scale="band" />
+                <XAxis dataKey="date" tick={{ textAnchor: 'start', dx: 100 }} scale="band" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
