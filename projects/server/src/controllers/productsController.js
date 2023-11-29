@@ -66,6 +66,33 @@ module.exports = {
             next(error);
         }
     },
+    getProductsForAdmin: async (req, res, next) => {
+        try {
+            const { catId, searchquery, sort, page, sortby } = req.query;
+            const limit = 10;
+            const like = Op.like;
+            const whereClause = { isDeleted: 0 };
+            if (catId) whereClause.product_categories_id = catId;
+            if (searchquery) whereClause.name = { [like]: `%${searchquery}%` };
+            const totalRecords = await db.product.count({ where: { ...whereClause } });
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            const products = await db.product.findAll({
+                where: { ...whereClause },
+                order: [[`${sortby}`, sort]],
+                limit,
+                offset,
+                include: [{ model: db.product_category, attributes: ["name"] }]
+            });
+            const result = res.json({
+                products,
+                maxPages,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+
     getAllProductsAndCategoryName: async (req, res, next) => {
         try {
             const allProduct = await getAllProductsAndCategoryNameService(req.params);
@@ -84,21 +111,50 @@ module.exports = {
     },
     getAllProductsByCat: async (req, res, next) => {
         try {
-            const { catId, searchQuery, sort, branchId } = req.query;
-            const like = Op.like
-            if (!catId && !searchQuery) {
-                const allProduct = await getAllProductsService2(sort, branchId);
-                responseHandler(res, "Get All Products Success 0", allProduct)
-            } else if (!searchQuery) {
-                const allProductByCat = await getAllProductsByCatService(catId, sort, branchId);
-                responseHandler(res, "Get All Product By Category Success 1", allProductByCat)
-            } else if (!catId) {
-                const allProductBySearch = await getAllProductsBySearchService(like, searchQuery, sort, branchId)
-                responseHandler(res, "Get All Product By Category Success 2", allProductBySearch)
+            const { catId, searchQuery, sort, branchId, page, sortby } = req.query;
+            const limit = 8;
+            const like = Sequelize.Op.like;
+            const whereClause = { isDeleted: 0 };
+            if (catId) whereClause.product_categories_id = catId;
+            if (searchQuery) whereClause.name = { [like]: `%${searchQuery}%` };
+            const totalRecords = await db.product.count({ where: { ...whereClause } });
+            const maxPages = Math.ceil(totalRecords / limit);
+            const offset = (page - 1) * limit;
+            let products;
+            if (sortby === "stock") {
+                products = await db.product.findAll({
+                    where: { ...whereClause },
+                    include: [
+                        {
+                            model: db.product_stock,
+                            where: { store_branch_id: branchId },
+                        },
+                    ],
+                    order: [[db.product_stock, 'stock', sort]],
+                    limit,
+                    offset,
+                });
             } else {
-                const allProductFiltered = await getAllProductsFilteredService(like, catId, searchQuery, sort, branchId)
-                responseHandler(res, "Get All Product By Category Success 3", allProductFiltered)
+                const includeProductStock = branchId
+                    ? [
+                        {
+                            model: db.product_stock,
+                            where: { store_branch_id: branchId },
+                        },
+                    ]
+                    : [];
+                products = await db.product.findAll({
+                    where: { ...whereClause },
+                    include: includeProductStock,
+                    order: [[`${sortby}`, sort]],
+                    limit,
+                    offset,
+                });
             }
+            const result = res.json({
+                products,
+                maxPages,
+            });
         } catch (error) {
             next(error);
         }

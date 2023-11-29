@@ -1,7 +1,5 @@
-import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer"
 import { useDispatch, useSelector } from "react-redux";
-import CartComponent from "../../components/cartComponent";
 import toast, { Toaster } from "react-hot-toast";
 import Button from "../../components/button";
 import { Link, useNavigate } from "react-router-dom";
@@ -26,6 +24,8 @@ const CheckoutPage = () => {
     const [discountId, setDiscountId] = useState()
     const [ownedCouponId, setOwnedCouponId] = useState()
     const [couponName, setCouponName] = useState()
+    const [shippingOptionSelected, setShippingOptionSelecteded] = useState(false);
+    const [shippingServiceSelected, setShippingServiceSelected] = useState(false)
     const cart = useSelector((state) => state.cart);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const closestBranch = useSelector((state) => state.branch.closestBranch);
@@ -39,7 +39,8 @@ const CheckoutPage = () => {
             const selectedService = event.target.value;
             setShippingService(selectedService)
             setShippingOption(null);
-            // setCost(0);
+            setCost(0);
+            setShippingOptionSelecteded(false)
             const getOption = await api().post('/transaction/option', { origin: closestBranch.city_id, destination: mainAddress.city_id, weight: totalWeight, courier: selectedService })
             setShippingOption(getOption.data.data[0].costs)
             // setCost(null)
@@ -57,6 +58,7 @@ const CheckoutPage = () => {
             } else {
                 setCost(Number(selectedOption))
             }
+            setShippingOptionSelecteded(true)
         } catch (error) {
             console.log(error);
         }
@@ -64,27 +66,25 @@ const CheckoutPage = () => {
 
     const submitOrder = async () => {
         try {
-            if (cost == null) {
-                toast.error("Please complete the shipping data")
+            if (!shippingOptionSelected) {
+                toast.error("Please complete the shipping data");
             } else {
-                setDisabled(true)
+                setDisabled(true);
                 console.log("ini disable", disabled);
-                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName })
+                const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName });
                 console.log(createOrder.data);
                 toast.success("Order created!");
                 setTimeout(() => {
                     nav(`/order/${createOrder.data.data.id}`);
-                }, 1500); // Adjust the delay time as needed
+                }, 1500);
             }
         } catch (error) {
             console.log(error);
-            toast.error("An Error Has Occured, Please Try Again Later")
-            setDisabled(false)
+            toast.error("An Error Has Occurred, Please Try Again Later");
+            setDisabled(false);
         }
-        finally {
-            // setDisabled(false); // Move this line outside the try block
-        }
-    }
+    };
+
     const onGetCoupon = async () => {
         try {
             const coupon = await api().get(`/transaction/coupon/user`)
@@ -103,22 +103,20 @@ const CheckoutPage = () => {
             setDiscountId(ownedCoupon[event.target.value].coupon_id)
             setOwnedCouponId(ownedCoupon[event.target.value].id)
             setCouponName(ownedCoupon[event.target.value].coupon_name)
-            // console.log(ownedCoupon[event.target.value].id);
         } catch (error) {
             console.log(error);
         }
     }
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         dispatch(getCartAsync());
         dispatch(nearestBranch());
         dispatch(getMainAddress());
         onGetCoupon()
     }, []);
-    console.log("ini disable", disabled);
 
-    // console.log(address);
-    // console.log(closestBranch.id);
+    console.log(shippingOptionSelected);
 
     useEffect(() => {
         if (!discount && !cost) {
@@ -174,48 +172,55 @@ const CheckoutPage = () => {
                                 <div className="grid gap-2">
                                     <div className="font-bold">Shipping Service</div>
                                     <div>
-                                        <select onChange={handleShippingService} className="select select-bordered w-full  text-black">
+                                        <select onChange={handleShippingService} className="select select-bordered w-full text-black">
                                             <option value="" disabled selected>Select shipping service</option>
-                                            <option value={"jne"}>JNE</option>
-                                            <option value={"pos"}>POS INDONESIA</option>
-                                            <option value={"tiki"}>Tiki</option>
+                                            <option value="jne">JNE</option>
+                                            <option value="pos">POS INDONESIA</option>
+                                            <option value="tiki">Tiki</option>
                                         </select>
                                     </div>
                                 </div>
-                                <div className="grid gap-2">
-                                    <div className="font-bold">Shipping Option</div>
-                                    <div>
-                                        <select onChange={handleShippingOption} className="select select-bordered w-full  text-black">
-                                            <option value="" >Select shipping option</option>
-                                            {shippingOption ? shippingOption.map((value, index) => {
-                                                return (
-                                                    <option value={value.cost[0].value} key={index}>{value.description} - estimation {value.cost[0].etd} day(s) arrival</option>
-                                                )
-                                            }) : <option >Finding shipping option...</option>}
-                                        </select>
+                                {shippingService && (
+                                    <div className="grid gap-2">
+                                        <div className="font-bold">Shipping Option</div>
+                                        <div>
+                                            <select onChange={handleShippingOption} className="select select-bordered w-full text-black">
+                                                <option value="">Select shipping option</option>
+                                                {shippingOption ? (
+                                                    shippingOption.map((value, index) => (
+                                                        <option value={value.cost[0].value} key={index}>{value.description} - estimation {value.cost[0].etd} day(s) arrival</option>
+                                                    ))
+                                                ) : (
+                                                    <option>Finding shipping option...</option>
+                                                )}
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                                 <div className="grid gap-2">
                                     <div className="font-bold">Voucher</div>
                                     <div>
-                                        <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full  text-black">
-                                            {/* {array.map((value, index) => {
-                                                return (
-                                                    <option value={index}>{value.id}</option>
-                                                )
-                                            })} */}
-                                            <option value="" >Select Voucher</option>
-                                            {ownedCoupon ? ownedCoupon.map((value, index) => {
-                                                return (
-                                                    <option value={index}>{value.coupon_name}</option>
-                                                )
-                                            }) : null}
-
-                                        </select>
+                                        {ownedCoupon && ownedCoupon.length > 0 ? (
+                                            <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full text-black">
+                                                <option value="">Select Voucher</option>
+                                                {ownedCoupon.map((value, index) => (
+                                                    <option value={index} key={index}>{value.coupon_name}</option>
+                                                ))}
+                                            </select>
+                                        ) : (
+                                            // <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full text-black">
+                                            //     <option value="">You don't have any vouchers available</option>
+                                            //     {ownedCoupon.map((value, index) => (
+                                            //         <option value={index} disabled key={index}>You don't have any vouchers available</option>
+                                            //     ))}
+                                            // </select>
+                                            <div>You don't have any vouchers available.</div>
+                                            // Alternatively, you can choose to hide this section altogether.
+                                        )}
                                     </div>
                                 </div>
                             </div>
-                            <div className="grid gap-2 mt-3">
+                            <div className="grid gap-2 mt-8">
                                 <div className="flex justify-between">
                                     <div>Total Weight</div>
                                     <div className="font-bold">{totalWeight} gr</div>
@@ -236,9 +241,7 @@ const CheckoutPage = () => {
                                     <div className="font-bold">- Rp {discount ? discount.toLocaleString() : 0}</div>
                                 </div>
                             </div>
-
                             <div className="h-[3px] bg-white my-2"></div>
-
                             <div className="flex justify-between text-xl font-black">
                                 <div>Grand Total</div>
                                 <div className="">Rp {totalFinal ? totalFinal.toLocaleString() : null}</div>
@@ -246,9 +249,8 @@ const CheckoutPage = () => {
                         </div>
                         <div className="my-3">
                             {disabled ?
-                                <Button style={"w-full"} text={"Processing Order"} />
+                                <Button style={"w-full cursor-not-allowed"} text={"Processing Order"} />
                                 : <Button disabled={disabled} onClick={() => submitOrder()} style={"w-full"} text={disabled ? "Creating Order" : "Confirm Order"} />}
-
                         </div>
                     </div>
 

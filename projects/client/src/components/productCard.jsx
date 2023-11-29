@@ -5,9 +5,13 @@ import { deleteItemInCartAsync } from "../redux/Features/cart";
 import { toast } from "react-hot-toast";
 import { Navigate, useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { getMainAddress } from "../redux/Features/branch";
+import { useEffect } from "react";
+
 
 const ProductCard = (props) => {
     const dispatch = useDispatch();
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
     const cart = useSelector((state) => state.cart);
     const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id === props.data);
@@ -33,6 +37,21 @@ const ProductCard = (props) => {
 
         }
     };
+
+    const altAddToCart = () => {
+        try {
+            toast.error("Please add a main address before adding products to the cart.");
+            setTimeout(() => {
+                navigate(`/manage-address`)
+            }, 1500)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        dispatch(getMainAddress());
+    }, []);
 
     return (
         <div>
@@ -82,7 +101,16 @@ const ProductCard = (props) => {
                                 <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
                             </div>
                         ) : (
-                            <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
+                            <div>
+
+                                {mainAddress ? <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} /> :
+
+
+                                    <Button onClick={() => altAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
+                            </div>
+
+
+
                         )
                     ) : (
                         <div className="text-black">Out of Stock</div>

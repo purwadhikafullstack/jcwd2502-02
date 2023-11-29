@@ -1,6 +1,6 @@
 const db = require('./../models');
 const fs = require('fs').promises;
-const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager, checkReferralService } = require('./../services/userService');
+const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager, checkReferralService, verifyUserAccount } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
 // const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
@@ -10,6 +10,7 @@ const respondHandler = require('../utils/resnpondHandler');
 const responseHandler = require('../utils/responseHandler');
 const { log, error } = require('console');
 const { deleteFiles } = require('../helper/deleteFiles')
+const FE_BASEPATH = process.env.FE_BASEPATH || "http://localhost:3000";
 
 module.exports = {
     login: async (req, res, next) => {
@@ -29,7 +30,6 @@ module.exports = {
                 }
             })
         } catch (error) {
-            console.log("masuk");
             next(error)
         }
     },
@@ -82,14 +82,14 @@ module.exports = {
             }, '3h');
             const readTemplate = await fs.readFile('./src/public/password-recovery.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
-            const newTemplate = compiledTemplate({ email, token })
+            const newTemplate = compiledTemplate({ email, token, basepath: FE_BASEPATH })
             await db.used_token.create({
                 token: token,
                 isValid: true,
                 user_id: response.dataValues.id
             })
             await transporter.sendMail({
-                to: `aryosetyotama27@gmail.com`,
+                to: response.dataValues.email,
                 subject: 'password recovery mail',
                 html: newTemplate
             })
@@ -240,8 +240,6 @@ module.exports = {
 
     checkPasswordToken: async (req, res, next) => {
         try {
-            console.log(`sampe endpoint cek token`);
-            console.log(req.headers);
             const { authorization } = req.headers;
             const token = authorization.split(" ")[1]
             const validToken = await db.used_token.findOne({
@@ -338,6 +336,15 @@ module.exports = {
             })
         } catch (error) {
             next(error);
+        }
+    },
+
+    verifyUserProfile: async (req, res, next) => {
+        try {
+            const data = await verifyUserAccount(req)
+            respondHandler(res, data)
+        } catch (error) {
+            next(error)
         }
     }
 }

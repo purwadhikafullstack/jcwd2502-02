@@ -16,6 +16,8 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
     const [provinceId, setProvinceId] = useState()
     const [cityId, setCityId] = useState()
     const [addressData, setAddressData] = useState()
+    const [disabled, setDisabled] = useState(false)
+
 
     const getProvinceId = async () => {
         try {
@@ -46,6 +48,7 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
         },
         onSubmit: async (values, { resetForm }) => {
             try {
+                setDisabled(true)
                 const UpdateAddres = await apiInstance.patch(`/location/address/${id}`, dataUpdate.values)
                 document.getElementById('my_modal_' + id).close();
                 Swal.fire("Success!", "Address Successfully Updated", "success");
@@ -55,6 +58,7 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
                 }, 1000);
             } catch (error) {
                 console.log(error);
+                setDisabled(false)
             }
         },
         validationSchema: yup.object().shape({
@@ -162,12 +166,14 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
                     <div className="modal-action flex justify-center">
                         <form method="dialog">
                             <div className="flex gap-2">
-                                <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
-                                >CANCEL</button>
+
+                                {disabled ? null : <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
+                                >CANCEL</button>}
                             </div>
                         </form>
-                        <button type="button" onClick={() => dataUpdate.handleSubmit()} className="btn bg-yellow-300 ml-3 text-green-700 border-4 border-green-700 hover:bg-yellow-300 hover:border-green-700 rounded-2xl"
-                        >SUBMIT</button>
+                        {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>UPDATING</button>
+                            :
+                            <button disabled={disabled} onClick={() => dataUpdate.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>}
                     </div>
                 </div>
             </dialog>

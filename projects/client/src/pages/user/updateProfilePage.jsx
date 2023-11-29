@@ -14,6 +14,7 @@ import { AiFillEdit } from "react-icons/ai";
 const UpdateProfile = () => {
     const navigate = useNavigate()
     const apiInstance = api()
+    const [disabled, setDisabled] = useState(false)
     const [data, setData] = useState('')
     const [preview, setPreview] = useState();
     const inputFileRef = useRef(null);
@@ -41,11 +42,20 @@ const UpdateProfile = () => {
         },
         onSubmit: async (values) => {
             try {
-
+                setDisabled(true)
+                if (!values.username || !values.email || !values.gender || !values.birthdate) {
+                    toast.error("Please input all data.");
+                    setDisabled(false)
+                    return;
+                }
                 const updateUserData = await apiInstance.patch('/users/update-user', formik.values)
                 toast.success(updateUserData.data.message);
+                setTimeout(() => {
+                    navigate('/profile')
+                }, 1500);
             } catch (error) {
                 console.log(error);
+                setDisabled(false)
             }
         },
         validationSchema: yup.object().shape({
@@ -89,46 +99,51 @@ const UpdateProfile = () => {
     return (
         <div>
             <Toaster />
-            {/* <Navbar /> */}
+
             <div className="grid place-content-center h-screen bg-gradient-to-b from-green-700 to-yellow-300">
-
-
-
-
-                <div className="px-5 md:px-8 lg:px-10 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700">
+                <div className="px-5 md:px-8 lg:px-10 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700 w-[300px] lg:w-[350px]">
                     {/* <div className="mt-10"></div> */}
                     <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Profile </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Username</div>
-                        <input type="text" onChange={formik.handleChange} name="username" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.username} />
-                        <div className=" pl-3 text-red-600">{formik.errors.username}</div>
+                        <input type="text" onChange={formik.handleChange} name="username" className="rounded-2xl border border-green-800 p-3 " defaultValue={formik.values.username} />
+                        <div className=" text-orange-400 font-medium pl-3">{formik.errors.username}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Email</div>
                         <input type="text" onChange={formik.handleChange} name="email" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.email} />
-                        <div className="pl-3 text-red-600">{formik.errors.email}</div>
+                        <div className="text-orange-400 font-medium pl-3">{formik.errors.email}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Gender</div>
                         <select onChange={formik.handleChange} name="gender" defaultValue={formik.values.gender} className="rounded-2xl border border-green-800 p-3">
-                            {formik.values.gender != "male" ? (<option value="male">Male</option>
-                            ) : (<option value="male" selected>Male</option>
-                            )}
-                            {formik.values.gender == "female" ? (
-                                <option value="female" selected>Female</option>
-                            ) : (<option value="female">Female</option>)}
+                            <option value="" disabled>
+                                Select Gender
+                            </option>
+                            <option value="male" selected={formik.values.gender === "male"}>
+                                Male
+                            </option>
+                            <option value="female" selected={formik.values.gender === "female"}>
+                                Female
+                            </option>
                         </select>
+                        <div className="text-orange-400 font-medium pl-3">{formik.errors.gender}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Birthdate</div>
                         <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
+                        <div className="text-orange-400 font-medium pl-3">{formik.errors.birthdate}</div>
+
                     </div>
                     <div className="grid place-content-center mt-5">
-                        <Button onClick={() => debouncedHandleSubmit()} text={"Submit Changes"} />
+
+                        {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>APPLYING CHANGES</button>
+                            :
+
+                            <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT CHANGES"}</button>}
                     </div>
                 </div>
             </div>
-            {/* <Footer /> */}
         </div>
     )
 }

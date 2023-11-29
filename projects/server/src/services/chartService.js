@@ -122,7 +122,15 @@ module.exports = {
 
     getTopProduct: async (req) => {
         try {
-            const data = await db.transaction_detail.findAll()
+            const data = await db.transaction_detail.findAll(
+                {
+                    include: {
+                        model: db.transactions,
+                        attributes: ["status"],
+                        where: {status: "Complete"}
+                    }
+                }
+            )
             const productQuantities = data.reduce((acc, item) => {
                 const productId = item.products_id;
                 const quantity = item.quantity;

@@ -9,6 +9,7 @@ import toast, { Toaster } from "react-hot-toast";
 const ModalEditAdmin = ({ adminData, getAdmins }) => {
     const [image, setImage] = useState([])
     const [branch, setBranch] = useState("")
+    const [disabled, setDisabled] = useState(false)
     const formik = useFormik({
         initialValues: {
             username: adminData.username,
@@ -17,13 +18,18 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
         },
         onSubmit: async (values) => {
             try {
+                setDisabled(true)
                 const response = await api().patch(`/users/edit-admin`, { ...values, username: adminData.username, email: adminData.email, })
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
-                getAdmins()
             } catch (error) {
                 toast.error(error.response.data.message);
+                setDisabled(false)
             }
+            finally {
+                setDisabled(false)
+            }
+            getAdmins()
         },
         validationSchema: yup.object().shape({
             username: yup.string().required(),
@@ -58,10 +64,6 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
         formik.setFieldValue(target.name, target.value);
     }
 
-    // const debouncedHandleSubmit = debounce(() => {
-    //     inputAddress.handleSubmit();
-    // }, 1000);
-
     useEffect(() => {
         onGetBranch()
     }, []);
@@ -71,13 +73,13 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
             < Toaster />
             <Button text={"Edit"} style={"w-full"} onClick={() => document.getElementById(`my_modal_${adminData.username}`).showModal()}></Button>
             <dialog id={`my_modal_${adminData.username}`} className="modal backdrop-blur-md">
-                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[650px] ">
-                    <h3 className="font-bold text-4xl text-white">Reassign Branch Admin {adminData.username}</h3>
+                <div className="modal-box w-[600px] ">
+                    <h3 className="font-bold text-2xl ">Reassign Admin {adminData.username}</h3>
                     <div className="flex flex-col gap-5 mt-5">
                         <div className="grid gap-5">
                             <div>
-                                <div className="text-white pb-2"> Branch </div>
-                                <select id="store_branch_id" name="store_branch_id" onChange={formik.handleChange} value={formik.values.store_branch_id} className="rounded-md w-3/4 p-2">
+                                <div className=" pb-2"> Branch </div>
+                                <select id="store_branch_id" name="store_branch_id" onChange={formik.handleChange} value={formik.values.store_branch_id} className="rounded-xl w-full border border-green-700 p-2">
                                     <option value="" disabled> Select a branch </option>
                                     {
                                         branch && branch.map((value, index) => {
@@ -93,13 +95,24 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="modal-action">
-                        <div className="flex gap-2">
+                    <div className="modal-action flex justify-center">
+                        {/* <div className="flex gap-2">
                             <button onClick={() => document.getElementById(`my_modal_${adminData.username}`).close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
                             <form method="dialog" onClick={() => formik.handleSubmit()}>
                                 <button type="submit" className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800">Submit</button>
                             </form>
-                        </div>
+                        </div> */}
+
+                        <form method="dialog">
+                            <div className="flex gap-2">
+                                {disabled ? null : <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"
+                                >CANCEL</button>}
+                            </div>
+                        </form>
+                        {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>UPDATING</button>
+                            :
+                            <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>
+                        }
                     </div>
                 </div>
             </dialog>

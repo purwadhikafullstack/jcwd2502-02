@@ -87,6 +87,11 @@ const CartComponent = (props) => {
                                 apiEndpoint={"/cart/delete-all"}
                                 itemId={props.id}
                                 onDelete={() => handleGetCart()}
+                                text={""}
+                                textOnButton={"Delete"}
+                                message={"Product successfully deleted from cart"}
+                                reloadPage={false}
+
                             />
                             <Button style={"lg:w-[50px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
                             <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>

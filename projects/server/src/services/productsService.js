@@ -24,32 +24,59 @@ module.exports = {
             return error;
         }
     },
-    getAllProductsService2: async (sort, branchId) => {
+    getAllProductsService2: async (sort, branchId, limit, offset) => {
         try {
-            return await db.product.findAll({ where: { isDeleted: 0, }, include: [{ model: db.product_stock, where: { store_branch_id: branchId } }], order: [["name", sort]], });
+            return await db.product.findAll({
+                where: { isDeleted: 0 },
+                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
+                order: [["name", sort]],
+                limit,
+                offset,
+            });
         } catch (error) {
             return error;
         }
     },
-    getAllProductsByCatService: async (catId, sort, branchId) => {
+
+    getAllProductsByCatService: async (catId, sort, branchId, limit, offset) => {
         try {
-            return await db.product.findAll({ where: { product_categories_id: catId, }, include: [{ model: db.product_stock, where: { store_branch_id: branchId } }], order: [["name", sort]], });
+            return await db.product.findAll({
+                where: { product_categories_id: catId },
+                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
+                order: [["name", sort]],
+                limit,
+                offset,
+            });
         } catch (error) {
             return error;
         }
     },
-    getAllProductsBySearchService: async (like, searchQuery, sort, branchId) => {
+
+    getAllProductsBySearchService: async (like, searchQuery, sort, branchId, limit, offset) => {
         try {
-            return await db.product.findAll({ where: { name: { [like]: `%${searchQuery}%`, }, }, include: [{ model: db.product_stock, where: { store_branch_id: branchId } }], order: [["name", sort]], });
+            return await db.product.findAll({
+                where: { name: { [like]: `%${searchQuery}%` } },
+                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
+                order: [["name", sort]],
+                limit,
+                offset,
+            });
         } catch (error) {
-            return error
+            return error;
         }
     },
-    getAllProductsFilteredService: async (like, catId, searchQuery, sort, branchId) => {
+
+    getAllProductsFilteredService: async (like, catId, searchQuery, sort, branchId, limit, offset) => {
         try {
-            return await db.product.findAll({ where: { product_categories_id: catId, name: { [like]: `%${searchQuery}%`, }, }, include: [{ model: db.product_stock, where: { store_branch_id: branchId } }], order: [["name", sort]], });
+            return await db.product.findAll({
+                where: { product_categories_id: catId, name: { [like]: `%${searchQuery}%` } },
+                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
+                order: [["name", sort]],
+                limit,
+                offset,
+            });
         } catch (error) {
-            return error
+            return error;
         }
     },
     getOneProductService: async (params) => {

@@ -20,6 +20,7 @@ Router.get('/data/overall-transaction', verify, transactionController.getOverall
 
 Router.patch('/cancel/:transactionId', verify, transactionController.cancelOrder)
 Router.patch('/admin/cancel/:transactionId', verify, transactionController.adminCancelOrder)
+Router.patch('/admin/cancel-payment/:transactionId', verify, transactionController.adminDeclinePaymentOrder)
 Router.patch('/admin/approve/:transactionId', verify, transactionController.adminApproveOrder)
 Router.patch('/admin/send/:transactionId', verify, transactionController.adminSendOrder)
 Router.patch('/admin/cancel-send/:transactionId', verify, transactionController.adminCancelSendOrder)

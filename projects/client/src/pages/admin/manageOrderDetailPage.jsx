@@ -126,8 +126,20 @@ const AdminOrderDetail = () => {
                                                     text={""}
                                                     message={"Order Canceled"}
                                                     textOnButton={"Yes"}
-                                                    button={<div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">
+                                                    button={<div className=" btn hover:bg-red-400 bg-red-600 text-white w-full border-none ">
                                                         CANCEL ORDER
+                                                    </div>} />
+                                            </div>
+                                            <div className="w-full">
+                                                <DeleteConfirmation
+                                                    itemId={id}
+                                                    onDelete={getDetailOrder}
+                                                    apiEndpoint="transaction/admin/cancel-payment"
+                                                    text={""}
+                                                    message={"Payment Declined"}
+                                                    textOnButton={"Yes"}
+                                                    button={<div className=" btn hover:bg-orange-400 bg-orange-700 text-white w-full border-none ">
+                                                        Decline Payment Proof
                                                     </div>} />
                                             </div>
                                             <div className="w-full">
@@ -138,7 +150,7 @@ const AdminOrderDetail = () => {
                                                     text={""}
                                                     message={"Order Approved"}
                                                     textOnButton={"Yes"}
-                                                    button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
+                                                    button={<div className=" btn hover:bg-green-400 bg-green-600 text-white w-full border-none ">
                                                         APPROVE ORDER
                                                     </div>} />
                                             </div>

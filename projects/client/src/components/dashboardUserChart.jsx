@@ -15,9 +15,11 @@ const DashboardUserChart = ({ data }) => {
                     bottom: 20,
                     left: 20,
                 }}
+                barCategoryGap={50}
+                barGap={50}
             >
                 <CartesianGrid stroke="#f5f5f5" />
-                <XAxis dataKey="date" scale="band" />
+                <XAxis dataKey="date" tick={{ textAnchor: 'start', dx: 60 }} scale="band" />
                 <YAxis />
                 <Tooltip />
                 <Legend />

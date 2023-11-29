@@ -24,7 +24,7 @@ const BranchOrderList = () => {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const branchLocation = useSelector((state) => state.users.store_branch_id);
-    const [sort, setSort] = useState('ASC');
+    const [sort, setSort] = useState('DESC');
     const handleReset = () => {
         try {
             setInvoice(""); setStatus(""); setStartdate(""); setPage(1); setMaxPage(1); handleSearch(); setEnddate(""); setSort("ASC"); setSortBy("id");
@@ -118,14 +118,14 @@ const BranchOrderList = () => {
             <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"} style={{ minHeight: "100vh" }}>
                 <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Order List
                 </div>
-                <div className="mb-10 lg:flex border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 p-3 shadow-xl rounded-2xl lg:justify-center">
-                    <div className="border-2 flex rounded-xl bg-white md:h-[48px] my-3 lg:w-[350px]">
+                <div className="mb-10 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 py-5 px-8 shadow-xl rounded-2xl">
+                    <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full lg:w-[500px] text-lg pl-2" placeholder=" Search your order invoice number" />
+                        <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
                     <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3">
                         <div className="grid place-content-center">
-                            <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                            <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="h-[48px] px-2 border-2 rounded-xl w-[170px] lg:w-[200px]">
                                 <option value={""} disabled selected>Status</option>
                                 <option value={"canceled"} >CANCEL</option>
                                 <option value={"pending"} >PENDING</option>
@@ -135,18 +135,30 @@ const BranchOrderList = () => {
                                 <option value={"Complete"}>COMPLETE</option>
                             </select>
                         </div>
-                        <div className="grid place-content-center"><input value={startdate} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" /></div>
-                        <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                        <div className="flex">
+                            <div className="flex">
+                                <div className="grid place-content-center mx-3 text-xl">from</div>
+                                <div className="grid place-content-center"><input value={startdate} max={formattedToday} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                                </div>
+                            </div>
+
+                            <div className="flex">
+                                <div className="grid place-content-center mx-3 text-xl">to</div>
+                                <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
+                                </div>
+                            </div>
                         </div>
+
+
                         <div className="grid place-content-center">
-                            <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                            <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[150px]">
                                 <option value={"id"} disabled selected>Sort By</option>
                                 <option value="createdAt"> Date </option>
                                 <option value="final_total"> Subtotal </option>
                             </select>
                         </div>
                         <div className="grid place-content-center">
-                            <select defaultValue="" value={sort} onChange={(e) => handleSort(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[200px]">
+                            <select defaultValue="" value={sort} onChange={(e) => handleSort(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
                                 <option value={""} disabled selected>Sort</option>
                                 <option value="ASC"> Asc </option>
                                 <option value="DESC"> Desc </option>
@@ -168,7 +180,11 @@ const BranchOrderList = () => {
                                     total={value.final_total.toLocaleString()}
                                     date={moment(value.createdAt).format('Do MMMM YYYY')}
                                     details={<Link to={`/admin/order/${value.id}`}>
-                                        <div className="lg:flex-1 p-2 my-2 lg:grid lg:place-content-center text-green-600 hover:underline">See Transaction Detail</div></Link>}
+                                        <div className="lg:flex-1 p-2 my-2 lg:grid lg:place-content-center text-green-600 hover:underline">See Details</div></Link>}
+                                    store={value.store_branch.name}
+                                    image={value?.transaction_details[0]?.product?.image}
+                                    productName={value?.transaction_details[0]?.name}
+                                    quantity={value.transaction_details.length > 1 ? `+ ${value.transaction_details.length - 1} Item` : "1 Item"}
                                 />
                             </div>
                         )

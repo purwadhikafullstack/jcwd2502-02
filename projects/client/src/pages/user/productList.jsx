@@ -105,6 +105,7 @@ const ProductListPage = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
     useEffect(() => {
+        window.scrollTo(0, 0);
         if (searchProduct && searchProduct !== searchQuery) {
             setSearchQuery(searchProduct);
         }

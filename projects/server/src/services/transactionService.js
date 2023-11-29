@@ -39,6 +39,10 @@ module.exports = {
                 coupon_name
             });
 
+            const autoCancel = `CREATE EVENT cancel_transaction_${transaction.dataValues.id} ON SCHEDULE AT date_add(NOW(), INTERVAL 24 HOUR) DO UPDATE transactions SET status = 'canceled' WHERE id = ${transaction.dataValues.id}`;
+
+            await db.sequelize.query(autoCancel);
+
             const inMyCart = await db.cart.findAll({
                 include: [
                     {

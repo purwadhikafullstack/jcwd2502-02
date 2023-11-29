@@ -61,6 +61,7 @@ const ProductDetailPage = () => {
         }
     };
     useEffect(() => {
+        window.scrollTo(0, 0);
         dispatch(nearestBranch())
     }, [dispatch]);
     useEffect(() => {

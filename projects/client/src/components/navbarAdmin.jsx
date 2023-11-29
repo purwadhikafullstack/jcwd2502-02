@@ -10,6 +10,8 @@ import { RiLogoutBoxRFill } from "react-icons/ri";
 import { logout } from "../redux/Features/users";
 import { FaBoxOpen } from "react-icons/fa";
 import { PiPercentFill } from "react-icons/pi";
+import { BsFillPieChartFill } from "react-icons/bs";
+import { FaHistory } from "react-icons/fa";
 
 
 
@@ -24,15 +26,13 @@ const NavbarAdmin = () => {
 
     }
 
-    console.log(user);
-
-
+    console.log(user.role);
     // belum tau dia branch mana dan rolenya super atau admin biasa
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
                 <div>
-                    <Link to={"/admin-dashboard"}><img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" /></Link>
+                    <Link to={"/admin-dashboard"}><img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[70px]" /></Link>
                 </div>
                 <div className="flex gap-5">
                     <div className="grid items-center">
@@ -81,12 +81,34 @@ const NavbarAdmin = () => {
                                                     <div className="flex justify-center text-md pb-5">{user?.email}</div>
                                                 </div>
                                             </div>
+                                            {user.role == "superadmin" ?
+                                                <Link to={'/user-management'}>
+                                                    <li className="hover:bg-green-600 rounded-full ease-in duration-200">
+                                                        <div className="flex gap-5 hover:text-white rounded-full "><FaUserLarge />Manage Admin</div>
+                                                    </li>
+                                                </Link>
+                                                : null}
                                             <Link to={'/admin/order-list'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200">
                                                     <div className="flex gap-5 hover:text-white rounded-full "><HiShoppingCart />Manage Order</div>
                                                 </li>
                                             </Link>
-                                            <Link to={'/updatecategory'}>
+                                            <Link to={'/updateproducts'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <RiFileList3Fill />
+                                                    Manage Inventory</div></li>
+                                            </Link>
+                                            <Link to={'/stock-history'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <FaHistory />
+                                                    Stock History</div></li>
+                                            </Link>
+                                            <Link to={'/sales-report/user'}>
+                                                <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
+                                                    <BsFillPieChartFill />
+                                                    Sales Report</div></li>
+                                            </Link>
+                                            {/* <Link to={'/updatecategory'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <RiFileList3Fill />
                                                     Manage Category</div></li>
@@ -105,7 +127,7 @@ const NavbarAdmin = () => {
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <RiFileList3Fill />
                                                     Manage Discount</div></li>
-                                            </Link>
+                                            </Link> */}
                                             {/* <Link to={'/update-product-stocks'}>
                                                 <li className="hover:bg-green-600 rounded-full ease-in duration-200"><div className="flex gap-5 hover:text-white rounded-full ">
                                                     <FaBoxOpen />

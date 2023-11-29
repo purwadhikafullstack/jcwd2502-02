@@ -4,8 +4,9 @@ const { Sequelize } = require("sequelize");
 const axios = require('axios');
 const { Op, literal } = require("sequelize");
 const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
-const couponValidityCron = require('./../helper/couponCronJob');
-
+const { deleteFiles } = require("./../helper/deleteFiles")
+const { handleCompletedTransactions } = require('../helper/handleCompleteTransaction')
+const { executeCouponQueries } = require('../helper/couponExpiry')
 module.exports = {
     getShippingOption: async (req, res, next) => {
         try {
@@ -39,6 +40,9 @@ module.exports = {
                             model: db.product
                         }]
                     },
+                    {
+                        model: db.user, attributes: ["username"]
+                    }
                 ],
                 where: { user_id: id, id: transactionId }
             });
@@ -61,6 +65,9 @@ module.exports = {
                                 model: db.product
                             }]
                         },
+                        {
+                            model: db.user, attributes: ["username"]
+                        },
                     ],
                     where: { id: transactionId }
                 });
@@ -74,10 +81,11 @@ module.exports = {
         try {
             const { id } = req.dataToken;
             console.log(id);
-            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby } = req.query;
+            const { invoice, status, createdAt, page, startdate, enddate, sort, sortby, branchId } = req.query;
             const limit = 6;
             const whereClause = {};
             if (invoice) whereClause.invoice = { [Op.like]: `%${invoice}%` };
+            if (branchId) whereClause.store_branch_id = branchId;
             if (status) whereClause.status = status;
             if (startdate && !enddate) {
                 whereClause.createdAt = { [Op.gte]: new Date(startdate), [Op.lte]: new Date(startdate + 'T23:59:59.999Z') }
@@ -96,6 +104,7 @@ module.exports = {
                 limit,
                 offset,
                 order: [[`${sortby}`, sort]],
+                include: [{ model: db.store_branch, attributes: ["name"] }, { model: db.transaction_detail, include: [{ model: db.product }] }]
             });
             const result = res.json({
                 orders,
@@ -132,6 +141,7 @@ module.exports = {
                 limit,
                 offset,
                 order: [[`${sortby}`, sort]],
+                include: [{ model: db.store_branch, attributes: ["name"] }, { model: db.transaction_detail, include: [{ model: db.product }] }]
             });
             const result = res.json({
                 orders,
@@ -180,6 +190,29 @@ module.exports = {
                 const upload = await db.transactions.update({
                     status: "canceled"
                 }, { where: { id: transactionId } })
+                const transaction = await db.transactions.findOne({
+                    where: { id: transactionId }
+                })
+                responseHandler(res, "Cancel Order Success", transaction);
+            }
+        } catch (error) {
+            next(error)
+        }
+    },
+    adminDeclinePaymentOrder: async (req, res, next) => {
+        try {
+            const { role } = req.dataToken;
+            const { transactionId } = req.params;
+            if (role === "admin" || role === "superadmin") {
+                const paymentProof = await db.transactions.findOne({
+                    where: { id: transactionId }
+                })
+                const oldImage = paymentProof.payment_proof
+                deleteFiles({ image: [oldImage] })
+                const upload = await db.transactions.update({
+                    status: "pending", payment_proof: null
+                }, { where: { id: transactionId } })
+
                 const transaction = await db.transactions.findOne({
                     where: { id: transactionId }
                 })
@@ -239,6 +272,7 @@ module.exports = {
             next(error)
         }
     },
+
     userCompleteOrder: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
@@ -249,6 +283,9 @@ module.exports = {
             const transaction = await db.transactions.findAll({
                 where: { user_id: id, status: "Complete" }
             })
+
+            // await handleCompletedTransactions(id);
+
             const numberOfCompleteTransactions = transaction.length;
             const coupon2 = await db.coupon.findOne({ where: { id: 2 } })
             const coupon3 = await db.coupon.findOne({ where: { id: 3 } })
@@ -310,6 +347,64 @@ module.exports = {
                     ],
                     where: { id: transactionId }
                 });
+                const userTotalTransactions = await db.transactions.count({
+                    where: { user_id: getOrder.user_id, status: "Complete" }
+                });
+                console.log(">>>>>>>>>>>>>>>>>");
+                console.log(userTotalTransactions);
+                console.log(">>>>>>>>>>>>>>>>>");
+                const coupon2 = await db.coupon.findOne({ where: { id: 2 } });
+                const coupon3 = await db.coupon.findOne({ where: { id: 3 } });
+                const conditionCoupon2 = (userTotalTransactions + 1) % 3 === 0
+                const conditionCoupon3 = (userTotalTransactions + 1) % 2 === 0
+
+                if (conditionCoupon3) {
+                    const newCoupon3 = await db.owned_coupon.create({
+                        user_id: getOrder.user_id, coupon_id: coupon3.dataValues.id, coupon_value: 0, isValid: "false", coupon_name: coupon3.dataValues.name
+                    });
+                    console.log(newCoupon3.dataValues.id);
+                    const giftCoupon3 = `CREATE EVENT gift_coupon_freeongkir_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 1 MINUTE) DO BEGIN 
+                        UPDATE owned_coupon SET isValid = 'true' WHERE id = ${newCoupon3.dataValues.id};`;
+                    console.log("Gift Coupon SQL:", giftCoupon3);
+
+                    const completeOrder3 = `CREATE EVENT auto_complete_order_for_freeongkir_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 1 MINUTE) DO BEGIN UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId};`;
+
+                    const expiryCoupon3 = `CREATE EVENT expired_coupon_freeongkir_${newCoupon3.dataValues.id} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO BEGIN 
+                    UPDATE owned_coupon SET isValid = 'false' WHERE id = ${newCoupon3.dataValues.id}`;
+
+                    // const result3 = await db.sequelize.query(giftCoupon3);
+                    // console.log("SQL Execution Result:", result3);
+
+                    // await db.sequelize.query(expiryCoupon3);
+                    executeCouponQueries(giftCoupon3, completeOrder3, expiryCoupon3)
+                }
+                if (conditionCoupon2) {
+                    const newCoupon2 = await db.owned_coupon.create({
+                        user_id: getOrder.user_id, coupon_id: coupon2.dataValues.id, coupon_value: coupon2.dataValues.amount, isValid: "false", coupon_name: coupon2.dataValues.name
+                    });
+                    console.log(newCoupon2.dataValues.id);
+                    const giftCoupon2 = `CREATE EVENT gift_coupon_potonganharga_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 1 MINUTE) DO 
+                    UPDATE owned_coupon SET isValid = 'true' WHERE id = ${newCoupon2.dataValues.id};
+                    UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId};
+                    END;`;
+
+                    console.log("Gift Coupon SQL:", giftCoupon2);
+                    const completeOrder2 = `CREATE EVENT auto_complete_order_for_potonganharga_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 1 MINUTE) DO BEGIN UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId};`;
+
+                    const expiryCoupon2 = `CREATE EVENT expired_coupon_potonganharga_${newCoupon2.dataValues.id} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO BEGIN UPDATE owned_coupon SET isValid = 'false' WHERE id = ${newCoupon2.dataValues.id}`
+
+                    // const result2 = await db.sequelize.query(giftCoupon2);
+                    // console.log("SQL Execution Result:", result2);
+
+                    // await db.sequelize.query(expiryCoupon2);
+                    executeCouponQueries(giftCoupon2, completeOrder2, expiryCoupon2)
+                }
+                if (!conditionCoupon2 && !conditionCoupon3) {
+                    const autoComplete = `CREATE EVENT complete_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 1 MINUTE) DO UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId}`;
+                    await db.sequelize.query(autoComplete);
+
+                }
+
                 responseHandler(res, "Send Order Success", result);
             }
         } catch (error) {
