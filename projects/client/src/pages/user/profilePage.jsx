@@ -14,6 +14,7 @@ import moment from 'moment';
 
 const ProfilePage = () => {
     const apiInstance = api()
+    const [disabled, setDisabled] = useState(false)
     const [data, setData] = useState('')
     const [coupon, setCoupon] = useState()
     const mainAddress = useSelector((state) => state.branch.mainAddress)
@@ -67,10 +68,15 @@ const ProfilePage = () => {
     };
     const verifyAccount = async () => {
         try {
+            setDisabled(true)
             const response = await api().post('/users/verify-user-profile');
             toast.success(response.data.message);
         } catch (error) {
             console.log(error);
+            setDisabled(false)
+        }
+        finally {
+            setDisabled(false)
         }
     }
     useEffect(() => {
@@ -184,12 +190,19 @@ const ProfilePage = () => {
                                 <Link to={'/updateprofile'}>
                                     <div className="hover:underline ease-in duration-200 flex gap-1">Update Profile </div>
                                 </Link>
-                                {
-                                    user.isVerified == "verified" ?
-                                        null
-                                        :
-                                        <div className="hover:underline ease-in duration-200 flex gap-1" onClick={() => verifyAccount()}> Verify Account </div>
-                                }
+
+                                {disabled ?
+
+                                    <div className="hover:underline ease-in duration-200 flex gap-1" > Sending Verification Email... </div>
+                                    :
+                                    <>{
+                                        user.isVerified == "verified" ?
+                                            null
+                                            :
+                                            <div className="hover:underline ease-in duration-200 flex gap-1" onClick={() => verifyAccount()}> Verify Account </div>
+                                    }
+                                    </>}
+
                             </div>
                         </div>
                     </div>

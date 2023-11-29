@@ -23,27 +23,37 @@ const ProductCard = (props) => {
         const productInCart = cart.cart.find(item => item.products_id === props.data);
         return productInCart ? productInCart.quantity : 0;
     };
+    const userStatus = user.isVerified
     const handleAddToCart = () => {
-        if (!user.username) {
+        if (user.username) {
+            dispatch(addToCartAsync(props.data, closestBranch.id, userStatus));
+        }
+        else if (!user.username) {
             toast.error("Please log in to add items to your cart");
             setTimeout(() => {
                 navigate("/login"); // Step 4
             }, 2000);
             return
         }
-
-        if (user.username) {
-            dispatch(addToCartAsync(props.data, closestBranch.id));
-
-        }
     };
 
     const altAddToCart = () => {
         try {
-            toast.error("Please add a main address before adding products to the cart.");
-            setTimeout(() => {
-                navigate(`/manage-address`)
-            }, 1500)
+
+            if (userStatus === "unverified") {
+                toast.error("Please verify your account before adding products to the cart.");
+                setTimeout(() => {
+                    navigate(`/profile`)
+                }, 1500)
+            }
+
+            else if (userStatus === "verified") {
+                toast.error("Please add a main address before adding products to the cart.");
+                setTimeout(() => {
+                    navigate(`/manage-address`)
+                }, 1500)
+            }
+
         } catch (error) {
             console.log(error);
         }
@@ -52,6 +62,8 @@ const ProductCard = (props) => {
     useEffect(() => {
         dispatch(getMainAddress());
     }, []);
+
+    console.log(mainAddress);
 
     return (
         <div>

@@ -106,10 +106,6 @@ module.exports = {
         }
     },
 
-
-
-
-
     getMainAddress: async (req, res, next) => {
         try {
             const { id } = req.dataToken
@@ -127,7 +123,7 @@ module.exports = {
                         ]
                     },
                 ],
-                where: { user_id: id, isPrimary: 'true' }
+                where: { user_id: id, isPrimary: 'true', isDeleted: 0 }
             })
             responseHandler(res, "Get Main Address Success", mainAddress)
         } catch (error) {

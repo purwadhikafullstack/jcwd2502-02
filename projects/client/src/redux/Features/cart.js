@@ -40,28 +40,36 @@ export const getCartAsync = () => async (dispatch) => {
     }
 }
 
-export const addToCartAsync = (productId, stroreId) => async (dispatch) => {
+export const addToCartAsync = (productId, stroreId, userStatus) => async (dispatch) => {
     try {
         // const navigate = useNavigate(); // Use the useNavigate hook
         const { data } = await api().get('/location/address/main')
         console.log(data);
 
-        if (data.data !== null) {
-            const response1 = await api().post(`/cart/add?productId=${productId}&stroreId=${stroreId}`)
-            console.log(response1);
-            if (!response1) return console.log("Data is not found")
-            if (response1.data.isError == false) {
-                toast.success(response1.data.message);
-                dispatch(getCartAsync())
-            } else if (response1.data.isError) {
-                toast.error(response1.data.data);
-                dispatch(getCartAsync())
-            }
-        } else {
-            toast.error("Please add a main address before adding products to the cart.");
+        if (userStatus === "unverified") {
+            toast.error("Please verify your account before adding products to the cart.");
             // navigate('/manage-address')
             return;
         }
+        else if (userStatus === "verified") {
+            if (data.data !== null) {
+                const response1 = await api().post(`/cart/add?productId=${productId}&stroreId=${stroreId}`)
+                console.log(response1);
+                if (!response1) return console.log("Data is not found")
+                if (response1.data.isError == false) {
+                    toast.success(response1.data.message);
+                    dispatch(getCartAsync())
+                } else if (response1.data.isError) {
+                    toast.error(response1.data.data);
+                    dispatch(getCartAsync())
+                }
+            } else {
+                toast.error("Please add a main address before adding products to the cart.");
+                // navigate('/manage-address')
+                return;
+            }
+        }
+
 
 
 
