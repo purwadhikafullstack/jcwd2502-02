@@ -26,7 +26,7 @@ export default function Protected({ children, adminPage, userPage, guestPage, su
             setLoading(false)
         }, 1500), navigate('/admin-dashboard')
 
-        if(user && user.role == "superadmin" && (userPage)) return setTimeout(() => {
+        if (user && user.role == "superadmin" && (userPage)) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/admin-dashboard')
 

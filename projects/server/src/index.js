@@ -4,7 +4,8 @@ const express = require("express");
 const cors = require("cors");
 const { join } = require("path");
 const bearerToken = require("express-bearer-token");
-const couponCronjob = require('./helper/couponCronjob')
+const couponCronjob = require('./helper/completeAndcouponCronjob')
+const transactionCronJob = require('./helper/transactionCronjob')
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(cors());

@@ -12,10 +12,12 @@ import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
 import PaginationFixed from "../../components/paginationComponent";
 import toast, { Toaster } from "react-hot-toast";
+import { BiSearchAlt } from "react-icons/bi";
 
 
 const ProductListPage = () => {
     const [category, setCategory] = useState([]);
+    const [discount, setDiscount] = useState("");
     const [catId, setCatId] = useState("");
     const [products, setProducts] = useState([]);
     const [searchQuery, setSearchQuery] = useState("");
@@ -37,7 +39,8 @@ const ProductListPage = () => {
             setPage(1)
             setSearchQuery("")
             setSort("ASC")
-            navigate(`/products?category=`, { replace: true });
+            setDiscount("")
+            onGetFilteredProducts()
         } catch (error) {
             console.log(error);
         }
@@ -50,11 +53,31 @@ const ProductListPage = () => {
             console.log(error);
         }
     };
+    const handleSearch = (event) => {
+        try {
+            // console.log(event.target.value);
+            setPage(1);
+            setSearchQuery(event);
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleDiscount = (event) => {
+        try {
+            setPage(1);
+            setDiscount(event)
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
+
     const onGetFilteredProducts = async () => {
         try {
             if (closestBranch.id === undefined) {
                 const response = await api.get(
-                    `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=&page=${page}`
+                    `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=&page=${page}&discount=${discount}`
 
                 )
                 console.log(response);
@@ -62,7 +85,7 @@ const ProductListPage = () => {
                 setProducts(response.data.products);
             } else {
                 const response = await api.get(
-                    `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}&page=${page}`
+                    `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}&page=${page}&discount=${discount}`
                 )
                 console.log(response);
                 setMaxPage(response.data.maxPages)
@@ -111,7 +134,14 @@ const ProductListPage = () => {
         }
         onGetCategory();
         onGetFilteredProducts();
-    }, [catId, searchQuery, sort, closestBranch, page, id, searchProduct]);
+    }, [catId, sort, closestBranch, page, id, searchProduct, discount]);
+
+    useEffect(() => {
+        const debouncedSearch = debounce(() => {
+            onGetFilteredProducts();
+        }, 1000);
+        debouncedSearch();
+    }, [searchQuery])
 
     return (
         <div className="">
@@ -133,38 +163,55 @@ const ProductListPage = () => {
             <div className="mx-5 md:mx-24 lg:mx-40 my-10">
                 <div className="flex  justify-center gap-2 my-5 py-3 ">
                     <div className=" grid place-content-center">
-                        <Searchbar value={searchQuery} onChange={(e) => debouncedSearch(e.target.value)} />
+                        {/* <Searchbar value={searchQuery} onChange={(e) => debouncedSearch(e.target.value)} /> */}
+                        <div className="border-2 flex rounded-xl bg-white h-[48px]">
+                            <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
+                            <input value={searchQuery} type="text" onChange={(e) => handleSearch(e.target.value)} className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product" />
+                        </div>
                     </div>
-                    <div>
-                        <SortButton
-                            onChange={handleChange}
-                            value1={"ASC"}
-                            value2={"DESC"}
-                            className="border"
-                        />
+                    <div className="grid place-content-center">
+                        <select defaultValue="" value={sort} onChange={(e) => handleChange(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
+                            <option value={""} disabled selected>Sort</option>
+                            <option value="ASC"> A-Z </option>
+                            <option value="DESC"> Z-A </option>
+                        </select>
+                    </div>
+                    <div className="grid place-content-center">
+                        <select defaultValue="" value={discount} onChange={(e) => handleDiscount(e.target.value)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
+                            <option value={""} disabled selected>Sort</option>
+                            <option value="diskon"> Discounted Products </option>
+                            <option value="bogo"> Buy 1 Get 1 Free </option>
+                            {/* <option value="3"> Z-A </option> */}
+                        </select>
                     </div>
                     <div>
                         <button onClick={handleReset} className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900">Show All Products</button>
                     </div>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
-                    {products ? products.map((value, index) => (
-                        <a key={index}>
-                            <div>
-                                <ProductCard
-                                    name={value.name}
-                                    image={value.image}
-                                    description={value.description}
-                                    price={value.price}
-                                    final_price={value.final_price}
-                                    discount_id={value.discount_id}
-                                    stock={value.product_stocks ? value.product_stocks : "empty"}
-                                    data={value.id}
-                                />
-                            </div>
-                        </a>
-                    )) : null}
+                    {products && products.length ? products.map((value, index) => {
+                        return (
+                            <a key={index}>
+                                <div className="">
+                                    <ProductCard
+                                        name={value.name}
+                                        image={value.image}
+                                        description={value.description}
+                                        price={value.price}
+                                        final_price={value.final_price}
+                                        discount_id={value.discount_id}
+                                        stock={value.product_stocks ? value.product_stocks : "empty"}
+                                        data={value.id}
+                                    />
+                                </div>
+                            </a>
+                        )
+                    }) : null}
                 </div>
+
+                {products && !products.length ? <div role="alert" className="alert alert-error w-full ">
+                    <span className="">Sorry, the product that you are looking for is not available.</span>
+                </div> : null}
             </div>
             <div className="flex justify-center mt-4 mb-10">
                 <PaginationFixed

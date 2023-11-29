@@ -10,6 +10,7 @@ import { IoIosArrowForward } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
 import OrderDetailsSection from "../../components/orderDetails";
 import DeleteConfirmation from "../../components/deleteModal";
+import ConfirmConfirmation from "../../components/confirmModal";
 
 const AdminOrderDetail = () => {
     const [timeRemaining, setTimeRemaining] = useState(0); // Set the initial time in seconds
@@ -143,7 +144,7 @@ const AdminOrderDetail = () => {
                                                     </div>} />
                                             </div>
                                             <div className="w-full">
-                                                <DeleteConfirmation
+                                                <ConfirmConfirmation
                                                     itemId={id}
                                                     onDelete={getDetailOrder}
                                                     apiEndpoint="transaction/admin/approve"
@@ -177,7 +178,7 @@ const AdminOrderDetail = () => {
                                                 </div>} />
                                         </div>
                                         <div className="w-full">
-                                            <DeleteConfirmation
+                                            <ConfirmConfirmation
                                                 itemId={id}
                                                 onDelete={getDetailOrder}
                                                 apiEndpoint="transaction/admin/send"

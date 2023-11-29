@@ -7,7 +7,9 @@ import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
 import Searchbar from "../../components/searchBar";
 import NavbarAdmin from "../../components/navbarAdmin";
+import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
+import ConfirmConfirmation from "../../components/confirmModal";
 
 export default function CreateAdminPage() {
     const [branch, setBranch] = useState(false);
@@ -32,6 +34,7 @@ export default function CreateAdminPage() {
     };
 
     const handleNameInput = (event) => {
+        setPage(1);
         setQueryUsername(event.target.value);
     };
 
@@ -67,7 +70,15 @@ export default function CreateAdminPage() {
     useEffect(() => {
         onGetAdmins()
         onGetBranch()
-    }, [queryUsername, queryBranch, page])
+    }, [queryBranch, page])
+
+
+    useEffect(() => {
+        const debouncedSearch = debounce(() => {
+            onGetAdmins();
+        }, 1000);
+        debouncedSearch();
+    }, [queryUsername])
 
     return (
         <div className="flex flex-col flex-grow min-h-screen gap-2">
@@ -77,12 +88,6 @@ export default function CreateAdminPage() {
             </div>
 
             <div className=" mx-5 pt-5 md:mx-20 lg:mx-32">
-                {/* <div>
-                    <div className="flex justify-center bg-gradient-to-b from-green-500 to-yellow-300">
-                        <h1 className="m-3 text-lg font-bold">User Management Page</h1>
-                    </div>
-                </div> */}
-
                 <div className="lg:flex lg:justify-between mb-5">
                     <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Branch Admin Management</div>
 
@@ -157,7 +162,18 @@ export default function CreateAdminPage() {
                                         <div className="grid place-content-center">
                                             <div className="lg:flex-row flex flex-col gap-4 lg:w-[300px]">
                                                 <ModalEditAdmin getAdmins={onGetAdmins} adminData={value} key={index} />
-                                                <button onClick={() => handleDeactivateAdmin(value.email)} className={value.isVerified == "verified" ? " btn bg-red-600 hover:bg-red-600 rounded-2xl  text-white " : " btn bg-green-600 hover:bg-green-600 rounded-2xl  text-white w-[120px]"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>
+
+                                                <ConfirmConfirmation
+                                                    itemId={""}
+                                                    onDelete={onGetAdmins}
+                                                    apiEndpoint="users/deactivate-admin"
+                                                    text={""}
+                                                    bodyValue={value.email}
+                                                    message={"Admin Status Changed"}
+                                                    textOnButton={"Confirm"}
+                                                    button={<button className={value.isVerified == "verified" ? " btn bg-red-600 hover:bg-red-600 rounded-2xl  text-white " : " btn bg-green-600 hover:bg-green-600 rounded-2xl  text-white w-[120px]"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>} />
+
+
                                             </div>
                                         </div>
                                     </div>
@@ -166,6 +182,10 @@ export default function CreateAdminPage() {
                             )
                         })
                     }
+
+                    {admin && !admin.length ? <div role="alert" className="alert alert-error w-full ">
+                        <span className="">Sorry, the admin that you are looking for is not available.</span>
+                    </div> : null}
 
                 </div>
 

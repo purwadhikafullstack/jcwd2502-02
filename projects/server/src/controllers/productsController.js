@@ -33,12 +33,18 @@ module.exports = {
     },
     getAllProductRevised: async (req, res, next) => {
         try {
-            const { catId, searchQuery, sort, branchId, page } = req.query;
+            const { catId, searchQuery, sort, branchId, page, discount } = req.query;
             const limit = 8;
             const like = Op.like;
             const whereClause = { isDeleted: 0 };
             if (catId) whereClause.product_categories_id = catId;
             if (searchQuery) whereClause.name = { [like]: `%${searchQuery}%` };
+            if (discount === "diskon") {
+                whereClause.discount_id = { [Op.or]: [1, 2] };
+            }
+            else if (discount === "bogo") {
+                whereClause.discount_id = 3
+            }
             const totalRecords = await db.product.count({ where: { ...whereClause } });
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;

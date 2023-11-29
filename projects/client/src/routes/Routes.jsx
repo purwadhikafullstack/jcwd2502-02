@@ -36,7 +36,7 @@ import Protected from "./protected";
 
 const routes = [
     <Route path='/' element={
-        <Protected userPage={false}>
+        <Protected userPage={true}>
             <LandingPage />
         </Protected>
     } />,
