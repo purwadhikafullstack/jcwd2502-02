@@ -64,7 +64,7 @@ const SalesReportProduct = () => {
 
     const handleReset = () => {
         try {
-            setSort(""); setStartDate(""); setPage(1); setMaxPage(1); fetchData(); setEndDate(""); setSort("ASC"); setSortBy("name"); setBranch("")
+            setSort(""); setStartDate(""); setPage(1); setMaxPage(1); setEndDate(""); setSort("ASC"); setSortBy("name"); setBranch("");
         } catch (error) {
             console.log(error);
         }
@@ -174,6 +174,9 @@ const SalesReportProduct = () => {
                                 <option value="DESC"> DESC </option>
                             </select>
                         </div>
+                        <div className="grid place-content-center">
+                            <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black" onClick={handleReset}>Reset</div>
+                        </div>
 
                     </div>
 
@@ -207,10 +210,14 @@ const SalesReportProduct = () => {
                                     ))}
                                 </tbody>
                             </table>
+                            <div className='flex justify-center m-3'>
+                                {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
+                                    <span className="flex justify-center">Sorry there are no data just yet</span>
+                                </div> : null}
+                            </div>
                         </div>
                     </div>
                 </div>
-
                 {/* <div className="h-[500px] w-[1000px] m-4 border border-black rounded-xl">
                     <h1> Quantity of products sold by type </h1>
                     <ResponsiveContainer width="90%" height="100%">

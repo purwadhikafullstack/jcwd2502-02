@@ -5,7 +5,6 @@ import { api } from "../../api/api"
 import ModalNewAdmin from "../../components/modalNewAdmin";
 import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
-import Searchbar from "../../components/searchBar";
 import NavbarAdmin from "../../components/navbarAdmin";
 import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
@@ -18,6 +17,8 @@ export default function CreateAdminPage() {
     const [queryBranch, setQueryBranch] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [sortBy, setSortBy] = useState("name")
+    const [sort, setSort] = useState("ASC");
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
@@ -36,22 +37,34 @@ export default function CreateAdminPage() {
     const handleNameInput = (event) => {
         setPage(1);
         setQueryUsername(event.target.value);
+        setPage(1);
     };
 
     const handleBranchInput = (event) => {
         setQueryBranch(event.target.value);
+        setPage(1);
     };
 
     const onGetAdmins = async () => {
         try {
+            setAdmin(() => [])
             const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&page=${page}`)
             setMaxPage(data.data.maxPages)
-            setAdmin(data.data.filteredAdmins);
+            setAdmin(() => data.data.filteredAdmins);
         } catch (error) {
             console.log(error);
         }
     }
 
+    const handleResetFilter = async () => {
+        try {
+            setQueryUsername("")
+            setQueryBranch("")
+            setPage(1)
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const onGetBranch = async () => {
         try {
             const { data } = await api().get('/branch/all');
@@ -117,9 +130,23 @@ export default function CreateAdminPage() {
                                 }
                             </select>
                         </div>
-
                         <div className="grid place-content-center">
-                            <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
+                            <h1>Sort By:</h1>
+                        </div>
+                        <div className="grid place-content-center">
+                            <select name="" id="" className="h-[48px] px-2 border-2 rounded-xl w-[100px]">
+                                <option value="name"> Name </option>
+                                <option value="status"> Status </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <select name="" id="" className="h-[48px] px-2 border-2 rounded-xl w-[80px]">
+                                <option value="ASC"> ASC </option>
+                                <option value="DESC"> DESC </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black" onClick={() => handleResetFilter()}>Reset</div>
                         </div>
 
                     </div>
@@ -130,8 +157,7 @@ export default function CreateAdminPage() {
                         admin && admin.map((value, index) => {
                             return (
 
-                                <div className="rounded-xl border-2 border-l-8 border-green-700 border-l-green-700 ">
-
+                                <div className="rounded-xl border-2 border-l-8 border-green-700 border-l-green-700" key={value.id}>
                                     <div className="flex justify-between p-5 ">
                                         <div className="lg:flex grid place-content-center gap-2 lg:pl-5 ">
                                             <div className=" lg:w-[300px]">
