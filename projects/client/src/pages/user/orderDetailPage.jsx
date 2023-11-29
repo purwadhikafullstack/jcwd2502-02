@@ -120,8 +120,14 @@ const UserOrderDetail = () => {
                                     <div className="grid place-content-center">TIME REMAINING:</div>
                                     <div className="text-6xl grid place-content-center">{formatTime(timeRemaining)}</div>
                                     <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
-                                    <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 flex place-content-center text-xs lg:text-base"><img src="./download.png" alt="app_logo" className="h-[20px] lg:pr-3" /> 6041688880 - a/n PT BuyFresh Indonesia</div>
-                                    <div className="grid place-content-center"></div>
+
+                                    <div className="flex">
+                                        <div className="grid place-content-center">
+                                            <img src={"./download.png" && "https://cdn.discordapp.com/attachments/1120979304961032195/1179266321049989253/image.png?ex=65792858&is=6566b358&hm=1c24c04ab821f91ec5971a3ea52b4ecb6962718f1349f384f37b8ad33908c5f6&"} alt="app_logo" className="h-[30px] lg:pr-3" />
+                                        </div>
+                                        <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 text-xs lg:text-base grid place-content-center"> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                    </div>
+
                                 </div>
                                 <input
                                     type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={payment} onChange={uploadPayment}

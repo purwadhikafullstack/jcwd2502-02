@@ -32,7 +32,7 @@ const NavbarAdmin = () => {
         <div className="relative">
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">
                 <div>
-                    <Link to={"/admin-dashboard"}><img src="./buyfresh_logo.png" alt="app_logo" className="h-[70px]" /></Link>
+                    <Link to={"/admin-dashboard"}><img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[70px]" /></Link>
                 </div>
                 <div className="flex gap-5">
                     <div className="grid items-center">
