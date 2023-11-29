@@ -1,8 +1,5 @@
 import CategoryCard from "../../components/categoryCard"
-import Searchbar from "../../components/searchBar";
-import SortButton from "../../components/sortButton";
 import ProductCard from "../../components/productCard";
-import Pagination from "../../components/pagination";
 import Navbar from "../../components/navbarUser";
 import Footer from "../../components/footer";
 import React, { useEffect, useState } from "react";
@@ -13,8 +10,6 @@ import { useSelector } from "react-redux";
 import PaginationFixed from "../../components/paginationComponent";
 import toast, { Toaster } from "react-hot-toast";
 import { BiSearchAlt } from "react-icons/bi";
-
-
 const ProductListPage = () => {
     const [category, setCategory] = useState([]);
     const [discount, setDiscount] = useState("");
@@ -41,6 +36,7 @@ const ProductListPage = () => {
             setSort("ASC")
             setDiscount("")
             onGetFilteredProducts()
+            navigate(`/products?category=`, { replace: true });
         } catch (error) {
             console.log(error);
         }
@@ -55,39 +51,32 @@ const ProductListPage = () => {
     };
     const handleSearch = (event) => {
         try {
-            // console.log(event.target.value);
             setPage(1);
             setSearchQuery(event);
         } catch (error) {
             console.log(error);
         }
     }
-
     const handleDiscount = (event) => {
         try {
             setPage(1);
             setDiscount(event)
         } catch (error) {
             console.log(error);
-
         }
     }
-
     const onGetFilteredProducts = async () => {
         try {
             if (closestBranch.id === undefined) {
                 const response = await api.get(
                     `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=&page=${page}&discount=${discount}`
-
                 )
-                console.log(response);
                 setMaxPage(response.data.maxPages)
                 setProducts(response.data.products);
             } else {
                 const response = await api.get(
                     `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}&page=${page}&discount=${discount}`
                 )
-                console.log(response);
                 setMaxPage(response.data.maxPages)
                 setProducts(response.data.products);
             }
@@ -135,14 +124,12 @@ const ProductListPage = () => {
         onGetCategory();
         onGetFilteredProducts();
     }, [catId, sort, closestBranch, page, id, searchProduct, discount]);
-
     useEffect(() => {
         const debouncedSearch = debounce(() => {
             onGetFilteredProducts();
         }, 1000);
         debouncedSearch();
     }, [searchQuery])
-
     return (
         <div className="">
             <Toaster />
@@ -163,7 +150,6 @@ const ProductListPage = () => {
             <div className="mx-5 md:mx-24 lg:mx-40 my-10">
                 <div className="flex  justify-center gap-2 my-5 py-3 ">
                     <div className=" grid place-content-center">
-                        {/* <Searchbar value={searchQuery} onChange={(e) => debouncedSearch(e.target.value)} /> */}
                         <div className="border-2 flex rounded-xl bg-white h-[48px]">
                             <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                             <input value={searchQuery} type="text" onChange={(e) => handleSearch(e.target.value)} className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product" />
@@ -181,7 +167,6 @@ const ProductListPage = () => {
                             <option value={""} disabled selected>Sort</option>
                             <option value="diskon"> Discounted Products </option>
                             <option value="bogo"> Buy 1 Get 1 Free </option>
-                            {/* <option value="3"> Z-A </option> */}
                         </select>
                     </div>
                     <div>
@@ -208,7 +193,6 @@ const ProductListPage = () => {
                         )
                     }) : null}
                 </div>
-
                 {products && !products.length ? <div role="alert" className="alert alert-error w-full ">
                     <span className="">Sorry, the product that you are looking for is not available.</span>
                 </div> : null}

@@ -2,7 +2,7 @@ import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useState, useRef } from "react";
 import { api1 } from "../../api/api";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
@@ -35,7 +35,6 @@ const UpdateProductStocksPage = () => {
             const response = await api.get(
                 `/products/filtered?catId=${catId}&searchQuery=${searchQuery}&sort=${sort}&branchId=${branchId}&sortby=${sortBy}&page=${page}`
             );
-            console.log(response);
             setMaxPage(response.data.maxPages);
             setProducts(response.data.products);
         } catch (error) {

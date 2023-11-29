@@ -9,6 +9,8 @@ import { AiFillEdit } from "react-icons/ai";
 import toast, { Toaster } from "react-hot-toast";
 import PaginationFixed from "../../components/paginationComponent";
 import { Link, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import DeleteConfirmation from "../../components/deleteModal";
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef();
     const [category, setCategory] = useState([]);
@@ -21,6 +23,7 @@ const UpdateProductsCategoryPage = () => {
     const [maxPages, setMaxPages] = useState(1);
     const pageTopRef = useRef(null);
     const navigate = useNavigate();
+    const role = useSelector((state) => state.users.role);
     const onGetCategory = async () => {
         try {
             const response = await api().get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
@@ -157,9 +160,11 @@ const UpdateProductsCategoryPage = () => {
                             <div role="tab" className="tab lg:text-xl ">Products</div>
                         </Link>
                         <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Category</div>
-                        <Link to={`/update-product-stocks`}>
-                            <div role="tab" className="tab lg:text-xl">Stocks</div>
-                        </Link>
+                        {role === "admin" ? <>
+                            <Link to={`/update-product-stocks`}>
+                                <div role="tab" className="tab lg:text-xl">Stocks</div>
+                            </Link>
+                        </> : null}
                         <Link to={`/manage-product-discount`}>
                             <div role="tab" className="tab lg:text-xl">Discount</div>
                         </Link>
@@ -186,8 +191,6 @@ const UpdateProductsCategoryPage = () => {
                         <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
                     </div>
                 </div>
-
-
                 <div className="overflow-x-auto ">
                     <table className="table">
                         <thead>
@@ -228,14 +231,18 @@ const UpdateProductsCategoryPage = () => {
                                                         handleEditCategory(value.id);
                                                     }}>EDIT
                                                 </button>
-
-                                                <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black"
-                                                    onClick={() => {
-                                                        onDeleteCategory(value.id);
-                                                    }}>DELETE</button>
+                                                <DeleteConfirmation
+                                                    itemId={value.id}
+                                                    onDelete={onGetCategory}
+                                                    apiEndpoint="category/deletecategory"
+                                                    text={""}
+                                                    message={"Category Deleted"}
+                                                    textOnButton={"Yes"}
+                                                    button={<div className=" btn hover:bg-red-600 hover:border-black bg-red-600 border-black border-4 text-white w-full">
+                                                        Delete
+                                                    </div>} />
                                             </div>
                                         </td>
-
                                     </tr>
                                 );
                             })}

@@ -19,24 +19,22 @@ const ManageProductDiscountPage = () => {
     const [sort, setSort] = useState("ASC");
     const pageTopRef = useRef(null);
     const api = api1();
-    const branchId = useSelector((state) => state.users.store_branch_id);
     const [isModalOpen, setModalOpen] = useState(false);
     const [discountId, setDiscountId] = useState(0);
     const [discountType, setDiscountType] = useState(null)
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [sortBy, setSortBy] = useState("id");
+    const role = useSelector((state) => state.users.role);
     const fetchData = async () => {
         try {
             const category = await api.get(`category/all`);
             setCategory(category.data.data);
             const discount = await api.get(`/products/discount`)
-            console.log(discount.data.data);
             setDiscountType(discount.data.data)
             const response = await api.get(
-                `/products/filtered?catId=${catId}&searchQuery=${searchQuery}&sort=${sort}&branchId=${branchId}&sortby=${sortBy}&page=${page}`
+                `/products/filtered?catId=${catId}&searchQuery=${searchQuery}&sort=${sort}&sortby=${sortBy}&page=${page}`
             );
-            console.log(response.data);
             setMaxPage(response.data.maxPages);
             setProducts(response.data.products);
         } catch (error) {
@@ -65,7 +63,6 @@ const ManageProductDiscountPage = () => {
     const handleSortBy = (event) => {
         try {
             setPage(1);
-            console.log(event.target.value);
             if (event.target.value === "discount_id") {
                 setSort("DESC")
                 setSortBy(event.target.value);
@@ -114,7 +111,7 @@ const ManageProductDiscountPage = () => {
     }
     useEffect(() => {
         fetchData()
-    }, [catId, sort, branchId, page, sortBy]);
+    }, [catId, sort, page, sortBy]);
     useEffect(() => {
         const debouncedSearch = debounce(() => {
             fetchData()
@@ -141,9 +138,11 @@ const ManageProductDiscountPage = () => {
                         <Link to={`/updatecategory`}>
                             <div role="tab" className="tab lg:text-xl">Category</div>
                         </Link>
-                        <Link to={`/update-product-stocks`}>
-                            <div role="tab" className="tab lg:text-xl">Stocks</div>
-                        </Link>
+                        {role === "admin" ? <>
+                            <Link to={`/update-product-stocks`}>
+                                <div role="tab" className="tab lg:text-xl">Stocks</div>
+                            </Link>
+                        </> : null}
                         <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Discount</div>
                     </div>
                 </div>

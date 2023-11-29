@@ -282,35 +282,19 @@ module.exports = {
             const transaction = await db.transactions.findAll({
                 where: { user_id: id, status: "Complete" }
             })
-
-            // await handleCompletedTransactions(id);
-
             const numberOfCompleteTransactions = transaction.length;
             const coupon2 = await db.coupon.findOne({ where: { id: 2 } })
             const coupon3 = await db.coupon.findOne({ where: { id: 3 } })
-            const conditionCoupon2 = (numberOfCompleteTransactions) % 321 === 0
-            const conditionCoupon3 = (numberOfCompleteTransactions) % 123 === 0
+            const conditionCoupon2 = (numberOfCompleteTransactions) % 10 === 0
+            const conditionCoupon3 = (numberOfCompleteTransactions) % 3 === 0
             if (conditionCoupon3) {
-                // await db.owned_coupon.create({
-                //     user_id: id, coupon_id: coupon3.dataValues.id, coupon_value: 0, isValid: "true", coupon_name: coupon3.dataValues.name
-                // });
                 const removeEventQuery3 = `CREATE EVENT remove_event_freeongkir_${transactionId} ON SCHEDULE AT NOW() DO BEGIN DROP EVENT IF EXISTS gift_coupon_freeongkir_for_transaction_${transactionId}; END`;
-
                 const createCoupon3 = `CREATE EVENT create_coupon_freeongkir_${transactionId} ON SCHEDULE AT NOW() DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name) VALUES ("true",${id}, ${coupon3.id}, ${coupon3.amount}, "${coupon3.name}"); END`;
-                console.log(removeEventQuery3);
-                console.log(createCoupon3);
                 await db.sequelize.query(removeEventQuery3);
                 await db.sequelize.query(createCoupon3);
-
             } if (conditionCoupon2) {
-                // await db.owned_coupon.create({
-                //     user_id: id, coupon_id: coupon2.dataValues.id, coupon_value: coupon2.dataValues.amount, isValid: "true", coupon_name: coupon2.dataValues.name
-                // });
                 const removeEventQuery2 = `CREATE EVENT remove_event_potonganharga_${transactionId} ON SCHEDULE AT NOW() DO BEGIN DROP EVENT IF EXISTS gift_coupon_potonganharga_for_transaction_${transactionId}; END`;
-
                 const createCoupon2 = `CREATE EVENT create_coupon_potonganharga_${transactionId} ON SCHEDULE AT NOW() DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name) VALUES ("true",${id}, ${coupon2.id}, ${coupon2.amount}, "${coupon2.name}"); END`;
-                console.log(removeEventQuery2);
-                console.log(createCoupon2);
                 await db.sequelize.query(removeEventQuery2);
                 await db.sequelize.query(createCoupon2);
             } if (!conditionCoupon2 && !conditionCoupon3) {
@@ -352,7 +336,6 @@ module.exports = {
                         throw { message: "Stock is Not Enough / Unavailable" }
                     }
                 }
-
                 await db.transactions.update({
                     status: "Delivered"
                 }, { where: { id: transactionId } })
@@ -364,16 +347,14 @@ module.exports = {
                     ],
                     where: { id: transactionId }
                 });
-
-
                 const userTotalTransactions = await db.transactions.count({
                     where: { user_id: getOrder.user_id, status: "Complete" }
                 });
                 console.log(userTotalTransactions);
                 const coupon2 = await db.coupon.findOne({ where: { id: 2 } });
                 const coupon3 = await db.coupon.findOne({ where: { id: 3 } });
-                const conditionCoupon2 = (userTotalTransactions + 1) % 321 === 0
-                const conditionCoupon3 = (userTotalTransactions + 1) % 123 === 0
+                const conditionCoupon2 = (userTotalTransactions + 1) % 10 === 0
+                const conditionCoupon3 = (userTotalTransactions + 1) % 3 === 0
                 if (conditionCoupon3) {
                     const giftCoupon3 = `CREATE EVENT gift_coupon_freeongkir_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name)
                     VALUES ('true',${getOrder.user_id}, ${coupon3.id}, ${coupon3.amount}, '${coupon3.name}');
@@ -392,7 +373,6 @@ module.exports = {
                     const autoComplete = `CREATE EVENT complete_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId}`;
                     await db.sequelize.query(autoComplete);
                 }
-
                 responseHandler(res, "Send Order Success", result);
             }
         } catch (error) {
