@@ -2,7 +2,7 @@ const axios = require('axios');
 const { Op, literal, Sequelize } = require("sequelize");
 const db = require("./../models");
 const responseHandler = require("./../utils/responseHandler");
-
+const { sequelize } = require('./../models')
 
 module.exports = {
     shippingOption: async (origin, destination, weight, courier) => {
@@ -20,6 +20,8 @@ module.exports = {
     },
 
     create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId, total_weight, discount_coupon, coupon_id, ownedCouponId, coupon_name }) => {
+        const t = await sequelize.transaction(); // Assuming Sequelize is the Sequelize instance
+
         try {
             const invoice = Date.now() + Math.round(Math.random() * 1E9);
             const transaction = await db.transactions.create({
@@ -37,11 +39,7 @@ module.exports = {
                 discount_coupon,
                 coupon_id,
                 coupon_name
-            });
-
-            // const autoCancel = `CREATE EVENT cancel_transaction_${transaction.dataValues.id} ON SCHEDULE AT date_add(NOW(), INTERVAL 24 HOUR) DO UPDATE transactions SET status = 'canceled' WHERE id = ${transaction.dataValues.id}`;
-
-            // await db.sequelize.query(autoCancel);
+            }, { transaction: t });
 
             const inMyCart = await db.cart.findAll({
                 include: [
@@ -65,20 +63,26 @@ module.exports = {
                     weight: product.product.weight,
                     real_price: product.product.price,
                     store_branch_id: branchId
-                });
+                }, { transaction: t });
             }
 
-            await db.cart.destroy({ where: { user_id: userId } });
+            await db.cart.destroy({ where: { user_id: userId }, transaction: t });
+
             if (ownedCouponId) {
-                await db.owned_coupon.update({ isValid: "false" }, { where: { id: ownedCouponId } })
+                await db.owned_coupon.update({ isValid: "false" }, { where: { id: ownedCouponId }, transaction: t });
             }
-            const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id } });
+
+            const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id }, transaction: t });
+
+            await t.commit();
 
             return transaction;
         } catch (error) {
+            await t.rollback();
             throw error;
         }
     },
+
 
     filteredAllOrder: async ({ invoice, status, createdAt, page, branchId }) => {
         try {

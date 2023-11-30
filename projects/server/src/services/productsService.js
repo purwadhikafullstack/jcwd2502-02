@@ -1,6 +1,8 @@
 const db = require("./../models");
 const { deleteFiles } = require('./../helper/deleteFiles');
 const { logger } = require("handlebars");
+const { sequelize } = require('./../models')
+
 module.exports = {
     getAllProductsService: async () => {
         try {
@@ -88,17 +90,29 @@ module.exports = {
         }
     },
     createProductService: async (body, file) => {
+        let t; // Declare transaction outside try-catch block
         try {
+            t = await sequelize.transaction(); // Start transaction
+
             const data = JSON.parse(body);
-            const dataImage = file
-            const newProduct = await db.product.create({ ...data, image: dataImage });
-            const branches = await db.store_branch.findAll()
-            for (const branch of branches) await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 });
-            return newProduct
+            const dataImage = file;
+            const newProduct = await db.product.create({ ...data, image: dataImage }, { transaction: t });
+
+            const branches = await db.store_branch.findAll();
+
+            for (const branch of branches) {
+                await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 }, { transaction: t });
+            }
+
+            await t.commit(); // Commit the transaction
+
+            return newProduct;
         } catch (error) {
-            return error
+            if (t) await t.rollback(); // Rollback the transaction if there's an error
+            return error;
         }
     },
+
     deleteProductService: async (params) => {
         try {
             const { id } = params;

@@ -5,6 +5,8 @@ const axios = require('axios');
 const { Op, literal } = require("sequelize");
 const { shippingOption, create, filteredAllOrder, filteredTransactionsData, filteredProductTransaction, getUserCouponService, getOverallData } = require('../services/transactionService')
 const { deleteFiles } = require("./../helper/deleteFiles")
+const { sequelize } = require('./../models')
+
 
 module.exports = {
     getShippingOption: async (req, res, next) => {
@@ -41,7 +43,11 @@ module.exports = {
                     },
                     {
                         model: db.user, attributes: ["username"]
-                    }
+                    },
+                    {
+                        model: db.store_branch, attributes: ["name"]
+                    },
+
                 ],
                 where: { user_id: id, id: transactionId }
             });
@@ -66,6 +72,9 @@ module.exports = {
                         },
                         {
                             model: db.user, attributes: ["username"]
+                        },
+                        {
+                            model: db.store_branch, attributes: ["name"]
                         },
                     ],
                     where: { id: transactionId }
@@ -307,6 +316,7 @@ module.exports = {
         }
     },
     adminSendOrder: async (req, res, next) => {
+
         try {
             const { role } = req.dataToken;
             const { transactionId } = req.params;
@@ -356,21 +366,21 @@ module.exports = {
                 const conditionCoupon2 = (userTotalTransactions + 1) % 10 === 0
                 const conditionCoupon3 = (userTotalTransactions + 1) % 3 === 0
                 if (conditionCoupon3) {
-                    const giftCoupon3 = `CREATE EVENT gift_coupon_freeongkir_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name)
+                    const giftCoupon3 = `CREATE EVENT gift_coupon_freeongkir_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 14 DAY) DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name)
                     VALUES ('true',${getOrder.user_id}, ${coupon3.id}, ${coupon3.amount}, '${coupon3.name}');
                     UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId};
                     END`;
                     await db.sequelize.query(giftCoupon3);
                 }
                 if (conditionCoupon2) {
-                    const giftCoupon2 = `CREATE EVENT gift_coupon_potonganharga_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name)
+                    const giftCoupon2 = `CREATE EVENT gift_coupon_potonganharga_for_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 14 DAY) DO BEGIN INSERT INTO owned_coupons (isValid, user_id, coupon_id, coupon_value, coupon_name)
                     VALUES ('true',${getOrder.user_id}, ${coupon2.id}, ${coupon2.amount}, '${coupon2.name}');
                     UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId};
                     END`;
                     await db.sequelize.query(giftCoupon2);
                 }
                 if (!conditionCoupon2 && !conditionCoupon3) {
-                    const autoComplete = `CREATE EVENT complete_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 2 MINUTE) DO UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId}`;
+                    const autoComplete = `CREATE EVENT complete_transaction_${transactionId} ON SCHEDULE AT date_add(NOW(), INTERVAL 14 DAY) DO UPDATE transactions SET status = 'Complete' WHERE id = ${transactionId}`;
                     await db.sequelize.query(autoComplete);
                 }
                 responseHandler(res, "Send Order Success", result);

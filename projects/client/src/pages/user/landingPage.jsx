@@ -89,7 +89,7 @@ const LandingPage = () => {
                 </div>
                 <Jumbotron />
                 <div className="">
-                    <div className="h-[180px] mt-10 pt-5 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-48 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600  border-yellow-300">
+                    <div className="h-[160px] mt-10 lg:pt-5 pt-3 px-5 lg:h-[190px] lg:py-5 overflow-x-auto  m-5 md:mx-24 lg:mx-48 lg:gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600  border-yellow-300 hide-scrollbar">
                         {category.map((value, index) => {
                             return (
                                 <div key={index} className="">

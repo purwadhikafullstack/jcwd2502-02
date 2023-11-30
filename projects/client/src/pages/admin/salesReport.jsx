@@ -287,7 +287,7 @@ const SalesReportPage = () => {
                                         ))}
                                     </tbody>
                                 </table>
-                                <div className='flex justify-center m-3'>
+                                <div className='flex justify-center mt-3'>
                                     {data.length == 0 ? <div className="alert alert-error flex justify-center w-full">
                                         <span className="flex justify-center">Sorry there are no data yet</span>
                                     </div> : null}

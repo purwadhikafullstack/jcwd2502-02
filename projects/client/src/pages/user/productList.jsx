@@ -10,6 +10,8 @@ import { useSelector } from "react-redux";
 import PaginationFixed from "../../components/paginationComponent";
 import toast, { Toaster } from "react-hot-toast";
 import { BiSearchAlt } from "react-icons/bi";
+import { useDebounce } from 'use-debounce';
+
 const ProductListPage = () => {
     const [category, setCategory] = useState([]);
     const [discount, setDiscount] = useState("");
@@ -25,10 +27,9 @@ const ProductListPage = () => {
     const [page, setPage] = useState(1);
     const navigate = useNavigate();
     const [maxPage, setMaxPage] = useState(1);
-    const debouncedSearch = debounce((value) => {
-        setPage(1)
-        setSearchQuery(value);
-    }, 1000);
+    const [debouncedSearch] = useDebounce(searchQuery, 1000);
+
+
     const handleReset = () => {
         try {
             setPage(1)
@@ -123,19 +124,14 @@ const ProductListPage = () => {
         }
         onGetCategory();
         onGetFilteredProducts();
-    }, [catId, sort, closestBranch, page, id, searchProduct, discount]);
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            onGetFilteredProducts();
-        }, 1000);
-        debouncedSearch();
-    }, [searchQuery])
+    }, [catId, sort, closestBranch, page, id, searchProduct, discount, debouncedSearch]);
+
     return (
         <div className="">
             <Toaster />
             <Navbar />
             <div className="mt-[70px] pt-3">
-                <div className="h-[190px] mt-10 px-5 lg:h-[190px] lg:py-5 overflow-x-auto m-5 md:mx-24 lg:mx-40 gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600 border-yellow-300">
+                <div className="h-[160px] mt-10 lg:pt-5 pt-3 px-5 lg:h-[190px] lg:py-5 overflow-x-auto  m-5 md:mx-24 lg:mx-44 lg:gap-5 flex shadow-xl rounded-3xl border-l-8 border-r-8 border-r-green-600  border-yellow-300 hide-scrollbar">
                     {category.map((value, index) => {
                         return (
                             <div key={index}>
@@ -148,30 +144,36 @@ const ProductListPage = () => {
                 </div>
             </div>
             <div className="mx-5 md:mx-24 lg:mx-40 my-10">
-                <div className="flex  justify-center gap-2 my-5 py-3 ">
-                    <div className=" grid place-content-center">
-                        <div className="border-2 flex rounded-xl bg-white h-[48px]">
+                <div className="gap-2 my-5 py-3 px-5 lg:gap-3  lg:flex">
+
+                    <div className=" w-full mb-3 lg:mb-0">
+                        <div className="border-2 flex rounded-xl bg-white h-[48px] ">
                             <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                             <input value={searchQuery} type="text" onChange={(e) => handleSearch(e.target.value)} className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product" />
                         </div>
                     </div>
-                    <div className="grid place-content-center">
-                        <select defaultValue="" value={sort} onChange={(e) => handleChange(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
-                            <option value={""} disabled selected>Sort</option>
-                            <option value="ASC"> A-Z </option>
-                            <option value="DESC"> Z-A </option>
-                        </select>
+
+                    <div className="flex gap-3">
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={sort} onChange={(e) => handleChange(e)} className="w-[100px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
+                                <option value={""} disabled selected>Sort</option>
+                                <option value="ASC"> A-Z </option>
+                                <option value="DESC"> Z-A </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <select defaultValue="" value={discount} onChange={(e) => handleDiscount(e.target.value)} className="w-[100px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
+                                <option value={""} disabled selected>Sort</option>
+                                <option value="diskon"> Discounted Products </option>
+                                <option value="bogo"> Buy 1 Get 1 Free </option>
+                            </select>
+                        </div>
+                        <div>
+                            <button onClick={handleReset} className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900">Show All Products</button>
+                        </div>
+
                     </div>
-                    <div className="grid place-content-center">
-                        <select defaultValue="" value={discount} onChange={(e) => handleDiscount(e.target.value)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
-                            <option value={""} disabled selected>Sort</option>
-                            <option value="diskon"> Discounted Products </option>
-                            <option value="bogo"> Buy 1 Get 1 Free </option>
-                        </select>
-                    </div>
-                    <div>
-                        <button onClick={handleReset} className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900">Show All Products</button>
-                    </div>
+
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
                     {products && products.length ? products.map((value, index) => {

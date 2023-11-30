@@ -121,7 +121,7 @@ const AdminOrderDetail = () => {
                                                     message={"Payment Declined"}
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-orange-400 bg-orange-700 text-white w-full border-none ">
-                                                        Decline Payment Proof
+                                                        Decline Payment
                                                     </div>} />
                                             </div>
                                             <div className="w-full">

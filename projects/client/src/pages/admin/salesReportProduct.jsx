@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from "../../components/footer";
 import { useAppSelector } from '../../redux/App/Store';
+import { useDebounce } from 'use-debounce';
+
 
 const SalesReportProduct = () => {
     const userSelector = useAppSelector((state) => state.users)
@@ -23,6 +25,8 @@ const SalesReportProduct = () => {
     const [name, setName] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [debouncedName] = useDebounce(name, 1000);
+
     const handleSortQuery = (event) => {
         setPage(1)
         setSort(event.target.value);
@@ -93,7 +97,7 @@ const SalesReportProduct = () => {
 
     useEffect(() => {
         fetchData()
-    }, [sortBy, startDate, endDate, sort, name, page, branch])
+    }, [sortBy, startDate, endDate, sort, debouncedName, page, branch])
     console.log(data);
 
     return (
@@ -116,7 +120,7 @@ const SalesReportProduct = () => {
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input onChange={handleNameQuery} value={name} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product Name" />
                     </div>
-                    <div className="flex gap-3 lg:overflow-none justify-between overflow-x-auto my-3">
+                    <div className="flex gap-3 lg:overflow-none justify-center overflow-x-auto my-3">
                         <div className="flex">
                             <div className="flex">
                                 <div className="grid place-content-center mx-3">from</div>
@@ -189,7 +193,7 @@ const SalesReportProduct = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data && data.map((value, index) => (
+                                    {data ? data.map((value, index) => (
                                         <tr key={value.id} className="hover:bg-gray-100 py-3">
                                             <td className="px-4 py-3 text-center border-r">{value.name}</td>
                                             <td className="px-4 py-3 text-center border-r">{value.product.product_category.name}</td>
@@ -199,9 +203,17 @@ const SalesReportProduct = () => {
                                             <td className="px-4 py-3 text-center border-r">{value.transaction.store_branch.name} </td>
                                             <td className="px-4 py-3 text-center border-r">{value.date.split("T")[0]} </td>
                                         </tr>
-                                    ))}
+                                    )) :
+                                        null
+                                    }
+
                                 </tbody>
                             </table>
+                            <div className='flex justify-center mt-3'>
+                                {data.length == 0 ? <div className="alert alert-error flex justify-center w-full">
+                                    <span className="flex justify-center">Sorry there are no data yet</span>
+                                </div> : null}
+                            </div>
                             <div className='flex justify-center m-3'>
                                 {/* {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
                                     <span className="flex justify-center">Sorry there are no data just yet</span>
