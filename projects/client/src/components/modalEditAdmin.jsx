@@ -23,6 +23,7 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
                 await getAdmins()
                 document.getElementById(`my_modal_${adminData.username}`).close();
                 toast.success(response.data.message);
+                window.location.reload();
                 setDisabled(false)
             } catch (error) {
                 toast.error(error.response.data.message);

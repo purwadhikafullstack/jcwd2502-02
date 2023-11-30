@@ -64,7 +64,7 @@ const SalesReportProduct = () => {
 
     const handleReset = () => {
         try {
-            setSort(""); setStartDate(""); setPage(1); setMaxPage(1); setEndDate(""); setSort("ASC"); setSortBy("name"); setBranch("");
+            setSort(""); setStartDate(""); setPage(1); setMaxPage(1); setEndDate(""); setSort("ASC"); setSortBy("name"); setBranch(""); setName("");
         } catch (error) {
             console.log(error);
         }
@@ -118,7 +118,7 @@ const SalesReportProduct = () => {
 
                     <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product Name" />
+                        <input onChange={handleNameQuery} value={name} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product Name" />
                     </div>
 
                     <div className="flex gap-5 lg:overflow-none justify-between overflow-x-auto my-3">
