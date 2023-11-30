@@ -132,7 +132,9 @@ const routes = [
     } />,
 
     <Route path='/admin-dashboard' element={
-        < AdminDashboardPage />
+        <Protected superadminPage={false}>
+            < AdminDashboardPage />
+        </Protected>
     } />,
 
     <Route path='/sales-report/user' element={

@@ -27,10 +27,10 @@ export default function LoginPage() {
             const data = await dispatch(login2({ ...values }))
             const token = localStorage.getItem("accessToken");
             if (data.payload && token) {
-                toast.success('Login successful')
-                setTimeout(() => {
-                    navigate('/')
-                }, 3000)
+                // toast.success('Login successful')
+                // setTimeout(() => {
+                //     navigate('/')
+                // }, 3000)
             }
         },
         validationSchema: yup.object().shape({

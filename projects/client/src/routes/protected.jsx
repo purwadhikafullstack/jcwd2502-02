@@ -32,7 +32,7 @@ export default function Protected({ children, adminPage, userPage, guestPage, su
 
         setTimeout(() => {
             setLoading(false)
-        }, 2000)
+        }, 3000)
 
     }, [children, user]);
 
