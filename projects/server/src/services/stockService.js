@@ -5,7 +5,8 @@ module.exports = {
     stockHistory: async(req) => {
         try {
             const {role, id} = req.dataToken;
-            const {product, branch, description, startDate, endDate, page} = req.query;
+            const {product, branch, description, startDate, endDate, sort, page} = req.query;
+            console.log(req.query)
             let whereCondition = {};
             let nameCondition = {};
             const limit = 6;
@@ -27,12 +28,12 @@ module.exports = {
                     where: whereCondition,
                     limit,
                     offset,
-                    order: [["createdAt", "ASC"]],
+                    order: [["createdAt", sort]],
                     include: [
                         {
                         model: db.product,
                         attributes: ['id', 'name'],
-                        where: nameCondition
+                        where: nameCondition,
                         },
                         {
                             model: db.store_branch,
@@ -55,12 +56,12 @@ module.exports = {
                     where: whereCondition,
                     limit,
                     offset,
-                    order: [["createdAt", "ASC"]],
+                    order: [["createdAt", sort]],
                     include: [
                         {
                             model: db.product,
                             attributes: ['id', 'name'],
-                            where: nameCondition
+                            where: nameCondition,
                         },
                         {
                             model: db.store_branch,

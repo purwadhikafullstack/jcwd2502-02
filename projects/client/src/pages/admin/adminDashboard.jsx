@@ -37,16 +37,12 @@ const AdminDashboardPage = () => {
     const onFetchData = async () => {
         const orderCount = await api().get(`/chart/order-count?branch=${orderByBranch}`)
         setOrderData(orderCount.data.data);
-        // setOrderData(orderCount.data.data);
         const branchData = await api().get('/branch/all');
         setBranch(branchData.data.data)
-        // get user data
         const users = await api().get('/chart/new-users');
         setUserData(users.data.data);
-        // get product mvp
         const bestProduct = await api().get('/chart/top-product');
         setPopularProduct(bestProduct.data.data)
-        // get card data 
         const cardData = await api().get(`/report/dashboard-card?branch=${cardBranch}`)
         setCardData(cardData.data.data);
     }
@@ -59,13 +55,13 @@ const AdminDashboardPage = () => {
         <div className="h-full w-full bg-white">
             <div>
                 <NavbarAdmin />
-
                 <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 ">
                     <div className="">
-                        <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Admin Dashboard</div>
-                        <div className="rounded-md w-fit border border-black text-xs p-1 my-1">
+                        <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Admin Dashboard {userSelector.role == "admin" ? <div className="text-sm pl-3 flex items-end">({branch[userSelector?.store_branch_id - 1]?.name})</div> : null } </div>
+                        
                             {   
                                 userSelector.role == "superadmin" ?
+                                <div className="rounded-md w-fit border border-black text-xs p-1 my-1">
                                 <select name="" id="" onChange={handleCardBranchChange}>
                                     <option value=""> All branch </option>
                                     {
@@ -76,10 +72,10 @@ const AdminDashboardPage = () => {
                                         })
                                     }
                                 </select>
+                                </div>
                                 :
-                                <h1> Displaying data of {branch[userSelector?.store_branch_id - 1]?.name}</h1>
+                                null
                             }
-                        </div>
 
                         {/* <div className="rounded-full border-8 border-green-700 bg-yellow-300 lg:p-3 flex flex-col justify-center items-center my-5 p-3 overflow-hidden">
                             <div className="truncate">
@@ -124,11 +120,9 @@ const AdminDashboardPage = () => {
                                     <div className="font-black text-3xl grid place-content-center">User Report</div>
                                     <div className="text-sm grid place-content-center text-center"> Displaying user registration count in the past week</div>
                                 </div>
-
-                                <div className="">
+                                <div>
                                     < DashboardUserChart className="" data={userData} />
                                 </div>
-
                             </div>
 
                             {/* better masukin di sales report aja  */}
@@ -169,20 +163,16 @@ const AdminDashboardPage = () => {
                                             }
                                         </select>
                                         :
-                                        <div className="text-sm grid place-content-center text-center"> Displaying data for {branch[userSelector?.store_branch_id - 1]?.name} </div>
+                                        null
                                     }
                                 </div>
                                 <div>
                                     <DashboardOrderChart data={orderData} />
                                 </div>
-
-
                             </div>
                         </div>
-
                     </div>
                 </div>
-
                 <Footer />
             </div>
         </div>

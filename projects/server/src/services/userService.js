@@ -222,7 +222,8 @@ module.exports = {
 
     getFilteredAdmin: async (req) => {
         try {
-            const { username, branch, page } = req.query;
+            const { username, branch, sortBy, sorting, page } = req.query;
+            console.log(sortBy, sorting);
             const limit = 6;
             const offset = (page - 1) * limit;
             let whereCondition = {};
@@ -237,12 +238,11 @@ module.exports = {
             }
             const filteredAdmins = await db.user.findAll({
                 where: whereCondition,
-                order: [["updatedAt", "DESC"]],
+                order: [[sortBy, sorting]],
                 limit,
                 offset,
                 include: [{ model: db.store_branch }]
             });
-            console.log(filteredAdmins);
             const totalRecords = await db.user.count({ where: whereCondition });
             const maxPages = Math.ceil(totalRecords / limit);
             return {

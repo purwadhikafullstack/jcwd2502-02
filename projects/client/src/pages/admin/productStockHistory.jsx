@@ -21,11 +21,14 @@ const ProductStockHistoryPage = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [branchList, setBranchList] = useState([]);
+
+    const [sort, setSort] = useState("DESC");
+
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const handleReset = () => {
         try {
-            setNameQuery(""); setBranchQuery(""); setDescQuery(""); setStartDate(formattedToday); setEndDate(""); setPage(1);
+            setNameQuery(""); setBranchQuery(""); setDescQuery(""); setStartDate(formattedToday); setSort("DESC"); setEndDate(""); setPage(1);
         } catch (error) {
             console.log(error);
         }
@@ -50,8 +53,13 @@ const ProductStockHistoryPage = () => {
         setPage(1);
         setEndDate(event.target.value);
     };
+    const handleSort = (event) => {
+        setPage(1);
+        setSort(event.target.value)
+    }
+
     const fetchData = async () => {
-        const response = await api().get(`/stock/history?product=${nameQuery}&branch=${branchQuery}&description=${descQuery}&startDate=${startDate}&endDate=${endDate}&page=${page}`)
+        const response = await api().get(`/stock/history?product=${nameQuery}&branch=${branchQuery}&description=${descQuery}&startDate=${startDate}&endDate=${endDate}&sort=${sort}&page=${page}`)
         const branchData = await api().get('/branch/all');
         console.log(response);
         setBranchList(branchData.data.data);
@@ -76,15 +84,7 @@ const ProductStockHistoryPage = () => {
     useEffect(() => {
         fetchData()
         console.log(stockData);
-    }, [descQuery, branchQuery, startDate, endDate, page]);
-
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            fetchData();
-        }, 1000);
-        debouncedSearch();
-    }, [nameQuery])
-
+    }, [nameQuery, descQuery, branchQuery, startDate, endDate, sort, page]);
     return (
         <div className="">
             <NavbarAdmin />
@@ -100,8 +100,37 @@ const ProductStockHistoryPage = () => {
                             <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                             <input value={nameQuery} onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder="Search Product Name" />
                         </div>
-
-                        <div className="flex lg:justify-center lg:gap-8 lg:overflow-none overflow-x-auto my-3">
+                        <div>
+                            <div className="flex">
+                                <div className="flex">
+                                    <div className="grid place-content-center mx-3">from</div>
+                                    <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                    </div>
+                                </div>
+                                <div className="flex">
+                                    <div className="grid place-content-center mx-3">to</div>
+                                    <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="flex">
+                            <div className="grid place-content-center mx-3">
+                                <select name="" id="" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[130px]" onChange={handleSort} value={sort}>
+                                    <option value="ASC"> Oldest </option>
+                                    <option value="DESC"> Newest </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div className="flex gap-3">
+                            <div className=''>
+                                <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[160px]' onChange={handleDescQuery} value={descQuery}>
+                                    <option value=""> Show all </option>
+                                    <option value="sale"> Sale </option>
+                                    <option value="stock"> Restock </option>
+                                    <option value="expire"> Expire Product </option>
+                                </select>
+                            </div>
                             <div>
                                 <div className="flex">
                                     <div className="flex">

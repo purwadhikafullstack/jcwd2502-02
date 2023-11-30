@@ -18,10 +18,9 @@ export default function CreateAdminPage() {
     const [queryBranch, setQueryBranch] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
-    const [sortBy, setSortBy] = useState("name")
-    const [sort, setSort] = useState("ASC");
+    const [sortBy, setSortBy] = useState("updatedAt")
+    const [sort, setSort] = useState("DESC");
     const [debouncedName] = useDebounce(queryUsername, 1000);
-
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
@@ -37,10 +36,19 @@ export default function CreateAdminPage() {
         handlePageChange(page - 1);
     };
 
+    // const handleNameInput = (event) => {
+    //     setQueryUsername(event.target.value);
+    //     setPage(1);
+    // };
+
+    const debouncedHandleNameInput = debounce((value) => {
+        setQueryUsername(value);
+        setPage(1);
+    }, 300);
+
     const handleNameInput = (event) => {
-        setPage(1);
-        setQueryUsername(event.target.value);
-        setPage(1);
+        const { value } = event.target;
+        debouncedHandleNameInput(value);
     };
 
     const handleBranchInput = (event) => {
@@ -48,10 +56,20 @@ export default function CreateAdminPage() {
         setPage(1);
     };
 
+    const handleSortByInput = (event) => {
+        setSortBy(event.target.value);
+        setPage(1)
+    }
+
+    const handleSortInput = (event) => {
+        setSort(event.target.value);
+        setPage(1);
+    }
+
     const onGetAdmins = async () => {
         try {
             setAdmin(() => [])
-            const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&page=${page}`)
+            const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&sortBy=${sortBy}&sorting=${sort}&page=${page}`)
             setMaxPage(data.data.maxPages)
             setAdmin(() => data.data.filteredAdmins);
         } catch (error) {
@@ -61,8 +79,10 @@ export default function CreateAdminPage() {
 
     const handleResetFilter = async () => {
         try {
-            setQueryUsername("")
-            setQueryBranch("")
+            setQueryUsername("");
+            setQueryBranch("");
+            setSort("DESC");
+            setSortBy("updatedAt")
             setPage(1)
         } catch (error) {
             console.log(error);
@@ -86,7 +106,7 @@ export default function CreateAdminPage() {
     useEffect(() => {
         onGetAdmins()
         onGetBranch()
-    }, [queryBranch, page, debouncedName])
+    }, [queryBranch, sortBy, sort, page, debouncedName])
 
 
     return (
@@ -129,13 +149,13 @@ export default function CreateAdminPage() {
                         <div className="grid place-content-center">
                             <h1>Sort By:</h1>
                         </div>
-                        <div className="grid place-content-center">
+                        <div className="grid place-content-center" onChange={handleSortByInput} value={sortBy}>
                             <select name="" id="" className="h-[48px] px-2 border-2 rounded-xl w-[100px]">
-                                <option value="name"> Name </option>
-                                <option value="status"> Status </option>
+                                <option value="updatedAt"> Recent </option>
+                                <option value="isVerified"> Status </option>
                             </select>
                         </div>
-                        <div className="grid place-content-center">
+                        <div className="grid place-content-center" onChange={handleSortInput} value={sort}>
                             <select name="" id="" className="h-[48px] px-2 border-2 rounded-xl w-[80px]">
                                 <option value="ASC"> ASC </option>
                                 <option value="DESC"> DESC </option>
@@ -194,7 +214,6 @@ export default function CreateAdminPage() {
                                                     message={"Admin Status Changed"}
                                                     textOnButton={"Confirm"}
                                                     button={<button className={value.isVerified == "verified" ? " btn bg-red-600 hover:bg-red-600 rounded-2xl  text-white " : " btn bg-green-600 hover:bg-green-600 rounded-2xl  text-white w-[120px]"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>} />
-
 
                                             </div>
                                         </div>

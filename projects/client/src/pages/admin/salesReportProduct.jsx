@@ -99,30 +99,24 @@ const SalesReportProduct = () => {
     return (
         <div className="">
             <NavbarAdmin />
-
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32">
-                <div className="text-4xl font-bold text-green-800 mb-3">
-                    Sales Report
+                <div className="text-4xl font-bold text-green-800 mb-3 flex">
+                    Sales Report {userSelector.role == "admin" ? <div className="text-sm pl-3 flex items-end">({branchList[userSelector?.store_branch_id - 1]?.name})</div> : null}
                 </div>
-
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
                     <div role="tablist" className="tabs tabs-lifted tabs-lg">
                         <Link to={`/sales-report/user`}>
                             <div role="tab" className="tab lg:text-xl ">Transactions</div>
                         </Link>
                         <div role="tab" className="tab tab-active bg-green-700 text-white rounded-t-xl lg:text-xl">Products</div>
-
                     </div>
                 </div>
-
                 <div className="border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5">
-
                     <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input onChange={handleNameQuery} value={name} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product Name" />
                     </div>
-
-                    <div className="flex gap-5 lg:overflow-none justify-between overflow-x-auto my-3">
+                    <div className="flex gap-3 lg:overflow-none justify-between overflow-x-auto my-3">
                         <div className="flex">
                             <div className="flex">
                                 <div className="grid place-content-center mx-3">from</div>
@@ -135,7 +129,6 @@ const SalesReportProduct = () => {
                                 </div>
                             </div>
                         </div>
-
                         {
                             userSelector?.role === "superadmin" ?
                                 <div className='grid place-content-center'>
@@ -151,10 +144,8 @@ const SalesReportProduct = () => {
                                     </select>
                                 </div>
                                 :
-                                <h1 className="grid place-content-center"> Displaying data of {branchList[userSelector?.store_branch_id - 1]?.name} </h1>
+                                null
                         }
-
-
                         <div className="flex">
                             <div className='grid place-content-center mr-2 w-[60px]'>Sort By</div>
                             <div className=''>
