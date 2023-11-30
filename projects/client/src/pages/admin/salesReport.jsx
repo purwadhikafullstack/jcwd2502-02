@@ -81,6 +81,7 @@ const SalesReportPage = () => {
         const response = await api().get(`/transaction/data/product-transaction?username=${username}&sort=${sort}&startdate=${startDate}&enddate=${endDate}&page=${page}&branch=${branch}&sortby=${sortBy}&transactionstatus=${transactionFilter}`);
         const response2 = await api().get(`/transaction/data/overall-transaction?startdate=${startDate}&enddate=${endDate}&branch=${branch}`)
         const branchData = await api().get('/branch/all')
+        console.log(response2);
         setCardData(response2.data.data);
         setBranchList(branchData.data.data);
         setMaxPage(response.data.data.maxPages)
