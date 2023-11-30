@@ -3,7 +3,7 @@ import Footer from "../../components/footer";
 import React, { useEffect, useState, useRef } from "react";
 import { api1 } from "../../api/api";
 import { Link } from "react-router-dom";
-import debounce from 'lodash/debounce';
+import { useDebounce } from 'use-debounce';
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import ModalUpdateProductStock from "../../components/modalUpdateProductStock";
@@ -26,6 +26,8 @@ const UpdateProductStocksPage = () => {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [sortBy, setSortBy] = useState("id");
+    const [debouncedSearch] = useDebounce(searchQuery, 1000);
+
     const fetchData = async () => {
         try {
             const branchAdmin = await api.get(`branch/one/${branchId}`);
@@ -111,13 +113,8 @@ const UpdateProductStocksPage = () => {
     }
     useEffect(() => {
         fetchData()
-    }, [catId, sort, branchId, page, sortBy]);
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            fetchData()
-        }, 1000);
-        debouncedSearch();
-    }, [searchQuery])
+    }, [catId, sort, branchId, page, sortBy, debouncedSearch]);
+
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
@@ -228,7 +225,11 @@ const UpdateProductStocksPage = () => {
                                     );
                                 }) : null}
                             </tbody>
+
                         </table>
+                        {products.length == 0 ? <div className="alert alert-error flex justify-center w-full">
+                            <span className="flex justify-center">Sorry Product is Unavailable</span>
+                        </div> : null}
                     </div>
                 </div>
             </div>

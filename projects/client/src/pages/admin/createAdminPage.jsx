@@ -7,6 +7,7 @@ import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
 import NavbarAdmin from "../../components/navbarAdmin";
 import debounce from 'lodash/debounce';
+import { useDebounce } from 'use-debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import ConfirmConfirmation from "../../components/confirmModal";
 
@@ -19,6 +20,8 @@ export default function CreateAdminPage() {
     const [maxPage, setMaxPage] = useState(1);
     const [sortBy, setSortBy] = useState("name")
     const [sort, setSort] = useState("ASC");
+    const [debouncedName] = useDebounce(queryUsername, 1000);
+
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
@@ -83,15 +86,8 @@ export default function CreateAdminPage() {
     useEffect(() => {
         onGetAdmins()
         onGetBranch()
-    }, [queryBranch, page])
+    }, [queryBranch, page, debouncedName])
 
-
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            onGetAdmins();
-        }, 1000);
-        debouncedSearch();
-    }, [queryUsername])
 
     return (
         <div className="flex flex-col flex-grow min-h-screen gap-2">

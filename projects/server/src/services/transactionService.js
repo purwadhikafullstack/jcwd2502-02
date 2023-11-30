@@ -164,6 +164,8 @@ module.exports = {
             console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken;
             const { username, sort, page, branch, startdate, enddate, sortby, transactionstatus } = req.query;
+            console.log(">>>>>>>>>>.");
+            console.log(req.query);
             if (transactionstatus == 2) {
                 whereClause.status = 'Complete'
             } else if (transactionstatus == 3) {
@@ -212,6 +214,9 @@ module.exports = {
                 limit,
                 offset
             })
+            console.log(whereClause);
+            console.log("ini datanya>>>>>>>>>>>>>..");
+            console.log(data);
             return {
                 maxPages,
                 data

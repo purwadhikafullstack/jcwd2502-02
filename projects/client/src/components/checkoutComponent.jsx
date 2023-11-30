@@ -37,7 +37,7 @@ const CheckoutComponent = (props) => {
             toast.error("Oops, stock limit reached. No more items can be added");
         }
     };
-    console.log(props);
+    // console.log(props);
     return (
         <div>
             <div className={`w-full ${props.style}`}>

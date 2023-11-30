@@ -35,6 +35,8 @@ module.exports = {
             const { branchId } = req.query;
             const whereClause = { isDeleted: 0 };
 
+            console.log(req.query);
+            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.");
             const includeProductStock = branchId
                 ? [
                     {
@@ -47,14 +49,18 @@ module.exports = {
             const products = await db.product.findAll({
                 where: { ...whereClause },
                 include: includeProductStock,
-                order: [['product_categories_id', 'ASC']],
-                group: ['product_categories_id'],  // Group by product_categories_id
+                limit: 10,
+                // order: [['product.product_categories_id', 'ASC']],
+                // group: ['product.product_categories_id'],  // Group by product_categories_id
             });
+
+            console.log(products);
 
             const result = res.json({
                 products,
             });
         } catch (error) {
+            console.log(error);
             next(error);
         }
     }

@@ -5,11 +5,15 @@ import Button from "./button";
 import Input from "./input";
 import { useRef, useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import { IoEyeSharp } from "react-icons/io5";
+import { IoEyeOffSharp } from "react-icons/io5";
 
 const ModalNewAdmin = ({ getAdmins }) => {
     const [image, setImage] = useState([])
     const [branch, setBranch] = useState("")
     const [disabled, setDisabled] = useState(false)
+    const [showPassword, setShowPassword] = useState(false);
+
     const formik = useFormik({
         initialValues: {
             username: "",
@@ -115,7 +119,27 @@ const ModalNewAdmin = ({ getAdmins }) => {
                             </div>
                             <div>
                                 <div className=" pb-2"> Password </div>
-                                <input type="password" id='password' name='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className='border border-green-800 rounded-xl w-full p-2' />
+
+                                <div className='bg-white rounded-full flex justify-between'>
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        id='password'
+                                        name='password'
+                                        onBlur={formik.handleBlur}
+                                        onChange={formik.handleChange}
+                                        value={formik.values.password}
+                                        className='rounded-l-xl p-2 pl-3 w-full border border-green-800'
+                                    />
+                                    <button
+                                        type="button"
+                                        className=" grid place-content-center px-3 rounded-r-xl text-xl border border-green-800  text-green-800"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                    >
+                                        {showPassword ? <IoEyeOffSharp /> : <IoEyeSharp />}
+                                    </button>
+                                </div>
+
+                                {/* <input type="password" id='password' name='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className='border border-green-800 rounded-xl w-full p-2' /> */}
                                 {
                                     formik.touched.password && formik.errors.password ?
                                         <div className='text-red-500 font-bold'> {formik.errors.password} </div>

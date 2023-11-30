@@ -7,6 +7,8 @@ import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
+import debounce from 'lodash/debounce';
+
 
 const ProductStockHistoryPage = () => {
     const today = new Date();
@@ -74,7 +76,14 @@ const ProductStockHistoryPage = () => {
     useEffect(() => {
         fetchData()
         console.log(stockData);
-    }, [nameQuery, descQuery, branchQuery, startDate, endDate, page]);
+    }, [descQuery, branchQuery, startDate, endDate, page]);
+
+    useEffect(() => {
+        const debouncedSearch = debounce(() => {
+            fetchData();
+        }, 1000);
+        debouncedSearch();
+    }, [nameQuery])
 
     return (
         <div className="">
@@ -86,53 +95,56 @@ const ProductStockHistoryPage = () => {
                         <div className="text-4xl font-bold text-green-800 mb-3">
                             Stock History                        </div>
                     </div>
-                    <div className="border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5 flex gap-3">
-                        <div className="border-2 flex rounded-xl bg-white h-[48px]">
+                    <div className="border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5 ">
+                        <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                             <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                            <input value={nameQuery} onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-[300px] text-lg pl-2" placeholder="Search Product Name" />
+                            <input value={nameQuery} onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder="Search Product Name" />
                         </div>
-                        <div>
-                        <div className="flex">
-                            <div className="flex">
-                                <div className="grid place-content-center mx-3">from</div>
-                                <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
-                                </div>
-                            </div>
-                            <div className="flex">
-                                <div className="grid place-content-center mx-3">to</div>
-                                <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
-                                </div>
-                            </div>
-                        </div>
-                        </div>
-                        <div className="flex gap-3">
-                            <div className=''>
-                                <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[160px]' onChange={handleDescQuery} value={descQuery}>
-                                    <option value=""> Show all </option>
-                                    <option value="sale"> Sale </option>
-                                    <option value="stock"> Restock </option>
-                                    <option value="expire"> Expire Product </option>
-                                </select>
-                            </div>
+
+                        <div className="flex lg:justify-center lg:gap-8 lg:overflow-none overflow-x-auto my-3">
                             <div>
-                                {
-                                    userSelector.role == "superadmin" ?
-                                        <select name="" id="" className="w-[200px] h-[48px] px-2 border-2 rounded-xl lg:w-[170px]" onChange={handleBranchQuery} value={branchQuery}>
-                                            <option value=""> All stores </option>
-                                            {
-                                                branchList && branchList.map((value) => {
-                                                    return (
-                                                        <option value={value.id}> {value.name} </option>
-                                                    )
-                                                })
-                                            }
-                                        </select>
-                                        :
-                                        null
-                                }
+                                <div className="flex">
+                                    <div className="flex">
+                                        <div className="grid place-content-center mx-3">from</div>
+                                        <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                        </div>
+                                    </div>
+                                    <div className="flex">
+                                        <div className="grid place-content-center mx-3">to</div>
+                                        <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div className="">
-                                <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
+                            <div className="flex gap-3">
+                                <div className=''>
+                                    <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[160px]' onChange={handleDescQuery} value={descQuery}>
+                                        <option value=""> Show all </option>
+                                        <option value="sale"> Sale </option>
+                                        <option value="stock"> Restock </option>
+                                        <option value="expire"> Expire Product </option>
+                                    </select>
+                                </div>
+                                <div>
+                                    {
+                                        userSelector.role == "superadmin" ?
+                                            <select name="" id="" className="w-[200px] h-[48px] px-2 border-2 rounded-xl lg:w-[170px]" onChange={handleBranchQuery} value={branchQuery}>
+                                                <option value=""> All stores </option>
+                                                {
+                                                    branchList && branchList.map((value) => {
+                                                        return (
+                                                            <option value={value.id}> {value.name} </option>
+                                                        )
+                                                    })
+                                                }
+                                            </select>
+                                            :
+                                            null
+                                    }
+                                </div>
+                                <div className="">
+                                    <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -171,6 +183,9 @@ const ProductStockHistoryPage = () => {
                                         }) : null}
                                     </tbody>
                                 </table>
+                                {stockData.length == 0 ? <div className="alert alert-error mt-3">
+                                    <span className="flex justify-center">Sorry Product is Unavailable</span>
+                                </div> : null}
                             </div>
                         </div>
                     </div>

@@ -3,7 +3,7 @@ import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useRef, useState } from "react";
 import { api1 } from "../../api/api";
-import debounce from 'lodash/debounce';
+import { useDebounce } from 'use-debounce';
 import ModalNewProduct from "../../components/modalNewProduct";
 import toast, { Toaster } from "react-hot-toast";
 import { AiFillEdit } from "react-icons/ai";
@@ -31,6 +31,8 @@ const UpdateProductsPage = () => {
     const [sort, setSort] = useState('ASC');
     const [sortBy, setSortBy] = useState("id");
     const role = useSelector((state) => state.users.role);
+    const [debouncedSearch] = useDebounce(searchQuery, 1000);
+
     const fetchData = async () => {
         try {
             const data = await api.get(`category/all`);
@@ -148,17 +150,10 @@ const UpdateProductsPage = () => {
             console.log(error);
         }
     };
-    const debouncedSaveProducts = debounce(() => { handleSaveProduct() }, 1000);
     useEffect(() => {
         fetchData()
-    }, [sort, page, sortBy, category]);
+    }, [sort, page, sortBy, category, debouncedSearch]);
 
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            fetchData();
-        }, 1000);
-        debouncedSearch();
-    }, [searchQuery])
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
@@ -288,6 +283,9 @@ const UpdateProductsPage = () => {
 
                             </tbody>
                         </table>
+                        {products.length == 0 ? <div className="alert alert-error flex justify-center w-full">
+                            <span className="flex justify-center">Sorry Product is Unavailable</span>
+                        </div> : null}
                     </div>
                 </div>
             </div>

@@ -10,6 +10,8 @@ import moment from 'moment';
 import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
+import { useDebounce } from 'use-debounce';
+
 
 const SuperOrderList = () => {
     const today = new Date();
@@ -25,6 +27,9 @@ const SuperOrderList = () => {
     const [sort, setSort] = useState('DESC');
     const [branch, setBranch] = useState("")
     const [branches, setBranches] = useState()
+    const [debouncedInvoice] = useDebounce(invoice, 1000);
+
+
     const getBranches = async () => {
         try {
             const branches = await api().get(`/branch/all`)
@@ -55,6 +60,16 @@ const SuperOrderList = () => {
         try {
             setPage(1);
             setStatus(event.target.value)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleSearchInvoice = (event) => {
+        try {
+            // console.log(event.target.value);
+            setPage(1);
+            setInvoice(event)
         } catch (error) {
             console.log(error);
         }
@@ -94,10 +109,6 @@ const SuperOrderList = () => {
         }
     };
 
-    const handleInvoice = debounce((event) => {
-        console.log(event);
-        setInvoice(event);
-    }, 1000);
 
     const handleSearch = async () => {
         try {
@@ -130,17 +141,8 @@ const SuperOrderList = () => {
     useEffect(() => {
         handleSearch()
         getBranches()
-    }, [startdate, status, invoice, page, enddate, sortBy, sort, branch])
+    }, [debouncedInvoice, startdate, status, page, enddate, sortBy, sort, branch])
 
-    const testing = (value) => {
-        try {
-            console.log(value);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    console.log(page);
 
     return (
         <div >
@@ -152,7 +154,7 @@ const SuperOrderList = () => {
                 <div className="mb-10 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 py-5 px-8 shadow-xl rounded-2xl">
                     <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="g:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
+                        <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="g:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
                     <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3">
                         <div className="grid place-content-center">
@@ -213,7 +215,7 @@ const SuperOrderList = () => {
                 <div className="grid gap-3 mb-10">
                     {orderData ? orderData.map((value, index) => {
                         return (
-                            <div key={index} onClick={() => testing(value.id)}>
+                            <div key={index} >
                                 <OrderComponent
                                     status={value.status}
                                     invoice={value.invoice}

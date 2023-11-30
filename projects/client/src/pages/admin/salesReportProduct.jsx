@@ -94,7 +94,8 @@ const SalesReportProduct = () => {
     useEffect(() => {
         fetchData()
     }, [sortBy, startDate, endDate, sort, name, page, branch])
-    console.log(userSelector?.role);
+    console.log(data);
+
     return (
         <div className="">
             <NavbarAdmin />
@@ -137,22 +138,22 @@ const SalesReportProduct = () => {
 
                         {
                             userSelector?.role === "superadmin" ?
-                            <div className='grid place-content-center'>
-                                <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
-                                    <option value={""} selected>All Branch</option>
-                                    {
-                                        branchList && branchList.map((value) => {
-                                            return (
-                                                <option value={value.id}> {value.name} </option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            :
-                            <h1 className="grid place-content-center"> Displaying data of {branchList[userSelector?.store_branch_id - 1]?.name} </h1>
+                                <div className='grid place-content-center'>
+                                    <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
+                                        <option value={""} selected>All Branch</option>
+                                        {
+                                            branchList && branchList.map((value) => {
+                                                return (
+                                                    <option value={value.id}> {value.name} </option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                                :
+                                <h1 className="grid place-content-center"> Displaying data of {branchList[userSelector?.store_branch_id - 1]?.name} </h1>
                         }
-                        
+
 
                         <div className="flex">
                             <div className='grid place-content-center mr-2 w-[60px]'>Sort By</div>
@@ -211,9 +212,9 @@ const SalesReportProduct = () => {
                                 </tbody>
                             </table>
                             <div className='flex justify-center m-3'>
-                                {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
+                                {/* {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
                                     <span className="flex justify-center">Sorry there are no data just yet</span>
-                                </div> : null}
+                                </div> : null} */}
                             </div>
                         </div>
                     </div>

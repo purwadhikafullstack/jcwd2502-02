@@ -9,6 +9,7 @@ import NavbarAdmin from '../../components/navbarAdmin';
 import { Link } from 'react-router-dom';
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from '../../components/footer';
+import { useDebounce } from 'use-debounce';
 
 const SalesReportPage = () => {
     const today = new Date();
@@ -25,6 +26,9 @@ const SalesReportPage = () => {
     const [username, setUsername] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [debouncedName] = useDebounce(username, 1000);
+
+
     const handleTransactionFilter = (event) => {
         setPage(1)
         setTransactionFilter(event.target.value)
@@ -97,7 +101,7 @@ const SalesReportPage = () => {
     }
     useEffect(() => {
         fetchData(page)
-    }, [username, sort, startDate, endDate, page, branch, sortBy, transactionFilter])
+    }, [debouncedName, sort, startDate, endDate, page, branch, sortBy, transactionFilter])
 
     console.log(cardData);
 
@@ -276,7 +280,7 @@ const SalesReportPage = () => {
                                     </tbody>
                                 </table>
                                 <div className='flex justify-center m-3'>
-                                    {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
+                                    {data.length == 0 ? <div className="alert alert-error flex justify-center w-full">
                                         <span className="flex justify-center">Sorry there are no data yet</span>
                                     </div> : null}
                                 </div>

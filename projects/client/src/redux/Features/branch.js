@@ -27,8 +27,6 @@ export const branchSlice = createSlice({
 export const onGetBranchAsync = () => async (dispatch) => {
     try {
         const { data } = await api().get('/branch/all');
-        console.log(data);
-        console.log(data.data);
         dispatch(setBranch(data.data))
     } catch (error) {
         console.log(error);
@@ -37,8 +35,6 @@ export const onGetBranchAsync = () => async (dispatch) => {
 export const getMainAddress = () => async (dispatch) => {
     try {
         const { data } = await api().get('/location/address/main')
-        console.log(data.data);
-        console.log(data);
         dispatch(setMainAddress(data.data))
     } catch (error) {
         console.log(error);
@@ -51,7 +47,6 @@ export const nearestBranch = () => async (dispatch) => {
         const userLatitude = userAddress.data.data.latitude;
         const userLongitude = userAddress.data.data.longitude;
         const { data } = await api().get('/branch/all');
-        console.log(data.data);
         let nearest = null;
         let minDistance = Infinity;
         data.data.forEach((location, idx) => {
@@ -73,8 +68,6 @@ export const nearestBranch = () => async (dispatch) => {
                 nearest = location;
             }
         });
-        console.log(nearest.name);
-        console.log(nearest);
         dispatch(setClosestBranch(nearest))
     } catch (error) {
         console.log(error);

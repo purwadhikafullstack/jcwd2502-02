@@ -133,11 +133,6 @@ const ProductDetailPage = () => {
                             <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white font-bold rounded-xl w-[150px] grid place-content-center">Buy 1 Get 1 Free</div>
                             : null
                         }
-                        {/* <div className="font-semibold text-3xl pt-2 text-green-500 flex">
-                            Rp {product && product.product ? product?.product.final_price?.toLocaleString() : product?.final_price?.toLocaleString()}
-                            {product && product?.product?.discount_id === 1 || product && product?.product?.discount_id === 2 || product?.discount_id === 1 || product && product?.discount_id === 2 ? <div className="text-red-600 line-through font-semibold text-3xl pl-3">Rp {product?.product?.price.toLocaleString()} {product?.price.toLocaleString()} </div> :
-                                null}
-                        </div> */}
                         <div className="font-semibold text-3xl pt-2 text-green-500 flex">
                             Rp {product && product.product ? (product.product.final_price ? product.product.final_price.toLocaleString() : null) : product.final_price?.toLocaleString()}
                             {product && product?.product?.discount_id === 1 || product && product?.product?.discount_id === 2 || product?.discount_id === 1 || product && product?.discount_id === 2 ? <div className="text-red-600 line-through font-semibold text-3xl pl-3">Rp {product?.product?.price ? product?.product?.price.toLocaleString() : null} {product?.price ? product?.price.toLocaleString() : null} </div> :
@@ -174,7 +169,7 @@ const ProductDetailPage = () => {
 
                                 )
                             ) : (
-                                <div className="text-black">Out of Stock</div>
+                                <div className="text-black"></div>
                             )}
                         </div>
                     </div>

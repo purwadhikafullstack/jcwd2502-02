@@ -115,7 +115,6 @@ const routes = [
     } />,
     <Route path='/order/:id' element={
         <Protected userPage={false}>
-            <Navbar />
             <UserOrderDetail />
         </Protected>
     } />,

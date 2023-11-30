@@ -2,7 +2,7 @@ import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import React, { useEffect, useRef, useState } from "react";
 import { api } from "../../api/api";
-import debounce from 'lodash/debounce';
+import { useDebounce } from 'use-debounce';
 import ModalNewCategory from "../../components/modalNewCategory";
 import ModalEditCategory from "../../components/modalEditCategory";
 import { AiFillEdit } from "react-icons/ai";
@@ -24,6 +24,8 @@ const UpdateProductsCategoryPage = () => {
     const pageTopRef = useRef(null);
     const navigate = useNavigate();
     const role = useSelector((state) => state.users.role);
+    const [debouncedSearch] = useDebounce(searchQuery, 1000);
+
     const onGetCategory = async () => {
         try {
             const response = await api().get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
@@ -132,13 +134,8 @@ const UpdateProductsCategoryPage = () => {
     };
     useEffect(() => {
         onGetCategory();
-    }, [sortOrder, page]);
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            onGetCategory();
-        }, 1000);
-        debouncedSearch();
-    }, [searchQuery])
+    }, [sortOrder, page, debouncedSearch]);
+
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
@@ -248,6 +245,9 @@ const UpdateProductsCategoryPage = () => {
                             })}
                         </tbody>
                     </table>
+                    {category.length == 0 ? <div className="alert alert-error flex justify-center w-full">
+                        <span className="flex justify-center">Sorry Category is Unavailable</span>
+                    </div> : null}
                 </div>
                 <div className="flex justify-center mt-4 mb-10">
                     <PaginationFixed

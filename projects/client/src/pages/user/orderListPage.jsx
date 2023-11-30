@@ -6,9 +6,10 @@ import { useEffect, useState, useRef } from "react";
 import { api } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
 import moment from 'moment';
-import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
+import { useDebounce } from 'use-debounce';
+
 
 
 const UserOrderList = () => {
@@ -25,6 +26,7 @@ const UserOrderList = () => {
     const [sort, setSort] = useState('DESC');
     const [branch, setBranch] = useState("")
     const [branches, setBranches] = useState()
+    const [debouncedInvoice] = useDebounce(invoice, 1000);
 
     const getBranches = async () => {
         try {
@@ -94,9 +96,9 @@ const UserOrderList = () => {
             console.log(error);
         }
     };
+
     const handleSearchInvoice = (event) => {
         try {
-            // console.log(event.target.value);
             setPage(1);
             setInvoice(event)
         } catch (error) {
@@ -138,14 +140,8 @@ const UserOrderList = () => {
         handleSearch()
         getBranches()
 
-    }, [startdate, status, page, enddate, sortBy, sort, branch])
+    }, [startdate, debouncedInvoice, status, page, enddate, sortBy, sort, branch])
 
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            handleSearch();
-        }, 1000);
-        debouncedSearch();
-    }, [invoice])
 
     return (
         <div >

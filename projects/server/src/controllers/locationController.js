@@ -6,7 +6,7 @@ const axios = require('axios');
 module.exports = {
     getProvince: async (req, res, next) => {
         try {
-            const province = await db.province.findAll()
+            const province = await db.province.findAll({ where: { isValid: "true" } })
             responseHandler(res, "Get Province Success", province)
         } catch (error) {
             next(error)

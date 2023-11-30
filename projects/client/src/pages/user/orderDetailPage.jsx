@@ -19,6 +19,8 @@ const UserOrderDetail = () => {
     const [detail, setDetail] = useState("")
     const { id } = useParams()
     const payment = useRef(null);
+    const [orderLoaded, setOrderLoaded] = useState(false); // New state
+
 
     const getDetailOrder = async () => {
         try {
@@ -67,6 +69,9 @@ const UserOrderDetail = () => {
         }
     }
 
+    const endDate = new Date(/* Set your end date here */);
+
+
     useEffect(() => {
         getDetailOrder()
         const intervalId = setInterval(() => {
@@ -85,119 +90,126 @@ const UserOrderDetail = () => {
     return (
         <div>
             <Toaster />
-            {/* <Navbar /> */}
-            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"}
+            <Navbar />
+            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full mb-10"}
                 style={{ minHeight: "100vh" }}>
+                {transaction ?
+                    <>
+                        <div className="flex text-md lg:text-2xl font-bold pt-10 pb-5">
+                            <Link to={'/order-list'}>
+                                <div className="hover:underline"> Order List</div>
+                            </Link>
+                            <div className="grid place-content-center px-3"><IoIosArrowForward />
+                            </div>INV {transaction ? transaction.invoice : null}
+                        </div>
 
-                <div className="flex text-md lg:text-2xl font-bold pt-10 pb-5">
-                    <Link to={'/order-list'}>
-                        <div className="hover:underline"> Order List</div>
-                    </Link>
-                    <div className="grid place-content-center px-3"><IoIosArrowForward />
-                    </div>INV {transaction ? transaction.invoice : null}
-                </div>
-
-                <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between ">
-                    <div className="flex flex-col gap-3 lg:flex-1 ">
-                        <div className="flex flex-col gap-3">
-                            <div className="flex justify-between gap-3">
-                                <div className="w-[230px] lg:w-[170px] text-xl font-bold flex flex-col justify-center">Order Status:</div>
-                                <div className="w-full">
-                                    {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>WAITING FOR PAYMENT</div> : null}
-                                    {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
-                                    {transaction.status == "Payment Approved" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2 text-white`}>PAYMENT APPROVED</div> : null}
-                                    {transaction.status == "Delivered" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2 text-white`}>ORDER SENT</div> : null}
-                                    {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
-                                        null
-                                    }
-                                    {transaction.status == "Complete" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-green-600 p-2 text-white`}>{transaction.status.toUpperCase()}</div> :
-                                        null
-                                    }
-                                </div>
-                            </div>
-                            {transaction.payment_proof == null && transaction.status !== "canceled" ? <div>
-                                <div className="border-4 border-green-700 h-[200px] grid place-content-center">
-                                    <div className="grid place-content-center">TIME REMAINING:</div>
-                                    <div className="text-6xl grid place-content-center">{formatTime(timeRemaining)}</div>
-                                    <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
-
-                                    <div className="flex">
-                                        <div className="grid place-content-center">
-                                            <img src={"./download.png" && "https://cdn.discordapp.com/attachments/1120979304961032195/1179266321049989253/image.png?ex=65792858&is=6566b358&hm=1c24c04ab821f91ec5971a3ea52b4ecb6962718f1349f384f37b8ad33908c5f6&"} alt="app_logo" className="h-[30px] lg:pr-3" />
+                        <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between ">
+                            <div className="flex flex-col gap-3 lg:flex-1 ">
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex justify-between gap-3">
+                                        <div className="w-[230px] lg:w-[170px] text-xl font-bold flex flex-col justify-center">Order Status:</div>
+                                        <div className="w-full">
+                                            {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>WAITING FOR PAYMENT</div> : null}
+                                            {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
+                                            {transaction.status == "Payment Approved" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2 text-white`}>PAYMENT APPROVED</div> : null}
+                                            {transaction.status == "Delivered" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2 text-white`}>ORDER SENT</div> : null}
+                                            {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
+                                                null
+                                            }
+                                            {transaction.status == "Complete" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-green-600 p-2 text-white`}>{transaction.status.toUpperCase()}</div> :
+                                                null
+                                            }
                                         </div>
-                                        <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 text-xs lg:text-base grid place-content-center"> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                    </div>
+                                    {transaction.status === "pending" ? <div>
+                                        <div className="border-4 border-green-700 h-[200px] grid place-content-center">
+                                            <div className="grid place-content-center">TIME REMAINING:</div>
+                                            <div className="text-6xl grid place-content-center countdown ">{formatTime(timeRemaining)}</div>
+                                            <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
+
+                                            <div className="flex">
+                                                <div className="grid place-content-center">
+                                                    <img src={"./download.png" && "https://cdn.discordapp.com/attachments/1120979304961032195/1179266321049989253/image.png?ex=65792858&is=6566b358&hm=1c24c04ab821f91ec5971a3ea52b4ecb6962718f1349f384f37b8ad33908c5f6&"} alt="app_logo" className="h-[30px] lg:pr-3" />
+                                                </div>
+                                                <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 text-xs lg:text-base grid place-content-center"> 6041688880 - a/n PT BuyFresh Indonesia</div>
+                                            </div>
+
+                                        </div>
+                                        <input
+                                            type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={payment} onChange={uploadPayment}
+                                        />
+                                        <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div>
+
+                                        <DeleteConfirmation
+                                            itemId={id}
+                                            onDelete={getDetailOrder}
+                                            apiEndpoint="/transaction/cancel"
+                                            text={""}
+                                            message={"Order Canceled"}
+                                            textOnButton={"Yes"}
+                                            button={<div className=" btn hover:bg-red-600 bg-red-600 text-white rounded-xl mt-3 w-full border-none ">
+                                                CANCEL ORDER
+                                            </div>}
+                                        />
+
+                                    </div>
+                                        : null
+                                    }
+
+                                    {transaction.status === "Delivered" ?
+
+                                        <div className="w-full">
+                                            <DeleteConfirmation
+                                                itemId={id}
+                                                onDelete={getDetailOrder}
+                                                apiEndpoint="transaction/user/complete"
+                                                text={""}
+                                                message={"Order Completed"}
+                                                textOnButton={"Yes"}
+                                                button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
+                                                    COMPLETE ORDER
+                                                </div>} />
+                                        </div>
+
+                                        : null}
+
+                                    <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>
+                                    <div className="">
+                                        <div className="text-xl font-bold mb-3">Item List:</div>
+                                        <div className="flex flex-col gap-3 h-[360px] overflow-y-auto">
+                                            {detail ? detail.map((value, index) => {
+                                                return (
+                                                    <div key={index}>
+                                                        <CheckoutComponent
+                                                            name={value.name}
+                                                            weight={value.weight}
+                                                            price={value.real_price}
+                                                            final_price={value.price}
+                                                            discount_id={value.discount_id}
+                                                            quantity={value.quantity}
+                                                            subtotal={value.subtotal}
+                                                            image={value.product.image}
+                                                        />
+                                                    </div>
+                                                )
+                                            }) : null}
+
+
+                                        </div>
                                     </div>
 
                                 </div>
-                                <input
-                                    type="file" accept=".jpg, .jpeg, .png" name="file" hidden ref={payment} onChange={uploadPayment}
-                                />
-                                <div onClick={() => payment.current.click()} className=" btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 w-full mt-5">UPLOAD PAYMENT PROOF</div>
-
-                                <DeleteConfirmation
-                                    itemId={id}
-                                    onDelete={getDetailOrder}
-                                    apiEndpoint="/transaction/cancel"
-                                    text={""}
-                                    message={"Order Canceled"}
-                                    textOnButton={"Yes"}
-                                    button={<div className=" btn hover:bg-red-600 bg-red-600 text-white rounded-xl mt-3 w-full border-none ">
-                                        CANCEL ORDER
-                                    </div>}
-                                />
-
                             </div>
-                                : null
-                            }
-
-                            {transaction.status === "Delivered" ?
-
-                                <div className="w-full">
-                                    <DeleteConfirmation
-                                        itemId={id}
-                                        onDelete={getDetailOrder}
-                                        apiEndpoint="transaction/user/complete"
-                                        text={""}
-                                        message={"Order Completed"}
-                                        textOnButton={"Yes"}
-                                        button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
-                                            COMPLETE ORDER
-                                        </div>} />
-                                </div>
-
-                                : null}
-
-                            <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>
-                            <div className="">
-                                <div className="text-xl font-bold mb-3">Item List:</div>
-                                <div className="flex flex-col gap-3 h-[360px] overflow-y-auto">
-                                    {detail ? detail.map((value, index) => {
-                                        return (
-                                            <div key={index}>
-                                                <CheckoutComponent
-                                                    name={value.name}
-                                                    weight={value.weight}
-                                                    price={value.real_price}
-                                                    final_price={value.price}
-                                                    discount_id={value.discount_id}
-                                                    quantity={value.quantity}
-                                                    subtotal={value.subtotal}
-                                                    image={value.product.image}
-                                                />
-                                            </div>
-                                        )
-                                    }) : null}
-
-
-                                </div>
-                            </div>
-
+                            <OrderDetailsSection transaction={transaction}
+                                fetchData={getDetailOrder}
+                                id={id} />
                         </div>
-                    </div>
-                    <OrderDetailsSection transaction={transaction}
-                        fetchData={getDetailOrder}
-                        id={id} />
-                </div>
+
+                    </>
+                    : null
+
+                }
+
             </div>
 
             <Footer />

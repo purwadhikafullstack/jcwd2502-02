@@ -27,9 +27,7 @@ const LandingPage = () => {
     const dispatch = useDispatch();
     const api = api1();
     const closestBranch = useSelector((state) => state.branch.closestBranch);
-    console.log(closestBranch.id);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
-    console.log(mainAddress);
 
     const onGetCategory = async () => {
         try {
@@ -52,7 +50,6 @@ const LandingPage = () => {
         try {
             if (closestBranch.id === undefined) {
                 const branch = await api.get(`/branch/recommend?branchId=`)
-                console.log(branch);
                 setProducts(branch.data.products)
             } else {
                 const branch = await api.get(`/branch/recommend?branchId=${closestBranch.id}`)
@@ -71,7 +68,6 @@ const LandingPage = () => {
     useEffect(() => {
         dispatch(getMainAddress());
     }, []);
-
 
     return (
         <div className="">

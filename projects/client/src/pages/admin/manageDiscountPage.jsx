@@ -3,8 +3,8 @@ import Footer from "../../components/footer";
 import NavbarAdmin from "../../components/navbarAdmin"
 import React, { useEffect, useState, useRef } from "react";
 import { api1 } from "../../api/api";
+import { useDebounce } from 'use-debounce';
 import { Link } from "react-router-dom";
-import debounce from 'lodash/debounce';
 import { useSelector } from "react-redux";
 import toast, { Toaster } from "react-hot-toast";
 import ModalManageDiscount from "../../components/modalManageDiscount";
@@ -26,6 +26,7 @@ const ManageProductDiscountPage = () => {
     const [maxPage, setMaxPage] = useState(1);
     const [sortBy, setSortBy] = useState("id");
     const role = useSelector((state) => state.users.role);
+    const [debouncedSearch] = useDebounce(searchQuery, 1000);
     const fetchData = async () => {
         try {
             const category = await api.get(`category/all`);
@@ -111,13 +112,8 @@ const ManageProductDiscountPage = () => {
     }
     useEffect(() => {
         fetchData()
-    }, [catId, sort, page, sortBy]);
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            fetchData()
-        }, 1000);
-        debouncedSearch();
-    }, [searchQuery])
+    }, [catId, sort, page, sortBy, debouncedSearch]);
+
     return (
         <div ref={pageTopRef} className="">
             <Toaster />
@@ -238,7 +234,10 @@ const ManageProductDiscountPage = () => {
                                     }) : null}
                                 </tbody>
                             </table>
-                        ) : null}
+
+                        ) : <div className="alert alert-error flex justify-center w-full">
+                            <span className="flex justify-center">Sorry Product is Unavailable</span>
+                        </div>}
                     </div>
                 </div>
             </div>
