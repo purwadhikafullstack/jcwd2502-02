@@ -3,11 +3,7 @@ const { deleteFiles } = require('./../helper/deleteFiles');
 const responseHandler = require("./../utils/responseHandler")
 const { getAllProductsService } = require("./../services/productsService");
 const { getAllProductsAndCategoryNameService } = require("./../services/productsService");
-const { getAllProductsService2 } = require("./../services/productsService");
-const { getAllProductsByCatService } = require("./../services/productsService");
 const { getProductsByCategoryService } = require("./../services/productsService");
-const { getAllProductsBySearchService } = require("./../services/productsService");
-const { getAllProductsFilteredService } = require("./../services/productsService");
 const { getOneProductService } = require("./../services/productsService");
 const { createProductService } = require("./../services/productsService");
 const { deleteProductService } = require("./../services/productsService");
@@ -121,13 +117,10 @@ module.exports = {
             const limit = 8;
             const like = Sequelize.Op.like;
             const whereClause = { isDeleted: 0 };
-
             if (catId) whereClause.product_categories_id = catId;
             if (searchQuery) whereClause.name = { [like]: `%${searchQuery}%` };
-
             let products;
             let totalRecords;
-
             if (sortby === "stock") {
                 products = await db.product.findAll({
                     where: { ...whereClause },
@@ -139,11 +132,7 @@ module.exports = {
                     ],
                     order: [[db.product_stock, 'stock', sort]],
                 });
-
-                // Count the total number of records after sorting
                 totalRecords = products.length;
-
-                // Apply pagination
                 products = products.slice((page - 1) * limit, page * limit);
             } else {
                 const includeProductStock = branchId
@@ -154,11 +143,7 @@ module.exports = {
                         },
                     ]
                     : [];
-
-                // Fetch the total number of records without pagination
                 totalRecords = await db.product.count({ where: { ...whereClause } });
-
-                // Fetch the products with pagination
                 products = await db.product.findAll({
                     where: { ...whereClause },
                     include: includeProductStock,
@@ -167,9 +152,7 @@ module.exports = {
                     offset: (page - 1) * limit,
                 });
             }
-
             const maxPages = Math.ceil(totalRecords / limit);
-
             const result = res.json({
                 products,
                 maxPages,
@@ -178,11 +161,8 @@ module.exports = {
             next(error);
         }
     },
-
     createProduct: async (req, res, next) => {
         try {
-            console.log("ini isi req.body.data= " + req.body.data);
-            console.log("ini isi req.files.image[0].filename= " + req.files.image[0].filename);
             const newProduct = await createProductService(req.body.data, req.files.image[0].filename)
             responseHandler(res, "Create Product Success", newProduct)
         } catch (error) {
@@ -250,7 +230,6 @@ module.exports = {
     updateProductStock: async (req, res, next) => {
         try {
             const updatedProductStock = await updateProductStockService(req.body)
-            console.log(updatedProductStock);
             responseHandler(res, "Update Product Stock Success", updatedProductStock)
         } catch (error) {
             next(error)
@@ -280,20 +259,4 @@ module.exports = {
             next(error)
         }
     },
-    clonePriceToFinalPrice: async (req, res, next) => {
-        try {
-            const products = await db.product.findAll({ attributes: ["id", "price", "final_price"] });
-            const updatedProducts = await Promise.all(
-                products.map(async (product) => {
-                    if (!product.final_price) {
-                        await db.product.update({ final_price: product.price }, { where: { id: product.id } });
-                        return product;
-                    } else { return product; }
-                })
-            );
-            responseHandler(res, "Clone Price to Final Price Success", updatedProducts);
-        } catch (error) {
-            next(error);
-        }
-    }
 }

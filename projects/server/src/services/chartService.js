@@ -7,8 +7,8 @@ module.exports = {
             const adminData = req.dataToken;
             const sevenDaysAgo = new Date();
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            if(adminData.role == 'admin') {
-                const response = await db.user.findOne({where: {id: adminData.id}})
+            if (adminData.role == 'admin') {
+                const response = await db.user.findOne({ where: { id: adminData.id } })
                 orders = await db.transactions.findAll({
                     where: {
                         store_branch_id: response.dataValues.store_branch_id,
@@ -22,8 +22,8 @@ module.exports = {
                 });
             }
             const store_branch_id = req.query.branch;
-            if(adminData.role == "superadmin") {
-                if(store_branch_id) {
+            if (adminData.role == "superadmin") {
+                if (store_branch_id) {
                     orders = await db.transactions.findAll({
                         where: {
                             store_branch_id,
@@ -39,7 +39,7 @@ module.exports = {
                     orders = await db.transactions.findAll({
                         where: {
                             createdAt: {
-                                [Op.gte]: sevenDaysAgo, 
+                                [Op.gte]: sevenDaysAgo,
                             },
                             status: {
                                 [Op.ne]: "canceled"
@@ -67,7 +67,6 @@ module.exports = {
             return error;
         }
     },
-
     getNewUserCount: async (req) => {
         try {
             const sevenDaysAgo = new Date();
@@ -75,7 +74,7 @@ module.exports = {
             users = await db.user.findAll({
                 where: {
                     createdAt: {
-                        [Op.gte]: sevenDaysAgo, 
+                        [Op.gte]: sevenDaysAgo,
                     },
                 },
             });
@@ -98,7 +97,6 @@ module.exports = {
             return error;
         }
     },
-
     getTopProduct: async (req) => {
         try {
             const data = await db.transaction_detail.findAll(
@@ -106,19 +104,19 @@ module.exports = {
                     include: {
                         model: db.transactions,
                         attributes: ["status"],
-                        where: {status: "Complete"}
+                        where: { status: "Complete" }
                     }
                 }
             )
             const productQuantities = data.reduce((acc, item) => {
                 const productId = item.products_id;
                 const quantity = item.quantity;
-            if (acc[productId]) {
-                acc[productId] += quantity;
-            } else {
-                acc[productId] = quantity;
-            }
-            return acc;
+                if (acc[productId]) {
+                    acc[productId] += quantity;
+                } else {
+                    acc[productId] = quantity;
+                }
+                return acc;
             }, {});
             const mostSoldProductId = Object.keys(productQuantities).reduce((a, b) =>
                 productQuantities[a] > productQuantities[b] ? a : b
@@ -129,18 +127,16 @@ module.exports = {
             return error
         }
     },
-
     getRevenueReport: async (req) => {
         try {
             let whereBranchCondition = {};
             const adminData = req.dataToken;
             const selectBranch = req.query.branch;
-            if(adminData.role == 'superadmin') {
+            if (adminData.role == 'superadmin') {
                 whereBranchCondition.store_branch_id = selectBranch
             } else if (adminData.role == 'admin') {
                 whereBranchCondition.store_branch_id = adminData.store_branch_id
             }
-            console.log(adminData.role);
             const data = await db.transaction_detail.findAll({
                 attributes: [
                     'name',
@@ -156,7 +152,6 @@ module.exports = {
                 group: ['name', 'transaction.store_branch_id'],
                 raw: true
             });
-            console.log(whereBranchCondition);
             return data
         } catch (error) {
             return error;

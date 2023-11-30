@@ -4,6 +4,7 @@ const responseHandler = require("./../utils/responseHandler")
 const { getBranchService } = require("./../services/branchService");
 const { getOneBranchService } = require("./../services/branchService");
 const { nearestBranchService } = require("./../services/branchService");
+const { getRecommendProductService } = require("./../services/branchService");
 module.exports = {
     getbranch: async (req, res, next) => {
         try {
@@ -29,40 +30,14 @@ module.exports = {
             next(error)
         }
     },
-
     getRecommendProduct: async (req, res, next) => {
         try {
-            const { branchId } = req.query;
-            const whereClause = { isDeleted: 0 };
-
-            console.log(req.query);
-            console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>.");
-            const includeProductStock = branchId
-                ? [
-                    {
-                        model: db.product_stock,
-                        where: { store_branch_id: branchId },
-                    },
-                ]
-                : [];
-
-            const products = await db.product.findAll({
-                where: { ...whereClause },
-                include: includeProductStock,
-                limit: 10,
-                // order: [['product.product_categories_id', 'ASC']],
-                // group: ['product.product_categories_id'],  // Group by product_categories_id
-            });
-
-            console.log(products);
-
-            const result = res.json({
-                products,
-            });
+            const result = await getRecommendProductService(req.query, res);
+            responseHandler(res, "Get Recommended Products Success", result);
         } catch (error) {
             console.log(error);
             next(error);
         }
-    }
+    },
 
 }

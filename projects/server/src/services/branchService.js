@@ -24,4 +24,30 @@ module.exports = {
             return error
         }
     },
+    getRecommendProductService: async (query, res) => {
+        try {
+            const { branchId } = query;
+            const whereClause = { isDeleted: 0 };
+            const includeProductStock = branchId
+                ? [
+                    {
+                        model: db.product_stock,
+                        where: { store_branch_id: branchId },
+                    },
+                ]
+                : [];
+            const products = await db.product.findAll({
+                where: { ...whereClause },
+                include: includeProductStock,
+                limit: 10,
+            });
+            const result = res.json({
+                products,
+            });
+
+            return result;
+        } catch (error) {
+            throw error;
+        }
+    },
 }
