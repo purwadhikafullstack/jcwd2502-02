@@ -43,7 +43,7 @@ app.get("/api/greetings", (req, res, next) => {
   });
 });
 
-app.use(express.static('src/public'))
+app.use(express.static(`${__dirname}/public`))
 
 const { productsRouter, categoryRouter, branchRouter, cartRouter, locationRouter, transactionRouter, stockRouter, reportRouter } = require('./routers');
 const { log } = require("handlebars");
