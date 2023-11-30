@@ -9,8 +9,11 @@ import NavbarAdmin from '../../components/navbarAdmin';
 import { Link } from 'react-router-dom';
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from '../../components/footer';
+import { useAppSelector } from '../../redux/App/Store';
+
 
 const SalesReportPage = () => {
+    const userSelector = useAppSelector((state) => state.users)
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
     const [sortBy, setSortBy] = useState("id");
@@ -105,8 +108,8 @@ const SalesReportPage = () => {
             <NavbarAdmin />
             <div className='mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32'>
                 <div className="">
-                    <div className="text-4xl font-bold text-green-800 mb-3">
-                        Sales Report
+                    <div className="text-4xl font-bold text-green-800 mb-3 flex">
+                        Sales Report { userSelector.role == "admin" ? <div className="text-sm pl-3 flex items-end">({branchList[userSelector?.store_branch_id - 1]?.name})</div> : null }
                     </div>
                 </div>
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
@@ -119,7 +122,7 @@ const SalesReportPage = () => {
                 </div>
                 <div className='overflow-x-auto h-[100px] lg:h-auto flex justify-between gap-3 mt-5'>
                     <div className='w-[400px] border-4 bg-yellow-300 border-green-700 rounded-xl p-3'>
-                        <div className='grid place-content-start font-medium'>Total Revenue:</div>
+                        <div className='grid place-content-start font-medium'>Current Revenue:</div>
                         <div className="grid place-content-end text-3xl font-bold mt-2">
                             <div className='flex'> Rp <div className='pl-3'></div>
                                 {cardData ? cardData?.completedOrderRevenue?.toLocaleString() : null
@@ -137,7 +140,7 @@ const SalesReportPage = () => {
                                 Rp
                                 <div className='pl-3'></div>
                                 {cardData ? (
-                                    cardData.onGoingOrderRevenue && cardData.completedOrderRevenue ? (
+                                    cardData.onGoingOrderRevenue || cardData.completedOrderRevenue ? (
                                         (cardData.onGoingOrderRevenue + cardData.completedOrderRevenue).toLocaleString()
                                     ) : (
                                         <span className="loading loading-spinner loading-lg"></span>
@@ -202,16 +205,21 @@ const SalesReportPage = () => {
                                 </select>
                             </div>
                             <div className='grid place-content-center'>
-                                <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[180px]'>
-                                    <option value={""} selected>All Branch</option>
-                                    {
-                                        branchList && branchList.map((value) => {
-                                            return (
-                                                <option value={value.id}> {value.name} </option>
-                                            )
-                                        })
-                                    }
-                                </select>
+                                {
+                                    userSelector.role == "superadmin" ?
+                                    <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[180px]'>
+                                        <option value={""} selected>All Branch</option>
+                                        {
+                                            branchList && branchList.map((value) => {
+                                                return (
+                                                    <option value={value.id}> {value.name} </option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                    :
+                                    null
+                                }
                             </div>
                             <div className='flex gap-3'>
                                 <div className="flex">

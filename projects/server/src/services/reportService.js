@@ -50,7 +50,7 @@ module.exports = {
                         include: [{ model: db.product_category, attributes: ["name"] }]
                     }
                 ],
-                group: ["transaction_detail.name", "transaction_detail.price", "transaction_detail.products_id", "transaction_detail.store_branch_id", Sequelize.fn('DATE', Sequelize.col('transaction_detail.createdAt'))],
+                group: ["transaction.id", "transaction_detail.name", "transaction_detail.price", "transaction_detail.products_id", "transaction_detail.store_branch_id", Sequelize.fn('DATE', Sequelize.col('transaction_detail.createdAt'))],
                 order: [[sortBy, sortHow]],
                 where: { ...whereCondition },
                 limit,
@@ -64,6 +64,7 @@ module.exports = {
                 dataFinal
             }
         } catch (error) {
+            console.log(error);
             return error;
         }
     },

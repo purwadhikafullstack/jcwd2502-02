@@ -1,36 +1,6 @@
 const { Op } = require("sequelize");
 const db = require("./../models");
 module.exports = {
-    // getOrderCountByBranch: async (req) => {
-    //     try {
-    //         let orders
-    //         const store_branch_id = req.query.branch
-    //         console.log(store_branch_id);
-    //         if(store_branch_id) {
-    //             orders = await db.transactions.findAll({where: {store_branch_id} })
-    //         } else {
-    //             orders = await db.transactions.findAll()
-    //         }
-    //         const sortedData = orders.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-    //         const groupedData = sortedData.reduce((result, item) => {
-    //         const date = new Date(item.createdAt).toISOString().split('T')[0];
-    //         result[date] = (result[date] || 0) + 1;
-    //             return result;
-    //         }, {});
-    //         const resultArray = Object.keys(groupedData).map(date => ({
-    //         date,
-    //         count: groupedData[date],
-    //         }));
-    //         const formattedResult = resultArray.map(item => ({
-    //             date: new Date(item.date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long' }),
-    //             count: item.count,
-    //         }));
-    //         return formattedResult;
-    //     } catch (error) {
-    //         return error;
-    //     }
-    // },
-
     getOrderCountByBranch: async (req) => {
         try {
             let orders;
@@ -45,6 +15,9 @@ module.exports = {
                         createdAt: {
                             [Op.gte]: sevenDaysAgo,
                         },
+                        status: {
+                            [Op.ne]: "canceled"
+                        }
                     },
                 });
             }
@@ -57,6 +30,9 @@ module.exports = {
                             createdAt: {
                                 [Op.gte]: sevenDaysAgo,
                             },
+                            status: {
+                                [Op.ne]: "canceled"
+                            }
                         },
                     });
                 } else {
@@ -65,6 +41,9 @@ module.exports = {
                             createdAt: {
                                 [Op.gte]: sevenDaysAgo, 
                             },
+                            status: {
+                                [Op.ne]: "canceled"
+                            }
                         },
                     });
                 }

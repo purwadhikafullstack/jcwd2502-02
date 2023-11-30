@@ -19,11 +19,14 @@ const ProductStockHistoryPage = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [branchList, setBranchList] = useState([]);
+
+    const [sort, setSort] = useState("DESC");
+
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const handleReset = () => {
         try {
-            setNameQuery(""); setBranchQuery(""); setDescQuery(""); setStartDate(formattedToday); setEndDate(""); setPage(1);
+            setNameQuery(""); setBranchQuery(""); setDescQuery(""); setStartDate(formattedToday); setSort("DESC");  setEndDate(""); setPage(1);
         } catch (error) {
             console.log(error);
         }
@@ -48,8 +51,13 @@ const ProductStockHistoryPage = () => {
         setPage(1);
         setEndDate(event.target.value);
     };
+    const handleSort = (event) => {
+        setPage(1);
+        setSort(event.target.value)
+    }
+    
     const fetchData = async () => {
-        const response = await api().get(`/stock/history?product=${nameQuery}&branch=${branchQuery}&description=${descQuery}&startDate=${startDate}&endDate=${endDate}&page=${page}`)
+        const response = await api().get(`/stock/history?product=${nameQuery}&branch=${branchQuery}&description=${descQuery}&startDate=${startDate}&endDate=${endDate}&sort=${sort}&page=${page}`)
         const branchData = await api().get('/branch/all');
         console.log(response);
         setBranchList(branchData.data.data);
@@ -74,8 +82,7 @@ const ProductStockHistoryPage = () => {
     useEffect(() => {
         fetchData()
         console.log(stockData);
-    }, [nameQuery, descQuery, branchQuery, startDate, endDate, page]);
-
+    }, [nameQuery, descQuery, branchQuery, startDate, endDate, sort, page]);
     return (
         <div className="">
             <NavbarAdmin />
@@ -92,18 +99,26 @@ const ProductStockHistoryPage = () => {
                             <input value={nameQuery} onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-[300px] text-lg pl-2" placeholder="Search Product Name" />
                         </div>
                         <div>
-                        <div className="flex">
                             <div className="flex">
-                                <div className="grid place-content-center mx-3">from</div>
-                                <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                <div className="flex">
+                                    <div className="grid place-content-center mx-3">from</div>
+                                    <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex">
-                                <div className="grid place-content-center mx-3">to</div>
-                                <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                <div className="flex">
+                                    <div className="grid place-content-center mx-3">to</div>
+                                    <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+                        <div className="flex">
+                            <div className="grid place-content-center mx-3">
+                                <select name="" id="" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[130px]" onChange={handleSort} value={sort}>
+                                    <option value="ASC"> Oldest </option>
+                                    <option value="DESC"> Newest </option>
+                                </select>
+                            </div>
                         </div>
                         <div className="flex gap-3">
                             <div className=''>
