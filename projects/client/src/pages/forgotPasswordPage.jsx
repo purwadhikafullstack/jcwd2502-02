@@ -11,7 +11,6 @@ export default function ForgotPasswordPage() {
             email: ""
         },
         onSubmit: async (values) => {
-            console.log(values.email);
             const response = await api().post('/users/request-reset', { email: values.email })
             toast.success('Recovery email has been sent')
         },

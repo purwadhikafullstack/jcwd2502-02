@@ -2,7 +2,7 @@ const axios = require('axios');
 const { Op, literal, Sequelize } = require("sequelize");
 const db = require("./../models");
 const responseHandler = require("./../utils/responseHandler");
-
+const { sequelize } = require('./../models')
 
 module.exports = {
     shippingOption: async (origin, destination, weight, courier) => {
@@ -20,6 +20,8 @@ module.exports = {
     },
 
     create: async (userId, { subtotal, shipping_cost, discount, final_total, shipping_method, address, branchId, total_weight, discount_coupon, coupon_id, ownedCouponId, coupon_name }) => {
+        const t = await sequelize.transaction(); // Assuming Sequelize is the Sequelize instance
+
         try {
             const invoice = Date.now() + Math.round(Math.random() * 1E9);
             const transaction = await db.transactions.create({
@@ -37,11 +39,7 @@ module.exports = {
                 discount_coupon,
                 coupon_id,
                 coupon_name
-            });
-
-            const autoCancel = `CREATE EVENT cancel_transaction_${transaction.dataValues.id} ON SCHEDULE AT date_add(NOW(), INTERVAL 24 HOUR) DO UPDATE transactions SET status = 'canceled' WHERE id = ${transaction.dataValues.id}`;
-
-            await db.sequelize.query(autoCancel);
+            }, { transaction: t });
 
             const inMyCart = await db.cart.findAll({
                 include: [
@@ -65,20 +63,26 @@ module.exports = {
                     weight: product.product.weight,
                     real_price: product.product.price,
                     store_branch_id: branchId
-                });
+                }, { transaction: t });
             }
 
-            await db.cart.destroy({ where: { user_id: userId } });
+            await db.cart.destroy({ where: { user_id: userId }, transaction: t });
+
             if (ownedCouponId) {
-                await db.owned_coupon.update({ isValid: "false" }, { where: { id: ownedCouponId } })
+                await db.owned_coupon.update({ isValid: "false" }, { where: { id: ownedCouponId }, transaction: t });
             }
-            const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id } });
+
+            const transactionDetails = await db.transaction_detail.findAll({ where: { transaction_id: transaction.id }, transaction: t });
+
+            await t.commit();
 
             return transaction;
         } catch (error) {
+            await t.rollback();
             throw error;
         }
     },
+
 
     filteredAllOrder: async ({ invoice, status, createdAt, page, branchId }) => {
         try {
@@ -111,11 +115,8 @@ module.exports = {
 
     filteredTransactionsData: async (req) => {
         try {
-            console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken
-            console.log(role);
             const { username, sort, days, page } = req.query;
-            console.log(sort);
             let whereClause = {};
             let whereUsername = {};
             if (role == "admin") {
@@ -127,10 +128,8 @@ module.exports = {
             if (days) {
                 whereClause.createdAt = { [Op.gte]: new Date(new Date() - days * 24 * 60 * 60 * 1000) }
             }
-            console.log(whereClause);
             const limit = 6;
             const totalRecords = await db.transactions.count({ where: whereClause })
-            console.log(`cek 1`);
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;
             const data = await db.transactions.findAll({
@@ -161,7 +160,6 @@ module.exports = {
         try {
             let whereClause = {};
             let nameClause = {};
-            console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken;
             const { username, sort, page, branch, startdate, enddate, sortby, transactionstatus } = req.query;
             if (transactionstatus == 2) {
@@ -223,7 +221,6 @@ module.exports = {
     getOverallData: async (req) => {
         try {
             let whereCondition = {};
-            console.log(req.dataToken);
             const { branch, startdate, enddate } = req.query;
             const { role, store_branch_id } = req.dataToken;
             if (startdate && enddate) {
@@ -238,7 +235,6 @@ module.exports = {
                 if (branch) whereCondition.store_branch_id = branch
             }
             whereCondition.status = { [db.Sequelize.Op.not]: 'Canceled' }
-            console.log(whereCondition);
             const data = await db.transactions.findAll({
                 where: whereCondition,
                 attributes: ["status", "subtotal", "final_total", "store_branch_id", "createdAt"],

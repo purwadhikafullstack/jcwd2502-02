@@ -1,6 +1,6 @@
 const db = require("./../models");
 const { deleteFiles } = require('./../helper/deleteFiles');
-const { logger } = require("handlebars");
+const { sequelize } = require('./../models')
 module.exports = {
     getAllProductsService: async () => {
         try {
@@ -24,61 +24,6 @@ module.exports = {
             return error;
         }
     },
-    getAllProductsService2: async (sort, branchId, limit, offset) => {
-        try {
-            return await db.product.findAll({
-                where: { isDeleted: 0 },
-                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
-                order: [["name", sort]],
-                limit,
-                offset,
-            });
-        } catch (error) {
-            return error;
-        }
-    },
-
-    getAllProductsByCatService: async (catId, sort, branchId, limit, offset) => {
-        try {
-            return await db.product.findAll({
-                where: { product_categories_id: catId },
-                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
-                order: [["name", sort]],
-                limit,
-                offset,
-            });
-        } catch (error) {
-            return error;
-        }
-    },
-
-    getAllProductsBySearchService: async (like, searchQuery, sort, branchId, limit, offset) => {
-        try {
-            return await db.product.findAll({
-                where: { name: { [like]: `%${searchQuery}%` } },
-                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
-                order: [["name", sort]],
-                limit,
-                offset,
-            });
-        } catch (error) {
-            return error;
-        }
-    },
-
-    getAllProductsFilteredService: async (like, catId, searchQuery, sort, branchId, limit, offset) => {
-        try {
-            return await db.product.findAll({
-                where: { product_categories_id: catId, name: { [like]: `%${searchQuery}%` } },
-                include: [{ model: db.product_stock, where: { store_branch_id: branchId } }],
-                order: [["name", sort]],
-                limit,
-                offset,
-            });
-        } catch (error) {
-            return error;
-        }
-    },
     getOneProductService: async (params) => {
         try {
             const { id } = params;
@@ -88,15 +33,21 @@ module.exports = {
         }
     },
     createProductService: async (body, file) => {
+        let t;
         try {
+            t = await sequelize.transaction();
             const data = JSON.parse(body);
-            const dataImage = file
-            const newProduct = await db.product.create({ ...data, image: dataImage });
-            const branches = await db.store_branch.findAll()
-            for (const branch of branches) await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 });
-            return newProduct
+            const dataImage = file;
+            const newProduct = await db.product.create({ ...data, image: dataImage }, { transaction: t });
+            const branches = await db.store_branch.findAll();
+            for (const branch of branches) {
+                await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 }, { transaction: t });
+            }
+            await t.commit();
+            return newProduct;
         } catch (error) {
-            return error
+            if (t) await t.rollback();
+            return error;
         }
     },
     deleteProductService: async (params) => {

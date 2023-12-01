@@ -20,46 +20,69 @@ const ProductDetailPage = () => {
     const api = api1();
     const { id } = useParams()
     const closestBranch = useSelector((state) => state.branch.closestBranch);
-    console.log(closestBranch.id);
     const cart = useSelector((state) => state.cart);
     const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id == id);
     const navigate = useNavigate()
     const productStock = Array.isArray(product?.stock) ? product.stock[0]?.stock : product?.stock;
     const isProductInStock = productStock !== null && productStock !== undefined && productStock !== '' && productStock !== 0;
+    const userStatus = user.isVerified
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
+
+
     const getProductQuantity = () => {
         const productInCart = cart.cart.find(item => item.products_id == id);
         return productInCart ? productInCart.quantity : 0;
     };
     const handleAddToCart = () => {
-        if (!user.username) {
+        if (user.username) {
+            dispatch(addToCartAsync(id, closestBranch.id, userStatus));
+        }
+        else if (!user.username) {
             toast.error("Please log in to add items to your cart");
             setTimeout(() => {
                 navigate("/login"); // Step 4
             }, 2000);
             return
         }
-
-        if (user.username) {
-            dispatch(addToCartAsync(id, closestBranch.id));
-
-        }
     };
     const onGetProduct = async () => {
         try {
             if (closestBranch.id === undefined) {
                 const oneProduct = await api.get(`products/oneproduct/${id}`);
-                console.log(oneProduct.data.data);
                 setProduct(oneProduct.data.data);
             } else {
                 const oneProduct = await api.get(`products/product-stock?productId=${id}&branchId=${closestBranch.id}`);
-                console.log(oneProduct.data.data);
                 setProduct(oneProduct.data.data);
             }
         } catch (error) {
             console.log(error);
         }
     };
+
+
+    const altAddToCart = () => {
+        try {
+
+            if (userStatus === "unverified") {
+                toast.error("Please verify your account before adding products to the cart.");
+                setTimeout(() => {
+                    navigate(`/profile`)
+                }, 1500)
+            }
+
+            else if (userStatus === "verified") {
+                toast.error("Please add a main address before adding products to the cart.");
+                setTimeout(() => {
+                    navigate(`/manage-address`)
+                }, 1500)
+            }
+
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         window.scrollTo(0, 0);
         dispatch(nearestBranch())
@@ -85,10 +108,9 @@ const ProductDetailPage = () => {
 
 
                 <div className="flex flex-col lg:flex-row mb-10 gap-5 lg:gap-10">
-                    <div className='w-auto'>
-                        <img className="
-                lg:h-[600px]
-                    " src={product && product.product ? process.env.REACT_APP_URL + product.product.image : process.env.REACT_APP_URL + product.image} alt={"image of" + (product && product.product ? product.product.name : "")} />
+                    <div className='lg:w-[400px] lg:h-[400px] '>
+                        <img className="w-full h-full object-cover"
+                            src={product && product.product ? process.env.REACT_APP_URL + product.product.image : process.env.REACT_APP_URL + product.image} alt={"image of" + (product && product.product ? product.product.name : "")} />
                     </div>
 
                     <div className="flex flex-col justify-start gap-3">
@@ -108,11 +130,6 @@ const ProductDetailPage = () => {
                             <div className="bg-gradient-to-r from-yellow-300 to-green-600 p-2 text-white font-bold rounded-xl w-[150px] grid place-content-center">Buy 1 Get 1 Free</div>
                             : null
                         }
-                        {/* <div className="font-semibold text-3xl pt-2 text-green-500 flex">
-                            Rp {product && product.product ? product?.product.final_price?.toLocaleString() : product?.final_price?.toLocaleString()}
-                            {product && product?.product?.discount_id === 1 || product && product?.product?.discount_id === 2 || product?.discount_id === 1 || product && product?.discount_id === 2 ? <div className="text-red-600 line-through font-semibold text-3xl pl-3">Rp {product?.product?.price.toLocaleString()} {product?.price.toLocaleString()} </div> :
-                                null}
-                        </div> */}
                         <div className="font-semibold text-3xl pt-2 text-green-500 flex">
                             Rp {product && product.product ? (product.product.final_price ? product.product.final_price.toLocaleString() : null) : product.final_price?.toLocaleString()}
                             {product && product?.product?.discount_id === 1 || product && product?.product?.discount_id === 2 || product?.discount_id === 1 || product && product?.discount_id === 2 ? <div className="text-red-600 line-through font-semibold text-3xl pl-3">Rp {product?.product?.price ? product?.product?.price.toLocaleString() : null} {product?.price ? product?.price.toLocaleString() : null} </div> :
@@ -137,10 +154,19 @@ const ProductDetailPage = () => {
                                         <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
                                     </div>
                                 ) : (
-                                    <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} />
+                                    <div>
+
+                                        {mainAddress ? <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} /> :
+
+
+                                            <Button onClick={() => altAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
+                                    </div>
+
+
+
                                 )
                             ) : (
-                                <div className="text-red-600 font-semibold text-xl">Out of Stock</div>
+                                <div className="text-black"></div>
                             )}
                         </div>
                     </div>

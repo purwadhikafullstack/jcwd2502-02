@@ -10,6 +10,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   province.init({
     name: DataTypes.STRING,
+    isValid: DataTypes.STRING,
     createdAt: {
       type: DataTypes.DATE,
       defaultValue: sequelize.literal('CURRENT_TIMESTAMP')

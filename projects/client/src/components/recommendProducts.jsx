@@ -13,9 +13,7 @@ import { Link } from "react-router-dom";
 const RecommendProducts = (props) => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.users)
-    console.log(user);
     const products = props.data
-    console.log(products);
     const settings = {
         dots: false,
         infinite: true,

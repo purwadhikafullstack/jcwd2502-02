@@ -1,6 +1,5 @@
 import { HiShoppingCart } from "react-icons/hi";
 import { HiMenu } from "react-icons/hi";
-import { LuSearch } from "react-icons/lu";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { FaUserLarge } from "react-icons/fa6";
@@ -8,8 +7,6 @@ import { RiFileList3Fill } from "react-icons/ri";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 import { logout } from "../redux/Features/users";
-import { FaBoxOpen } from "react-icons/fa";
-import { PiPercentFill } from "react-icons/pi";
 import { BsFillPieChartFill } from "react-icons/bs";
 import { FaHistory } from "react-icons/fa";
 
@@ -26,8 +23,6 @@ const NavbarAdmin = () => {
 
     }
 
-    console.log(user.role);
-    // belum tau dia branch mana dan rolenya super atau admin biasa
     return (
         <div className="relative">
             < div className="bg-gradient-to-r from-yellow-300 to-green-600 flex justify-between px-3 md:px-20 lg:px-32 fixed top-0 w-screen z-50">

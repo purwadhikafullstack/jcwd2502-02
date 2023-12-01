@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { onCheckIsLogin } from "../redux/Features/users";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 export default function Protected({ children, adminPage, userPage, guestPage, superadminPage }) {
-
     const [loading, setLoading] = useState(true);
-    // const [userRole, setUserRole] = useState(null);
     const navigate = useNavigate();
-    const dispatch = useDispatch();
     const user = useSelector((state) => state.users)
-    // => user.role
-
     useEffect(() => {
-        console.log(user.role);
         if (user.role !== "" && guestPage) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/')
@@ -26,20 +19,15 @@ export default function Protected({ children, adminPage, userPage, guestPage, su
             setLoading(false)
         }, 1500), navigate('/admin-dashboard')
 
-        if(user && user.role == "superadmin" && (userPage)) return setTimeout(() => {
+        if (user && user.role == "superadmin" && (userPage)) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/admin-dashboard')
 
         setTimeout(() => {
             setLoading(false)
-        }, 2000)
+        }, 3000)
 
     }, [children, user]);
-
-    // useEffect(() => {
-    //     console.log(`protected routes finding user`);
-    //     console.log(user);
-    // }, [user])
 
     return (
         <>

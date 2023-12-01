@@ -6,9 +6,10 @@ import { useEffect, useState, useRef } from "react";
 import { api } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
 import moment from 'moment';
-import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
+import { useDebounce } from 'use-debounce';
+
 
 
 const UserOrderList = () => {
@@ -25,11 +26,11 @@ const UserOrderList = () => {
     const [sort, setSort] = useState('DESC');
     const [branch, setBranch] = useState("")
     const [branches, setBranches] = useState()
+    const [debouncedInvoice] = useDebounce(invoice, 1000);
 
     const getBranches = async () => {
         try {
             const branches = await api().get(`/branch/all`)
-            console.log(branches.data.data);
             setBranches(branches.data.data);
         } catch (error) {
             console.log(error);
@@ -94,9 +95,9 @@ const UserOrderList = () => {
             console.log(error);
         }
     };
+
     const handleSearchInvoice = (event) => {
         try {
-            // console.log(event.target.value);
             setPage(1);
             setInvoice(event)
         } catch (error) {
@@ -106,7 +107,6 @@ const UserOrderList = () => {
     const handleSearch = async () => {
         try {
             const response = await api().get(`/transaction/user/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branch}`)
-            console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
         } catch (error) {
@@ -135,17 +135,11 @@ const UserOrderList = () => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         handleSearch()
         getBranches()
+    }, [startdate, debouncedInvoice, status, page, enddate, sortBy, sort, branch])
 
-    }, [startdate, status, page, enddate, sortBy, sort, branch])
-
-    useEffect(() => {
-        const debouncedSearch = debounce(() => {
-            handleSearch();
-        }, 1000);
-        debouncedSearch();
-    }, [invoice])
 
     return (
         <div >
@@ -159,7 +153,7 @@ const UserOrderList = () => {
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search invoice number" />
                     </div>
-                    <div className="flex justify-between gap-2 lg:overflow-none overflow-x-auto my-3">
+                    <div className="flex justify-between gap-2 lg:overflow-none overflow-x-auto my-3 pb-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]">
                                 <option value={""} disabled selected>Status</option>

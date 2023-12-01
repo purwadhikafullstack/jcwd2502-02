@@ -29,9 +29,7 @@ module.exports = {
     },
     deleteCartbyItem: async (req, res, next) => {
         try {
-            const { id } = req.dataToken
-            const { productId } = req.params
-            const result = await deleteCartItem(id, productId);
+            const result = await deleteCartItem(req.dataToken, req.params);
             responseHandler(res, "Delete Item(s) Success", result)
         } catch (error) {
             next(error)

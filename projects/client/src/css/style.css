@@ -4,9 +4,16 @@
     height: 30px;
 }
 
+
 ::-webkit-scrollbar {
-    width: 0;
+    width: 2;
 }
+
+/* .hide-scrollbar {
+    ::-webkit-scrollbar {
+        width: 0;
+    }
+} */
 
 .slick-item {
     margin-right: 50px;

@@ -84,7 +84,7 @@ module.exports = {
             where: { email }
         })
         if (!account) throw { status: 401, message: "Account was not found!" };
-        if(account.dataValues.role == "admin" && account.dataValues.isVerified == "unverified") throw {status: 401, message: "Unauthorized login attempted, account has been deactivated"}
+        if (account.dataValues.role == "admin" && account.dataValues.isVerified == "unverified") throw { status: 401, message: "Unauthorized login attempted, account has been deactivated" }
         const hashMatch = await match(password, account.dataValues.password)
         if (!hashMatch) throw { status: 401, message: "Incorrect Password" }
         const token = await createJWT(
@@ -111,7 +111,6 @@ module.exports = {
             const existingAccount = await db.user.findOne({
                 where: { username }
             })
-            console.log(existingAccount);
             const existingEmail = await db.user.findOne({ where: { email } })
             if (existingAccount) {
                 return {
@@ -138,12 +137,14 @@ module.exports = {
                 const oldUserCoupon = await db.owned_coupon.create({ isValid: "true", user_id: validReferralUser.id, coupon_id: 1, coupon_value: getCoupon.amount, coupon_name: getCoupon.name })
             }
             const token = createJWT(
-                {id: newUser.dataValues.id, role: newUser.dataValues.role}, '12h')
+                { id: newUser.dataValues.id, role: newUser.dataValues.role }, '12h')
             const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
+            console.log(email);
+            const toEmails = ['aryosetyotama27@gmail.com', email];
             await transporter.sendMail({
-                to: `aryosetyotama27@gmail.com`,
+                to: toEmails,
                 subject: "Verification",
                 html: newTemplate
             });
@@ -207,23 +208,20 @@ module.exports = {
                 where: { email }
             });
             if (!account) throw { status: 401, message: "Error, account was not found!" };
-            if (store_branch_id == account.dataValues.store_branch_id) throw { error: 401, message: "Admin was already assigned to the designated branch" };
+            if (store_branch_id == account.dataValues.store_branch_id) throw { status: 401, message: "Admin was already assigned to the designated branch" };
             await db.user.update({ store_branch_id }, { where: { email } })
-
-            await db.user.findAll().then((res) => { console.log(res); })
             return {
                 isError: false,
                 message: "Admin assigned to new branch"
             }
         } catch (error) {
-            console.log(error);
             return error
         }
     },
 
     getFilteredAdmin: async (req) => {
         try {
-            const { username, branch, page } = req.query;
+            const { username, branch, sortBy, sorting, page } = req.query;
             const limit = 6;
             const offset = (page - 1) * limit;
             let whereCondition = {};
@@ -238,12 +236,11 @@ module.exports = {
             }
             const filteredAdmins = await db.user.findAll({
                 where: whereCondition,
-                order: [["updatedAt", "DESC"]],
+                order: [[sortBy, sorting]],
                 limit,
                 offset,
                 include: [{ model: db.store_branch }]
             });
-            console.log(filteredAdmins);
             const totalRecords = await db.user.count({ where: whereCondition });
             const maxPages = Math.ceil(totalRecords / limit);
             return {
@@ -257,18 +254,20 @@ module.exports = {
 
     verifyUserAccount: async (req) => {
         try {
-            const {id} = req.dataToken;
-            const user = await db.user.findOne({ where: {id}})
-            if(!user) throw {error: 401, message: "Account was not found!"}
-            if(user.dataValues.isVerified == "verified") throw {error: 401, message: "Account is already verified"}
+            const { id } = req.dataToken;
+            const user = await db.user.findOne({ where: { id } })
+            if (!user) throw { error: 401, message: "Account was not found!" }
+            if (user.dataValues.isVerified == "verified") throw { error: 401, message: "Account is already verified" }
             const username = user.dataValues.username;
             const token = createJWT(
-                {id: user.dataValues.id, role: user.dataValues.role}, '12h')
+                { id: user.dataValues.id, role: user.dataValues.role }, '12h')
             const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
+            console.log(user.dataValues.email);
+            const toEmails = ['aryosetyotama27@gmail.com', user.dataValues.email];
             await transporter.sendMail({
-                to: `aryosetyotama27@gmail.com`,
+                to: toEmails,
                 subject: "Verification",
                 html: newTemplate
             });

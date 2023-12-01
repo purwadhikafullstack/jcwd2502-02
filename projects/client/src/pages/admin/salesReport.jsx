@@ -9,8 +9,12 @@ import NavbarAdmin from '../../components/navbarAdmin';
 import { Link } from 'react-router-dom';
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from '../../components/footer';
+import { useDebounce } from 'use-debounce';
+import { useAppSelector } from '../../redux/App/Store';
+
 
 const SalesReportPage = () => {
+    const userSelector = useAppSelector((state) => state.users)
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
     const [sortBy, setSortBy] = useState("id");
@@ -25,7 +29,11 @@ const SalesReportPage = () => {
     const [username, setUsername] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [debouncedName] = useDebounce(username, 1000);
+
+
     const handleTransactionFilter = (event) => {
+        setPage(1)
         setTransactionFilter(event.target.value)
     }
     const handleSortBy = (event) => {
@@ -88,29 +96,23 @@ const SalesReportPage = () => {
 
     const handleReset = () => {
         try {
-            setUsername(""); setSort(""); setStartDate(""); setPage(1); setMaxPage(1); fetchData(); setEndDate(""); setSort("ASC"); setSortBy("id"); setBranch("")
+            setUsername(""); setSort("DESC"); setStartDate(formattedToday); setPage(1); setMaxPage(1); setEndDate(""); setSortBy("id"); setBranch(""); setTransactionFilter("");
         } catch (error) {
             console.log(error);
         }
     }
     useEffect(() => {
         fetchData(page)
-    }, [username, sort, startDate, endDate, page, branch, sortBy, transactionFilter])
-
-    console.log(cardData);
-
+    }, [debouncedName, sort, startDate, endDate, page, branch, sortBy, transactionFilter])
     return (
         <div >
             <NavbarAdmin />
-
-
             <div className='mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32'>
                 <div className="">
-                    <div className="text-4xl font-bold text-green-800 mb-3">
-                        Sales Report
+                    <div className="text-4xl font-bold text-green-800 mb-3 flex">
+                        Sales Report {userSelector.role == "admin" ? <div className="text-sm pl-3 flex items-end">({branchList[userSelector?.store_branch_id - 1]?.name})</div> : null}
                     </div>
                 </div>
-
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
                     <div role="tablist" className="tabs tabs-lifted tabs-lg">
                         <div role="tab" className="tab lg:text-xl tab-active bg-green-700 text-white rounded-t-xl">Transactions</div>
@@ -119,10 +121,9 @@ const SalesReportPage = () => {
                         </Link>
                     </div>
                 </div>
-
                 <div className='overflow-x-auto h-[100px] lg:h-auto flex justify-between gap-3 mt-5'>
                     <div className='w-[400px] border-4 bg-yellow-300 border-green-700 rounded-xl p-3'>
-                        <div className='grid place-content-start font-medium'>Total Revenue:</div>
+                        <div className='grid place-content-start font-medium'>Current Revenue:</div>
                         <div className="grid place-content-end text-3xl font-bold mt-2">
                             <div className='flex'> Rp <div className='pl-3'></div>
                                 {cardData ? cardData?.completedOrderRevenue?.toLocaleString() : null
@@ -133,17 +134,14 @@ const SalesReportPage = () => {
                             </div>
                         </div>
                     </div>
-
                     <div className='w-[450px] border-4 bg-yellow-300 border-green-700 rounded-xl p-3'>
                         <div className='grid place-content-start font-medium'>Potential Revenue:</div>
                         <div className="grid place-content-end text-3xl font-bold mt-2">
                             <div className='flex'>
-
-
                                 Rp
                                 <div className='pl-3'></div>
                                 {cardData ? (
-                                    cardData.onGoingOrderRevenue && cardData.completedOrderRevenue ? (
+                                    cardData.onGoingOrderRevenue || cardData.completedOrderRevenue ? (
                                         (cardData.onGoingOrderRevenue + cardData.completedOrderRevenue).toLocaleString()
                                     ) : (
                                         <span className="loading loading-spinner loading-lg"></span>
@@ -151,12 +149,10 @@ const SalesReportPage = () => {
                                 ) : (
                                     <span className="loading loading-spinner loading-lg"></span>
                                 )}
-
                                 <div className='text-sm grid place-content-end pl-3 pb-1'>
                                     (+ Rp {cardData ? cardData?.onGoingOrderRevenue?.toLocaleString() : null
                                     })
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -182,7 +178,6 @@ const SalesReportPage = () => {
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <div className=''>
                     <div className='border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5'>
@@ -194,42 +189,44 @@ const SalesReportPage = () => {
                             <div className="flex">
                                 <div className="flex">
                                     <div className="grid place-content-center mx-3">from</div>
-                                    <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                    <div className="grid place-content-center"><input value={startDate} max={formattedToday} onChange={handleStartDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[160px]" />
                                     </div>
                                 </div>
                                 <div className="flex">
                                     <div className="grid place-content-center mx-3">to</div>
-                                    <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[180px]" />
+                                    <div className="grid place-content-center"><input value={endDate} max={formattedToday} min={startDate} onChange={handleEndDate} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[160px]" />
                                     </div>
                                 </div>
                             </div>
-
-
                             <div className='grid place-content-center'>
-                                <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]' onChange={handleTransactionFilter}>
+                                <select name="" id="" className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[170px]' onChange={handleTransactionFilter} value={transactionFilter}>
                                     <option value="1"> All sales</option>
                                     <option value="2"> Completed sales</option>
                                     <option value="3"> Ongoing sales</option>
                                 </select>
                             </div>
-
                             <div className='grid place-content-center'>
-                                <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
-                                    <option value={""} selected>All Branch</option>
-                                    {
-                                        branchList && branchList.map((value) => {
-                                            return (
-                                                <option value={value.id}> {value.name} </option>
-                                            )
-                                        })
-                                    }
-                                </select>
+                                {
+                                    userSelector.role == "superadmin" ?
+                                        <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[180px]'>
+                                            <option value={""} selected>All Branch</option>
+                                            {
+                                                branchList && branchList.map((value) => {
+                                                    return (
+                                                        <option value={value.id}> {value.name} </option>
+                                                    )
+                                                })
+                                            }
+                                        </select>
+                                        :
+                                        null
+                                }
                             </div>
                             <div className='flex gap-3'>
                                 <div className="flex">
                                     <div className='grid place-content-center mr-2 w-[60px]'>Sort By</div>
                                     <div className=''>
-                                        <select defaultValue="" value={sortBy} onChange={handleSortBy} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[150px]">
+                                        <select defaultValue="" value={sortBy} onChange={handleSortBy} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[120px]">
                                             <option value={"id"}>Id</option>
                                             <option value="user_id"> Username </option>
                                             <option value="status"> Status </option>
@@ -239,7 +236,6 @@ const SalesReportPage = () => {
                                         </select>
                                     </div>
                                 </div>
-
                                 <div className="grid place-content-center">
                                     <select defaultValue="grid place-content-center" value={sort} onChange={handleSortQuery} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
                                         <option value={""} disabled selected>Sort</option>
@@ -247,14 +243,11 @@ const SalesReportPage = () => {
                                         <option value="DESC"> DESC </option>
                                     </select>
                                 </div>
-
                                 <div className="grid place-content-center">
-                                    <div onClick={handleReset} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
+                                    <div onClick={() => handleReset()} className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
                                 </div>
                             </div>
                         </div>
-
-
                     </div>
 
 
@@ -290,6 +283,11 @@ const SalesReportPage = () => {
                                         ))}
                                     </tbody>
                                 </table>
+                                <div className='flex justify-center mt-3'>
+                                    {data.length == 0 ? <div className="alert alert-error flex justify-center w-full">
+                                        <span className="flex justify-center">Sorry there are no data yet</span>
+                                    </div> : null}
+                                </div>
                             </div>
                         </div>
                     </div>

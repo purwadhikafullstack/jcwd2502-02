@@ -8,9 +8,6 @@ import toast from 'react-hot-toast';
 
 
 const ModalUpdateAddress = ({ id, onClick, name }) => {
-
-    console.log(id);
-
     const apiInstance = api()
     const [selectedProvince, setSelectedProvince] = useState("");
     const [provinceId, setProvinceId] = useState()
@@ -77,7 +74,6 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
     const getAddress = async () => {
         try {
             const addressDetail = await apiInstance.get(`/location/${id}`)
-            console.log(addressDetail.data.data);
             setAddressData(addressDetail.data.data)
             dataUpdate.setValues({
                 name: addressDetail.data.data.name,
@@ -91,7 +87,6 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
         }
     }
 
-    console.log(dataUpdate.values);
     useEffect(() => {
         getProvinceId()
         getCityId()

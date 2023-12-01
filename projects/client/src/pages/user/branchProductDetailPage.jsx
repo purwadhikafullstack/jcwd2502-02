@@ -14,7 +14,6 @@ const BranchProductDetailPage = () => {
     const onGetProduct = async () => {
         try {
             const oneProduct = await api.get(`/products/detail/${id}`);
-            console.log(oneProduct);
             setProduct(oneProduct.data.data);
         } catch (error) {
             console.log(error);

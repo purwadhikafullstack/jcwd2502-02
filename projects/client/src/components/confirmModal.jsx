@@ -2,9 +2,8 @@ import React from "react";
 import Swal from "sweetalert2";
 import { api } from "../api/api";
 
-const ConfirmConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, textOnButton, message, reloadPage = true }) => {
+const ConfirmConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, textOnButton, message, reloadPage = true, bodyValue }) => {
     const apiInstance = api()
-
     const handleDelete = async () => {
         const result = await Swal.fire({
             title: "Are you sure?",
@@ -17,10 +16,14 @@ const ConfirmConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, text
             confirmButtonText: textOnButton,
             reverseButtons: true,
         });
-
         if (result.isConfirmed) {
             try {
-                const softDeleteResponse = await apiInstance.patch(`${apiEndpoint}/${itemId}`);
+                if (bodyValue) {
+                    const softDeleteResponse = await apiInstance.patch(`${apiEndpoint}/${itemId}`, { email: bodyValue });
+                }
+                else {
+                    const softDeleteResponse = await apiInstance.patch(`${apiEndpoint}/${itemId}`);
+                }
                 Swal.fire({
                     icon: "success",
                     html: message,
@@ -30,17 +33,16 @@ const ConfirmConfirmation = ({ itemId, onDelete, apiEndpoint, button, text, text
                     confirmButtonColor: "#039E57",
                 });
                 onDelete();
-                if (reloadPage) {
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
-                }
+                // if (reloadPage) {
+                //     setTimeout(() => {
+                //         window.location.reload();
+                //     }, 1000);
+                // }
             } catch (error) {
                 console.log(error);
             }
         }
     };
-
     return (
         <div className="" onClick={handleDelete}>
             {button}

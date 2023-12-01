@@ -28,12 +28,19 @@ const CheckoutPage = () => {
     const [shippingServiceSelected, setShippingServiceSelected] = useState(false)
     const cart = useSelector((state) => state.cart);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
+    const [cartLoaded, setCartLoaded] = useState(false); // New state
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const [totalFinal, setTotalFinal] = useState()
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
-    console.log(totalWeight);
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
+    useEffect(() => {
+        if (cart.cart.length === 0) {
+            nav('/'); // Update with the correct landing page route
+        } else {
+            setCartLoaded(true); // Set cartLoaded to true once the cart is loaded
+        }
+    }, [cart]);
     const handleShippingService = async (event) => {
         try {
             const selectedService = event.target.value;
@@ -70,9 +77,7 @@ const CheckoutPage = () => {
                 toast.error("Please complete the shipping data");
             } else {
                 setDisabled(true);
-                console.log("ini disable", disabled);
                 const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName });
-                console.log(createOrder.data);
                 toast.success("Order created!");
                 setTimeout(() => {
                     nav(`/order/${createOrder.data.data.id}`);
@@ -116,8 +121,6 @@ const CheckoutPage = () => {
         onGetCoupon()
     }, []);
 
-    console.log(shippingOptionSelected);
-
     useEffect(() => {
         if (!discount && !cost) {
             setTotalFinal(totalSubtotal)
@@ -130,7 +133,7 @@ const CheckoutPage = () => {
         }
         else { setTotalFinal(((totalSubtotal) + (cost) - (discount))) }
     }, [cost, totalSubtotal, discount]);
-    return (
+    return cartLoaded ? (
         <div>
             <Toaster />
             <div className="mx-5 pt-5 md:mx-20 lg:mx-32 ">
@@ -139,7 +142,8 @@ const CheckoutPage = () => {
                 </div>
                 <div className="flex my-5 text-lg">
                     <div className="pt-1 pr-3"><FaLocationDot /> </div>
-                    <div>{closestBranch?.name}</div>
+                    <div>Shipped From: </div>
+                    <div className="pl-3">{closestBranch?.name}</div>
                 </div>
                 <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between">
                     <div className="flex flex-col gap-3 lg:flex-1 h-[500px] overflow-y-auto">
@@ -258,6 +262,6 @@ const CheckoutPage = () => {
             </div>
             <Footer />
         </div >
-    )
+    ) : null
 }
 export default CheckoutPage

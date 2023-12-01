@@ -9,7 +9,6 @@ const AdminOrderList = () => {
 
     const role = useSelector((state) => state.users.role);
 
-    console.log(role);
 
     return (
         <div>

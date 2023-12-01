@@ -21,6 +21,9 @@ export default function ChangePasswordPage() {
             try {
                 const response = await api().patch('/users/reset-password', null, { headers: { authorization: `Bearer ${id}`, "password": values.password, "confirmpassword": values.confirmPassword } })
                 toast.success('Password successfully updated')
+                setTimeout(() => {
+                    navigate('/login')
+                }, 3000)
             } catch (error) {
                 console.log(error);
                 toast.error(error.response.data.message);
@@ -39,9 +42,7 @@ export default function ChangePasswordPage() {
 
     const onCheckToken = async () => {
         try {
-            console.log(`ini hasil id ` + id);
             const isTokenValid = await api().get('/users/check-token', { headers: { authorization: `Bearer ${id}` } })
-            console.log(isTokenValid.data.data.isValid);
         } catch (error) {
             if (error) {
                 setValid(false)
@@ -57,7 +58,7 @@ export default function ChangePasswordPage() {
         <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-yellow-300">
             <Toaster />
             <div className='grid place-content-center'>
-                <img src="./buyfresh_logo.png" alt="app_logo" className="h-[200px]" />
+                <img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[200px]" />
             </div>
             {
                 valid ?
