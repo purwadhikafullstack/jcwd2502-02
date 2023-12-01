@@ -2,62 +2,74 @@ const db = require('./../models');
 const { Op } = require('sequelize');
 
 module.exports = {
-    stockHistory: async(req) => {
+    stockHistory: async (req) => {
         try {
-            const {role, id} = req.dataToken;
-            const {product, branch, description, page} = req.query;
+            const { role, id } = req.dataToken;
+            const { product, branch, description, startDate, endDate, sort, page } = req.query;
             let whereCondition = {};
             let nameCondition = {};
             const limit = 6;
             const offset = (page - 1) * limit;
-            if(product) {
-                nameCondition.name = {[Op.like]: `%${product}%`}
+            if (product) {
+                nameCondition.name = { [Op.like]: `%${product}%` }
             }
-            if(description) {
-                whereCondition.description = {[Op.like]: `%${description}%`}
+            if (description) {
+                whereCondition.description = { [Op.like]: `%${description}%` }
             }
-            if(role == "admin") {
-                const response = await db.user.findOne({where: id})
-                whereCondition.store_branch_id = response.dataValues.store_branch_id
-                console.log(whereCondition);
-                const productStockHistory = await db.stock_history.findAll({
+            if (startDate && endDate) whereCondition.createdAt = {
+                [Op.gte]: new Date(startDate), [Op.lte]: new Date(endDate + 'T23:59:59.999Z')
+            }
+            if (role == "admin") {
+                const admin = await db.user.findOne({ where: id })
+                whereCondition.store_branch_id = admin.dataValues.store_branch_id
+                const productData = await db.stock_history.findAndCountAll({
                     where: whereCondition,
                     limit,
                     offset,
-                    order: [["createdAt", "ASC"]],
+                    order: [["createdAt", sort]],
                     include: [
                         {
-                        model: db.product,
-                        attributes: ['id', 'name'],
-                        where: nameCondition
+                            model: db.product,
+                            attributes: ['id', 'name'],
+                            where: nameCondition,
                         },
+                        {
+                            model: db.store_branch,
+                            attributes: ["name"],
+                        }
                     ],
                 })
-                const totalRecords = await db.stock_history.count({ where: whereCondition });
+                const totalRecords = productData.count
                 const maxPages = Math.ceil(totalRecords / limit);
+                productStockHistory = productData.rows
                 return {
                     productStockHistory,
                     maxPages
                 }
             } else if (role == "superadmin") {
-                if(branch) {
+                if (branch) {
                     whereCondition.store_branch_id = branch
                 }
-                const productStockHistory = await db.stock_history.findAll({
+                const productData = await db.stock_history.findAndCountAll({
                     where: whereCondition,
                     limit,
                     offset,
-                    order: [["createdAt", "ASC"]],
+                    order: [["createdAt", sort]],
                     include: [
                         {
-                        model: db.product,
-                        attributes: ['id', 'name'],
-                        where: nameCondition
+                            model: db.product,
+                            attributes: ['id', 'name'],
+                            where: nameCondition,
                         },
+                        {
+                            model: db.store_branch,
+                            attributes: ["name"],
+                        }
                     ],
                 })
-                const totalRecords = await db.stock_history.count({ where: whereCondition });
+                const totalRecords = productData.count
                 const maxPages = Math.ceil(totalRecords / limit);
+                productStockHistory = productData.rows
                 return {
                     productStockHistory,
                     maxPages

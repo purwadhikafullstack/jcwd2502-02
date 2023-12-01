@@ -8,7 +8,6 @@ module.exports = {
             const data = await stockHistory(req)
             responseHandler(res, 'Stock data retrieved', data)
         } catch (error) {
-            console.log(error);
             next(error);
         }
     }

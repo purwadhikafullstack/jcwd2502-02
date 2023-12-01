@@ -1,17 +1,12 @@
-import Button from "./button"
 import { useDispatch, useSelector } from "react-redux";
 import { addToCartAsync } from "../redux/Features/cart";
-import { deleteItemInCartAsync } from "../redux/Features/cart";
 import { toast } from "react-hot-toast";
-import { Navigate, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 const CheckoutComponent = (props) => {
     const dispatch = useDispatch();
     const cart = useSelector((state) => state.cart);
     const user = useSelector((state) => state.users);
-    const isInCart = cart.cart.some(item => item.products_id === props.data);
     const navigate = useNavigate()
-
     const getAvailableStock = () => {
         return props.stock;
     };
@@ -37,7 +32,6 @@ const CheckoutComponent = (props) => {
             toast.error("Oops, stock limit reached. No more items can be added");
         }
     };
-    console.log(props);
     return (
         <div>
             <div className={`w-full ${props.style}`}>

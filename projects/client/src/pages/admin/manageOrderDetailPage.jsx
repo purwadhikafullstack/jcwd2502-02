@@ -1,6 +1,5 @@
 import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer"
-import Button from "../../components/button";
 import CheckoutComponent from "../../components/checkoutComponent";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -10,27 +9,21 @@ import { IoIosArrowForward } from "react-icons/io";
 import toast, { Toaster } from "react-hot-toast";
 import OrderDetailsSection from "../../components/orderDetails";
 import DeleteConfirmation from "../../components/deleteModal";
+import ConfirmConfirmation from "../../components/confirmModal";
 
 const AdminOrderDetail = () => {
-    const [timeRemaining, setTimeRemaining] = useState(0); // Set the initial time in seconds
     const [transaction, setTransaction] = useState("")
     const [detail, setDetail] = useState("")
     const { id } = useParams()
-    const payment = useRef(null);
-
     const getDetailOrder = async () => {
         try {
             const order = await api().get(`/transaction/admin/order/${id}`)
-            console.log(order.data.data);
-            console.log(order.data.data.createdAt);
             setTransaction(order.data.data)
             setDetail(order.data.data.transaction_details)
-
         } catch (error) {
             console.log(error);
         }
     }
-
     const downloadImage = async () => {
         try {
             const imageURL = process.env.REACT_APP_URL + transaction.payment_proof;
@@ -46,20 +39,16 @@ const AdminOrderDetail = () => {
             console.error("Error downloading image:", error);
         }
     };
-
-
     useEffect(() => {
+        window.scrollTo(0, 0);
         getDetailOrder()
-    }, [])
-    console.log(detail);
-
+    }, []);
     return (
         <div>
             <Toaster />
             <NavbarAdmin />
-            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"}
+            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full mb-10"}
                 style={{ minHeight: "100vh" }}>
-
                 <div className="flex text-md lg:text-2xl font-bold pt-10 pb-5">
                     <Link to={'/admin/order-list'}>
                         <div className="hover:underline"> Order List</div>
@@ -67,7 +56,6 @@ const AdminOrderDetail = () => {
                     <div className="grid place-content-center px-3"><IoIosArrowForward />
                     </div>INV {transaction ? transaction.invoice : null}
                 </div>
-
                 <div className="lg:flex lg:gap-12 md:mb-10 lg:justify-between ">
                     <div className="flex flex-col gap-3 lg:flex-1 ">
                         <div className="flex flex-col gap-3">
@@ -78,7 +66,7 @@ const AdminOrderDetail = () => {
                                     {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
                                     {transaction.status == "Payment Approved" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2 text-white`}>PAYMENT APPROVED</div> : null}
                                     {transaction.status == "Delivered" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2 text-white`}>ORDER SENT</div> : null}
-                                    {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
+                                    {transaction.status == "canceled" ? <div className={`text-white lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
                                         null
                                     }
                                     {transaction.status == "Complete" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-green-600 p-2 text-white`}>{transaction.status.toUpperCase()}</div> :
@@ -86,16 +74,12 @@ const AdminOrderDetail = () => {
                                     }
                                 </div>
                             </div>
-
-
                             {transaction.payment_proof ?
                                 <div>
                                     <div className="">
                                         <div onClick={() => document.getElementById('my_modal_1').showModal()} className="flex justify-evenly  btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900">
-
                                             <div className="  grid place-content-center p=5 text-xl font-bold">View Payment Proof</div>
                                         </div>
-
                                         <dialog id="my_modal_1" className="modal">
                                             <div className="modal-box">
                                                 <div className="">
@@ -103,7 +87,6 @@ const AdminOrderDetail = () => {
                                                 </div>
                                                 <div className="modal-action">
                                                     <form method="dialog">
-                                                        {/* if there is a button in form, it will close the modal */}
                                                         <button className="btn">Close</button>
                                                     </form>
                                                     <button
@@ -139,11 +122,11 @@ const AdminOrderDetail = () => {
                                                     message={"Payment Declined"}
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-orange-400 bg-orange-700 text-white w-full border-none ">
-                                                        Decline Payment Proof
+                                                        Decline Payment
                                                     </div>} />
                                             </div>
                                             <div className="w-full">
-                                                <DeleteConfirmation
+                                                <ConfirmConfirmation
                                                     itemId={id}
                                                     onDelete={getDetailOrder}
                                                     apiEndpoint="transaction/admin/approve"
@@ -156,11 +139,8 @@ const AdminOrderDetail = () => {
                                             </div>
                                         </div>
                                         : null}
-
-
                                 </div>
                                 : null}
-
                             {transaction.status == "Payment Approved" ?
                                 <div className="w-full">
                                     <div className="flex mt-3 justify- gap-3">
@@ -177,7 +157,7 @@ const AdminOrderDetail = () => {
                                                 </div>} />
                                         </div>
                                         <div className="w-full">
-                                            <DeleteConfirmation
+                                            <ConfirmConfirmation
                                                 itemId={id}
                                                 onDelete={getDetailOrder}
                                                 apiEndpoint="transaction/admin/send"
@@ -190,9 +170,7 @@ const AdminOrderDetail = () => {
                                         </div>
                                     </div>
                                 </div>
-
                                 : null}
-
                             <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>
                             <div className="">
                                 <div className="text-xl font-bold mb-3">Item List:</div>
@@ -215,7 +193,6 @@ const AdminOrderDetail = () => {
                                     }) : null}
                                 </div>
                             </div>
-
                         </div>
                     </div>
                     <OrderDetailsSection transaction={transaction}
@@ -223,9 +200,7 @@ const AdminOrderDetail = () => {
                         id={id} />
                 </div>
             </div>
-
             <Footer />
-
         </div>
     )
 }

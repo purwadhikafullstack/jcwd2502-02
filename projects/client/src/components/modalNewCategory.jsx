@@ -41,10 +41,8 @@ const ModalNewCategory = () => {
             if (inputs.name === "" || inputs.image === "") {
                 toast.error("Please Fill All Data")
             } else {
-                console.log(inputs);
                 const data = await api.post(`category/addcategory`, fd)
                 toast.success('Create Category Success')
-                console.log(data);
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);

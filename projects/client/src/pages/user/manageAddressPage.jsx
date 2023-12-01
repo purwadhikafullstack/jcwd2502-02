@@ -60,7 +60,6 @@ const ManageAddress = () => {
 
     const updateMain = async (addressId) => {
         try {
-            console.log(addressId);
             const mainAddress = await apiInstance.patch(`/location/main/${addressId}`)
             Swal.fire("Success!", "Main Address Successfully Updated", "success");
             getAddress()
@@ -103,8 +102,6 @@ const ManageAddress = () => {
         }
     }
 
-    console.log(address);
-
 
     return (
         <div ref={pageTopRef} >
@@ -135,7 +132,7 @@ const ManageAddress = () => {
                                                 {value.isPrimary == "true" ? <div className="grid place-content-center rounded-xl px-2 bg-gradient-to-r from-yellow-300 to-green-600 text-white font-bold">Main</div> : null}
                                             </div>
                                             <div>{value.address}</div>
-                                            <div className="font-semibold">{value.city.name} - {value.city.province.name}</div>
+                                            <div className="font-semibold">{value.city?.name} - {value.city?.province?.name}</div>
                                         </div>
                                         <div className="md:grid md:place-content-center">
                                             {value.isPrimary == "false" ? <ConfirmConfirmation

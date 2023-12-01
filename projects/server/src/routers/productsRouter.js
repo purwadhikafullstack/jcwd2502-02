@@ -13,7 +13,6 @@ Router.get("/oneproduct/:id", productsController.getOneProduct);
 Router.get("/product-stock", productsController.getProductStock);
 Router.get("/all-product-stock/:branchId", productsController.getAllProductStock);
 Router.get("/discount", productsController.getDiscount);
-Router.get("/price", productsController.clonePriceToFinalPrice);
 Router.get("/allproductsfix", productsController.getAllProductRevised);
 Router.get("/get-for-edit-product", productsController.getProductsForAdmin);
 

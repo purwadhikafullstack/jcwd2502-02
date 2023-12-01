@@ -1,13 +1,13 @@
 import { useEffect, useRef, useState } from "react"
-import Button from "../../components/button"
 import { BiSearchAlt } from "react-icons/bi";
 import { api } from "../../api/api"
 import ModalNewAdmin from "../../components/modalNewAdmin";
 import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
-import Searchbar from "../../components/searchBar";
 import NavbarAdmin from "../../components/navbarAdmin";
+import { useDebounce } from 'use-debounce';
 import PaginationFixed from "../../components/paginationComponent";
+import ConfirmConfirmation from "../../components/confirmModal";
 
 export default function CreateAdminPage() {
     const [branch, setBranch] = useState(false);
@@ -16,6 +16,9 @@ export default function CreateAdminPage() {
     const [queryBranch, setQueryBranch] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [sortBy, setSortBy] = useState("updatedAt")
+    const [sort, setSort] = useState("DESC");
+    const [debouncedName] = useDebounce(queryUsername, 1000);
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
@@ -33,22 +36,45 @@ export default function CreateAdminPage() {
 
     const handleNameInput = (event) => {
         setQueryUsername(event.target.value);
+        setPage(1);
     };
 
     const handleBranchInput = (event) => {
         setQueryBranch(event.target.value);
+        setPage(1);
     };
+
+    const handleSortByInput = (event) => {
+        setSortBy(event.target.value);
+        setPage(1)
+    }
+
+    const handleSortInput = (event) => {
+        setSort(event.target.value);
+        setPage(1);
+    }
 
     const onGetAdmins = async () => {
         try {
-            const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&page=${page}`)
+            const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&sortBy=${sortBy}&sorting=${sort}&page=${page}`)
             setMaxPage(data.data.maxPages)
-            setAdmin(data.data.filteredAdmins);
+            setAdmin(() => data.data.filteredAdmins);
         } catch (error) {
             console.log(error);
         }
     }
 
+    const handleResetFilter = async () => {
+        try {
+            setQueryUsername("");
+            setQueryBranch("");
+            setSort("DESC");
+            setSortBy("updatedAt")
+            setPage(1)
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const onGetBranch = async () => {
         try {
             const { data } = await api().get('/branch/all');
@@ -58,16 +84,11 @@ export default function CreateAdminPage() {
         }
     }
 
-    const handleDeactivateAdmin = async (email) => {
-        const response = await api().patch('/users/deactivate-admin', { email: email })
-        toast.success(response.data.message);
-        onGetAdmins()
-    }
-
     useEffect(() => {
         onGetAdmins()
         onGetBranch()
-    }, [queryUsername, queryBranch, page])
+    }, [queryBranch, sortBy, sort, page, debouncedName])
+
 
     return (
         <div className="flex flex-col flex-grow min-h-screen gap-2">
@@ -77,12 +98,6 @@ export default function CreateAdminPage() {
             </div>
 
             <div className=" mx-5 pt-5 md:mx-20 lg:mx-32">
-                {/* <div>
-                    <div className="flex justify-center bg-gradient-to-b from-green-500 to-yellow-300">
-                        <h1 className="m-3 text-lg font-bold">User Management Page</h1>
-                    </div>
-                </div> */}
-
                 <div className="lg:flex lg:justify-between mb-5">
                     <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Branch Admin Management</div>
 
@@ -112,9 +127,23 @@ export default function CreateAdminPage() {
                                 }
                             </select>
                         </div>
-
                         <div className="grid place-content-center">
-                            <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black">Reset</div>
+                            <h1>Sort By:</h1>
+                        </div>
+                        <div className="grid place-content-center" onChange={handleSortByInput} value={sortBy}>
+                            <select name="" id="" className="h-[48px] px-2 border-2 rounded-xl w-[100px]">
+                                <option value="updatedAt"> Recent </option>
+                                <option value="isVerified"> Status </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center" onChange={handleSortInput} value={sort}>
+                            <select name="" id="" className="h-[48px] px-2 border-2 rounded-xl w-[80px]">
+                                <option value="ASC"> ASC </option>
+                                <option value="DESC"> DESC </option>
+                            </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black" onClick={() => handleResetFilter()}>Reset</div>
                         </div>
 
                     </div>
@@ -125,8 +154,7 @@ export default function CreateAdminPage() {
                         admin && admin.map((value, index) => {
                             return (
 
-                                <div className="rounded-xl border-2 border-l-8 border-green-700 border-l-green-700 ">
-
+                                <div className="rounded-xl border-2 border-l-8 border-green-700 border-l-green-700" key={value.id}>
                                     <div className="flex justify-between p-5 ">
                                         <div className="lg:flex grid place-content-center gap-2 lg:pl-5 ">
                                             <div className=" lg:w-[300px]">
@@ -157,7 +185,17 @@ export default function CreateAdminPage() {
                                         <div className="grid place-content-center">
                                             <div className="lg:flex-row flex flex-col gap-4 lg:w-[300px]">
                                                 <ModalEditAdmin getAdmins={onGetAdmins} adminData={value} key={index} />
-                                                <button onClick={() => handleDeactivateAdmin(value.email)} className={value.isVerified == "verified" ? " btn bg-red-600 hover:bg-red-600 rounded-2xl  text-white " : " btn bg-green-600 hover:bg-green-600 rounded-2xl  text-white w-[120px]"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>
+
+                                                <ConfirmConfirmation
+                                                    itemId={""}
+                                                    onDelete={onGetAdmins}
+                                                    apiEndpoint="users/deactivate-admin"
+                                                    text={""}
+                                                    bodyValue={value.email}
+                                                    message={"Admin Status Changed"}
+                                                    textOnButton={"Confirm"}
+                                                    button={<button className={value.isVerified == "verified" ? " btn bg-red-600 hover:bg-red-600 rounded-2xl  text-white " : " btn bg-green-600 hover:bg-green-600 rounded-2xl  text-white w-[120px]"}> {value.isVerified == "verified" ? "Deactivate" : "Activate"} </button>} />
+
                                             </div>
                                         </div>
                                     </div>
@@ -166,6 +204,10 @@ export default function CreateAdminPage() {
                             )
                         })
                     }
+
+                    {admin && !admin.length ? <div role="alert" className="alert alert-error w-full ">
+                        <span className="">Sorry, the admin that you are looking for is not available.</span>
+                    </div> : null}
 
                 </div>
 

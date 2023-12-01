@@ -6,7 +6,6 @@ import { BsFillPatchCheckFill } from "react-icons/bs";
 
 export default function VerificationPage() {
     const accessToken = useParams()
-    console.log(accessToken);
     const [isVerified, setIsVerified] = useState(false);
     const navigate = useNavigate();
     const apiInstance = api();
@@ -25,7 +24,7 @@ export default function VerificationPage() {
         }, 2000)
     }, [])
     return (
-        <div className="h-screen bg-gradient-to-b from-green-700 to-emerald-300 grid place-content-center">
+        <div className="h-screen bg-gradient-to-r from-yellow-300 to-green-600 grid place-content-center">
             <div className="px-5 md:px-20 lg:px-40">
                 {
                     isVerified ?

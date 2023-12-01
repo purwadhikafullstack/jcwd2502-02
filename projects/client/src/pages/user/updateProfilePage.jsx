@@ -1,14 +1,12 @@
-import Navbar from "../../components/navbarUser"
-import Footer from "../../components/footer"
-import Button from "../../components/button"
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import toast, { Toaster } from "react-hot-toast";
 import debounce from 'lodash/debounce';
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { useEffect, useRef, useState } from "react";
-import { AiFillEdit } from "react-icons/ai";
+import { IoEyeSharp } from "react-icons/io5";
+import { IoEyeOffSharp } from "react-icons/io5";
 
 
 const UpdateProfile = () => {
@@ -20,10 +18,11 @@ const UpdateProfile = () => {
     const inputFileRef = useRef(null);
     const [currentImage, setCurrentImage] = useState(null)
     let today = new Date().toISOString().split('T')[0];
+    const [showPassword, setShowPassword] = useState(false);
+
     const getUserData = async () => {
         try {
             const accessToken = localStorage.getItem("accessToken");
-            // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
             setData(data.data.data)
         } catch (error) {
@@ -106,17 +105,17 @@ const UpdateProfile = () => {
                     <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Profile </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Username</div>
-                        <input type="text" onChange={formik.handleChange} name="username" className="rounded-2xl border border-green-800 p-3 " defaultValue={formik.values.username} />
+                        <input type="text" onChange={formik.handleChange} name="username" className="rounded-full border border-green-800 p-3 " defaultValue={formik.values.username} />
                         <div className=" text-orange-400 font-medium pl-3">{formik.errors.username}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Email</div>
-                        <input type="text" onChange={formik.handleChange} name="email" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.email} />
+                        <input type="text" onChange={formik.handleChange} name="email" className="rounded-full border border-green-800 p-3" defaultValue={formik.values.email} />
                         <div className="text-orange-400 font-medium pl-3">{formik.errors.email}</div>
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Gender</div>
-                        <select onChange={formik.handleChange} name="gender" defaultValue={formik.values.gender} className="rounded-2xl border border-green-800 p-3">
+                        <select onChange={formik.handleChange} name="gender" defaultValue={formik.values.gender} className="rounded-full border border-green-800 p-3">
                             <option value="" disabled>
                                 Select Gender
                             </option>
@@ -131,7 +130,7 @@ const UpdateProfile = () => {
                     </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Birthdate</div>
-                        <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
+                        <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-full border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
                         <div className="text-orange-400 font-medium pl-3">{formik.errors.birthdate}</div>
 
                     </div>
@@ -139,8 +138,14 @@ const UpdateProfile = () => {
 
                         {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>APPLYING CHANGES</button>
                             :
+                            <div className="flex gap-3">
+                                <Link to={'/profile'}>
+                                    <button className={"btn bg-red-500 hover:bg-red-500 rounded-2xl border-4 border-black hover:border-black text-white"}>CANCEL</button>
+                                </Link>
+                                <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>
 
-                            <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT CHANGES"}</button>}
+                            </div>
+                        }
                     </div>
                 </div>
             </div>

@@ -10,10 +10,12 @@ import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
 import toast, { Toaster } from "react-hot-toast";
 import { getMainAddress } from "../../redux/Features/branch";
 import { PiPercentFill } from "react-icons/pi";
+import { MdEdit } from "react-icons/md";
 import moment from 'moment';
 
 const ProfilePage = () => {
     const apiInstance = api()
+    const [disabled, setDisabled] = useState(false)
     const [data, setData] = useState('')
     const [coupon, setCoupon] = useState()
     const mainAddress = useSelector((state) => state.branch.mainAddress)
@@ -26,10 +28,7 @@ const ProfilePage = () => {
 
     const getUserData = async () => {
         try {
-            // const accessToken = localStorage.getItem("accessToken");
-            // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
-            // console.log(data.data.data);
             setData(data.data.data)
         } catch (error) {
             console.log(error);
@@ -53,11 +52,9 @@ const ProfilePage = () => {
                 if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
                     message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
                 }
-                console.log(file);
                 const formData = new FormData();
                 formData.append('image', file);
                 const response = await apiInstance.patch(`users/update-image`, formData)
-                console.log(response.data.data);
                 dispatch(setProfile_Picture(response.data.data.profile_picture))
                 toast.success("Profile Picture Updated")
             }
@@ -67,10 +64,15 @@ const ProfilePage = () => {
     };
     const verifyAccount = async () => {
         try {
+            setDisabled(true)
             const response = await api().post('/users/verify-user-profile');
             toast.success(response.data.message);
         } catch (error) {
             console.log(error);
+            setDisabled(false)
+        }
+        finally {
+            setDisabled(false)
         }
     }
     useEffect(() => {
@@ -80,15 +82,10 @@ const ProfilePage = () => {
     }, [])
     useEffect(() => {
         getUserData();
-        console.log(user);
     }, [user])
     useEffect(() => {
         dispatch(getMainAddress());
     }, []);
-
-
-    console.log(mainAddress);
-    console.log(coupon);
     return (
         <div>
             <Toaster />
@@ -181,19 +178,32 @@ const ProfilePage = () => {
                                 <Link to={'/profile-password'}>
                                     <div className="hover:underline ease-in duration-200">Change Password</div>
                                 </Link>
-                                <Link to={'/updateprofile'}>
-                                    <div className="hover:underline ease-in duration-200 flex gap-1">Update Profile </div>
-                                </Link>
-                                {
-                                    user.isVerified == "verified" ?
-                                        null
-                                        :
-                                        <div className="hover:underline ease-in duration-200 flex gap-1" onClick={() => verifyAccount()}> Verify Account </div>
-                                }
+
+
+
+
                             </div>
                         </div>
                     </div>
                     <div className="my-5 md:my-0 md:p-10  mb-10 flex flex-col gap-3 border p-3 py-5 rounded-xl  md:rounded-none md:rounded-r-3xl md:col-span-2 shadow-xl">
+
+                        {disabled ?
+
+                            <div className=" ease-in duration-200 flex justify-center btn hover:bg-yellow-300 hover:border-green-800 bg-yellow-300 border-4 border-green-800 cursor-not-allowed" > Sending Verification Email... </div>
+                            :
+                            <>{
+                                user.isVerified == "verified" ?
+                                    <Link to={'/updateprofile'}>
+                                        <div className="flex place-content-end gap-3 text-green-800 text-lg">
+                                            <div className="grid place-content-center"><MdEdit></MdEdit></div>
+                                            <div className="hover:underline ease-in duration-200 grid place-content-end">Update Profile  </div>
+                                        </div>
+                                    </Link>
+                                    :
+                                    <div className=" ease-in duration-200 flex justify-center btn hover:bg-yellow-400 hover:border-green-800 bg-yellow-300 border-4 border-green-800" onClick={() => verifyAccount()}> Verify Account </div>
+                            }
+                            </>}
+
                         <div className="flex flex-col gap-2">
                             <div className="font-bold text-green-800 text-2xl">Username</div>
                             <div className="h-[5px] bg-green-800"></div>

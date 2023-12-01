@@ -10,6 +10,8 @@ import moment from 'moment';
 import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
+import { useDebounce } from 'use-debounce';
+
 
 const SuperOrderList = () => {
     const today = new Date();
@@ -25,10 +27,12 @@ const SuperOrderList = () => {
     const [sort, setSort] = useState('DESC');
     const [branch, setBranch] = useState("")
     const [branches, setBranches] = useState()
+    const [debouncedInvoice] = useDebounce(invoice, 1000);
+
+
     const getBranches = async () => {
         try {
             const branches = await api().get(`/branch/all`)
-            console.log(branches.data.data);
             setBranches(branches.data.data);
         } catch (error) {
             console.log(error);
@@ -55,6 +59,15 @@ const SuperOrderList = () => {
         try {
             setPage(1);
             setStatus(event.target.value)
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const handleSearchInvoice = (event) => {
+        try {
+            setPage(1);
+            setInvoice(event)
         } catch (error) {
             console.log(error);
         }
@@ -94,15 +107,10 @@ const SuperOrderList = () => {
         }
     };
 
-    const handleInvoice = debounce((event) => {
-        console.log(event);
-        setInvoice(event);
-    }, 1000);
 
     const handleSearch = async () => {
         try {
             const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branch}`)
-            console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
         } catch (error) {
@@ -128,19 +136,11 @@ const SuperOrderList = () => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         handleSearch()
         getBranches()
-    }, [startdate, status, invoice, page, enddate, sortBy, sort, branch])
+    }, [debouncedInvoice, startdate, status, page, enddate, sortBy, sort, branch])
 
-    const testing = (value) => {
-        try {
-            console.log(value);
-        } catch (error) {
-            console.log(error);
-        }
-    }
-
-    console.log(page);
 
     return (
         <div >
@@ -152,12 +152,12 @@ const SuperOrderList = () => {
                 <div className="mb-10 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 py-5 px-8 shadow-xl rounded-2xl">
                     <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="g:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
+                        <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="g:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
-                    <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3">
+                    <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3 pb-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" value={branch} onChange={(e) => handleBranch(e)} className="h-[48px] px-2 border-2 rounded-xl w-[170px] lg:w-[200px]">
-                                <option value={""} disabled selected>Store Branch</option>
+                                <option value={""} >All Branch</option>
                                 {branches ? branches.map((value, index) => {
                                     return (
                                         <option value={value.id}> {value.name}</option>
@@ -213,7 +213,7 @@ const SuperOrderList = () => {
                 <div className="grid gap-3 mb-10">
                     {orderData ? orderData.map((value, index) => {
                         return (
-                            <div key={index} onClick={() => testing(value.id)}>
+                            <div key={index} >
                                 <OrderComponent
                                     status={value.status}
                                     invoice={value.invoice}

@@ -1,8 +1,6 @@
 import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 const DashboardUserChart = ({ data }) => {
-    console.log(`ini di component dashboard user chart`);
-    console.log(data);
     return (
         <ResponsiveContainer width="100%" height={350}>
             <ComposedChart

@@ -8,10 +8,7 @@ const MyForm = ({ id }) => {
             input1: '',
             input2: '',
         },
-        // Define your validation schema
         onSubmit: (values) => {
-            // Handle form submission
-            console.log(values);
         },
     });
 
@@ -22,18 +19,17 @@ const MyForm = ({ id }) => {
                <input id="swal-input2" class="swal2-input" value="${formik.values.input2}" placeholder="Input 2">`,
             focusConfirm: false,
             preConfirm: () => {
-                console.log(id);
                 formik.setValues({
                     ...formik.values,
                     input1: document.getElementById('swal-input1').value,
                     input2: document.getElementById('swal-input2').value,
                 });
-                formik.validateForm(); // Trigger validation
+                formik.validateForm();
             },
         });
 
         if (formValues) {
-            // Handle the result if needed
+
         }
     };
 

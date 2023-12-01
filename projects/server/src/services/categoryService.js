@@ -41,7 +41,6 @@ module.exports = {
                 default:
                     order = [['updatedAt', 'DESC']];
             }
-
             const categories = await db.product_category.findAll({
                 where: { ...whereClause },
                 order,
@@ -56,7 +55,6 @@ module.exports = {
             return error;
         }
     },
-
     editCategoryService1: async (body) => {
         try {
             const { id } = body;

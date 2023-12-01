@@ -6,13 +6,12 @@ import { RiFileList3Fill } from "react-icons/ri";
 import { RiLogoutBoxFill } from "react-icons/ri";
 import { RiLogoutBoxRFill } from "react-icons/ri";
 import { Link, useNavigate, useLocation } from "react-router-dom";
-import { useAppSelector } from '../redux/App/Store';
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
 import { getCartAsync } from "../redux/Features/cart";
 import { clearCart } from "../redux/Features/cart";
 import { useEffect, useState } from "react";
-import { Navigate } from "react-router-dom";
+
 
 const Navbar = () => {
     const navigate = useNavigate()
@@ -20,19 +19,17 @@ const Navbar = () => {
     const dispatch = useDispatch()
     const { cart } = useSelector((state) => state.cart)
     const user = useSelector((state) => state.users)
-    const [searchQuery, setSearchQuery] = useState(""); // State to store the search query
+    const [searchQuery, setSearchQuery] = useState("");
 
     const handleLogout = async (e) => {
         e.preventDefault()
         dispatch(logout());
         dispatch(clearCart());
         navigate('/login')
-        window.location.reload();
 
     }
 
     const handleSearch = () => {
-        // Navigate to the product list page with the search query
         navigate(`/products?category=&search=${searchQuery}`);
     };
 
@@ -40,7 +37,6 @@ const Navbar = () => {
         dispatch(getCartAsync());
     }, [dispatch]);
 
-    // console.log(cart);
 
     return (
         <div className="relative">

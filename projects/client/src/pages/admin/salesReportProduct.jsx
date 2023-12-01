@@ -8,6 +8,8 @@ import { Link } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from "../../components/footer";
 import { useAppSelector } from '../../redux/App/Store';
+import { useDebounce } from 'use-debounce';
+
 
 const SalesReportProduct = () => {
     const userSelector = useAppSelector((state) => state.users)
@@ -23,6 +25,8 @@ const SalesReportProduct = () => {
     const [name, setName] = useState("");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [debouncedName] = useDebounce(name, 1000);
+
     const handleSortQuery = (event) => {
         setPage(1)
         setSort(event.target.value);
@@ -64,7 +68,7 @@ const SalesReportProduct = () => {
 
     const handleReset = () => {
         try {
-            setSort(""); setStartDate(""); setPage(1); setMaxPage(1); fetchData(); setEndDate(""); setSort("ASC"); setSortBy("name"); setBranch("")
+            setSort(""); setStartDate(""); setPage(1); setMaxPage(1); setEndDate(""); setSort("ASC"); setSortBy("name"); setBranch(""); setName("");
         } catch (error) {
             console.log(error);
         }
@@ -77,7 +81,6 @@ const SalesReportProduct = () => {
             setBranchList(branchData.data.data);
             setData(data.data.data.dataFinal);
             setMaxPage(data.data.data.maxPages)
-            console.log(data.data.data.dataFinal);
         } catch (error) {
             console.log(error);
         }
@@ -93,35 +96,29 @@ const SalesReportProduct = () => {
 
     useEffect(() => {
         fetchData()
-    }, [sortBy, startDate, endDate, sort, name, page, branch])
-    console.log(userSelector?.role);
+    }, [sortBy, startDate, endDate, sort, debouncedName, page, branch])
+
     return (
         <div className="">
             <NavbarAdmin />
-
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32">
-                <div className="text-4xl font-bold text-green-800 mb-3">
-                    Sales Report
+                <div className="text-4xl font-bold text-green-800 mb-3 flex">
+                    Sales Report {userSelector.role == "admin" ? <div className="text-sm pl-3 flex items-end">({branchList[userSelector?.store_branch_id - 1]?.name})</div> : null}
                 </div>
-
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
                     <div role="tablist" className="tabs tabs-lifted tabs-lg">
                         <Link to={`/sales-report/user`}>
                             <div role="tab" className="tab lg:text-xl ">Transactions</div>
                         </Link>
                         <div role="tab" className="tab tab-active bg-green-700 text-white rounded-t-xl lg:text-xl">Products</div>
-
                     </div>
                 </div>
-
                 <div className="border shadow-lg rounded-2xl overflow-x-auto lg:justify-center mt-5 p-3 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 mb-5">
-
                     <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={handleNameQuery} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product Name" />
+                        <input onChange={handleNameQuery} value={name} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product Name" />
                     </div>
-
-                    <div className="flex gap-5 lg:overflow-none justify-between overflow-x-auto my-3">
+                    <div className="flex gap-3 lg:overflow-none justify-center overflow-x-auto my-3">
                         <div className="flex">
                             <div className="flex">
                                 <div className="grid place-content-center mx-3">from</div>
@@ -134,26 +131,23 @@ const SalesReportProduct = () => {
                                 </div>
                             </div>
                         </div>
-
                         {
                             userSelector?.role === "superadmin" ?
-                            <div className='grid place-content-center'>
-                                <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
-                                    <option value={""} selected>All Branch</option>
-                                    {
-                                        branchList && branchList.map((value) => {
-                                            return (
-                                                <option value={value.id}> {value.name} </option>
-                                            )
-                                        })
-                                    }
-                                </select>
-                            </div>
-                            :
-                            <h1 className="grid place-content-center"> Displaying data of {branchList[userSelector?.store_branch_id - 1]?.name} </h1>
+                                <div className='grid place-content-center'>
+                                    <select name="" id="" onChange={handleBranch} value={branch} className='w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]'>
+                                        <option value={""} selected>All Branch</option>
+                                        {
+                                            branchList && branchList.map((value) => {
+                                                return (
+                                                    <option value={value.id}> {value.name} </option>
+                                                )
+                                            })
+                                        }
+                                    </select>
+                                </div>
+                                :
+                                null
                         }
-                        
-
                         <div className="flex">
                             <div className='grid place-content-center mr-2 w-[60px]'>Sort By</div>
                             <div className=''>
@@ -173,6 +167,9 @@ const SalesReportProduct = () => {
                                 <option value="ASC"> ASC </option>
                                 <option value="DESC"> DESC </option>
                             </select>
+                        </div>
+                        <div className="grid place-content-center">
+                            <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black" onClick={handleReset}>Reset</div>
                         </div>
 
                     </div>
@@ -194,7 +191,7 @@ const SalesReportProduct = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {data && data.map((value, index) => (
+                                    {data ? data.map((value, index) => (
                                         <tr key={value.id} className="hover:bg-gray-100 py-3">
                                             <td className="px-4 py-3 text-center border-r">{value.name}</td>
                                             <td className="px-4 py-3 text-center border-r">{value.product.product_category.name}</td>
@@ -204,13 +201,25 @@ const SalesReportProduct = () => {
                                             <td className="px-4 py-3 text-center border-r">{value.transaction.store_branch.name} </td>
                                             <td className="px-4 py-3 text-center border-r">{value.date.split("T")[0]} </td>
                                         </tr>
-                                    ))}
+                                    )) :
+                                        null
+                                    }
+
                                 </tbody>
                             </table>
+                            <div className='flex justify-center mt-3'>
+                                {data.length == 0 ? <div className="alert alert-error flex justify-center w-full">
+                                    <span className="flex justify-center">Sorry there are no data yet</span>
+                                </div> : null}
+                            </div>
+                            <div className='flex justify-center m-3'>
+                                {/* {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
+                                    <span className="flex justify-center">Sorry there are no data just yet</span>
+                                </div> : null} */}
+                            </div>
                         </div>
                     </div>
                 </div>
-
                 {/* <div className="h-[500px] w-[1000px] m-4 border border-black rounded-xl">
                     <h1> Quantity of products sold by type </h1>
                     <ResponsiveContainer width="90%" height="100%">

@@ -1,4 +1,4 @@
-import Navbar from "../../components/navbarUser"
+
 import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer"
 import OrderComponent from "../../components/orderComponent"
@@ -7,10 +7,11 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
 import moment from 'moment';
-import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { useDebounce } from 'use-debounce';
+
 
 const BranchOrderList = () => {
     const today = new Date();
@@ -25,6 +26,8 @@ const BranchOrderList = () => {
     const [maxPage, setMaxPage] = useState(1);
     const branchLocation = useSelector((state) => state.users.store_branch_id);
     const [sort, setSort] = useState('DESC');
+    const [debouncedInvoice] = useDebounce(invoice, 1000);
+
     const handleReset = () => {
         try {
             setInvoice(""); setStatus(""); setStartdate(""); setPage(1); setMaxPage(1); handleSearch(); setEnddate(""); setSort("ASC"); setSortBy("id");
@@ -74,15 +77,17 @@ const BranchOrderList = () => {
             console.log(error);
         }
     };
-    const handleInvoice = debounce((event) => {
-        console.log(event);
-        setInvoice(event);
-    }, 1000);
-
+    const handleSearchInvoice = (event) => {
+        try {
+            setPage(1);
+            setInvoice(event)
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const handleSearch = async () => {
         try {
             const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branchLocation}`)
-            console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
         } catch (error) {
@@ -107,9 +112,10 @@ const BranchOrderList = () => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         handleSearch()
+    }, [startdate, debouncedInvoice, status, page, enddate, sortBy, sort])
 
-    }, [startdate, status, invoice, page, enddate, sortBy, sort])
 
     return (
         <div >
@@ -121,9 +127,9 @@ const BranchOrderList = () => {
                 <div className="mb-10 border-l-4 border-r-4 border-l-yellow-300 border-r-green-600 lg:gap-3 py-5 px-8 shadow-xl rounded-2xl">
                     <div className="border-2 flex rounded-xl bg-white h-[48px] my-3">
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
-                        <input onChange={(e) => handleInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
+                        <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search your order invoice number" />
                     </div>
-                    <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3">
+                    <div className="flex gap-2 justify-between lg:overflow-none overflow-x-auto my-3 pb-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="h-[48px] px-2 border-2 rounded-xl w-[170px] lg:w-[200px]">
                                 <option value={""} disabled selected>Status</option>
