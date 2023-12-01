@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "JCWD-2502-02", // Format JCWD-{batchcode}-{groupnumber}
-      script: "./projects/server/src/index.js",
+      script: "./src/index.js",
       env: {
         NODE_ENV: "production",
         PORT: 2502,
@@ -15,6 +15,7 @@ module.exports = {
         TRANSPORTER_PASS: "vqqe bpez glsa vbzx",
         FE_BASEPATH: "https://jcwd250202.purwadhikabootcamp.com/",
       },
+      cwd: "/var/www/html/jcwd250202.purwadhikabootcamp.com/projects/server",
       time: true,
     },
   ],
