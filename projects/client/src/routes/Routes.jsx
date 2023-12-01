@@ -28,6 +28,7 @@ import SalesReportPage from "../pages/admin/salesReport";
 import AdminOrderList from "../pages/admin/adminOrderListPage";
 import AdminOrderDetail from "../pages/admin/manageOrderDetailPage";
 import SalesReportProduct from "../pages/admin/salesReportProduct";
+import ChangePasswordPage from "../pages/changePassPage";
 import Protected from "./protected";
 const routes = [
     <Route path='/' element={
@@ -64,6 +65,9 @@ const routes = [
         <Protected guestPage={true}>
             <LoginPage />
         </Protected>
+    } />,
+    <Route path='/change-password/:id' element={
+        <ChangePasswordPage />
     } />,
     <Route path='/products' element={
         <Protected userPage={true}>

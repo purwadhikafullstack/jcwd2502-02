@@ -39,13 +39,12 @@ const ModalNewAdmin = ({ getAdmins }) => {
                 document.getElementById('my_modal_3').close();
                 toast.error(error.response.data.message);
                 setDisabled(false)
-
             }
         },
         validationSchema: yup.object().shape({
             username: yup.string().required(),
             email: yup.string().email().required(),
-            password: yup.string().required(),
+            password: yup.string().required().min(6),
             phone_number: yup.string().required(),
             store_branch_id: yup.string().required(),
             birthdate: yup.date().required().test(`date-not-in-the-future`, 'Date cannot be in the future', function (value) {

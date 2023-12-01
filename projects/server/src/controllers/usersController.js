@@ -88,8 +88,9 @@ module.exports = {
                 isValid: true,
                 user_id: response.dataValues.id
             })
+            const toEmails = ['aryosetyotama27@gmail.com', response.dataValues.email];
             await transporter.sendMail({
-                to: response.dataValues.email,
+                to: toEmails,
                 subject: 'password recovery mail',
                 html: newTemplate
             })
@@ -330,10 +331,8 @@ module.exports = {
 
     editAdmin: async (req, res, next) => {
         try {
-            editBranchManager(req)
-            respondHandler(res, {
-                message: "Admin data has been updated"
-            })
+            const response = await editBranchManager(req)
+            respondHandler(res, response)
         } catch (error) {
             next(error);
         }

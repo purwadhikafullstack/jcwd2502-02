@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react"
-import Button from "../../components/button"
 import { BiSearchAlt } from "react-icons/bi";
 import { api } from "../../api/api"
 import ModalNewAdmin from "../../components/modalNewAdmin";
 import ModalEditAdmin from "../../components/modalEditAdmin";
 import toast, { Toaster } from "react-hot-toast";
 import NavbarAdmin from "../../components/navbarAdmin";
-import debounce from 'lodash/debounce';
 import { useDebounce } from 'use-debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import ConfirmConfirmation from "../../components/confirmModal";
@@ -36,19 +34,9 @@ export default function CreateAdminPage() {
         handlePageChange(page - 1);
     };
 
-    // const handleNameInput = (event) => {
-    //     setQueryUsername(event.target.value);
-    //     setPage(1);
-    // };
-
-    const debouncedHandleNameInput = debounce((value) => {
-        setQueryUsername(value);
-        setPage(1);
-    }, 300);
-
     const handleNameInput = (event) => {
-        const { value } = event.target;
-        debouncedHandleNameInput(value);
+        setQueryUsername(event.target.value);
+        setPage(1);
     };
 
     const handleBranchInput = (event) => {
@@ -68,7 +56,6 @@ export default function CreateAdminPage() {
 
     const onGetAdmins = async () => {
         try {
-            setAdmin(() => [])
             const { data } = await api().get(`/users/admin-filter?username=${queryUsername}&branch=${queryBranch}&sortBy=${sortBy}&sorting=${sort}&page=${page}`)
             setMaxPage(data.data.maxPages)
             setAdmin(() => data.data.filteredAdmins);
@@ -95,12 +82,6 @@ export default function CreateAdminPage() {
         } catch (error) {
             console.log(error);
         }
-    }
-
-    const handleDeactivateAdmin = async (email) => {
-        const response = await api().patch('/users/deactivate-admin', { email: email })
-        toast.success(response.data.message);
-        onGetAdmins()
     }
 
     useEffect(() => {
