@@ -71,6 +71,7 @@ const UserOrderDetail = () => {
 
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         getDetailOrder()
         const intervalId = setInterval(() => {
             setTimeRemaining(prevTime => (prevTime > 0 ? prevTime - 1 : 0));

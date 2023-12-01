@@ -135,9 +135,9 @@ const UserOrderList = () => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         handleSearch()
         getBranches()
-
     }, [startdate, debouncedInvoice, status, page, enddate, sortBy, sort, branch])
 
 
@@ -153,7 +153,7 @@ const UserOrderList = () => {
                         <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                         <input value={invoice} onChange={(e) => handleSearchInvoice(e.target.value)} type="text" className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search invoice number" />
                     </div>
-                    <div className="flex justify-between gap-2 lg:overflow-none overflow-x-auto my-3">
+                    <div className="flex justify-between gap-2 lg:overflow-none overflow-x-auto my-3 pb-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" value={status} onChange={(e) => handleStatus(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[220px]">
                                 <option value={""} disabled selected>Status</option>

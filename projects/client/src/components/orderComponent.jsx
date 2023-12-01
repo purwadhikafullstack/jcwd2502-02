@@ -14,9 +14,9 @@ const OrderComponent = ({ status, invoice, total, date, details, store, image, p
                         </div>
                         {status == "pending" ? <div className={` text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR PAYMENT</div> : null}
                         {status == "waiting for payment approval" ? <div className={` text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
-                        {status == "canceled" ? <div className={` text-md ml-2 grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{status.toUpperCase()}</div> : null}
-                        {status == "Delivered" ? <div className={` text-md ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2`}>{status.toUpperCase()}</div> : null}
-                        {status == "Payment Approved" ? <div className={` text-md ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2`}>{status.toUpperCase()}</div> : null}
+                        {status == "canceled" ? <div className={`text-white text-md ml-2 grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{status.toUpperCase()}</div> : null}
+                        {status == "Delivered" ? <div className={`text-white text-md ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2`}>{status.toUpperCase()}</div> : null}
+                        {status == "Payment Approved" ? <div className={`text-white text-md ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2`}>{status.toUpperCase()}</div> : null}
                         {status == "Complete" ? <div className={` text-md ml-2 grid place-content-center rounded-xl font-bold bg-green-600 text-white p-2`}>{status.toUpperCase()}</div> : null}
                     </div>
 

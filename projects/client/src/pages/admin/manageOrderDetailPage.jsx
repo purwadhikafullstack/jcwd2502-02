@@ -40,13 +40,14 @@ const AdminOrderDetail = () => {
         }
     };
     useEffect(() => {
+        window.scrollTo(0, 0);
         getDetailOrder()
     }, []);
     return (
         <div>
             <Toaster />
             <NavbarAdmin />
-            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full"}
+            <div className={"mt-[70px] md:mx-20 lg:mx-32 mx-5 h-full mb-10"}
                 style={{ minHeight: "100vh" }}>
                 <div className="flex text-md lg:text-2xl font-bold pt-10 pb-5">
                     <Link to={'/admin/order-list'}>
@@ -65,7 +66,7 @@ const AdminOrderDetail = () => {
                                     {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
                                     {transaction.status == "Payment Approved" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2 text-white`}>PAYMENT APPROVED</div> : null}
                                     {transaction.status == "Delivered" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2 text-white`}>ORDER SENT</div> : null}
-                                    {transaction.status == "canceled" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
+                                    {transaction.status == "canceled" ? <div className={`text-white lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-red-400 p-2`}>{transaction.status.toUpperCase()}</div> :
                                         null
                                     }
                                     {transaction.status == "Complete" ? <div className={` lg:flex-1 text-xl grid place-content-center rounded-xl font-bold bg-green-600 p-2 text-white`}>{transaction.status.toUpperCase()}</div> :

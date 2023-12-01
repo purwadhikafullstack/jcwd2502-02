@@ -136,6 +136,7 @@ const SuperOrderList = () => {
     };
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         handleSearch()
         getBranches()
     }, [debouncedInvoice, startdate, status, page, enddate, sortBy, sort, branch])
