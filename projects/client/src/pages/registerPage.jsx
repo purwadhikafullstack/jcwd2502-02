@@ -28,7 +28,6 @@ export default function RegistrationPage() {
         onSubmit: async (values) => {
             try {
                 setDisabled(true)
-                console.log(values);
                 const response = await api().post(`/users/register`, { ...values })
                 toast.success(response.data.message);
                 setTimeout(() => {
@@ -70,8 +69,6 @@ export default function RegistrationPage() {
             console.log(error);
         }
     }
-
-    console.log(formik.values);
 
     return (
         <div className=" h-full md:h-screen bg-gradient-to-b from-green-700 to-yellow-300 pb-16 grid place-content-center">

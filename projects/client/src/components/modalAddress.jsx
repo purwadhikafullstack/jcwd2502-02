@@ -17,7 +17,6 @@ const ModalAddress = () => {
     const getAddress = async () => {
         try {
             const userAddress = await apiInstance.get('/location/')
-            console.log(userAddress.data.data);
             userAddress.data.data.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
             setAddress(userAddress.data.data)
         } catch (error) {

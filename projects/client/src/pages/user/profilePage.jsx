@@ -28,10 +28,7 @@ const ProfilePage = () => {
 
     const getUserData = async () => {
         try {
-            // const accessToken = localStorage.getItem("accessToken");
-            // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
-            // console.log(data.data.data);
             setData(data.data.data)
         } catch (error) {
             console.log(error);
@@ -55,11 +52,9 @@ const ProfilePage = () => {
                 if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
                     message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
                 }
-                console.log(file);
                 const formData = new FormData();
                 formData.append('image', file);
                 const response = await apiInstance.patch(`users/update-image`, formData)
-                console.log(response.data.data);
                 dispatch(setProfile_Picture(response.data.data.profile_picture))
                 toast.success("Profile Picture Updated")
             }
@@ -87,15 +82,10 @@ const ProfilePage = () => {
     }, [])
     useEffect(() => {
         getUserData();
-        console.log(user);
     }, [user])
     useEffect(() => {
         dispatch(getMainAddress());
     }, []);
-
-    console.log(user.isVerified);
-    console.log(mainAddress);
-    console.log(coupon);
     return (
         <div>
             <Toaster />

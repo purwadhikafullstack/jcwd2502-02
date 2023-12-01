@@ -33,7 +33,6 @@ const CheckoutPage = () => {
     const [totalFinal, setTotalFinal] = useState()
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
     const totalWeight = cart.cart.reduce((sum, item) => sum + item.total_weight, 0);
-    console.log(totalWeight);
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
     useEffect(() => {
         if (cart.cart.length === 0) {
@@ -78,9 +77,7 @@ const CheckoutPage = () => {
                 toast.error("Please complete the shipping data");
             } else {
                 setDisabled(true);
-                console.log("ini disable", disabled);
                 const createOrder = await api().post('/transaction/add', { subtotal: totalSubtotal, shipping_cost: cost, final_total: totalFinal, shipping_method: `${shippingService} - ${courier}`, address, branchId: closestBranch.id, total_weight: totalWeight, discount_coupon: discount, coupon_id: discountId, ownedCouponId: ownedCouponId, coupon_name: couponName });
-                console.log(createOrder.data);
                 toast.success("Order created!");
                 setTimeout(() => {
                     nav(`/order/${createOrder.data.data.id}`);
@@ -123,9 +120,6 @@ const CheckoutPage = () => {
         dispatch(getMainAddress());
         onGetCoupon()
     }, []);
-
-
-    console.log(shippingOptionSelected);
 
     useEffect(() => {
         if (!discount && !cost) {

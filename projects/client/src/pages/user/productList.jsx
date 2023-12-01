@@ -72,14 +72,12 @@ const ProductListPage = () => {
                 const response = await api.get(
                     `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=&page=${page}&discount=${discount}`
                 )
-                console.log(response);
                 setMaxPage(response.data.maxPages)
                 setProducts(response.data.products);
             } else {
                 const response = await api.get(
                     `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}&page=${page}&discount=${discount}`
                 )
-                console.log(response);
 
                 setMaxPage(response.data.maxPages)
                 setProducts(response.data.products);

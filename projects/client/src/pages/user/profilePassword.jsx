@@ -27,9 +27,6 @@ const UpdatePass2 = () => {
         },
         onSubmit: async (values) => {
             try {
-                console.log(`konyol`);
-                // const updateUserData = await axios.patch('http://localhost:8905/api/users/update-user', formik.values)
-                // toast.success(updateUserData.data.message);
             } catch (error) {
                 console.log(error);
             }

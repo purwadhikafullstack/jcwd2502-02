@@ -29,7 +29,6 @@ const UpdateProductsCategoryPage = () => {
     const onGetCategory = async () => {
         try {
             const response = await api().get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
-            console.log(response);
             setCategory(response.data.data.categories);
             setMaxPages(response.data.data.maxPages);
         } catch (error) {

@@ -25,8 +25,6 @@ const UserOrderDetail = () => {
     const getDetailOrder = async () => {
         try {
             const order = await api().get(`/transaction/user/order/${id}`)
-            console.log(order.data.data);
-            console.log(order.data.data.createdAt);
             setTransaction(order.data.data)
             setDetail(order.data.data.transaction_details)
             const createdAt = order.data.data.createdAt;

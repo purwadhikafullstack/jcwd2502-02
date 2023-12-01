@@ -115,11 +115,8 @@ module.exports = {
 
     filteredTransactionsData: async (req) => {
         try {
-            console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken
-            console.log(role);
             const { username, sort, days, page } = req.query;
-            console.log(sort);
             let whereClause = {};
             let whereUsername = {};
             if (role == "admin") {
@@ -131,10 +128,8 @@ module.exports = {
             if (days) {
                 whereClause.createdAt = { [Op.gte]: new Date(new Date() - days * 24 * 60 * 60 * 1000) }
             }
-            console.log(whereClause);
             const limit = 6;
             const totalRecords = await db.transactions.count({ where: whereClause })
-            console.log(`cek 1`);
             const maxPages = Math.ceil(totalRecords / limit);
             const offset = (page - 1) * limit;
             const data = await db.transactions.findAll({
@@ -165,11 +160,8 @@ module.exports = {
         try {
             let whereClause = {};
             let nameClause = {};
-            console.log(req.dataToken);
             const { role, store_branch_id } = req.dataToken;
             const { username, sort, page, branch, startdate, enddate, sortby, transactionstatus } = req.query;
-            console.log(">>>>>>>>>>.");
-            console.log(req.query);
             if (transactionstatus == 2) {
                 whereClause.status = 'Complete'
             } else if (transactionstatus == 3) {
@@ -218,9 +210,6 @@ module.exports = {
                 limit,
                 offset
             })
-            console.log(whereClause);
-            console.log("ini datanya>>>>>>>>>>>>>..");
-            console.log(data);
             return {
                 maxPages,
                 data
@@ -232,7 +221,6 @@ module.exports = {
     getOverallData: async (req) => {
         try {
             let whereCondition = {};
-            console.log(req.dataToken);
             const { branch, startdate, enddate } = req.query;
             const { role, store_branch_id } = req.dataToken;
             if (startdate && enddate) {
@@ -247,7 +235,6 @@ module.exports = {
                 if (branch) whereCondition.store_branch_id = branch
             }
             whereCondition.status = { [db.Sequelize.Op.not]: 'Canceled' }
-            console.log(whereCondition);
             const data = await db.transactions.findAll({
                 where: whereCondition,
                 attributes: ["status", "subtotal", "final_total", "store_branch_id", "createdAt"],

@@ -88,7 +88,6 @@ module.exports = {
     getAllUserOrders: async (req, res, next) => {
         try {
             const { id } = req.dataToken;
-            console.log(id);
             const { invoice, status, createdAt, page, startdate, enddate, sort, sortby, branchId } = req.query;
             const limit = 6;
             const whereClause = {};
@@ -360,7 +359,6 @@ module.exports = {
                 const userTotalTransactions = await db.transactions.count({
                     where: { user_id: getOrder.user_id, status: "Complete" }
                 });
-                console.log(userTotalTransactions);
                 const coupon2 = await db.coupon.findOne({ where: { id: 2 } });
                 const coupon3 = await db.coupon.findOne({ where: { id: 3 } });
                 const conditionCoupon2 = (userTotalTransactions + 1) % 10 === 0

@@ -20,7 +20,6 @@ const ProductDetailPage = () => {
     const api = api1();
     const { id } = useParams()
     const closestBranch = useSelector((state) => state.branch.closestBranch);
-    console.log(closestBranch.id);
     const cart = useSelector((state) => state.cart);
     const user = useSelector((state) => state.users);
     const isInCart = cart.cart.some(item => item.products_id == id);
@@ -51,11 +50,9 @@ const ProductDetailPage = () => {
         try {
             if (closestBranch.id === undefined) {
                 const oneProduct = await api.get(`products/oneproduct/${id}`);
-                console.log(oneProduct.data.data);
                 setProduct(oneProduct.data.data);
             } else {
                 const oneProduct = await api.get(`products/product-stock?productId=${id}&branchId=${closestBranch.id}`);
-                console.log(oneProduct.data.data);
                 setProduct(oneProduct.data.data);
             }
         } catch (error) {

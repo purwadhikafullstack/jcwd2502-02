@@ -6,7 +6,6 @@ module.exports = {
         try {
             let whereCondition = {};
             const { role, store_branch_id } = dataToken;
-            console.log(query);
             const { sortHow, sortBy, productName, branch, startDate, endDate, page } = query;
             if (role === "admin") {
                 whereCondition.store_branch_id = store_branch_id
@@ -24,7 +23,6 @@ module.exports = {
             }
             const limit = 6;
             const offset = (page - 1) * limit;
-            console.log(whereCondition);
             const data = await db.transaction_detail.findAndCountAll({
                 attributes: [
                     [db.sequelize.literal('transaction_detail.name'), 'name'],
@@ -40,12 +38,12 @@ module.exports = {
                         model: db.transactions,
                         attributes: ["status"],
                         where: {
-                            status: {[Op.not]: "canceled"}
+                            status: { [Op.not]: "canceled" }
                         },
-                        include: [{model: db.store_branch, attributes: ["name"]}]
-                    },  
+                        include: [{ model: db.store_branch, attributes: ["name"] }]
+                    },
                     {
-                        model: db.product, 
+                        model: db.product,
                         attributes: ["product_categories_id"],
                         include: [{ model: db.product_category, attributes: ["name"] }]
                     }
@@ -64,20 +62,17 @@ module.exports = {
                 dataFinal
             }
         } catch (error) {
-            console.log(error);
             return error;
         }
     },
 
     fetchDashboardCardData: async (req) => {
         try {
-            console.log(req.query);
-            const {branch} = req.query;
-            const {role, store_branch_id} = req.dataToken;
+            const { branch } = req.query;
+            const { role, store_branch_id } = req.dataToken;
             let whereCondition = {};
-            console.log(role, store_branch_id, branch);
-            if(role === "superadmin") {
-                if(branch) whereCondition.store_branch_id = branch
+            if (role === "superadmin") {
+                if (branch) whereCondition.store_branch_id = branch
             } else if (role == "admin") {
                 whereCondition.store_branch_id = store_branch_id
             }

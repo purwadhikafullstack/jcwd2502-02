@@ -33,7 +33,6 @@ const SuperOrderList = () => {
     const getBranches = async () => {
         try {
             const branches = await api().get(`/branch/all`)
-            console.log(branches.data.data);
             setBranches(branches.data.data);
         } catch (error) {
             console.log(error);
@@ -67,7 +66,6 @@ const SuperOrderList = () => {
 
     const handleSearchInvoice = (event) => {
         try {
-            // console.log(event.target.value);
             setPage(1);
             setInvoice(event)
         } catch (error) {
@@ -113,7 +111,6 @@ const SuperOrderList = () => {
     const handleSearch = async () => {
         try {
             const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branch}`)
-            console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
         } catch (error) {

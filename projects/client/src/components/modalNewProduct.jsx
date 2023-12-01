@@ -52,10 +52,8 @@ const ModalNewProduct = () => {
             if (inputs.name === "" || inputs.image === "" || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "") {
                 toast.error("Please Fill All Data")
             } else {
-                console.log(inputs);
                 const data = await api.post(`products/addproduct`, fd)
                 toast.success('Create Product Success')
-                console.log(data);
                 setTimeout(() => {
                     window.location.reload();
                 }, 1000);

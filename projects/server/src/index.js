@@ -9,20 +9,9 @@ const transactionCronJob = require('./helper/transactionCronjob')
 const PORT = process.env.PORT || 8000;
 const app = express();
 app.use(cors());
-// app.use(
-//   cors({
-//     origin: [
-//       process.env.WHITELISTED_DOMAIN &&
-//       process.env.WHITELISTED_DOMAIN.split(","),
-//     ],
-//   })
-// );
-
 app.use(express.json());
 app.use(bearerToken());
 app.use((req, res, next) => {
-  // console.log(req?.headers?.authorization)
-  // console.log("kalau kosong, ini mungkin karena postman (index.js");
   next();
 })
 
@@ -68,15 +57,6 @@ app.use((req, res, next) => {
   }
 });
 
-// error
-// app.use((err, req, res, next) => {
-//   if (req.path.includes("/api/")) {
-//     console.error("Error : ", err.stack);
-//     res.status(500).send("Error!");
-//   } else {
-//     next();
-//   }
-// });
 
 //#endregion
 

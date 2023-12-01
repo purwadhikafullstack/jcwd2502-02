@@ -81,7 +81,6 @@ const SalesReportProduct = () => {
             setBranchList(branchData.data.data);
             setData(data.data.data.dataFinal);
             setMaxPage(data.data.data.maxPages)
-            console.log(data.data.data.dataFinal);
         } catch (error) {
             console.log(error);
         }
@@ -98,7 +97,6 @@ const SalesReportProduct = () => {
     useEffect(() => {
         fetchData()
     }, [sortBy, startDate, endDate, sort, debouncedName, page, branch])
-    console.log(data);
 
     return (
         <div className="">

@@ -12,8 +12,6 @@ const Cart = () => {
     const dispatch = useDispatch()
     const cart = useSelector((state) => state.cart);
     const closestBranch = useSelector((state) => state.branch.closestBranch);
-    console.log(closestBranch);
-    console.log(cart.cart);
     useEffect(() => {
         window.scrollTo(0, 0);
         dispatch(nearestBranch())

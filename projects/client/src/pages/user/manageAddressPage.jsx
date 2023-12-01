@@ -60,7 +60,6 @@ const ManageAddress = () => {
 
     const updateMain = async (addressId) => {
         try {
-            console.log(addressId);
             const mainAddress = await apiInstance.patch(`/location/main/${addressId}`)
             Swal.fire("Success!", "Main Address Successfully Updated", "success");
             getAddress()
@@ -102,8 +101,6 @@ const ManageAddress = () => {
         } catch (error) {
         }
     }
-
-    console.log(address);
 
 
     return (

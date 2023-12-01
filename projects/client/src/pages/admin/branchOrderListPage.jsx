@@ -1,4 +1,4 @@
-import Navbar from "../../components/navbarUser"
+
 import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer"
 import OrderComponent from "../../components/orderComponent"
@@ -7,7 +7,6 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/api";
 import toast, { Toaster } from "react-hot-toast";
 import moment from 'moment';
-import debounce from 'lodash/debounce';
 import PaginationFixed from "../../components/paginationComponent";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
@@ -80,7 +79,6 @@ const BranchOrderList = () => {
     };
     const handleSearchInvoice = (event) => {
         try {
-            // console.log(event.target.value);
             setPage(1);
             setInvoice(event)
         } catch (error) {
@@ -90,7 +88,6 @@ const BranchOrderList = () => {
     const handleSearch = async () => {
         try {
             const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branchLocation}`)
-            console.log(response.data.orders);
             setMaxPage(response.data.maxPages);
             setOrderData(response.data.orders);
         } catch (error) {

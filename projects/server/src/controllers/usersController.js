@@ -2,7 +2,6 @@ const db = require('./../models');
 const fs = require('fs').promises;
 const { findAllUsers, findId, findEmail, findUsername, findReferral, verifyUser, createUser, userLogin, registerUser, createBranchManager, getFilteredAdmin, editBranchManager, checkReferralService, verifyUserAccount } = require('./../services/userService');
 const { createJWT } = require('../lib/jwt');
-// const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
@@ -177,7 +176,6 @@ module.exports = {
                 data: account
             })
         } catch (error) {
-            console.log(error);
             next(error)
         }
     },
@@ -233,7 +231,6 @@ module.exports = {
                 data: newUser
             })
         } catch (error) {
-            console.log(error);
             deleteFiles(req.files)
             next(error)
         }
@@ -253,8 +250,6 @@ module.exports = {
                 data: validToken
             })
         } catch (error) {
-            console.log('>>>>');
-            console.log(error);
             next(error)
         }
     },
@@ -308,14 +303,12 @@ module.exports = {
 
     deactivateAdmin: async (req, res, next) => {
         try {
-            console.log(req.body);
             const { email } = req.body;
             const response = await db.user.findOne({
                 where: { email },
             })
             if (!response) throw { message: "User account was not found" };
             const adminStatus = response.dataValues.isVerified;
-            console.log(`adminStatus: ${adminStatus}`);
             if (adminStatus == 'verified') {
                 const deactivate = await db.user.update({ isVerified: 'unverified' }, { where: { email } })
             } else if (adminStatus == 'unverified') {

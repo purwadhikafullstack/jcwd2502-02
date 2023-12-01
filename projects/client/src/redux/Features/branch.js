@@ -62,7 +62,6 @@ export const nearestBranch = () => async (dispatch) => {
                 Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
             const distance = R * c;
-            // console.log(distance, minDistance, idx);
             if (distance < minDistance) {
                 minDistance = distance;
                 nearest = location;

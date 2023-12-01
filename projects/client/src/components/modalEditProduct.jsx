@@ -19,7 +19,6 @@ const ModalEditProduct = ({
     categories,
 
 }) => {
-    console.log('ModalEditProduct - showModal:', showModal);
     return (
         <>
             {showModal ? (<div className="fixed backdrop-blur-md bg-black/30 h-screen w-full z-50 top-0 right-0 duration-600 ease-in"></div>) : ("")}

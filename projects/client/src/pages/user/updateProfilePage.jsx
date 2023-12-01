@@ -23,7 +23,6 @@ const UpdateProfile = () => {
     const getUserData = async () => {
         try {
             const accessToken = localStorage.getItem("accessToken");
-            // console.log("ini token", accessToken);
             const data = await apiInstance.get("/users/fetch-user")
             setData(data.data.data)
         } catch (error) {

@@ -28,7 +28,6 @@ const ProductListAdminPage = () => {
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("category")
     const debouncedSearch = debounce((value) => {
-        // console.log(value);
         setSearchQuery(value);
     }, 1000);
     const nearestBranch = async () => {
@@ -79,8 +78,6 @@ const ProductListAdminPage = () => {
         onGetFilteredProducts();
         nearestBranch()
     }, [catId, searchQuery, sort, closestBranch]);
-
-    console.log(currentPosts);
     return (
         <div className="">
             <Navbar />

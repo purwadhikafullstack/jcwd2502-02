@@ -6,7 +6,6 @@ import { BsFillPatchCheckFill } from "react-icons/bs";
 
 export default function VerificationPage() {
     const accessToken = useParams()
-    console.log(accessToken);
     const [isVerified, setIsVerified] = useState(false);
     const navigate = useNavigate();
     const apiInstance = api();

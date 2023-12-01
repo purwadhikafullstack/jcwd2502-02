@@ -61,11 +61,9 @@ const ProductStockHistoryPage = () => {
     const fetchData = async () => {
         const response = await api().get(`/stock/history?product=${nameQuery}&branch=${branchQuery}&description=${descQuery}&startDate=${startDate}&endDate=${endDate}&sort=${sort}&page=${page}`)
         const branchData = await api().get('/branch/all');
-        console.log(response);
         setBranchList(branchData.data.data);
         setMaxPage(response.data.data.maxPages);
         setStockData(response.data.data.productStockHistory);
-        console.log(response.data.data.productStockHistory);
     }
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
@@ -83,7 +81,6 @@ const ProductStockHistoryPage = () => {
     };
     useEffect(() => {
         fetchData()
-        console.log(stockData);
     }, [nameQuery, descQuery, branchQuery, startDate, endDate, sort, page]);
     return (
         <div className="">

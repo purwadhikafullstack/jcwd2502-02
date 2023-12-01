@@ -24,7 +24,6 @@ const ModalTransactionDetail = ({ transactionData }) => {
     }
 
     useEffect(() => {
-        console.log(products);
     }, [])
     return (
         <div className="h-fit">

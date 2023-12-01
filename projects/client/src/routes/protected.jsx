@@ -7,7 +7,6 @@ export default function Protected({ children, adminPage, userPage, guestPage, su
     const navigate = useNavigate();
     const user = useSelector((state) => state.users)
     useEffect(() => {
-        console.log(user.role);
         if (user.role !== "" && guestPage) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/')

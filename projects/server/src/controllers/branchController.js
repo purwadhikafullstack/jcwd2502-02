@@ -35,7 +35,6 @@ module.exports = {
             const result = await getRecommendProductService(req.query, res);
             responseHandler(res, "Get Recommended Products Success", result);
         } catch (error) {
-            console.log(error);
             next(error);
         }
     },

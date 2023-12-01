@@ -42,9 +42,7 @@ export default function ChangePasswordPage() {
 
     const onCheckToken = async () => {
         try {
-            console.log(`ini hasil id ` + id);
             const isTokenValid = await api().get('/users/check-token', { headers: { authorization: `Bearer ${id}` } })
-            console.log(isTokenValid.data.data.isValid);
         } catch (error) {
             if (error) {
                 setValid(false)

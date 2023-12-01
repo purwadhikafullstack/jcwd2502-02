@@ -4,7 +4,6 @@ const { Sequelize } = require('sequelize');
 
 cron.schedule('0 */1 * * *', async () => { // Updated cron expression to run every hour
     try {
-        console.log("This is coupon cron job");
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setHours(sevenDaysAgo.getHours() - 24 * 7);
         await db.owned_coupon.update(
