@@ -151,12 +151,11 @@ const ManageAddress = () => {
                                                 id={value.id}
                                                 onClick={() => UpdateAddres(value.id)}
                                                 name={value.name} />
-
                                             <div className="text-red-600 hover:underline">
                                                 <DeleteConfirmation
-                                                    itemId={value.id} // Pass the item ID to delete
-                                                    onDelete={getAddress} // Pass a callback function to execute after deletion
-                                                    apiEndpoint="/location" // Pass the API endpoint to customize the request URL
+                                                    itemId={value.id}
+                                                    onDelete={getAddress}
+                                                    apiEndpoint="/location"
                                                     text={""}
                                                     textOnButton={"Delete"}
                                                     message={"Address successfully deleted"}

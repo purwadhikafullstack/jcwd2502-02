@@ -23,7 +23,6 @@ const ModalNewAdmin = ({ getAdmins }) => {
             birthdate: "",
             store_branch_id: "",
             gender: ""
-            // profile_picture: ""
         },
         onSubmit: async (values) => {
             try {
@@ -32,9 +31,6 @@ const ModalNewAdmin = ({ getAdmins }) => {
                 document.getElementById('my_modal_3').close();
                 toast.success(response.data.message);
                 await getAdmins()
-                // setTimeout(() => {
-                // window.location.reload();
-                // }, 3000);
             } catch (error) {
                 document.getElementById('my_modal_3').close();
                 toast.error(error.response.data.message);
@@ -137,8 +133,6 @@ const ModalNewAdmin = ({ getAdmins }) => {
                                         {showPassword ? <IoEyeOffSharp /> : <IoEyeSharp />}
                                     </button>
                                 </div>
-
-                                {/* <input type="password" id='password' name='password' onBlur={formik.handleBlur} onChange={formik.handleChange} value={formik.values.password} className='border border-green-800 rounded-xl w-full p-2' /> */}
                                 {
                                     formik.touched.password && formik.errors.password ?
                                         <div className='text-red-500 font-bold'> {formik.errors.password} </div>
@@ -207,21 +201,10 @@ const ModalNewAdmin = ({ getAdmins }) => {
                                         null
                                 }
                             </div>
-                            {/* <div>
-                                <div className="text-white pb-2"> Profile Picture </div>
-                                <div>
-                                    <input className="file-input file-input-warning w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
-                                </div>
-                            </div> */}
                         </div>
                     </div>
                     <div className="modal-action grid place-content-center">
                         <div className="flex gap-2">
-                            {/* <button onClick={() => document.getElementById('my_modal_3').close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
-                            <form method="dialog" onClick={formik.handleSubmit}>
-                                <button type="submit" className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800">Submit</button>
-                            </form> */}
-
                             <form method="dialog">
                                 <div className="flex gap-2">
                                     {disabled ? null : <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"

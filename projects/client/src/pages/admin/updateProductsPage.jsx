@@ -11,6 +11,7 @@ import DeleteConfirmation from "../../components/deleteModal"
 import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
 import ModalEditProduct from "../../components/modalEditProduct";
+
 const UpdateProductsPage = () => {
     const inputImage = useRef()
     const [categories, setCategories] = useState([]);

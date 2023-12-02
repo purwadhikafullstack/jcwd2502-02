@@ -234,7 +234,6 @@ const ManageProductDiscountPage = () => {
                                     }) : null}
                                 </tbody>
                             </table>
-
                         ) : <div className="alert alert-error flex justify-center w-full">
                             <span className="flex justify-center">Sorry Product is Unavailable</span>
                         </div>}

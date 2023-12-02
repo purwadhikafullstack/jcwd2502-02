@@ -28,7 +28,7 @@ const CheckoutPage = () => {
     const [shippingServiceSelected, setShippingServiceSelected] = useState(false)
     const cart = useSelector((state) => state.cart);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
-    const [cartLoaded, setCartLoaded] = useState(false); // New state
+    const [cartLoaded, setCartLoaded] = useState(false);
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const [totalFinal, setTotalFinal] = useState()
     const totalSubtotal = cart.cart.reduce((sum, item) => sum + item.subtotal, 0);
@@ -36,9 +36,9 @@ const CheckoutPage = () => {
     const address = `${mainAddress?.address}, ${mainAddress?.city?.name}, ${mainAddress?.city?.province.name}`
     useEffect(() => {
         if (cart.cart.length === 0) {
-            nav('/'); // Update with the correct landing page route
+            nav('/');
         } else {
-            setCartLoaded(true); // Set cartLoaded to true once the cart is loaded
+            setCartLoaded(true);
         }
     }, [cart]);
     const handleShippingService = async (event) => {
@@ -212,14 +212,7 @@ const CheckoutPage = () => {
                                                 ))}
                                             </select>
                                         ) : (
-                                            // <select onChange={(e) => handleCoupon(e)} className="select select-bordered w-full text-black">
-                                            //     <option value="">You don't have any vouchers available</option>
-                                            //     {ownedCoupon.map((value, index) => (
-                                            //         <option value={index} disabled key={index}>You don't have any vouchers available</option>
-                                            //     ))}
-                                            // </select>
                                             <div>You don't have any vouchers available.</div>
-                                            // Alternatively, you can choose to hide this section altogether.
                                         )}
                                     </div>
                                 </div>
@@ -229,17 +222,14 @@ const CheckoutPage = () => {
                                     <div>Total Weight</div>
                                     <div className="font-bold">{totalWeight} gr</div>
                                 </div>
-
                                 <div className="flex justify-between">
                                     <div>Subtotal</div>
                                     <div className="font-bold">Rp {totalSubtotal.toLocaleString()}</div>
                                 </div>
-
                                 <div className="flex justify-between">
                                     <div>Shipping Cost</div>
                                     <div className="font-bold">Rp {cost ? cost.toLocaleString() : 0}</div>
                                 </div>
-
                                 <div className="flex justify-between">
                                     <div>Voucher Discount</div>
                                     <div className="font-bold">- Rp {discount ? discount.toLocaleString() : 0}</div>
@@ -257,7 +247,6 @@ const CheckoutPage = () => {
                                 : <Button disabled={disabled} onClick={() => submitOrder()} style={"w-full"} text={disabled ? "Creating Order" : "Confirm Order"} />}
                         </div>
                     </div>
-
                 </div>
             </div>
             <Footer />

@@ -1,4 +1,3 @@
-// ModalEditCategory.js
 import React from "react";
 
 const ModalEditCategory = ({ modal, setModal, inputCat, setInputCat, handleSaveCat }) => {

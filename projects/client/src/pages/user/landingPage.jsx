@@ -2,14 +2,10 @@ import Navbar from "../../components/navbarUser"
 import Footer from "../../components/footer"
 import Jumbotron from "../../components/jumbotron"
 import RecommendProducts from "../../components/recommendProducts"
-import ModalAddress from "../../components/modalAddress"
 import CategoryCard from "../../components/categoryCard"
-import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { onCheckIsLogin } from "../../redux/Features/users";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom"
 import { api1 } from "../../api/api";
@@ -18,6 +14,7 @@ import { getMainAddress, nearestBranch } from "../../redux/Features/branch"
 import { FaLocationDot } from "react-icons/fa6";
 import { BiSolidDownArrow } from "react-icons/bi";
 import WAChat from "../../components/waChat"
+import { useAppSelector } from '../../redux/App/Store';
 
 const LandingPage = () => {
     const [branchLoc, setBranchLoc] = useState("")
@@ -28,6 +25,7 @@ const LandingPage = () => {
     const api = api1();
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
+    const userSelector = useAppSelector((state) => state.users)
 
     const onGetCategory = async () => {
         try {
@@ -76,16 +74,24 @@ const LandingPage = () => {
             <Navbar />
             <div className="mt-[70px]">
                 <div className="flex justify-center mx-5 md:justify-end md:mr-20 lg:mr-48 py-5">
-                    <Link to={'/manage-address'}>
-                        <div className="flex p-1 px-3 w-[350px] rounded-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 bg-yellow-300">
-                            <div className="grid place-content-center ">
-                                <FaLocationDot />
+                    {userSelector.role == "customer" ? 
+                        <Link to={'/manage-address'}>
+                            <div className="flex p-1 px-3 w-[350px] rounded-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 bg-yellow-300">
+                                <div className="grid place-content-center ">
+                                    <FaLocationDot />
+                                </div>
+                                {
+                                    !mainAddress?.name ?
+                                    <div className="font-bold truncate">Add New Address</div>
+                                    :
+                                    <div className="font-bold truncate">Delivered to {mainAddress?.name}</div>
+                                }
+                                <div className="grid place-content-center "><BiSolidDownArrow /></div>
                             </div>
-                            <div className="font-bold truncate">Delivered to {mainAddress?.name}</div>
-                            <div className="grid place-content-center "><BiSolidDownArrow /></div>
-                        </div>
-                    </Link>
-
+                        </Link>
+                        :
+                        null
+                    }
                 </div>
                 <Jumbotron />
                 <div className="">

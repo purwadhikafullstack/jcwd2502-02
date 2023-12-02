@@ -1,5 +1,3 @@
-// ModalEditProduct.js
-
 import React from 'react';
 
 const ModalEditProduct = ({

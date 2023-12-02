@@ -11,6 +11,7 @@ import PaginationFixed from "../../components/paginationComponent";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DeleteConfirmation from "../../components/deleteModal";
+
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef();
     const [category, setCategory] = useState([]);

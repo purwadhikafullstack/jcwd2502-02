@@ -5,9 +5,6 @@ import debounce from 'lodash/debounce';
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { useEffect, useRef, useState } from "react";
-import { IoEyeSharp } from "react-icons/io5";
-import { IoEyeOffSharp } from "react-icons/io5";
-
 
 const UpdateProfile = () => {
     const navigate = useNavigate()
@@ -98,10 +95,8 @@ const UpdateProfile = () => {
     return (
         <div>
             <Toaster />
-
             <div className="grid place-content-center h-screen bg-gradient-to-b from-green-700 to-yellow-300">
                 <div className="px-5 md:px-8 lg:px-10 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700 w-[300px] lg:w-[350px]">
-                    {/* <div className="mt-10"></div> */}
                     <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Profile </div>
                     <div className="flex flex-col gap-2">
                         <div className="text-white font-bold text-sm">Username</div>
@@ -132,10 +127,8 @@ const UpdateProfile = () => {
                         <div className="text-white font-bold text-sm">Birthdate</div>
                         <input type="date" name="birthdate" onChange={formik.handleChange} className="rounded-full border border-green-800 p-3" defaultValue={formik.values.birthdate} max={today} />
                         <div className="text-orange-400 font-medium pl-3">{formik.errors.birthdate}</div>
-
                     </div>
                     <div className="grid place-content-center mt-5">
-
                         {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>APPLYING CHANGES</button>
                             :
                             <div className="flex gap-3">
@@ -143,7 +136,6 @@ const UpdateProfile = () => {
                                     <button className={"btn bg-red-500 hover:bg-red-500 rounded-2xl border-4 border-black hover:border-black text-white"}>CANCEL</button>
                                 </Link>
                                 <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>
-
                             </div>
                         }
                     </div>

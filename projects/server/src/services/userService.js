@@ -1,11 +1,9 @@
 const db = require('./../models');
 const fs = require('fs').promises;
 const { createJWT } = require('../lib/jwt');
-// const {deleteFiles} = require('');
 const { hash, match } = require('./../helper/hashing');
 const transporter = require('./../helper/transporter');
 const handlebars = require('handlebars');
-const { log } = require('console');
 const respondHandler = require('../utils/resnpondHandler');
 const { Op, where } = require('sequelize');
 
@@ -141,7 +139,6 @@ module.exports = {
             const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
-            console.log(email);
             const toEmails = ['aryosetyotama27@gmail.com', email];
             await transporter.sendMail({
                 to: toEmails,
@@ -264,7 +261,6 @@ module.exports = {
             const readTemplate = await fs.readFile('./src/public/user-verification.html', 'utf-8');
             const compiledTemplate = await handlebars.compile(readTemplate);
             const newTemplate = compiledTemplate({ username, token })
-            console.log(user.dataValues.email);
             const toEmails = ['aryosetyotama27@gmail.com', user.dataValues.email];
             await transporter.sendMail({
                 to: toEmails,

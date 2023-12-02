@@ -7,8 +7,6 @@ import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
-import debounce from 'lodash/debounce';
-
 
 const ProductStockHistoryPage = () => {
     const today = new Date();
@@ -21,9 +19,7 @@ const ProductStockHistoryPage = () => {
     const [startDate, setStartDate] = useState("");
     const [endDate, setEndDate] = useState("");
     const [branchList, setBranchList] = useState([]);
-
     const [sort, setSort] = useState("DESC");
-
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const handleReset = () => {
@@ -154,9 +150,7 @@ const ProductStockHistoryPage = () => {
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-
                     </div>
                     <div className="overflow-x-auto">
                         <div className=''>
@@ -200,7 +194,6 @@ const ProductStockHistoryPage = () => {
                         </div>
                     </div>
                 </div>
-
                 <div className="flex justify-center my-10">
                     {
                         stockData && stockData.length > 0 ?

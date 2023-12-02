@@ -1,16 +1,9 @@
-import Navbar from "../../components/navbarUser"
-import Footer from "../../components/footer"
-import Button from "../../components/button"
-import axios from "axios";
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 import toast, { Toaster } from "react-hot-toast";
-import debounce from 'lodash/debounce';
 import { Link, useNavigate } from "react-router-dom";
 import { api } from "../../api/api";
 import { useEffect, useRef, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { AiFillEdit } from "react-icons/ai"
 import { IoEyeSharp } from "react-icons/io5";
 import { IoEyeOffSharp } from "react-icons/io5";;
 
@@ -21,7 +14,6 @@ const UpdatePasswordPage = () => {
     const [showPassword1, setShowPassword1] = useState(false);
     const [showPassword2, setShowPassword2] = useState(false);
     const [showPassword3, setShowPassword3] = useState(false);
-
 
     const formik = useFormik({
         initialValues: {
@@ -41,15 +33,11 @@ const UpdatePasswordPage = () => {
                 toast.error(error.response.data.message);
                 setDisabled(false)
             }
-            finally {
-                // Any code in the finally block will be executed, regardless of whether there was an error or not.
-                // Remove the toast.error from here if you don't want it to appear twice.
-            }
 
         },
         validationSchema: yup.object().shape({
             oldPassword: yup.string().required().min(6, 'Must be 6 characters atleast'),
-            newPassword: yup.string().required().min(6, 'Must be 6 characters atleast'),
+            newPassword: yup.string().required().min(6, 'Must be 6 characters atleast').notOneOf([yup.ref('oldPassword')], 'Cannot be the same as the old password'),
             confirmPassword: yup.string().required().min(6, 'Must be 6 characters atleast').oneOf([yup.ref('newPassword')], `Password must match`)
         })
     });
@@ -57,12 +45,6 @@ const UpdatePasswordPage = () => {
         const { target } = event;
         formik.setFieldValue(target.name, target.value);
     }
-    const debouncedHandleSubmit = debounce(() => {
-        // formik.handleSubmit();
-        // setTimeout(() => {
-        //     navigate('/profile')
-        // }, 1500);
-    }, 1000);
 
     return (
         <div>
@@ -71,13 +53,10 @@ const UpdatePasswordPage = () => {
                 <div className="">
                     <form onSubmit={(formik.handleSubmit)}>
                         <div className="px-5 md:px-8 lg:px-10 flex-col gap-3 p-3 py-5 mb-10 rounded-xl shadow-lg bg-green-700">
-
                             <div className="text-center text-yellow-300 text-3xl font-black pb-5">Update Password
                             </div>
-
                             <div className="flex flex-col gap-2">
                                 <div className="text-white font-bold text-sm">Old Password</div>
-
                                 <div className=" bg-white rounded-full flex justify-between">
                                     <input
                                         type={showPassword1 ? "text" : "password"}
@@ -96,8 +75,6 @@ const UpdatePasswordPage = () => {
                                         {showPassword1 ? <IoEyeOffSharp /> : <IoEyeSharp />}
                                     </button>
                                 </div>
-
-                                {/* <input type="password" onChange={formik.handleChange} name="oldPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.oldPassword} /> */}
                                 <div className=" text-orange-400 font-medium">{formik.errors.oldPassword}</div>
                             </div>
                             <div className="flex flex-col gap-2">
@@ -120,12 +97,10 @@ const UpdatePasswordPage = () => {
                                         {showPassword2 ? <IoEyeOffSharp /> : <IoEyeSharp />}
                                     </button>
                                 </div>
-                                {/* <input type="password" onChange={formik.handleChange} name="newPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.newPassword} /> */}
                                 <div className="text-orange-400 font-medium">{formik.errors.newPassword}</div>
                             </div>
                             <div className="flex flex-col gap-2">
                                 <div className="text-white font-bold text-sm">Confirm Password</div>
-
                                 <div className=" bg-white rounded-full flex justify-between">
                                     <input
                                         type={showPassword3 ? "text" : "password"}
@@ -144,11 +119,8 @@ const UpdatePasswordPage = () => {
                                         {showPassword3 ? <IoEyeOffSharp /> : <IoEyeSharp />}
                                     </button>
                                 </div>
-
-                                {/* <input type="password" onChange={formik.handleChange} name="confirmPassword" className="rounded-2xl border border-green-800 p-3" defaultValue={formik.values.confirmPassword} /> */}
                                 <div className="text-orange-400 font-medium">{formik.errors.confirmPassword}</div>
                             </div>
-
                             <div className="grid place-content-center mt-5">
                                 {disabled ? <button className={"btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 cursor-not-allowed"}>APPLYING CHANGES</button>
                                     :
@@ -157,16 +129,10 @@ const UpdatePasswordPage = () => {
                                             <button className={"btn bg-red-500 hover:bg-red-500 rounded-2xl border-4 border-black hover:border-black text-white"}>CANCEL</button>
                                         </Link>
                                         <button disabled={disabled} onClick={() => formik.handleSubmit()} type="submit" className={`${disabled ? "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900 " : "btn bg-yellow-300 hover:bg-yellow-300 rounded-2xl border-4 border-green-800 hover:border-green-800 text-green-900"} `}>{disabled ? "APPLYING CHANGES" : "SUBMIT"}</button>
-
-
                                     </div>
-
-
                                 }
                             </div>
-
                         </div>
-
                     </form>
                 </div>
             </div>

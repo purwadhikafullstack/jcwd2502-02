@@ -15,9 +15,7 @@ export default function LoginPage() {
     const navigate = useNavigate();
     const userSelector = useAppSelector((state) => state.users)
     const dispatch = useDispatch();
-
     const [showPassword, setShowPassword] = useState(false);
-
     const formik = useFormik({
         initialValues: {
             email: "",
@@ -26,12 +24,6 @@ export default function LoginPage() {
         onSubmit: async (values) => {
             const data = await dispatch(login2({ ...values }))
             const token = localStorage.getItem("accessToken");
-            if (data.payload && token) {
-                // toast.success('Login successful')
-                // setTimeout(() => {
-                //     navigate('/')
-                // }, 3000)
-            }
         },
         validationSchema: yup.object().shape({
             email: yup.string().required().email(),
@@ -82,17 +74,14 @@ export default function LoginPage() {
                     {formik.touched.password && formik.errors.password ? (
                         <div className='text-orange-400 font-medium'>{formik.errors.password}</div>
                     ) : null}
-
                     <div className='flex justify-start text-yellow-300 hover:underline'>
                         <Link to={'/forgot-password'}>
                             <div className='hover:underline'>Forgot Password?</div>
                         </Link>
                     </div>
-
                     <div className='flex justify-center mt-5'>
                         <Button text={'Login'} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />
                     </div>
-
                     <div className='flex justify-center text-white'>
                         Don't have an account?
                         <Link to={'/register'}>

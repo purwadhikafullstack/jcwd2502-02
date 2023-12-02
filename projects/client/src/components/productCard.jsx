@@ -29,7 +29,7 @@ const ProductCard = (props) => {
         else if (!user.username) {
             toast.error("Please log in to add items to your cart");
             setTimeout(() => {
-                navigate("/login"); // Step 4
+                navigate("/login");
             }, 2000);
             return
         }

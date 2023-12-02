@@ -56,12 +56,10 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                         <div>Total Weight</div>
                         {transaction ? transaction.total_weight : null} gr
                     </div>
-
                     <div className="flex justify-between">
                         <div>Subtotal</div>
                         Rp {transaction ? transaction.subtotal.toLocaleString() : null}
                     </div>
-
                     <div className="flex justify-between">
                         <div>Shipping Cost</div>
                         Rp {transaction ? transaction.shipping_cost.toLocaleString() : null}
@@ -70,41 +68,14 @@ const OrderDetailsSection = ({ transaction, fetchData, id }) => {
                         <div>Voucher Discount</div>
                         <div>- Rp {transaction ? transaction?.discount_coupon?.toLocaleString() : null}</div>
                     </div>}
-                    {/* <div className="flex justify-between">
-                        <div>Voucher Discount</div>
-                        <div>- Rp {transaction ? transaction?.discount_coupon?.toLocaleString() : null}</div>
-                    </div> */}
                 </div>
-
                 <div className="h-[3px] bg-white my-2"></div>
-
                 <div className="flex justify-between text-xl font-black">
                     <div>Grand Total</div>
                     Rp {transaction ? transaction.final_total.toLocaleString() : null}
                 </div>
             </div>
             <div className="my-3">
-                {/* {role === "customer" ?
-                    <div>
-                        {
-
-                            transaction.status === "pending" ? (
-                                <DeleteConfirmation
-                                    itemId={id}
-                                    onDelete={fetchData}
-                                    apiEndpoint="/transaction/cancel"
-                                    text={""}
-                                    message={"Order Canceled"}
-                                    textOnButton={"Yes"}
-                                    button={<div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">
-                                        CANCEL ORDER
-                                    </div>}
-                                />
-                            ) : null
-                        }
-                    </div>
-                    : null} */}
-
             </div>
         </div>
     );

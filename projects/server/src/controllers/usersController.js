@@ -200,11 +200,8 @@ module.exports = {
     },
     updateImage: async (req, res, next) => {
         try {
-            // 1. Ambil id user
             const { id } = req.dataToken;
-            // 2. Ambil path image lama
             const userId = await findId(id)
-            // 3. Update new path on table
             const oldImage = userId.profile_picture
             const image = await db.user.findOne({ where: { id } })
             const findImage = await db.user.update({
@@ -215,16 +212,12 @@ module.exports = {
                 }
             })
             if (oldImage !== "user.jpg") {
-                // // 4. Delete image lama
                 deleteFiles({
                     image: [oldImage
                     ]
                 })
             }
-
-            // 5. Kirim response
             const newUser = await findId(id)
-
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',

@@ -225,6 +225,3 @@ export default function CreateAdminPage() {
         </div>
     )
 }
-{/* <div className="my-5 mx-3 rounded-full h-[100px] w-[100px]">
-<img className="object-cover rounded-full h-full w-full" src={process.env.REACT_APP_URL + `${value?.profile_picture}`} alt="user profile" />
-</div> */}
