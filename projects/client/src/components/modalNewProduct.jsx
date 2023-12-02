@@ -44,17 +44,32 @@ const ModalNewProduct = ({ onCreate }) => {
                 product_categories_id: Number(inputProductCategory.current.value),
                 weight: inputProductWeigth.current.value
             }
+            console.log(image);
             const fd = new FormData()
             fd.append('data', JSON.stringify(inputs))
             image.forEach(value => {
                 fd.append('image', value)
             })
-            if (inputs.name === "" || inputs.image === "" || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "") {
+            if (inputs.name === "" || image.length == 0 || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "" || inputProductWeigth.current.value === "") {
                 toast.error("Please Fill All Data")
             } else {
-                const data = await api.post(`products/addproduct`, fd)
-                toast.success('Create Product Success')
-                onCreate()
+                if (inputs.price === 0 || inputs.price <= 0 || inputs.weight === 0 || inputs.weight <= 0) {
+                    toast.error("Price and/or Weight Cannot Be 0")
+                } else {
+                    const data = await api.post(`products/addproduct`, fd)
+                    toast.success('Create Product Success')
+                    onCreate()
+                    inputProductName.current.value = "";
+                    inputProductPrice.current.value = "";
+                    inputProductDescription.current.value = "";
+                    inputProductCategory.current.value = "";
+                    inputProductWeigth.current.value = "";
+                    const fileInput = document.querySelector('.file-input');
+                    if (fileInput) {
+                        fileInput.value = null;
+                    }
+                    setImage([])
+                }
             }
         } catch (error) {
             console.log(error);

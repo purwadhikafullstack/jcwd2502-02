@@ -26,7 +26,6 @@ const UpdateProductsCategoryPage = () => {
     const navigate = useNavigate();
     const role = useSelector((state) => state.users.role);
     const [debouncedSearch] = useDebounce(searchQuery, 1000);
-
     const onGetCategory = async () => {
         try {
             const response = await api().get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
@@ -62,6 +61,17 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
+    const handleData = () => {
+        try {
+            setCategory([])
+            onGetCategory()
+            setPage(1);
+            setSearchQuery("");
+            setSortOrder("DESC")
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const onSelectId = async (categoryId) => {
         try {
             setCatId(categoryId);
@@ -122,7 +132,6 @@ const UpdateProductsCategoryPage = () => {
         setPage(1)
         setSearchQuery("")
         setSortOrder("DESC")
-        navigate(`/updatecategory`, { replace: true });
     }
     const handleChangeSort = (event) => {
         try {
@@ -148,7 +157,7 @@ const UpdateProductsCategoryPage = () => {
                         </div>
                     </div>
                     <div className="">
-                        <ModalNewCategory />
+                        <ModalNewCategory onCreate={handleData} />
                     </div>
                 </div>
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">

@@ -1,7 +1,7 @@
 const cron = require('node-cron');
 const db = require('./../models');
 const { Sequelize } = require('sequelize');
-cron.schedule('*/1 * * * *', async () => { // ini nanti diubah jadi 1 jam sekali
+cron.schedule('*/1 * * * *', async () => {
     try {
         const twentyFourHoursAgo = new Date();
         twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);

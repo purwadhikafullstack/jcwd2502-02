@@ -3,7 +3,6 @@ import Footer from "../../components/footer";
 import { AiFillEdit } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import React, { useEffect, useRef, useState } from "react";
-import axios from "axios";
 import { api } from "../../api/api";
 import { useDispatch, useSelector } from "react-redux";
 import { onCheckIsLogin, setProfile_Picture } from "../../redux/Features/users";
@@ -48,7 +47,6 @@ const ProfilePage = () => {
         try {
             const file = event.target.files[0]
             if (file) {
-                // Check file size and type here (validation)
                 if (file.size > 1000000 || !/image\/(png|jpg|jpeg)/.test(file.type)) throw {
                     message: 'File must be less than 1MB and in png, jpg, or jpeg format!'
                 }
@@ -144,7 +142,7 @@ const ProfilePage = () => {
                                                             <div className="grid place-content-center"><PiPercentFill /></div>
                                                             <div className="lg:flex lg:justify-between w-full ml-2">
                                                                 <div className="">{value.coupon_name}</div>
-                                                                <div>EXP {moment(value.createdAt).format('DD/MMM/YYYY')}</div>
+                                                                <div>EXP {moment(value.createdAt).add(7, 'days').format('DD/MMM/YYYY')}</div>
                                                             </div>
                                                         </div>
                                                     </div>

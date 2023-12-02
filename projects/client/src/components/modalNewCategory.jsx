@@ -4,7 +4,7 @@ import axios from "axios"
 import { useRef, useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import { api1 } from "../api/api"
-const ModalNewCategory = () => {
+const ModalNewCategory = ({ onCreate }) => {
     const [category, setCategory] = useState([]);
     const inputCategoryName = useRef();
     const [image, setImage] = useState([])
@@ -38,14 +38,18 @@ const ModalNewCategory = () => {
             image.forEach(value => {
                 fd.append('image', value)
             })
-            if (inputs.name === "" || inputs.image === "") {
+            if (inputs.name === "" || image.length == 0) {
                 toast.error("Please Fill All Data")
             } else {
                 const data = await api.post(`category/addcategory`, fd)
                 toast.success('Create Category Success')
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                onCreate()
+                const fileInput = document.querySelector('.file-input');
+                if (fileInput) {
+                    fileInput.value = null;
+                }
+                inputCategoryName.current.value = ""
+                setImage([])
             }
         } catch (error) {
             console.log(error);

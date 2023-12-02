@@ -216,10 +216,10 @@ const UpdateProductStocksPage = () => {
                                                 }
                                             </th>
                                             <th className="text-lg">
-                                                <button className="btn bg-red-600 border-4 border-green-800 hover:bg-red-300 hover:border-green-800" onClick={() => handleOpenModalReduce(value.id, value.product_stocks[0]?.stock)}>Reduce Stock</button>
+                                                <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModalAdd(value.id, value.product_stocks[0]?.stock)}>Add Stock</button>
                                             </th>
                                             <th className="text-lg">
-                                                <button className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800" onClick={() => handleOpenModalAdd(value.id, value.product_stocks[0]?.stock)}>Add Stock</button>
+                                                <button className="btn text-white bg-red-600 border-4 border-black hover:bg-red-300 hover:border-black" onClick={() => handleOpenModalReduce(value.id, value.product_stocks[0]?.stock)}>Reduce Stock</button>
                                             </th>
                                         </tr>
                                     );

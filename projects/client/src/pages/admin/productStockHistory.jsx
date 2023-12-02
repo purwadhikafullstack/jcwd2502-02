@@ -7,7 +7,7 @@ import NavbarAdmin from "../../components/navbarAdmin";
 import Footer from "../../components/footer";
 import { BiSearchAlt } from "react-icons/bi";
 import { Link } from "react-router-dom";
-
+import { useDebounce } from 'use-debounce';
 const ProductStockHistoryPage = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
@@ -22,6 +22,8 @@ const ProductStockHistoryPage = () => {
     const [sort, setSort] = useState("DESC");
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
+    const [debouncedName] = useDebounce(nameQuery, 1000);
+
     const handleReset = () => {
         try {
             setNameQuery(""); setBranchQuery(""); setDescQuery(""); setStartDate(formattedToday); setSort("DESC"); setEndDate(""); setPage(1);
@@ -77,7 +79,7 @@ const ProductStockHistoryPage = () => {
     };
     useEffect(() => {
         fetchData()
-    }, [nameQuery, descQuery, branchQuery, startDate, endDate, sort, page]);
+    }, [debouncedName, descQuery, branchQuery, startDate, endDate, sort, page]);
     return (
         <div className="">
             <NavbarAdmin />
