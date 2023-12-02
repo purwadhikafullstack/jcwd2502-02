@@ -8,6 +8,7 @@ import { RiLogoutBoxRFill } from "react-icons/ri";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
+import { resetBranch } from "../redux/Features/branch";
 import { getCartAsync } from "../redux/Features/cart";
 import { clearCart } from "../redux/Features/cart";
 import { useEffect, useState } from "react";
@@ -24,8 +25,8 @@ const Navbar = () => {
         e.preventDefault()
         dispatch(logout());
         dispatch(clearCart());
+        dispatch(resetBranch())
         navigate('/login')
-
     }
 
     const handleSearch = () => {

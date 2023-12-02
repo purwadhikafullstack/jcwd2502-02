@@ -21,6 +21,9 @@ export const branchSlice = createSlice({
         setMainAddress: (state, action) => {
             state.mainAddress = action.payload
         },
+        resetBranch: (state, action) => {
+            return state = initialState;
+        }
     }
 })
 
@@ -73,5 +76,5 @@ export const nearestBranch = () => async (dispatch) => {
     }
 }
 
-export const { setBranch, clearBranch, setClosestBranch, setMainAddress } = branchSlice.actions;
+export const { setBranch, clearBranch, setClosestBranch, setMainAddress, resetBranch } = branchSlice.actions;
 export default branchSlice.reducer;

@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import { api1 } from "../api/api"
 import debounce from 'lodash/debounce';
-const ModalNewProduct = () => {
+const ModalNewProduct = ({ onCreate }) => {
     const [category, setCategory] = useState([]);
     const inputProductName = useRef();
     const inputProductPrice = useRef();
@@ -54,9 +54,7 @@ const ModalNewProduct = () => {
             } else {
                 const data = await api.post(`products/addproduct`, fd)
                 toast.success('Create Product Success')
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                onCreate()
             }
         } catch (error) {
             console.log(error);
@@ -100,7 +98,7 @@ const ModalNewProduct = () => {
                                 </div>
                             </div>
                             <div>
-                                <div className="text-green-800 pb-2">Product Price</div>
+                                <div className="text-green-800 pb-2">Product Price (Rp)</div>
                                 <Input
                                     ref={inputProductPrice}
                                     type={"number"}
@@ -122,7 +120,7 @@ const ModalNewProduct = () => {
                                 </select>
                             </div>
                             <div>
-                                <div className="text-green-800 pb-2">Product Weigth</div>
+                                <div className="text-green-800 pb-2">Product Weigth (gr)</div>
                                 <Input
                                     ref={inputProductWeigth}
                                     type={"number"}

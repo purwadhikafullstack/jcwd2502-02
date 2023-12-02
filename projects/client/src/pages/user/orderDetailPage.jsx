@@ -6,20 +6,16 @@ import { useParams } from "react-router-dom";
 import { api } from "../../api/api";
 import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
-import moment from 'moment';
+import ConfirmConfirmation from "./../../components/confirmModal"
 import toast, { Toaster } from "react-hot-toast";
 import OrderDetailsSection from "../../components/orderDetails";
 import DeleteConfirmation from "../../components/deleteModal";
-
 const UserOrderDetail = () => {
     const [timeRemaining, setTimeRemaining] = useState(0);
     const [transaction, setTransaction] = useState("")
     const [detail, setDetail] = useState("")
     const { id } = useParams()
     const payment = useRef(null);
-    const [orderLoaded, setOrderLoaded] = useState(false);
-
-
     const getDetailOrder = async () => {
         try {
             const order = await api().get(`/transaction/user/order/${id}`)
@@ -28,14 +24,13 @@ const UserOrderDetail = () => {
             const createdAt = order.data.data.createdAt;
             const countdownDuration = 24 * 60 * 60;
             const startTime = new Date(createdAt).getTime() / 1000;
-            const currentTime = Math.floor(new Date().getTime() / 1000); 
+            const currentTime = Math.floor(new Date().getTime() / 1000);
             const remainingTime = countdownDuration - (currentTime - startTime);
             setTimeRemaining(remainingTime > 0 ? remainingTime : 0);
         } catch (error) {
             console.log(error);
         }
     }
-
     const copyToClipboard = (text) => {
         navigator.clipboard.writeText(text)
             .then(() => {
@@ -46,7 +41,6 @@ const UserOrderDetail = () => {
                 console.error("Copy to clipboard failed: ", err);
             });
     };
-
     const uploadPayment = async (event) => {
         try {
             const file = event.target.files[0]
@@ -64,7 +58,6 @@ const UserOrderDetail = () => {
             toast.error(error.message)
         }
     }
-
     useEffect(() => {
         window.scrollTo(0, 0);
         getDetailOrder()
@@ -73,14 +66,12 @@ const UserOrderDetail = () => {
         }, 1000);
         return () => clearInterval(intervalId);
     }, [])
-
     const formatTime = (time) => {
         const hours = Math.floor(time / 3600);
         const minutes = Math.floor((time % 3600) / 60);
         const seconds = time % 60;
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
     };
-
     return (
         <div>
             <Toaster />
@@ -146,7 +137,7 @@ const UserOrderDetail = () => {
                                     }
                                     {transaction.status === "Delivered" ?
                                         <div className="w-full">
-                                            <DeleteConfirmation
+                                            <ConfirmConfirmation
                                                 itemId={id}
                                                 onDelete={getDetailOrder}
                                                 apiEndpoint="transaction/user/complete"
@@ -155,7 +146,8 @@ const UserOrderDetail = () => {
                                                 textOnButton={"Yes"}
                                                 button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
                                                     COMPLETE ORDER
-                                                </div>} />
+                                                </div>}
+                                                reloadPage={false} />
                                         </div>
                                         : null}
                                     <div className="my-5 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 rounded-full"></div>

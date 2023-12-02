@@ -57,6 +57,7 @@ const UpdateProductsCategoryPage = () => {
             }
             setSearchQuery("");
             onGetCategory();
+            toast.success("Category Updated")
         } catch (error) {
             console.log(error);
         }
@@ -85,10 +86,9 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
-    const onDeleteCategory = async (catId) => {
+    const onDeleteCategory = async () => {
         try {
-            const deleteCategory = await api().patch(`category/deletecategory/${catId}`);
-            toast.success("Delete Category Success");
+            setCategory([])
             onGetCategory();
         } catch (error) {
             console.log(error);
@@ -230,14 +230,15 @@ const UpdateProductsCategoryPage = () => {
                                                 </button>
                                                 <DeleteConfirmation
                                                     itemId={value.id}
-                                                    onDelete={onGetCategory}
+                                                    onDelete={onDeleteCategory}
                                                     apiEndpoint="category/deletecategory"
                                                     text={""}
                                                     message={"Category Deleted"}
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-red-600 hover:border-black bg-red-600 border-black border-4 text-white w-full">
                                                         Delete
-                                                    </div>} />
+                                                    </div>}
+                                                    reloadPage={false} />
                                             </div>
                                         </td>
                                     </tr>

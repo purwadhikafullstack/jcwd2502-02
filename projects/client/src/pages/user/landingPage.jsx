@@ -26,7 +26,6 @@ const LandingPage = () => {
     const closestBranch = useSelector((state) => state.branch.closestBranch);
     const mainAddress = useSelector((state) => state.branch.mainAddress)
     const userSelector = useAppSelector((state) => state.users)
-
     const onGetCategory = async () => {
         try {
             const category = await api.get(`/category/all`);
@@ -58,7 +57,6 @@ const LandingPage = () => {
         }
     }
     useEffect(() => {
-        window.scrollTo(0, 0);
         onGetCategory();
         getBranch()
         nearestBranch()
@@ -74,7 +72,7 @@ const LandingPage = () => {
             <Navbar />
             <div className="mt-[70px]">
                 <div className="flex justify-center mx-5 md:justify-end md:mr-20 lg:mr-48 py-5">
-                    {userSelector.role == "customer" ? 
+                    {userSelector.role === "customer" ?
                         <Link to={'/manage-address'}>
                             <div className="flex p-1 px-3 w-[350px] rounded-full md:w-auto md:mx-0 border-t-2 border-r-8 border-l-2 border-b-2 border-green-700 hover:underline justify-center gap-3 text-green-700 bg-yellow-300">
                                 <div className="grid place-content-center ">
@@ -82,9 +80,9 @@ const LandingPage = () => {
                                 </div>
                                 {
                                     !mainAddress?.name ?
-                                    <div className="font-bold truncate">Add New Address</div>
-                                    :
-                                    <div className="font-bold truncate">Delivered to {mainAddress?.name}</div>
+                                        <div className="font-bold truncate">Add New Address</div>
+                                        :
+                                        <div className="font-bold truncate">Delivered to {mainAddress?.name}</div>
                                 }
                                 <div className="grid place-content-center "><BiSolidDownArrow /></div>
                             </div>
@@ -107,11 +105,9 @@ const LandingPage = () => {
                         })}
                     </div>
                 </div>
-
                 <div className="mt-12 h-[5px] bg-gradient-to-r from-yellow-300 to-green-600 m-5 md:mx-24 lg:mx-48 rounded-full"></div>
-
                 <div className="pb-10 mt-5 md:mt-10">
-                    <RecommendProducts data={products} branchName={closestBranch.name ? closestBranch.name : ""} />
+                    <RecommendProducts user={userSelector.role} data={products} branchName={closestBranch.name ? closestBranch.name : ""} />
                 </div>
             </div>
             <Footer />

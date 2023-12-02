@@ -86,10 +86,10 @@ const ProductDetailPage = () => {
         }
     }, [id, closestBranch]);
     return (
-        <div className="min-h-screen">
+        <div className="">
             <Toaster />
             <Navbar />
-            <div className="mt-[70px] pt-3 md:mx-20 lg:mx-32 mx-5 h-[750px]">
+            <div className="mt-[70px] pt-3 md:mx-20 lg:mx-32 mx-5 mb-10">
                 <div className="flex text-xl lg:text-2xl font-bold pb-5">
                     <div className="grid place-content-center "><IoIosArrowBack />
                     </div>
@@ -98,11 +98,11 @@ const ProductDetailPage = () => {
                     </Link>
                 </div>
                 <div className="flex flex-col lg:flex-row mb-10 gap-5 lg:gap-10">
-                    <div className='lg:w-[400px] lg:h-[400px] '>
+                    <div className='lg:w-[450px] lg:h-[400px]'>
                         <img className="w-full h-full object-cover"
                             src={product && product.product ? process.env.REACT_APP_URL + product.product.image : process.env.REACT_APP_URL + product.image} alt={"image of" + (product && product.product ? product.product.name : "")} />
                     </div>
-                    <div className="flex flex-col justify-start gap-3">
+                    <div className="flex flex-col justify-between gap-3 lg:h-[400px]">
                         <div className="">
                             <div className="font-semibold text-4xl lg:text-5xl w-full mb-2">
                                 {product && product.product ? product.product.name : product.name
@@ -122,30 +122,32 @@ const ProductDetailPage = () => {
                                 null}
                         </div>
                         <div>
-                            <div className="text-lg pt-2 pb-3">
+                            <div className="text-lg text-gray-600 pt-2 pb-3 lg:w-[550px]">
                                 {product && product.product ? product.product.description : product.description}
                             </div>
-                            {closestBranch.id === undefined ? null : <div className="mb-10">Stock(s): {product ? product?.stock : null}</div>}
+                            {closestBranch.id === undefined ? null : <div className="font-bold">Stock(s): {product ? product?.stock : null}</div>}
                         </div>
                         <div className="flex justify-center lg:justify-start pt-2 w-full">
-                            {isProductInStock ? (
-                                isInCart ? (
-                                    <div className="flex items-center gap-2 lg:gap-5">
-                                        <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(id))} />
-                                        <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
-                                        <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
-                                    </div>
-                                ) : (
-                                    <div>
-                                        {mainAddress ? <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} /> :
-                                            <Button onClick={() => altAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
-                                    </div>
-                                )
-                            ) : (
-                                <div className="text-black">
-                                    Adding products to cart requires a main address
-                                </div>
-                            )}
+                            {user.role === "customer" ?
+                                <>
+                                    {isProductInStock ? (
+                                        isInCart ? (
+                                            <div className="flex items-center gap-2 lg:gap-5">
+                                                <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(id))} />
+                                                <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
+                                                <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
+                                            </div>
+                                        ) : (
+                                            <div>
+                                                {mainAddress ? <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} /> :
+                                                    <Button onClick={() => altAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
+                                            </div>
+                                        )
+                                    ) : (
+                                        <div className="text-black">Out of Stock</div>
+                                    )}
+                                </>
+                                : <Button onClick={() => handleAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
                         </div>
                     </div>
                 </div>

@@ -15,6 +15,7 @@ const ModalEditProduct = ({
     inputCategory,
     setInputCategory,
     categories,
+    onEdit,
 
 }) => {
     return (
@@ -73,6 +74,7 @@ const ModalEditProduct = ({
                             <button
                                 className="btn bg-yellow-300 text-black border-4 border-green-600 hover:bg-yellow-300 hover:border-green-600"
                                 type="submit"
+                                onClick={() => onEdit()}
                             >
                                 Submit
                             </button>
