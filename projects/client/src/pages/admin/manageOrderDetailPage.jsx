@@ -111,7 +111,8 @@ const AdminOrderDetail = () => {
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-red-400 bg-red-600 text-white w-full border-none ">
                                                         CANCEL ORDER
-                                                    </div>} />
+                                                    </div>}
+                                                    reloadPage={false} />
                                             </div>
                                             <div className="w-full">
                                                 <DeleteConfirmation
@@ -123,7 +124,8 @@ const AdminOrderDetail = () => {
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-orange-400 bg-orange-700 text-white w-full border-none ">
                                                         Decline Payment
-                                                    </div>} />
+                                                    </div>}
+                                                    reloadPage={false} />
                                             </div>
                                             <div className="w-full">
                                                 <ConfirmConfirmation
@@ -135,7 +137,8 @@ const AdminOrderDetail = () => {
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-green-400 bg-green-600 text-white w-full border-none ">
                                                         APPROVE ORDER
-                                                    </div>} />
+                                                    </div>}
+                                                    reloadPage={false} />
                                             </div>
                                         </div>
                                         : null}
@@ -154,7 +157,8 @@ const AdminOrderDetail = () => {
                                                 textOnButton={"Yes"}
                                                 button={<div className=" btn hover:bg-red-600 bg-red-600 text-white w-full border-none ">
                                                     CANCEL ORDER
-                                                </div>} />
+                                                </div>}
+                                                reloadPage={false} />
                                         </div>
                                         <div className="w-full">
                                             <ConfirmConfirmation
@@ -166,7 +170,8 @@ const AdminOrderDetail = () => {
                                                 textOnButton={"Yes"}
                                                 button={<div className=" btn hover:bg-green-600 bg-green-600 text-white w-full border-none ">
                                                     SEND ORDER
-                                                </div>} />
+                                                </div>}
+                                                reloadPage={false} />
                                         </div>
                                     </div>
                                 </div>

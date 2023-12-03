@@ -12,6 +12,8 @@ import Swal from "sweetalert2";
 import DeleteConfirmation from "../../components/deleteModal"
 import PaginationFixed from "../../components/paginationComponent"
 import ConfirmConfirmation from "../../components/confirmModal"
+import { getMainAddress } from "../../redux/Features/branch";
+import { useDispatch } from "react-redux"
 const ManageAddress = () => {
     const apiInstance = api()
     const [page, setPage] = useState(1);
@@ -20,6 +22,8 @@ const ManageAddress = () => {
     const pageTopRef = useRef(null);
     const [provinceId, setProvinceId] = useState()
     const [cityId, setCityId] = useState()
+    const dispatch = useDispatch()
+
     const getProvinceId = async () => {
         try {
             const province = await apiInstance.get(`/location/province`)
@@ -42,6 +46,7 @@ const ManageAddress = () => {
         try {
             setAddress("")
             getAddress()
+            dispatch(getMainAddress())
         } catch (error) {
             console.log(error);
         }
@@ -111,16 +116,17 @@ const ManageAddress = () => {
                                             <div className="font-semibold">{value.city?.name} - {value.city?.province?.name}</div>
                                         </div>
                                         <div className="md:grid md:place-content-center">
-                                            {value.isPrimary == "false" ? <ConfirmConfirmation
-                                                itemId={value.id}
-                                                button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
-                                                onDelete={resetData}
-                                                apiEndpoint={"/location/main"}
-                                                text={"Your cart will be emptied if you change your main address. "}
-                                                textOnButton={"Confirm"}
-                                                message={"Main address successfully updated!"}
-                                                reloadPage={false}
-                                            />
+                                            {value.isPrimary == "false" ?
+                                                <ConfirmConfirmation
+                                                    itemId={value.id}
+                                                    button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
+                                                    onDelete={resetData}
+                                                    apiEndpoint={"/location/main"}
+                                                    text={"Your cart will be emptied if you change your main address. "}
+                                                    textOnButton={"Confirm"}
+                                                    message={"Main address successfully updated!"}
+                                                    reloadPage={false}
+                                                />
                                                 : null}
                                         </div>
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">

@@ -36,6 +36,8 @@ export default function RegistrationPage() {
             } catch (error) {
                 setDisabled(false)
                 toast.error(error.response.data.message);
+            } finally {
+                setDisabled(false)
             }
         },
         validationSchema: yup.object().shape({

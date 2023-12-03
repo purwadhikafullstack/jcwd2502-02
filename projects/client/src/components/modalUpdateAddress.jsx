@@ -104,7 +104,7 @@ const ModalUpdateAddress = ({ id, name, onUpdate }) => {
                             <select
                                 name="province_id"
                                 onChange={(e) => {
-                                    dataUpdate.handleChange(e); // Handle formik change
+                                    dataUpdate.handleChange(e);
                                     setSelectedProvince(e.target.value || dataUpdate.values.province_id);
                                 }}
                                 className="rounded-2xl border border-green-800 select"

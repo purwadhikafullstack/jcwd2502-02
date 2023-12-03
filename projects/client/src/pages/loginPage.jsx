@@ -16,14 +16,23 @@ export default function LoginPage() {
     const userSelector = useAppSelector((state) => state.users)
     const dispatch = useDispatch();
     const [showPassword, setShowPassword] = useState(false);
+    const [disabled, setDisabled] = useState(false);
     const formik = useFormik({
         initialValues: {
             email: "",
             password: "",
         },
         onSubmit: async (values) => {
-            const data = await dispatch(login2({ ...values }))
-            const token = localStorage.getItem("accessToken");
+            try {
+                setDisabled(true)
+                const data = await dispatch(login2({ ...values }))
+                const token = localStorage.getItem("accessToken");
+            } catch (error) {
+                setDisabled(false)
+                console.log(error);
+            } finally {
+                setDisabled(false)
+            }
         },
         validationSchema: yup.object().shape({
             email: yup.string().required().email(),
@@ -80,7 +89,11 @@ export default function LoginPage() {
                         </Link>
                     </div>
                     <div className='flex justify-center mt-5'>
-                        <Button text={'Login'} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />
+                        {disabled ?
+                            <div className='flex justify-center'>
+                                <span className="text-white place-content-center loading loading-dots loading-md"></span>
+                            </div>
+                            : <Button disabled={disabled} text={disabled ? "Please Wait.." : "Login"} type="submit" onClick={formik.handleSubmit} style={"w-[300px]"} />}
                     </div>
                     <div className='flex justify-center text-white'>
                         Don't have an account?

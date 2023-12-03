@@ -19,8 +19,8 @@ const Navbar = () => {
     const dispatch = useDispatch()
     const { cart } = useSelector((state) => state.cart)
     const user = useSelector((state) => state.users)
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
     const [searchQuery, setSearchQuery] = useState("");
-
     const handleLogout = async (e) => {
         e.preventDefault()
         dispatch(logout());
@@ -35,7 +35,7 @@ const Navbar = () => {
 
     useEffect(() => {
         dispatch(getCartAsync());
-    }, [dispatch]);
+    }, [dispatch, mainAddress]);
 
     return (
         <div className="relative">

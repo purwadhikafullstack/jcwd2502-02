@@ -93,7 +93,7 @@ const UserOrderDetail = () => {
                                     <div className="flex justify-between gap-3">
                                         <div className="w-[230px] lg:w-[170px] text-xl font-bold flex flex-col justify-center">Order Status:</div>
                                         <div className="w-full">
-                                            {transaction.status == "pending" ? <div className={` text-lg grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>WAITING FOR PAYMENT</div> : null}
+                                            {transaction.status == "pending" ? <div className={`lg:text-lg text-sm grid place-content-center rounded-xl font-bold bg-yellow-300 p-1`}>WAITING FOR PAYMENT</div> : null}
                                             {transaction.status == "waiting for payment approval" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-yellow-300 p-2`}>WAITING FOR APPROVAL</div> : null}
                                             {transaction.status == "Payment Approved" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-blue-600 p-2 text-white`}>PAYMENT APPROVED</div> : null}
                                             {transaction.status == "Delivered" ? <div className={` lg:flex-1 lg:text-md text-sm ml-2 grid place-content-center rounded-xl font-bold bg-orange-400 p-2 text-white`}>ORDER SENT</div> : null}
@@ -112,7 +112,7 @@ const UserOrderDetail = () => {
                                             <div className="grid place-content-center pt-5 text-sm">Please via Bank Transfer to:</div>
                                             <div className="flex">
                                                 <div className="grid place-content-center">
-                                                    <img src={"./download.png" && "https://cdn.discordapp.com/attachments/1120979304961032195/1179266321049989253/image.png?ex=65792858&is=6566b358&hm=1c24c04ab821f91ec5971a3ea52b4ecb6962718f1349f384f37b8ad33908c5f6&"} alt="app_logo" className="h-[30px] lg:pr-3" />
+                                                    <img src={"./download.png" && "https://cdn.discordapp.com/attachments/1120979304961032195/1179266321049989253/image.png?ex=65792858&is=6566b358&hm=1c24c04ab821f91ec5971a3ea52b4ecb6962718f1349f384f37b8ad33908c5f6&"} alt="app_logo" className="h-[30px] pr-2 lg:pr-3" />
                                                 </div>
                                                 <div onClick={() => copyToClipboard("6041688880")} className="hover:underline hover:text-green-700 text-xs lg:text-base grid place-content-center"> 6041688880 - a/n PT BuyFresh Indonesia</div>
                                             </div>
