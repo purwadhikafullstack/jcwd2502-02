@@ -164,7 +164,7 @@ module.exports = {
     createProduct: async (req, res, next) => {
         try {
             const newProduct = await createProductService(req.body.data, req.files.image[0].filename)
-            responseHandler(res, "Create Product Success", newProduct)
+            responseHandler(res, newProduct.message, newProduct, newProduct.status, newProduct.isError);
         } catch (error) {
             next(error)
         }
@@ -198,7 +198,7 @@ module.exports = {
     saveEditProduct: async (req, res, next) => {
         try {
             const newProduct = await saveEditProductService(req.body)
-            responseHandler(res, "Save Edited Product Success", newProduct)
+            responseHandler(res, newProduct.message, newProduct, newProduct.status, newProduct.isError);
         } catch (error) {
             next(error);
         }

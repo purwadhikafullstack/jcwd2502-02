@@ -12,7 +12,6 @@ import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
 import { useDebounce } from 'use-debounce';
 
-
 const SuperOrderList = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
@@ -28,8 +27,6 @@ const SuperOrderList = () => {
     const [branch, setBranch] = useState("")
     const [branches, setBranches] = useState()
     const [debouncedInvoice] = useDebounce(invoice, 1000);
-
-
     const getBranches = async () => {
         try {
             const branches = await api().get(`/branch/all`)
@@ -38,7 +35,6 @@ const SuperOrderList = () => {
             console.log(error);
         }
     }
-
     const handleReset = () => {
         try {
             setInvoice(""); setStatus(""); setStartdate(""); setPage(1); setMaxPage(1); handleSearch(); setEnddate(""); setSort("ASC"); setSortBy("id"); setBranch("")
@@ -54,7 +50,6 @@ const SuperOrderList = () => {
             console.log(error);
         }
     }
-
     const handleStatus = (event) => {
         try {
             setPage(1);
@@ -63,7 +58,6 @@ const SuperOrderList = () => {
             console.log(error);
         }
     }
-
     const handleSearchInvoice = (event) => {
         try {
             setPage(1);
@@ -72,8 +66,6 @@ const SuperOrderList = () => {
             console.log(error);
         }
     }
-
-
     const handleDate = (event) => {
         try {
             setPage(1);
@@ -106,8 +98,6 @@ const SuperOrderList = () => {
             console.log(error);
         }
     };
-
-
     const handleSearch = async () => {
         try {
             const response = await api().get(`/transaction/all?invoice=${invoice}&page=${page}&status=${status}&startdate=${startdate}&enddate=${enddate}&sort=${sort}&sortby=${sortBy}&branchId=${branch}`)
@@ -117,30 +107,24 @@ const SuperOrderList = () => {
             console.error("Error fetching data:", error);
         }
     };
-
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
-            // await handleSearch();
         } else {
             toast.error("Invalid page number!");
         }
     };
-
     const handleNextPage = () => {
         handlePageChange(page + 1);
     };
-
     const handlePrevPage = () => {
         handlePageChange(page - 1);
     };
-
     useEffect(() => {
         window.scrollTo(0, 0);
         handleSearch()
         getBranches()
     }, [debouncedInvoice, startdate, status, page, enddate, sortBy, sort, branch])
-
 
     return (
         <div >
@@ -182,14 +166,12 @@ const SuperOrderList = () => {
                                 <div className="grid place-content-center"><input value={startdate} max={formattedToday} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
                                 </div>
                             </div>
-
                             <div className="flex">
                                 <div className="grid place-content-center mx-3 text-xl">to</div>
                                 <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
                                 </div>
                             </div>
                         </div>
-
                         <div className="grid place-content-center">
                             <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[150px]">
                                 <option value={"id"} disabled selected>Sort By</option>
@@ -233,9 +215,7 @@ const SuperOrderList = () => {
                         <span className="flex justify-center">Sorry we dont find any order</span>
                     </div> : null}
                 </div>
-
             </div>
-
             <div className="flex justify-center mt-4 mb-10">
                 <PaginationFixed
                     page={page}
@@ -245,7 +225,6 @@ const SuperOrderList = () => {
                     handleNextPage={handleNextPage}
                 />
             </div>
-
             <Footer />
         </div>
     )

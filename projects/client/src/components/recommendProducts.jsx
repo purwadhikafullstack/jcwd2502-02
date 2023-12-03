@@ -4,12 +4,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../css/style.css"
 import { FaLocationDot } from "react-icons/fa6";
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
 import { Link } from "react-router-dom";
-
-
 const RecommendProducts = (props) => {
     const dispatch = useDispatch()
     const user = useSelector((state) => state.users)
@@ -49,18 +45,18 @@ const RecommendProducts = (props) => {
         <div className="w-[auto] px-5 md:px-20 lg:px-48 ">
             <div className="">
                 <div className="pb-5">
-                    <div className="text-4xl font-bold my-5 ">Products Nearby!</div>
+                    {props.user === "customer" ?
+                        <div className="text-4xl font-bold my-5 ">Products Nearby!</div>
+                        :
+                        <div className="text-3xl lg:text-4xl font-bold my-5 ">Explore Our Products!</div>
+                    }
                     <div className="flex justify-between">
-
                         {props.branchName ? <div className="flex gap-2 text-lg"> <FaLocationDot className="mt-1" /> {props.branchName}</div> : null
                         }
-
-
                         <Link to={`/products?category=`}>
                             <div className="text-green-600 hover:underline mr-3"> See More!
                             </div>
                         </Link>
-
                     </div>
                 </div>
                 <div className="">

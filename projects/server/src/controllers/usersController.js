@@ -10,7 +10,7 @@ const responseHandler = require('../utils/responseHandler');
 const { log, error } = require('console');
 const { deleteFiles } = require('../helper/deleteFiles')
 const FE_BASEPATH = process.env.FE_BASEPATH || "http://localhost:3000";
-
+const { Op } = require('sequelize');
 module.exports = {
     login: async (req, res, next) => {
         try {
@@ -102,7 +102,6 @@ module.exports = {
     },
 
     resetPassword: async (req, res, next) => {
-        // Di execute sebelum login
         try {
             const data = req.headers;
             const id = (req.dataToken.id);
@@ -182,29 +181,41 @@ module.exports = {
 
     updateUserData: async (req, res, next) => {
         try {
-            const { id, username, email, gender, birthdate } = req.body
-            const findUser = await await findId(id)
-            const newUserData = await db.user.update({ username, email, gender, birthdate }, {
+            const { username, email, gender, birthdate } = req.body
+            const { id } = req.dataToken;
+            const existingUsername = await db.user.findOne({
                 where: {
-                    id
-                }
-            })
-            res.status(201).send({
-                isError: false,
-                message: "Data Updated",
-                data: newUserData
-            })
+                    username,
+                    id: { [Op.not]: id },
+                },
+            });
+            if (existingUsername) {
+                throw { status: 401, message: 'Username already taken.' };
+            }
+            const existingEmail = await db.user.findOne({
+                where: {
+                    email,
+                    id: { [Op.not]: id },
+                },
+            });
+            if (existingEmail) {
+                throw { status: 401, message: 'Email already taken.' };
+            }
+            const newUserData = await db.user.update(
+                { username, email, gender, birthdate },
+                { where: { id }, returning: true }
+            );
+            const updatedUser = await db.user.findOne({ where: { id: id } })
+            console.log(updatedUser);
+            responseHandler(res, "Data Updated", updatedUser)
         } catch (error) {
             next(error)
         }
     },
     updateImage: async (req, res, next) => {
         try {
-            // 1. Ambil id user
             const { id } = req.dataToken;
-            // 2. Ambil path image lama
             const userId = await findId(id)
-            // 3. Update new path on table
             const oldImage = userId.profile_picture
             const image = await db.user.findOne({ where: { id } })
             const findImage = await db.user.update({
@@ -215,16 +226,12 @@ module.exports = {
                 }
             })
             if (oldImage !== "user.jpg") {
-                // // 4. Delete image lama
                 deleteFiles({
                     image: [oldImage
                     ]
                 })
             }
-
-            // 5. Kirim response
             const newUser = await findId(id)
-
             res.status(201).send({
                 isError: false,
                 message: 'Update Image Success!',

@@ -1,21 +1,15 @@
 import { useFormik } from 'formik';
 import * as yup from 'yup';
-import debounce from 'lodash/debounce';
 import { api } from "../api/api";
 import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
-import toast from 'react-hot-toast';
-
-
-const ModalUpdateAddress = ({ id, onClick, name }) => {
+const ModalUpdateAddress = ({ id, name, onUpdate }) => {
     const apiInstance = api()
     const [selectedProvince, setSelectedProvince] = useState("");
     const [provinceId, setProvinceId] = useState()
     const [cityId, setCityId] = useState()
     const [addressData, setAddressData] = useState()
     const [disabled, setDisabled] = useState(false)
-
-
     const getProvinceId = async () => {
         try {
             const province = await apiInstance.get(`/location/province`)
@@ -24,7 +18,6 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
             console.log(error);
         }
     }
-
     const getCityId = async () => {
         try {
             const cityId = await apiInstance.get(`/location/city`)
@@ -35,7 +28,6 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
             console.log(error);
         }
     }
-
     const dataUpdate = useFormik({
         initialValues: {
             name: "",
@@ -50,9 +42,7 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
                 document.getElementById('my_modal_' + id).close();
                 Swal.fire("Success!", "Address Successfully Updated", "success");
                 resetForm();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                onUpdate()
             } catch (error) {
                 console.log(error);
                 setDisabled(false)
@@ -65,12 +55,6 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
             province_id: yup.string().required(),
         })
     });
-
-    const debouncedHandleSubmit = debounce(() => {
-        dataUpdate.handleSubmit();
-    }, 1000);
-
-
     const getAddress = async () => {
         try {
             const addressDetail = await apiInstance.get(`/location/${id}`)
@@ -86,13 +70,11 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
             console.log(error);
         }
     }
-
     useEffect(() => {
         getProvinceId()
         getCityId()
         getAddress()
     }, [])
-
     return (
         <div>
             <div
@@ -122,7 +104,7 @@ const ModalUpdateAddress = ({ id, onClick, name }) => {
                             <select
                                 name="province_id"
                                 onChange={(e) => {
-                                    dataUpdate.handleChange(e); // Handle formik change
+                                    dataUpdate.handleChange(e);
                                     setSelectedProvince(e.target.value || dataUpdate.values.province_id);
                                 }}
                                 className="rounded-2xl border border-green-800 select"

@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from "react-redux";
 
-export default function Protected({ children, adminPage, userPage, guestPage, superadminPage }) {
+export default function Protected({ children, adminPage, userPage, guestPage, superadminPage, loginOnly }) {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const user = useSelector((state) => state.users)
+    const isLogin = localStorage.getItem("accessToken")
     useEffect(() => {
         if (user.role !== "" && guestPage) return setTimeout(() => {
+            setLoading(false)
+        }, 1500), navigate('/')
+
+        if (user && user.role == "" && loginOnly && !isLogin) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/')
 
@@ -22,6 +27,8 @@ export default function Protected({ children, adminPage, userPage, guestPage, su
         if (user && user.role == "superadmin" && (userPage)) return setTimeout(() => {
             setLoading(false)
         }, 1500), navigate('/admin-dashboard')
+
+
 
         setTimeout(() => {
             setLoading(false)

@@ -73,6 +73,7 @@ module.exports = {
             sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
             users = await db.user.findAll({
                 where: {
+                    role: "customer",
                     createdAt: {
                         [Op.gte]: sevenDaysAgo,
                     },

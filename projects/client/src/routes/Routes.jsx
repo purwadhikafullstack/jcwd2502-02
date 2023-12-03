@@ -37,22 +37,22 @@ const routes = [
         </Protected>
     } />,
     <Route path='/profile' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <ProfilePage />
         </Protected>
     } />,
     <Route path='/updateprofile' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <UpdateProfile />
         </Protected>
     } />,
     <Route path='/updatecategory' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <UpdateProductsCategoryPage />
         </Protected>
     } />,
     <Route path='/updateproducts' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <UpdateProductsPage />
         </Protected>
     } />,
@@ -62,7 +62,7 @@ const routes = [
         </Protected>
     } />,
     <Route path='/login' element={
-        <Protected guestPage={true}>
+        <Protected guestPage={true} >
             <LoginPage />
         </Protected>
     } />,
@@ -70,32 +70,32 @@ const routes = [
         <ChangePasswordPage />
     } />,
     <Route path='/products' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} >
             <ProductListPage />
         </Protected>
     } />,
     <Route path='/all-product-list' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <ProductListAdminPage />
         </Protected>
     } />,
     <Route path='/products/detail/:id' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} >
             <ProductDetailPage />
         </Protected>
     } />,
     <Route path='/branch/products/detail/:id' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <BranchProductDetailPage />
         </Protected>
     } />,
     <Route path='/update-product-stocks' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <UpdateProductStocksPage />
         </Protected>
     } />,
     <Route path='/manage-product-discount' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <ManageProductDiscountPage />
         </Protected>
     } />,
@@ -106,67 +106,67 @@ const routes = [
         <ForgotPasswordPage />
     } />,
     <Route path='/profile-password' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             < UpdatePasswordPage />
         </Protected>
     } />,
     <Route path='/manage-address' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             < ManageAddress />
         </Protected>
     } />,
     <Route path='/cart' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <Cart />
         </Protected>
     } />,
     <Route path='/checkout' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <CheckoutPage />
         </Protected>
     } />,
     <Route path='/order-list' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <UserOrderList />
         </Protected>
     } />,
     <Route path='/order/:id' element={
-        <Protected userPage={true}>
+        <Protected userPage={true} loginOnly={true}>
             <UserOrderDetail />
         </Protected>
     } />,
     <Route path='/admin/order-list' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <AdminOrderList />
         </Protected>
     } />,
     <Route path='/admin/order/:id' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             <AdminOrderDetail />
         </Protected>
     } />,
     <Route path='/user-management' element={
-        <Protected superadminPage={true}>
+        <Protected superadminPage={true} loginOnly={true}>
             < CreateAdminPage />
         </Protected>
     } />,
     <Route path='/admin-dashboard' element={
-        <Protected superadminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             < AdminDashboardPage />
         </Protected>
     } />,
     <Route path='/sales-report/user' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             < SalesReportPage />
         </Protected>
     } />,
     <Route path='/sales-report/product' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             < SalesReportProduct />
         </Protected>
     } />,
     <Route path='/stock-history' element={
-        <Protected adminPage={true}>
+        <Protected adminPage={true} loginOnly={true}>
             < ProductStockHistoryPage />
         </Protected>
     } />,

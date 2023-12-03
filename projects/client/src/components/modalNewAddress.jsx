@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import Swal from "sweetalert2";
 
 
-const ModalNewAddress = () => {
+const ModalNewAddress = (props) => {
     const apiInstance = api()
     const [selectedProvince, setSelectedProvince] = useState("");
     const [provinceId, setProvinceId] = useState()
@@ -53,13 +53,16 @@ const ModalNewAddress = () => {
                     inputAddress.resetForm();
                     document.getElementById('my_modal_1').close();
                     Swal.fire("Success!", "Address Successfully Added", "success");
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 1000);
+                    props.onCreate()
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 1000);
                 }
             } catch (error) {
                 document.getElementById('my_modal_1').close();
                 toast.error("Please fill all the data")
+                setDisabled(false)
+            } finally {
                 setDisabled(false)
             }
         },
@@ -102,7 +105,7 @@ const ModalNewAddress = () => {
                             }
                         </div>
                         <div className="flex flex-col gap-2">
-                            <div className="font-bold text-green-800">Complete Address:</div>
+                            <div className="lg:flex font-bold text-green-800">Complete Address: <div className="text-gray-400 text-xs lg:grid lg:place-content-center lg:pl-2">(Jl. Rajawali Blok C No 3, Menteng, Jakarta Pusat)</div></div>
                             <input type="text" onBlur={inputAddress.handleBlur} onChange={inputAddress.handleChange} name="address" className="rounded-2xl border border-green-800 p-3" value={inputAddress.values.address} />
                             {
                                 inputAddress.touched.address && inputAddress.errors.address ?

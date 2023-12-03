@@ -16,13 +16,10 @@ const storage = multer.diskStorage({
     }
 })
 
-// Setup File Filter
 var fileFilter = (req, file, cb) => {
     if (file.mimetype.split('/')[0] === 'image') {
-        // Accept
         cb(null, true)
     } else if (file.mimetype.split('/')[0] !== 'image') {
-        // Reject
         cb(new Error('File Must Be Image!'))
     }
 }

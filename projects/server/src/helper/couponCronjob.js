@@ -1,8 +1,8 @@
 const cron = require('node-cron');
-const db = require('./../models'); // Adjust the path as needed
+const db = require('./../models');
 const { Sequelize } = require('sequelize');
 
-cron.schedule('0 */1 * * *', async () => { // Updated cron expression to run every hour
+cron.schedule('0 */1 * * *', async () => {
     try {
         const sevenDaysAgo = new Date();
         sevenDaysAgo.setHours(sevenDaysAgo.getHours() - 24 * 7);

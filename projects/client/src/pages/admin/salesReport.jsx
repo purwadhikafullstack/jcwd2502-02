@@ -12,7 +12,6 @@ import Footer from '../../components/footer';
 import { useDebounce } from 'use-debounce';
 import { useAppSelector } from '../../redux/App/Store';
 
-
 const SalesReportPage = () => {
     const userSelector = useAppSelector((state) => state.users)
     const today = new Date();
@@ -30,8 +29,6 @@ const SalesReportPage = () => {
     const [page, setPage] = useState(1);
     const [maxPage, setMaxPage] = useState(1);
     const [debouncedName] = useDebounce(username, 1000);
-
-
     const handleTransactionFilter = (event) => {
         setPage(1)
         setTransactionFilter(event.target.value)
@@ -156,11 +153,6 @@ const SalesReportPage = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* <div className='w-[350px]  border-4 bg-yellow-300 border-green-700 rounded-xl p-3'>
-                        <div className=''>:</div>
-                        <div className=''>{"Rp.100,000,00"}</div>
-                    </div> */}
                     <div className='w-[350px] border-4 bg-yellow-300 border-green-700 rounded-xl p-3 flex justify-between gap-3'>
                         <div className='flex flex-col justify-between pl-2'>
                             <div className=''> Completed Sales: </div>
@@ -249,8 +241,6 @@ const SalesReportPage = () => {
                             </div>
                         </div>
                     </div>
-
-
                     <div className="overflow-x-auto">
                         <div className=''>
                             <div className=''>
@@ -292,10 +282,7 @@ const SalesReportPage = () => {
                         </div>
                     </div>
                 </div>
-
-
             </div>
-
             <div className="flex justify-center my-3">
                 {
                     data && data.length > 0 ?
@@ -310,7 +297,6 @@ const SalesReportPage = () => {
                         null
                 }
             </div>
-
             <Footer />
         </div>
     )

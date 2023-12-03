@@ -43,16 +43,6 @@ const BranchProductDetailPage = () => {
                         <Button style={"lg:w-[200px] rounded-full"} text={"Back to Product List"} />
                     </Link>
                 </div>
-                {/* <div className="flex justify-center pt-2 w-full">
-                    <div className="flex items-center gap-5 lg:gap-5">
-                        <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" />
-                        <div className="text-xl border-b-2 border-green-800 p-2"></div>
-                        <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" />
-                    </div>
-                </div>
-                <div className="flex justify-center mt-5 mb-5">
-                    <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />
-                </div> */}
             </div>
             <Footer />
         </div>
