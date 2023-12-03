@@ -10,7 +10,7 @@ const responseHandler = require('../utils/responseHandler');
 const { log, error } = require('console');
 const { deleteFiles } = require('../helper/deleteFiles')
 const FE_BASEPATH = process.env.FE_BASEPATH || "http://localhost:3000";
-
+const { Op } = require('sequelize');
 module.exports = {
     login: async (req, res, next) => {
         try {
@@ -182,18 +182,43 @@ module.exports = {
 
     updateUserData: async (req, res, next) => {
         try {
-            const { id, username, email, gender, birthdate } = req.body
-            const findUser = await await findId(id)
-            const newUserData = await db.user.update({ username, email, gender, birthdate }, {
+            const { username, email, gender, birthdate } = req.body
+            const { id } = req.dataToken;
+            // Check if the new username is unique among other users
+            const existingUsername = await db.user.findOne({
                 where: {
-                    id
-                }
-            })
-            res.status(201).send({
-                isError: false,
-                message: "Data Updated",
-                data: newUserData
-            })
+                    username,
+                    id: { [Op.not]: id }, // Exclude the current user
+                },
+            });
+
+            if (existingUsername) {
+                // return res.status(400).json({ error: 'Username already taken.' });
+                throw { status: 401, message: 'Username already taken.' };
+            }
+
+            // Check if the new email is unique among other users
+            const existingEmail = await db.user.findOne({
+                where: {
+                    email,
+                    id: { [Op.not]: id }, // Exclude the current user
+                },
+            });
+
+            if (existingEmail) {
+                // return res.status(400).json({ error: 'Email already taken.' });
+                throw { status: 401, message: 'Email already taken.' };
+
+            }
+
+            // Update the user with the new data
+            const newUserData = await db.user.update(
+                { username, email, gender, birthdate },
+                { where: { id }, returning: true }
+            );
+            const updatedUser = await db.user.findOne({ where: { id: id } })
+            console.log(updatedUser);
+            responseHandler(res, "Data Updated", updatedUser)
         } catch (error) {
             next(error)
         }
