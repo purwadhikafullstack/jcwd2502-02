@@ -39,13 +39,13 @@ const ModalUpdateProductStock = ({ isOpen, onClose, productId, branchId, onStock
             {isOpen && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-8 rounded-lg w-96">
-                        <h3 className="font-bold text-4xl text-gray-800 mb-4">Add Product Stock</h3>
+                        <h3 className="font-bold text-4xl text-green-800 mb-4">Add Product Stock</h3>
                         <div className="flex flex-col gap-5">
                             <div>
-                                <div className="text-gray-800 pb-2">Current Stock: {currentStock}</div>
-                                <div className="text-gray-800 pb-2">Add Stock:</div>
+                                <div className="text-green-800 pb-2">Current Stock: {currentStock}</div>
+                                <div className="text-green-800 pb-2">Add Stock:</div>
                                 <input
-                                    className="input w-full border-black"
+                                    className="input w-full border-green-800"
                                     type="number"
                                     value={inputStock}
                                     onChange={(e) => setInputStock(e.target.value)}

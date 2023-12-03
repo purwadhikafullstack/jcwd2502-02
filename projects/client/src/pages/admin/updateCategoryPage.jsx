@@ -55,9 +55,14 @@ const UpdateProductsCategoryPage = () => {
                 pageTopRef.current.scrollIntoView({ behavior: "smooth" });
             }
             setSearchQuery("");
-            onGetCategory();
             toast.success("Category Updated")
+            onGetCategory();
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the category data.");
+            }
             console.log(error);
         }
     };

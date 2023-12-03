@@ -125,9 +125,10 @@ const UpdateProductsPage = () => {
     const handleSaveProduct = async () => {
         try {
             const res = await api.patch(`products/saveproduct`, {
-                inputName, inputPrice, inputDescription, inputCategory,
+                inputName, inputPrice, inputDescription, inputCategory, inputWeight,
                 id: productId,
             });
+            console.log(res);
             setModal(!modal);
             if (pageTopRef.current) {
                 pageTopRef.current.scrollIntoView({ behavior: "smooth" });
@@ -136,6 +137,11 @@ const UpdateProductsPage = () => {
             toast.success("Update Product Success")
             fetchData();
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the product data.");
+            }
             console.log(error);
         }
     };

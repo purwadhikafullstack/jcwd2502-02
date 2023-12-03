@@ -42,9 +42,9 @@ const ModalNewProduct = ({ onCreate }) => {
                 price: Number(inputProductPrice.current.value),
                 description: inputProductDescription.current.value,
                 product_categories_id: Number(inputProductCategory.current.value),
-                weight: inputProductWeigth.current.value
+                weight: inputProductWeigth.current.value,
+                final_price: Number(inputProductPrice.current.value)
             }
-            console.log(image);
             const fd = new FormData()
             fd.append('data', JSON.stringify(inputs))
             image.forEach(value => {
@@ -72,6 +72,11 @@ const ModalNewProduct = ({ onCreate }) => {
                 }
             }
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the product data.");
+            }
             console.log(error);
         }
     }

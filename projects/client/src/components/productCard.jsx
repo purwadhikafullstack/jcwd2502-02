@@ -78,7 +78,7 @@ const ProductCard = (props) => {
                             (props.discount_id === 1 || props.discount_id === 2 || props.discount_id === null)
                                 ? (
                                     <div className="lg:flex gap-2">
-                                        <div className="text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
+                                        <div className="text-green-700 font-bold">Rp {props.final_price?.toLocaleString()}</div>
                                         {(props.discount_id === 1 || props.discount_id === 2) && (
                                             <div className="text-red-600 line-through font-bold">Rp {props.price.toLocaleString()}</div>
                                         )}

@@ -58,12 +58,14 @@ const Navbar = () => {
                     </div>
                 )}
                 <div className="flex gap-5">
-                    <div className="grid items-center relative mt-2 px-3">
-                        <Link to={'/cart'}>
-                            <div><HiShoppingCart className="text-white text-4xl" /></div>
-                        </Link>
-                        <div className="absolute top-0 right-0 border-2 border-green-800 rounded-full px-2 font-black bg-yellow-300 text-green-800 text-sm">{cart?.length}</div>
-                    </div>
+                    {user.username ?
+                        <div className="grid items-center relative mt-2 px-3">
+                            <Link to={'/cart'}>
+                                <div><HiShoppingCart className="text-white text-4xl" /></div>
+                            </Link>
+                            <div className="absolute top-0 right-0 border-2 border-green-800 rounded-full px-2 font-black bg-yellow-300 text-green-800 text-sm">{cart?.length}</div>
+                        </div>
+                        : null}
                     <div className="grid items-center">
                         <div className="drawer-end">
                             <input id="my-drawer" type="checkbox" className="drawer-toggle" />

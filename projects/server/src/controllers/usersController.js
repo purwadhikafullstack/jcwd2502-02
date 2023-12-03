@@ -102,7 +102,6 @@ module.exports = {
     },
 
     resetPassword: async (req, res, next) => {
-        // Di execute sebelum login
         try {
             const data = req.headers;
             const id = (req.dataToken.id);
@@ -184,34 +183,24 @@ module.exports = {
         try {
             const { username, email, gender, birthdate } = req.body
             const { id } = req.dataToken;
-            // Check if the new username is unique among other users
             const existingUsername = await db.user.findOne({
                 where: {
                     username,
-                    id: { [Op.not]: id }, // Exclude the current user
+                    id: { [Op.not]: id },
                 },
             });
-
             if (existingUsername) {
-                // return res.status(400).json({ error: 'Username already taken.' });
                 throw { status: 401, message: 'Username already taken.' };
             }
-
-            // Check if the new email is unique among other users
             const existingEmail = await db.user.findOne({
                 where: {
                     email,
-                    id: { [Op.not]: id }, // Exclude the current user
+                    id: { [Op.not]: id },
                 },
             });
-
             if (existingEmail) {
-                // return res.status(400).json({ error: 'Email already taken.' });
                 throw { status: 401, message: 'Email already taken.' };
-
             }
-
-            // Update the user with the new data
             const newUserData = await db.user.update(
                 { username, email, gender, birthdate },
                 { where: { id }, returning: true }
