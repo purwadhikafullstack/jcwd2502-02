@@ -190,7 +190,7 @@ module.exports = {
                 where: whereClause,
                 include: [{
                     model: db.transaction_detail,
-                    attributes: ["name", "price", "quantity", "price", "subtotal", "discount_value", "products_id"],
+                    attributes: ["name", "price", "quantity", "price", "subtotal", "discount_value", "discount_id", "products_id"],
                     include: [{
                         model: db.product,
                         attributes: ["image"]
