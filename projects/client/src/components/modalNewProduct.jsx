@@ -53,7 +53,7 @@ const ModalNewProduct = ({ onCreate }) => {
             if (inputs.name === "" || image.length == 0 || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "" || inputProductWeigth.current.value === "") {
                 toast.error("Please Fill All Data")
             } else {
-                if (inputs.price === 0 || inputs.price <= 0 || inputs.weight === 0 || inputs.weight <= 0) {
+                if (inputs.price <= 0 || inputs.weight <= 0) {
                     toast.error("Price and/or Weight Cannot Be 0")
                 } else {
                     const data = await api.post(`products/addproduct`, fd)

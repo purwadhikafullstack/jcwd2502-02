@@ -124,18 +124,21 @@ const UpdateProductsPage = () => {
     }
     const handleSaveProduct = async () => {
         try {
-            const res = await api.patch(`products/saveproduct`, {
-                inputName, inputPrice, inputDescription, inputCategory, inputWeight,
-                id: productId,
-            });
-            console.log(res);
-            setModal(!modal);
-            if (pageTopRef.current) {
-                pageTopRef.current.scrollIntoView({ behavior: "smooth" });
+            if (inputPrice <= 0 || inputWeight <= 0) {
+                toast.error("Price and/or Weight Cannot Be 0")
+            } else {
+                const res = await api.patch(`products/saveproduct`, {
+                    inputName, inputPrice, inputDescription, inputCategory, inputWeight,
+                    id: productId,
+                });
+                setModal(!modal);
+                if (pageTopRef.current) {
+                    pageTopRef.current.scrollIntoView({ behavior: "smooth" });
+                }
+                setSearchQuery("");
+                toast.success("Update Product Success")
+                fetchData();
             }
-            setSearchQuery("");
-            toast.success("Update Product Success")
-            fetchData();
         } catch (error) {
             if (error.response && error.response.data && error.response.data.message) {
                 toast.error(error.response.data.message);

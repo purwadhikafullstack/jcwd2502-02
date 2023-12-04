@@ -4,7 +4,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import '../css/style.css'
 const Jumbotron = () => {
-    const cards = ["https://jcwdol0905.purwadhikabootcamp.com/static/media/banner4.d41a4fe88c1ac43e55cf.jpg", "https://jcwdol0905.purwadhikabootcamp.com/static/media/banner3.1eb5955923005037ed13.jpg", "https://jcwdol0905.purwadhikabootcamp.com/static/media/banner2.c1651131755f5a5cf4f3.jpg"]
+    const cards = ["./jumbotron2.jpg", "./jumbotron1.jpg", "./jumbotron3.jpg"]
     const settings = {
         dots: true,
         infinite: true,

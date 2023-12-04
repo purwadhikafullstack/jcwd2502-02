@@ -57,7 +57,7 @@ const NavbarAdmin = () => {
                                                 </div>
                                                 <div className="bg-gradient-to-b from-yellow-300 to-green-600 rounded-3xl my-5 text-white">
                                                     <div className="flex justify-center text-xl font-black pt-5">Welcome, {user?.username}!</div>
-                                                    <div className="flex justify-center text-md pb-5">{user?.email}</div>
+                                                    <div className="flex justify-center text-sm pb-5">{user?.email}</div>
                                                 </div>
                                             </div>
                                             {user.role == "superadmin" ?
