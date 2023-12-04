@@ -34,7 +34,7 @@ const UpdatePass2 = () => {
         },
         validationSchema: yup.object().shape({
             oldPassword: yup.string().required(),
-            newPassword: yup.string().required(),
+            newPassword: yup.string().required().notOneOf([yup.ref('oldPassword')], 'Cannot be the same as the old password'),
             confirmPassword: yup.string().required().oneOf([yup.ref('newPassword')], `Password must match`)
         })
     });

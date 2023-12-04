@@ -1,4 +1,3 @@
-// ModalEditCategory.js
 import React from "react";
 
 const ModalEditCategory = ({ modal, setModal, inputCat, setInputCat, handleSaveCat }) => {
@@ -12,15 +11,15 @@ const ModalEditCategory = ({ modal, setModal, inputCat, setInputCat, handleSaveC
             <div
                 className={
                     modal
-                        ? `fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] md:w-[50%] lg:w-[30%] p-10 rounded-xl bg-gradient-to-l from-yellow-300 to-green-600`
+                        ? `fixed z-50 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[80%] md:w-[50%] lg:w-[30%] p-10 rounded-xl bg-white`
                         : `hidden`
                 }
             >
-                <h3 className="font-bold text-4xl text-white">Edit Category</h3>
+                <h3 className="font-bold text-4xl text-green-800">Edit Category</h3>
                 <div className="flex flex-col gap-5 mt-5">
                     <div>
-                        <div className="text-white pb-2"> Category Name</div>
-                        <input className="input w-full" type="text" value={inputCat} onChange={(e) => setInputCat(e.target.value)} />
+                        <div className="text-green-800 pb-2"> Category Name</div>
+                        <input className="input w-full border border-green-800" type="text" value={inputCat} onChange={(e) => setInputCat(e.target.value)} />
                     </div>
                 </div>
                 <div className="modal-action">

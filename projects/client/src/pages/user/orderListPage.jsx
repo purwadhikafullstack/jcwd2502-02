@@ -10,8 +10,6 @@ import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
 import { useDebounce } from 'use-debounce';
 
-
-
 const UserOrderList = () => {
     const today = new Date();
     const formattedToday = today.toISOString().split('T')[0];
@@ -140,7 +138,6 @@ const UserOrderList = () => {
         getBranches()
     }, [startdate, debouncedInvoice, status, page, enddate, sortBy, sort, branch])
 
-
     return (
         <div >
             <Toaster />
@@ -165,7 +162,6 @@ const UserOrderList = () => {
                                 <option value={"Complete"}>COMPLETE</option>
                             </select>
                         </div>
-
                         <div className="grid place-content-center">
                             <select defaultValue="" value={branch} onChange={(e) => handleBranch(e)} className="h-[48px] px-2 border-2 rounded-xl w-[170px] lg:w-[200px]">
                                 <option value={""} disabled selected>Store Branch</option>
@@ -176,21 +172,18 @@ const UserOrderList = () => {
                                 }) : null}
                             </select>
                         </div>
-
                         <div className="flex">
                             <div className="flex">
                                 <div className="grid place-content-center mr-3 text-xl">from</div>
                                 <div className="grid place-content-center"><input value={startdate} max={formattedToday} onChange={(e) => handleDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
                                 </div>
                             </div>
-
                             <div className="flex">
                                 <div className="grid place-content-center mx-3 text-xl">to</div>
                                 <div className="grid place-content-center"><input value={enddate} max={formattedToday} min={startdate} onChange={(e) => handleEndDate(e)} type="date" className="w-[200px] p-2 rounded-xl border-2 h-[48px] lg:w-[200px]" />
                                 </div>
                             </div>
                         </div>
-
                         <div className="grid place-content-center">
                             <select defaultValue="" value={sortBy} onChange={(e) => handleSortBy(e)} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[150px]">
                                 <option value={"id"} disabled selected>Sort By</option>
@@ -234,9 +227,7 @@ const UserOrderList = () => {
                         <span className="flex justify-center">Sorry we dont find any order</span>
                     </div> : null}
                 </div>
-
             </div>
-
             <div className="flex justify-center mt-4 mb-10">
                 <PaginationFixed
                     page={page}
@@ -246,7 +237,6 @@ const UserOrderList = () => {
                     handleNextPage={handleNextPage}
                 />
             </div>
-
             <Footer />
         </div>
     )

@@ -1,6 +1,7 @@
 const db = require("./../models");
 const { deleteFiles } = require('./../helper/deleteFiles');
 const { sequelize } = require('./../models')
+const { Op } = require('sequelize');
 module.exports = {
     getAllProductsService: async () => {
         try {
@@ -38,13 +39,26 @@ module.exports = {
             t = await sequelize.transaction();
             const data = JSON.parse(body);
             const dataImage = file;
-            const newProduct = await db.product.create({ ...data, image: dataImage }, { transaction: t });
-            const branches = await db.store_branch.findAll();
-            for (const branch of branches) {
-                await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 }, { transaction: t });
+            const existingName = await db.product.findOne({
+                where: {
+                    name: { [Op.like]: data.name },
+                    isDeleted: 0
+                }
+            })
+            if (existingName) {
+                return { status: 401, message: 'Product Name Already Exist', isError: true };
+            } else {
+                const newProduct = await db.product.create({ ...data, image: dataImage }, { transaction: t });
+                const branches = await db.store_branch.findAll();
+                for (const branch of branches) {
+                    await db.product_stock.create({ products_id: newProduct.id, store_branch_id: branch.id, stock: 0 }, { transaction: t });
+                }
+                await t.commit();
+                const newProductData = await db.product.findOne({
+                    where: { id: newProduct.id }
+                })
+                return { status: 201, message: 'Product Created', isError: false };
             }
-            await t.commit();
-            return newProduct;
         } catch (error) {
             if (t) await t.rollback();
             return error;
@@ -72,8 +86,20 @@ module.exports = {
     },
     saveEditProductService: async (body) => {
         try {
-            const { inputName, inputPrice, inputDescription, inputCategory, id } = body;
-            return await db.product.update({ name: inputName, price: inputPrice, description: inputDescription, product_categories_id: inputCategory }, { where: { id } });
+            const { inputName, inputPrice, inputDescription, inputCategory, inputWeight, id } = body;
+            const existingName = await db.product.findOne({
+                where: {
+                    name: inputName,
+                    id: { [Op.not]: id },
+                    isDeleted: 0
+                }
+            })
+            if (existingName) {
+                return { status: 401, message: 'Product Name Already Exist', isError: true };
+            } else {
+                const updatedProduct = await db.product.update({ name: inputName, price: inputPrice, description: inputDescription, product_categories_id: inputCategory, weight: inputWeight }, { where: { id } });
+                return { status: 201, message: 'Product Updated', isError: false };
+            }
         } catch (error) {
             return error
         }

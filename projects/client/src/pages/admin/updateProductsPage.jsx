@@ -11,6 +11,7 @@ import DeleteConfirmation from "../../components/deleteModal"
 import PaginationFixed from "../../components/paginationComponent";
 import { Link } from "react-router-dom";
 import ModalEditProduct from "../../components/modalEditProduct";
+
 const UpdateProductsPage = () => {
     const inputImage = useRef()
     const [categories, setCategories] = useState([]);
@@ -104,7 +105,19 @@ const UpdateProductsPage = () => {
     }
     const handleReset = () => {
         try {
-            setPage(1); setMaxPage(1); handleSearchInputChange(""); setSort("ASC"); setSortBy("id"); setCategory("")
+            setPage(1); handleSearchInputChange(""); setSort("ASC"); setSortBy("id"); setCategory("")
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const handleData = () => {
+        try {
+            setProducts([])
+            fetchData();
+            setPage(1);
+            setSort("DESC");
+            setSortBy("updatedAt");
+            handleSearchInputChange("");
         } catch (error) {
             console.log(error);
         }
@@ -112,9 +125,10 @@ const UpdateProductsPage = () => {
     const handleSaveProduct = async () => {
         try {
             const res = await api.patch(`products/saveproduct`, {
-                inputName, inputPrice, inputDescription, inputCategory,
+                inputName, inputPrice, inputDescription, inputCategory, inputWeight,
                 id: productId,
             });
+            console.log(res);
             setModal(!modal);
             if (pageTopRef.current) {
                 pageTopRef.current.scrollIntoView({ behavior: "smooth" });
@@ -123,6 +137,11 @@ const UpdateProductsPage = () => {
             toast.success("Update Product Success")
             fetchData();
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the product data.");
+            }
             console.log(error);
         }
     };
@@ -167,7 +186,7 @@ const UpdateProductsPage = () => {
                     </div>
                     <div></div>
                     <div className="">
-                        <ModalNewProduct />
+                        <ModalNewProduct onCreate={handleData} />
                     </div>
                 </div>
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
@@ -243,7 +262,7 @@ const UpdateProductsPage = () => {
                                         <tr key={value.id} className="hover border hover:border-b-green-700 hover:border-b-4 pl-0">
                                             <td>
                                                 <div className="relative pt-5">
-                                                    <img className="object-fit rounded-full h-[70px] w-[70px]" src={process.env.REACT_APP_URL + `${value.image}`} />
+                                                    <img className="object-fit rounded-full h-[70px] w-[100px]" src={process.env.REACT_APP_URL + `${value.image}`} />
                                                     <div className="absolute left-0 right-0 top-0">
                                                         <input type="file" accept=".jpg, .jpeg, .png" ref={inputImage} hidden onChange={(event) => onSelectImages(event)} />
                                                         <div onClick={() => { inputImage.current.click(); onSelectId(value.id) }}>
@@ -268,19 +287,19 @@ const UpdateProductsPage = () => {
                                             <td>
                                                 <DeleteConfirmation
                                                     itemId={value.id}
-                                                    onDelete={fetchData}
+                                                    onDelete={handleData}
                                                     apiEndpoint="products/deleteproduct"
                                                     text={""}
                                                     message={"Product Deleted"}
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-red-600 hover:border-black bg-red-600 border-black border-4 text-white w-full">
                                                         Delete
-                                                    </div>} />
+                                                    </div>}
+                                                    reloadPage={false} />
                                             </td>
                                         </tr>
                                     );
                                 }) : null}
-
                             </tbody>
                         </table>
                         {products.length == 0 ? <div className="alert alert-error flex justify-center w-full">
@@ -304,6 +323,7 @@ const UpdateProductsPage = () => {
                 inputCategory={inputCategory}
                 setInputCategory={setInputCategory}
                 categories={categories}
+                onEdit={handleData}
             />
             <div className="flex justify-center mt-4 mb-10">
                 <PaginationFixed

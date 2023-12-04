@@ -94,13 +94,6 @@ const ModalEditAdmin = ({ adminData, getAdmins }) => {
                         </div>
                     </div>
                     <div className="modal-action flex justify-center">
-                        {/* <div className="flex gap-2">
-                            <button onClick={() => document.getElementById(`my_modal_${adminData.username}`).close()} className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black">Cancel</button>
-                            <form method="dialog" onClick={() => formik.handleSubmit()}>
-                                <button type="submit" className="btn bg-yellow-300 border-4 border-green-800 hover:bg-yellow-300 hover:border-green-800">Submit</button>
-                            </form>
-                        </div> */}
-
                         <form method="dialog">
                             <div className="flex gap-2">
                                 {disabled ? null : <button className="btn bg-red-600 ml-3 text-white border-4 border-black hover:bg-red-600 hover:border-black rounded-2xl"

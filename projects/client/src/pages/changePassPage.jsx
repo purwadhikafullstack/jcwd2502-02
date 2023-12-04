@@ -1,10 +1,9 @@
 import { useFormik } from 'formik';
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from "react-hot-toast";
-import axios from 'axios';
 import * as yup from 'yup';
 import Button from '../components/button';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { api } from '../api/api';
 
 export default function ChangePasswordPage() {
@@ -25,7 +24,6 @@ export default function ChangePasswordPage() {
                     navigate('/login')
                 }, 3000)
             } catch (error) {
-                console.log(error);
                 toast.error(error.response.data.message);
             }
         },
@@ -55,10 +53,12 @@ export default function ChangePasswordPage() {
     }, [])
 
     return (
-        <div className=" h-[900px] md:h-[900px] bg-gradient-to-b from-green-700 to-yellow-300">
+        <div className="min-h-screen bg-gradient-to-b from-green-700 to-yellow-300">
             <Toaster />
             <div className='grid place-content-center'>
-                <img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[200px]" />
+                <Link to={'/'}>
+                    <img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[200px]" />
+                </Link>
             </div>
             {
                 valid ?

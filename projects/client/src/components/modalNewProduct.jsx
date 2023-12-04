@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import { api1 } from "../api/api"
 import debounce from 'lodash/debounce';
-const ModalNewProduct = () => {
+const ModalNewProduct = ({ onCreate }) => {
     const [category, setCategory] = useState([]);
     const inputProductName = useRef();
     const inputProductPrice = useRef();
@@ -42,23 +42,41 @@ const ModalNewProduct = () => {
                 price: Number(inputProductPrice.current.value),
                 description: inputProductDescription.current.value,
                 product_categories_id: Number(inputProductCategory.current.value),
-                weight: inputProductWeigth.current.value
+                weight: inputProductWeigth.current.value,
+                final_price: Number(inputProductPrice.current.value)
             }
             const fd = new FormData()
             fd.append('data', JSON.stringify(inputs))
             image.forEach(value => {
                 fd.append('image', value)
             })
-            if (inputs.name === "" || inputs.image === "" || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "") {
+            if (inputs.name === "" || image.length == 0 || inputs.description === "" || inputs.product_categories_id === "" || inputProductWeigth.current.value === "" || inputProductWeigth.current.value === "") {
                 toast.error("Please Fill All Data")
             } else {
-                const data = await api.post(`products/addproduct`, fd)
-                toast.success('Create Product Success')
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                if (inputs.price === 0 || inputs.price <= 0 || inputs.weight === 0 || inputs.weight <= 0) {
+                    toast.error("Price and/or Weight Cannot Be 0")
+                } else {
+                    const data = await api.post(`products/addproduct`, fd)
+                    toast.success('Create Product Success')
+                    onCreate()
+                    inputProductName.current.value = "";
+                    inputProductPrice.current.value = "";
+                    inputProductDescription.current.value = "";
+                    inputProductCategory.current.value = "";
+                    inputProductWeigth.current.value = "";
+                    const fileInput = document.querySelector('.file-input');
+                    if (fileInput) {
+                        fileInput.value = null;
+                    }
+                    setImage([])
+                }
             }
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the product data.");
+            }
             console.log(error);
         }
     }
@@ -100,7 +118,7 @@ const ModalNewProduct = () => {
                                 </div>
                             </div>
                             <div>
-                                <div className="text-green-800 pb-2">Product Price</div>
+                                <div className="text-green-800 pb-2">Product Price (Rp)</div>
                                 <Input
                                     ref={inputProductPrice}
                                     type={"number"}
@@ -122,7 +140,7 @@ const ModalNewProduct = () => {
                                 </select>
                             </div>
                             <div>
-                                <div className="text-green-800 pb-2">Product Weigth</div>
+                                <div className="text-green-800 pb-2">Product Weigth (gr)</div>
                                 <Input
                                     ref={inputProductWeigth}
                                     type={"number"}

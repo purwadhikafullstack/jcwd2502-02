@@ -4,7 +4,7 @@ import axios from "axios"
 import { useRef, useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import { api1 } from "../api/api"
-const ModalNewCategory = () => {
+const ModalNewCategory = ({ onCreate }) => {
     const [category, setCategory] = useState([]);
     const inputCategoryName = useRef();
     const [image, setImage] = useState([])
@@ -38,16 +38,25 @@ const ModalNewCategory = () => {
             image.forEach(value => {
                 fd.append('image', value)
             })
-            if (inputs.name === "" || inputs.image === "") {
+            if (inputs.name === "" || image.length == 0) {
                 toast.error("Please Fill All Data")
             } else {
                 const data = await api.post(`category/addcategory`, fd)
                 toast.success('Create Category Success')
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                onCreate()
+                const fileInput = document.querySelector('.file-input');
+                if (fileInput) {
+                    fileInput.value = null;
+                }
+                inputCategoryName.current.value = ""
+                setImage([])
             }
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the category data.");
+            }
             console.log(error);
         }
     }
@@ -59,22 +68,22 @@ const ModalNewCategory = () => {
             <Button text={"Add Category"} style={"w-[300px]"} onClick={() => document.getElementById('my_modal_3').showModal()}></Button>
 
             <dialog id="my_modal_3" className="modal backdrop-blur-md">
-                <div className="modal-box bg-gradient-to-l from-yellow-300 to-green-600 w-[350px] ">
-                    <h3 className="font-bold text-4xl text-white">New Category</h3>
+                <div className="modal-box bg-white w-[350px] ">
+                    <h3 className="font-bold text-4xl text-green-800">New Category</h3>
                     <div className="flex flex-col gap-5 mt-5">
                         <div className="grid gap-5">
                             <div>
-                                <div className="text-white pb-2"> Category Name
+                                <div className="text-black pb-2"> Category Name
                                 </div>
                                 <Input
                                     ref={inputCategoryName}
                                     type={"text"}
-                                    style={"input w-full"} />
+                                    style={"input w-full border border-green-800"} />
                             </div>
                             <div>
-                                <div className="text-white pb-2"> Category Image</div>
+                                <div className="text-black pb-2"> Category Image</div>
                                 <div>
-                                    <input className="file-input file-input-warning w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
+                                    <input className="file-input file-input-success w-full max-w-xs" type="file" onChange={(e) => onSelectImages(e)} />
                                 </div>
                             </div>
 

@@ -21,6 +21,9 @@ export const branchSlice = createSlice({
         setMainAddress: (state, action) => {
             state.mainAddress = action.payload
         },
+        resetBranch: (state, action) => {
+            return state = initialState;
+        }
     }
 })
 
@@ -54,7 +57,7 @@ export const nearestBranch = () => async (dispatch) => {
             const lon1 = userLongitude;
             const lat2 = location.latitude;
             const lon2 = location.longitude;
-            const R = 6371; // Earth's radius in km
+            const R = 6371;
             const dLat = (lat2 - lat1) * (Math.PI / 180);
             const dLon = (lon2 - lon1) * (Math.PI / 180);
             const a =
@@ -73,5 +76,5 @@ export const nearestBranch = () => async (dispatch) => {
     }
 }
 
-export const { setBranch, clearBranch, setClosestBranch, setMainAddress } = branchSlice.actions;
+export const { setBranch, clearBranch, setClosestBranch, setMainAddress, resetBranch } = branchSlice.actions;
 export default branchSlice.reducer;

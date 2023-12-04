@@ -3,7 +3,6 @@ import Footer from "../../components/footer"
 import Button from "../../components/button"
 import ModalNewAddress from "../../components/modalNewAddress"
 import ModalUpdateAddress from "../../components/modalUpdateAddress"
-import ModalDelete from "../../components/modalConfirmDelete"
 import toast, { Toaster } from "react-hot-toast";
 import { useEffect, useState } from "react"
 import { api } from "../../api/api";
@@ -11,12 +10,10 @@ import { useRef } from "react"
 import "../../css/sweet.css"
 import Swal from "sweetalert2";
 import DeleteConfirmation from "../../components/deleteModal"
-import MyForm from "../../components/modal"
 import PaginationFixed from "../../components/paginationComponent"
-import { FaLocationArrow } from "react-icons/fa6";
 import ConfirmConfirmation from "../../components/confirmModal"
-
-
+import { getMainAddress } from "../../redux/Features/branch";
+import { useDispatch } from "react-redux"
 const ManageAddress = () => {
     const apiInstance = api()
     const [page, setPage] = useState(1);
@@ -25,8 +22,7 @@ const ManageAddress = () => {
     const pageTopRef = useRef(null);
     const [provinceId, setProvinceId] = useState()
     const [cityId, setCityId] = useState()
-    const [disabled, setDisabled] = useState(false)
-
+    const dispatch = useDispatch()
 
     const getProvinceId = async () => {
         try {
@@ -36,7 +32,6 @@ const ManageAddress = () => {
             console.log(error);
         }
     }
-
     const getCityId = async () => {
         try {
             const cityId = await apiInstance.get(`/location/city`)
@@ -47,7 +42,15 @@ const ManageAddress = () => {
             console.log(error);
         }
     }
-
+    const resetData = async () => {
+        try {
+            setAddress("")
+            getAddress()
+            dispatch(getMainAddress())
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const getAddress = async () => {
         try {
             const userAddress = await apiInstance.get(`/location/pagination/${page}`)
@@ -57,18 +60,15 @@ const ManageAddress = () => {
             console.log(error);
         }
     }
-
     const updateMain = async (addressId) => {
         try {
             const mainAddress = await apiInstance.patch(`/location/main/${addressId}`)
             Swal.fire("Success!", "Main Address Successfully Updated", "success");
             getAddress()
-
         } catch (error) {
             console.log(error);
         }
     }
-
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
             setPage(newPage);
@@ -77,49 +77,30 @@ const ManageAddress = () => {
             toast.error("Invalid page number!");
         }
     };
-
     const handleNextPage = () => {
         handlePageChange(page + 1);
     };
-
     const handlePrevPage = () => {
         handlePageChange(page - 1);
     };
-
-
     useEffect(() => {
         getCityId()
         getProvinceId()
         getAddress()
         window.scrollTo(0, 0);
     }, [page])
-
-
-    const UpdateAddres = async (addressId) => {
-        try {
-            console.log(addressId);
-        } catch (error) {
-        }
-    }
-
-
     return (
         <div ref={pageTopRef} >
             <Toaster />
             <Navbar />
-
             <div className="mt-[70px] mx-5 pt-5 md:mx-20 lg:mx-32 mb-10 h-full" style={{ minHeight: "100vh" }}>
-
                 <div className="md:flex md:justify-between mt-5 md:mt-10">
                     <div className="text-4xl md:text-5xl font-bold gap-2 text-green-800">Manage Address
                     </div>
-
                     <div className="mt-5 md:mt-0">
-                        <ModalNewAddress />
+                        <ModalNewAddress onCreate={resetData} />
                     </div>
-
                 </div>
-
                 <div className="mt-10 flex flex-col gap-5">
                     {address ?
                         address.map((value, index) => {
@@ -135,28 +116,29 @@ const ManageAddress = () => {
                                             <div className="font-semibold">{value.city?.name} - {value.city?.province?.name}</div>
                                         </div>
                                         <div className="md:grid md:place-content-center">
-                                            {value.isPrimary == "false" ? <ConfirmConfirmation
-                                                itemId={value.id}
-                                                button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
-                                                onDelete={getAddress}
-                                                apiEndpoint={"/location/main"}
-                                                text={"Your cart will be emptied if you change your main address. "}
-                                                textOnButton={"Confirm"}
-                                                message={"Main address successfully updated!"}
-                                            />
+                                            {value.isPrimary == "false" ?
+                                                <ConfirmConfirmation
+                                                    itemId={value.id}
+                                                    button={<div className="mt-5 md:grid md:place-content-center"><Button text={"Make Main Address"} style={"w-full"} /></div>}
+                                                    onDelete={resetData}
+                                                    apiEndpoint={"/location/main"}
+                                                    text={"Your cart will be emptied if you change your main address. "}
+                                                    textOnButton={"Confirm"}
+                                                    message={"Main address successfully updated!"}
+                                                    reloadPage={false}
+                                                />
                                                 : null}
                                         </div>
                                         <div className="flex gap-5 mt-5 md:pr-10 md:mt-0 md:grid md:place-content-center">
                                             <ModalUpdateAddress
                                                 id={value.id}
-                                                onClick={() => UpdateAddres(value.id)}
-                                                name={value.name} />
-
+                                                name={value.name}
+                                                onUpdate={resetData} />
                                             <div className="text-red-600 hover:underline">
                                                 <DeleteConfirmation
-                                                    itemId={value.id} // Pass the item ID to delete
-                                                    onDelete={getAddress} // Pass a callback function to execute after deletion
-                                                    apiEndpoint="/location" // Pass the API endpoint to customize the request URL
+                                                    itemId={value.id}
+                                                    onDelete={getAddress}
+                                                    apiEndpoint="/location"
                                                     text={""}
                                                     textOnButton={"Delete"}
                                                     message={"Address successfully deleted"}

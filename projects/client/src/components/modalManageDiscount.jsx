@@ -73,12 +73,12 @@ const ModalManageDiscount = ({ isOpen, onClose, productId, discountId, discountT
             {isOpen && (
                 <div className="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-8 rounded-lg w-[500px]">
-                        <h3 className="font-bold text-4xl text-gray-800 mb-4">Update Product Discount</h3>
+                        <h3 className="font-bold text-4xl text-green-800 mb-4">Update Product Discount</h3>
                         <div className="flex flex-col gap-5">
                             <div>
-                                <div className="text-gray-800 pb-2">Discount Type: </div>
+                                <div className="text-green-800 pb-2">Discount Type: </div>
                                 <select
-                                    className="input w-full border-black"
+                                    className="input w-full border-green-800"
                                     value={selectedType}
                                     onChange={(e) => handleSelectChange(e)}
                                 >
@@ -92,11 +92,11 @@ const ModalManageDiscount = ({ isOpen, onClose, productId, discountId, discountT
                             </div>
                             {showInput && selectedType && (
                                 <div>
-                                    <div className="text-gray-800 pb-2">{productName} Price: {productPrice}</div>
-                                    <div className="text-gray-800 pb-2">Enter Discount Value:</div>
+                                    <div className="text-green-800 pb-2">{productName} Price: {productPrice}</div>
+                                    <div className="text-green-800 pb-2">Enter Discount Value:</div>
                                     <input
                                         type="number"
-                                        className="input w-full border-black"
+                                        className="input w-full border-green-800"
                                         value={inputDiscount}
                                         onChange={(e) => setInputDiscount(e.target.value)}
                                     />

@@ -75,7 +75,19 @@ module.exports = {
         try {
             const data = JSON.parse(body);
             const dataImage = file
-            return await db.product_category.create({ ...data, image: dataImage });
+            const existingName = await db.product_category.findOne({
+                where: {
+                    name: { [Op.like]: data.name },
+                    isDeleted: 0
+                }
+            })
+            if (existingName) {
+                return { status: 401, message: 'Category Name Already Exist', isError: true };
+            } else {
+                const newCategory = await db.product_category.create({ ...data, image: dataImage });
+                return { status: 201, message: 'Category Created', isError: false };
+            }
+
         } catch (error) {
             return error
         }
@@ -91,7 +103,19 @@ module.exports = {
     saveEditCategoryService: async (body) => {
         try {
             const { inputCat, id } = body;
-            return await db.product_category.update({ name: inputCat }, { where: { id } });
+            const existingName = await db.product_category.findOne({
+                where: {
+                    name: inputCat,
+                    id: { [Op.not]: id },
+                    isDeleted: 0
+                }
+            })
+            if (existingName) {
+                return { status: 401, message: 'Category Name Already Exist', isError: true };
+            } else {
+                const updatedCategory = await db.product_category.update({ name: inputCat }, { where: { id } });
+                return { status: 201, message: 'Category Updated', isError: false };
+            }
         } catch (error) {
             return error
         }

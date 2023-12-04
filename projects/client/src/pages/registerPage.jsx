@@ -36,6 +36,8 @@ export default function RegistrationPage() {
             } catch (error) {
                 setDisabled(false)
                 toast.error(error.response.data.message);
+            } finally {
+                setDisabled(false)
             }
         },
         validationSchema: yup.object().shape({
@@ -73,7 +75,6 @@ export default function RegistrationPage() {
     return (
         <div className=" h-full md:h-screen bg-gradient-to-b from-green-700 to-yellow-300 pb-16 grid place-content-center">
             <Toaster />
-
             <div className=' scale-90'>
                 <div className='grid place-content-center pt-3.5'>
                     <Link to={'/'}>
@@ -82,10 +83,8 @@ export default function RegistrationPage() {
                 </div>
                 <div className='grid place-content-center'>
                     <form className='flex flex-col rounded-2xl gap-1 bg-green-700 p-5 w-[320px] md:w-[390px] lg:w-[400px]' onSubmit={formik.handleSubmit}>
-
                         <div className="text-center text-yellow-300 text-2xl lg:text-4xl font-black pb-5">Welcome Onboard!
                         </div>
-
                         <label className='text-white font-bold text-sm' htmlFor="" >Username</label>
                         <input type="text" id='username' name='username' onChange={formik.handleChange} value={formik.values.username} className='rounded-full p-2 pl-3' />
                         <div className='text-orange-400 font-medium'> {formik.errors.username} </div>
@@ -115,7 +114,6 @@ export default function RegistrationPage() {
                         <label className='text-white font-bold text-sm' htmlFor="" >Phone Number</label>
                         <input type="text" id='text' name='phone_number' onChange={formik.handleChange} value={formik.values.phone_number} className='rounded-full p-2 pl-3' />
                         <div className='text-orange-400 font-medium'> {formik.errors.phone_number} </div>
-
                         {formik.values.referralValid ? <div className='text-white'>Referral Code Applied!</div> :
                             <div>
                                 <label className='text-white font-bold text-sm' htmlFor="" >Reff. Code</label>
@@ -127,11 +125,6 @@ export default function RegistrationPage() {
                                 </div>
                             </div>
                         }
-
-                        {/* <div className='flex justify-center m-4'>
-                            <Button text='Register' type='submit' style={"w-[290px] md:w-[350px]"} />
-                        </div> */}
-
                         <div className="my-3">
                             {disabled ?
                                 <div className='flex justify-center'>

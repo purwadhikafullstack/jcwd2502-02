@@ -5,16 +5,9 @@ import { useAppSelector } from '../../redux/App/Store';
 import { FiUsers } from 'react-icons/fi';
 import { api } from "../../api/api";
 import { HiShoppingCart } from "react-icons/hi";
-import { Link } from "react-router-dom";
 import '../../css/admin.css'
-// component chart
 import DashboardOrderChart from "../../components/dashboardOrderChart";
 import DashboardUserChart from "../../components/dashboardUserChart";
-
-// data visualization
-import { ComposedChart, BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import UserChart from "../../components/userChart";
-
 
 const AdminDashboardPage = () => {
     const [transactionData, setTransactionData] = useState("");
@@ -59,7 +52,6 @@ const AdminDashboardPage = () => {
                     <div className="">
                         <div className="lg:flex lg:justify-between flex justify-between">
                             <div className="flex text-5xl font-bold gap-2 py-5 text-green-800">Admin Dashboard {userSelector.role == "admin" ? <div className="text-sm pl-3 flex items-end">({branch[userSelector?.store_branch_id - 1]?.name})</div> : null} </div>
-
                             <div className="grid place-content-center">
                                 {
                                     userSelector.role == "superadmin" ?
@@ -107,20 +99,17 @@ const AdminDashboardPage = () => {
                                 <div className="font-bold text-3xl marquee"> {popularProduct} </div>
                             </div>
                         </div>
-
                         <div className="h-[10px] bg-gradient-to-r from-yellow-300 to-green-600 my-10 rounded-full"></div>
-
                         <div className="grid gap-3">
                             <div className="rounded-xl shadow-xl border  my-5 p-4 w-full ">
                                 <div className="grid place-content-center pb-5">
                                     <div className="font-black text-3xl grid place-content-center">User Report</div>
-                                    <div className="text-sm grid place-content-center text-center"> Displaying user registration count in the past week</div>
+                                    <div className="text-sm grid place-content-center text-center"> Displaying new customers in the past week</div>
                                 </div>
                                 <div>
                                     < DashboardUserChart className="" data={userData} />
                                 </div>
                             </div>
-
                             <div className="rounded-xl shadow-xl border my-5 mb-20 p-4">
                                 <div className="grid place-content-center pb-5">
                                     <div className="flex gap-3">

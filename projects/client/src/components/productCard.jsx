@@ -29,7 +29,7 @@ const ProductCard = (props) => {
         else if (!user.username) {
             toast.error("Please log in to add items to your cart");
             setTimeout(() => {
-                navigate("/login"); // Step 4
+                navigate("/login");
             }, 2000);
             return
         }
@@ -78,7 +78,7 @@ const ProductCard = (props) => {
                             (props.discount_id === 1 || props.discount_id === 2 || props.discount_id === null)
                                 ? (
                                     <div className="lg:flex gap-2">
-                                        <div className="text-green-700 font-bold">Rp {props.final_price.toLocaleString()}</div>
+                                        <div className="text-green-700 font-bold">Rp {props.final_price?.toLocaleString()}</div>
                                         {(props.discount_id === 1 || props.discount_id === 2) && (
                                             <div className="text-red-600 line-through font-bold">Rp {props.price.toLocaleString()}</div>
                                         )}
@@ -93,22 +93,26 @@ const ProductCard = (props) => {
                     </div>
                 </Link>
                 <div className="flex justify-center pt-2 w-full">
-                    {isProductInStock ? (
-                        isInCart ? (
-                            <div className="flex items-center gap-2 lg:gap-5">
-                                <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
-                                <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
-                                <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
-                            </div>
-                        ) : (
-                            <div>
-                                {mainAddress ? <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} /> :
-                                    <Button onClick={() => altAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
-                            </div>
-                        )
-                    ) : (
-                        <div className="text-black">Out of Stock</div>
-                    )}
+                    {user.role === "customer" ?
+                        <>
+                            {isProductInStock ? (
+                                isInCart ? (
+                                    <div className="flex items-center gap-2 lg:gap-5">
+                                        <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="-" onClick={() => dispatch(deleteItemInCartAsync(props.data))} />
+                                        <div className="text-xl border-b-2 border-green-800 p-2">{getProductQuantity()}</div>
+                                        <Button style={"lg:w-[50px] w-[20px] text-xl rounded-full"} text="+" onClick={() => handleAddToCart()} />
+                                    </div>
+                                ) : (
+                                    <div>
+                                        {mainAddress ? <Button style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} onClick={() => handleAddToCart()} /> :
+                                            <Button onClick={() => altAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
+                                    </div>
+                                )
+                            ) : (
+                                <div className="text-black">Out of Stock</div>
+                            )}
+                        </>
+                        : <Button onClick={() => handleAddToCart()} style={"lg:w-[200px] rounded-full"} text={"Add to Cart"} />}
                 </div>
             </div>
         </div >

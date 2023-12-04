@@ -3,13 +3,11 @@ import { api } from "../../api/api";
 import NavbarAdmin from "./../../components/navbarAdmin"
 import React from 'react';
 import PaginationFixed from "../../components/paginationComponent";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Link } from "react-router-dom";
 import { BiSearchAlt } from "react-icons/bi";
 import Footer from "../../components/footer";
 import { useAppSelector } from '../../redux/App/Store';
 import { useDebounce } from 'use-debounce';
-
 
 const SalesReportProduct = () => {
     const userSelector = useAppSelector((state) => state.users)
@@ -53,10 +51,8 @@ const SalesReportProduct = () => {
     };
     const handlePageChange = async (newPage) => {
         if (newPage >= 1 && newPage <= maxPage) {
-            // await fetchData(newPage)
             setPage(newPage);
         } else {
-            // toast.error("Invalid page number!");
         }
     };
     const handleNextPage = () => {
@@ -160,7 +156,6 @@ const SalesReportProduct = () => {
                                 </select>
                             </div>
                         </div>
-
                         <div className="grid place-content-center">
                             <select defaultValue="grid place-content-center" value={sort} onChange={handleSortQuery} className="w-[130px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
                                 <option value={""} disabled selected>Sort</option>
@@ -171,9 +166,7 @@ const SalesReportProduct = () => {
                         <div className="grid place-content-center">
                             <div className=" w-[70px] h-[48px] grid place-content-center text-lg lg:text-xl hover:underline  text-green-700 font-black" onClick={handleReset}>Reset</div>
                         </div>
-
                     </div>
-
                 </div>
                 <div className="overflow-x-auto">
                     <div className=''>
@@ -204,7 +197,6 @@ const SalesReportProduct = () => {
                                     )) :
                                         null
                                     }
-
                                 </tbody>
                             </table>
                             <div className='flex justify-center mt-3'>
@@ -213,25 +205,10 @@ const SalesReportProduct = () => {
                                 </div> : null}
                             </div>
                             <div className='flex justify-center m-3'>
-                                {/* {data.length == 0 ? <div className="alert alert-error flex justify-center w-[600px]">
-                                    <span className="flex justify-center">Sorry there are no data just yet</span>
-                                </div> : null} */}
                             </div>
                         </div>
                     </div>
                 </div>
-                {/* <div className="h-[500px] w-[1000px] m-4 border border-black rounded-xl">
-                    <h1> Quantity of products sold by type </h1>
-                    <ResponsiveContainer width="90%" height="100%">
-                        <LineChart width={300} height={800} data={data} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                            <Line type="monotone" dataKey="total_sales" stroke="#8884d8" strokeWidth={2} />
-                            <XAxis dataKey="name" interval="preserveStartEnd" tick={{ textAnchor: 'center' }} />
-                            <YAxis dataKey="total_sales" domain={[0, 1500000]} />
-                            <Tooltip />
-                            <Legend />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </div> */}
             </div>
             <div className="flex justify-center my-3">
                 {

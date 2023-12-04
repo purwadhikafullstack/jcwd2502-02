@@ -41,7 +41,7 @@ module.exports = {
     createCategory: async (req, res, next) => {
         try {
             const addCategory = await createCategoryService(req.body.data, req.files.image[0].filename)
-            responseHandler(res, "Product Added", addCategory)
+            responseHandler(res, addCategory.message, addCategory, addCategory.status, addCategory.isError);
         } catch (error) {
             next(error);
         }
@@ -58,7 +58,7 @@ module.exports = {
     saveEditCat: async (req, res, next) => {
         try {
             const newCategory = await saveEditCategoryService(req.body)
-            responseHandler(res, "Save Edited Category Success", newCategory)
+            responseHandler(res, newCategory.message, newCategory, newCategory.status, newCategory.isError);
         } catch (error) {
             next(error);
         }

@@ -29,7 +29,6 @@ const ProductListPage = () => {
     const [maxPage, setMaxPage] = useState(1);
     const [debouncedSearch] = useDebounce(searchQuery, 1000);
 
-
     const handleReset = () => {
         try {
             setPage(1)
@@ -78,7 +77,6 @@ const ProductListPage = () => {
                 const response = await api.get(
                     `/products/allproductsfix?catId=${id}&searchQuery=${searchQuery}&sort=${sort}&branchId=${closestBranch.id}&page=${page}&discount=${discount}`
                 )
-
                 setMaxPage(response.data.maxPages)
                 setProducts(response.data.products);
             }
@@ -146,14 +144,12 @@ const ProductListPage = () => {
             </div>
             <div className="mx-5 md:mx-24 lg:mx-40 my-10">
                 <div className="gap-2 my-5 py-3 px-5 lg:gap-3  lg:flex">
-
                     <div className=" w-full mb-3 lg:mb-0">
                         <div className="border-2 flex rounded-xl bg-white h-[48px] ">
                             <div className="flex items-center pl-2 text-green-800"><BiSearchAlt /></div>
                             <input value={searchQuery} type="text" onChange={(e) => handleSearch(e.target.value)} className="lg:grid lg:place-content-center outline-none rounded-full w-full text-lg pl-2" placeholder=" Search Product" />
                         </div>
                     </div>
-
                     <div className="flex gap-3">
                         <div className="grid place-content-center">
                             <select defaultValue="" value={sort} onChange={(e) => handleChange(e)} className="w-[100px] h-[48px] px-2 border-2 rounded-xl lg:w-[80px]">
@@ -172,9 +168,7 @@ const ProductListPage = () => {
                         <div>
                             <button onClick={handleReset} className="grid place-content-center btn bg-yellow-300 hover:bg-yellow-300 rounded-full border-4 border-green-800 hover:border-green-800 text-green-900">Show All Products</button>
                         </div>
-
                     </div>
-
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 overflow-auto place-items-center">
                     {products && products.length ? products.map((value, index) => {

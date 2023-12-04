@@ -11,6 +11,7 @@ import PaginationFixed from "../../components/paginationComponent";
 import { Link, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import DeleteConfirmation from "../../components/deleteModal";
+
 const UpdateProductsCategoryPage = () => {
     const inputImage = useRef();
     const [category, setCategory] = useState([]);
@@ -25,7 +26,6 @@ const UpdateProductsCategoryPage = () => {
     const navigate = useNavigate();
     const role = useSelector((state) => state.users.role);
     const [debouncedSearch] = useDebounce(searchQuery, 1000);
-
     const onGetCategory = async () => {
         try {
             const response = await api().get(`category/list?search=${searchQuery}&sort=${sortOrder}&page=${page}`);
@@ -55,11 +55,28 @@ const UpdateProductsCategoryPage = () => {
                 pageTopRef.current.scrollIntoView({ behavior: "smooth" });
             }
             setSearchQuery("");
+            toast.success("Category Updated")
             onGetCategory();
         } catch (error) {
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(error.response.data.message);
+            } else {
+                toast.error("An error occurred while creating the category data.");
+            }
             console.log(error);
         }
     };
+    const handleData = () => {
+        try {
+            setCategory([])
+            onGetCategory()
+            setPage(1);
+            setSearchQuery("");
+            setSortOrder("DESC")
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const onSelectId = async (categoryId) => {
         try {
             setCatId(categoryId);
@@ -84,10 +101,9 @@ const UpdateProductsCategoryPage = () => {
             console.log(error);
         }
     };
-    const onDeleteCategory = async (catId) => {
+    const onDeleteCategory = async () => {
         try {
-            const deleteCategory = await api().patch(`category/deletecategory/${catId}`);
-            toast.success("Delete Category Success");
+            setCategory([])
             onGetCategory();
         } catch (error) {
             console.log(error);
@@ -121,7 +137,6 @@ const UpdateProductsCategoryPage = () => {
         setPage(1)
         setSearchQuery("")
         setSortOrder("DESC")
-        navigate(`/updatecategory`, { replace: true });
     }
     const handleChangeSort = (event) => {
         try {
@@ -147,7 +162,7 @@ const UpdateProductsCategoryPage = () => {
                         </div>
                     </div>
                     <div className="">
-                        <ModalNewCategory />
+                        <ModalNewCategory onCreate={handleData} />
                     </div>
                 </div>
                 <div className="overflow-x-auto mt-5 border-b-4 border-green-700">
@@ -229,14 +244,15 @@ const UpdateProductsCategoryPage = () => {
                                                 </button>
                                                 <DeleteConfirmation
                                                     itemId={value.id}
-                                                    onDelete={onGetCategory}
+                                                    onDelete={onDeleteCategory}
                                                     apiEndpoint="category/deletecategory"
                                                     text={""}
                                                     message={"Category Deleted"}
                                                     textOnButton={"Yes"}
                                                     button={<div className=" btn hover:bg-red-600 hover:border-black bg-red-600 border-black border-4 text-white w-full">
                                                         Delete
-                                                    </div>} />
+                                                    </div>}
+                                                    reloadPage={false} />
                                             </div>
                                         </td>
                                     </tr>

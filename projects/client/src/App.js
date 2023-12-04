@@ -8,12 +8,13 @@ import routes from "./routes/Routes";
 
 function App() {
   const user = useSelector((state) => state.users)
+  const mainAddress = useSelector((state) => state.branch.mainAddress)
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(onCheckIsLogin());
     dispatch(onGetBranchAsync())
     dispatch(nearestBranch())
-  }, [user.id])
+  }, [user.id, mainAddress])
 
   return (
     <div data-theme="light">

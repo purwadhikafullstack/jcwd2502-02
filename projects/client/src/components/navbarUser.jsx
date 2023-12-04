@@ -8,10 +8,10 @@ import { RiLogoutBoxRFill } from "react-icons/ri";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../redux/Features/users";
+import { resetBranch } from "../redux/Features/branch";
 import { getCartAsync } from "../redux/Features/cart";
 import { clearCart } from "../redux/Features/cart";
 import { useEffect, useState } from "react";
-
 
 const Navbar = () => {
     const navigate = useNavigate()
@@ -19,14 +19,14 @@ const Navbar = () => {
     const dispatch = useDispatch()
     const { cart } = useSelector((state) => state.cart)
     const user = useSelector((state) => state.users)
+    const mainAddress = useSelector((state) => state.branch.mainAddress)
     const [searchQuery, setSearchQuery] = useState("");
-
     const handleLogout = async (e) => {
         e.preventDefault()
         dispatch(logout());
         dispatch(clearCart());
+        dispatch(resetBranch())
         navigate('/login')
-
     }
 
     const handleSearch = () => {
@@ -35,8 +35,7 @@ const Navbar = () => {
 
     useEffect(() => {
         dispatch(getCartAsync());
-    }, [dispatch]);
-
+    }, [dispatch, mainAddress]);
 
     return (
         <div className="relative">
@@ -46,7 +45,6 @@ const Navbar = () => {
                         <img src={"./buyfresh_logo.png" && "https://cdn.discordapp.com/attachments/1159339445049368588/1174957031107608636/buyfresh_logo.png?ex=65697b01&is=65570601&hm=ff2240905e431008b2dccd668e94ce44a2e248efb11493b26c265c7dba380f28&"} alt="app_logo" className="h-[70px]" />
                     </div>
                 </Link>
-
                 {location.pathname !== '/products' && (
                     <div className="grid items-center">
                         <div className="flex rounded-full bg-white">
@@ -59,15 +57,15 @@ const Navbar = () => {
                         </div>
                     </div>
                 )}
-
                 <div className="flex gap-5">
-                    <div className="grid items-center relative mt-2 px-3">
-                        <Link to={'/cart'}>
-                            <div><HiShoppingCart className="text-white text-4xl" /></div>
-                        </Link>
-                        <div className="absolute top-0 right-0 border-2 border-green-800 rounded-full px-2 font-black bg-yellow-300 text-green-800 text-sm">{cart?.length}</div>
-                    </div>
-
+                    {user.username ?
+                        <div className="grid items-center relative mt-2 px-3">
+                            <Link to={'/cart'}>
+                                <div><HiShoppingCart className="text-white text-4xl" /></div>
+                            </Link>
+                            <div className="absolute top-0 right-0 border-2 border-green-800 rounded-full px-2 font-black bg-yellow-300 text-green-800 text-sm">{cart?.length}</div>
+                        </div>
+                        : null}
                     <div className="grid items-center">
                         <div className="drawer-end">
                             <input id="my-drawer" type="checkbox" className="drawer-toggle" />
@@ -82,8 +80,6 @@ const Navbar = () => {
                                     ) : (
                                         <HiMenu className="text-white text-3xl" />
                                     )}
-                                    {/* 
-                                    <img className="w-[45px] h-[45px] bg-base-200 rounded-full drawer-button " src={process.env.REACT_APP_URL + `${user?.profile_picture}`} alt="" /> */}
                                 </label>
                             </div>
                             <div className="drawer-side">
@@ -91,15 +87,13 @@ const Navbar = () => {
                                 {
                                     user.username ?
                                         <ul className="menu p-4 w-64 md:w-80 min-h-full bg-white text-xl ">
-
                                             <div>
                                                 <div className="grid place-content-center">
                                                     <img className="w-[150px] h-[150px] bg-base-200 rounded-full drawer-button " src={process.env.REACT_APP_URL + `${user?.profile_picture}`} alt="" />
                                                 </div>
-
                                                 <div className="bg-gradient-to-b from-yellow-300 to-green-600 rounded-3xl my-5 text-white">
                                                     <div className="flex justify-center text-xl font-black pt-5">Welcome, {user?.username}!</div>
-                                                    <div className="flex justify-center text-md pb-5">{user?.email}</div>
+                                                    <div className="flex justify-center text-sm pb-5">{user?.email}</div>
                                                 </div>
                                             </div>
                                             <Link to={'/profile'}>
